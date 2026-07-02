@@ -308,7 +308,7 @@ interface NewsItem {
                           @for (icon of iconPresets; track icon.name) {
                             <button class="icon-preset" [class.icon-preset-active]="form.thumbSrc === icon.svg"
                               (click)="form.thumbSrc = icon.svg" [title]="icon.name">
-                              <span [innerHTML]="icon.svg"></span>
+                              <span [innerHTML]="sanitizeHtml(icon.svg)"></span>
                             </button>
                           }
                         </div>
@@ -341,7 +341,7 @@ interface NewsItem {
                         @if (form.thumbType === 'img') {
                           <img [src]="form.thumbSrc" alt="preview" />
                         } @else {
-                          <span [innerHTML]="form.thumbSrc"></span>
+                          <span [innerHTML]="sanitizeHtml(form.thumbSrc)"></span>
                         }
                       </div>
                     </div>

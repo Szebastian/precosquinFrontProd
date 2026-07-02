@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 interface User {
   id: string;
@@ -155,7 +156,7 @@ interface InviteResult {
                     @for (role of roleOptions; track role.value) {
                       <label class="role-option" [class.selected]="inviteForm.role === role.value">
                         <input type="radio" name="role" [value]="role.value" [(ngModel)]="inviteForm.role" />
-                        <span class="role-icon" [innerHTML]="role.icon"></span>
+                        <span class="role-icon" [innerHTML]="sanitizeHtml(role.icon)"></span>
                         <div>
                           <span class="role-name">{{ role.label }}</span>
                           <span class="role-desc">{{ role.desc }}</span>
@@ -784,6 +785,7 @@ interface InviteResult {
 })
 export class AdminPageComponent implements OnInit {
   private http = inject(HttpClient);
+  private sanitizer = inject(DomSanitizer);
 
   users = signal<User[]>([]);
   allUsers = signal<User[]>([]);
@@ -812,6 +814,10 @@ export class AdminPageComponent implements OnInit {
     { value: 'staff', label: 'Staff', desc: 'Personal de apoyo en la operación', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>' },
     { value: 'organizador', label: 'Organizador', desc: 'Gestiona el festival completo', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1"/></svg>' },
   ];
+
+  sanitizeHtml(html: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
 
   ngOnInit(): void {
     this.loadUsers();
