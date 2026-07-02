@@ -1,0 +1,443 @@
+<div class="doc-page">
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="doc-header-inner">
+      <a routerLink="/" class="doc-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+        Volver al inicio
+      </a>
+      <h1 class="doc-title">Documentación Oficial</h1>
+      <p class="doc-subtitle">55° Certamen para Nuevos Valores Pre Cosquín · Edición 2027</p>
+      <p class="doc-desc">Encontrá todas las reglas, categorías y requisitos para participar del Pre Cosquín Puerto Pirámides.</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="doc-content">
+
+    <!-- SECCIÓN 1: REGLAMENTO GENERAL -->
+    <div class="accordion-section" [class.open]="openSection() === 'reglamento'">
+      <button class="accordion-trigger" (click)="toggleSection('reglamento')">
+        <div class="accordion-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        </div>
+        <div class="accordion-text">
+          <h2>Reglamento General</h2>
+          <p>Requisitos para participar, normativas y premiación</p>
+        </div>
+        <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+
+          <div class="doc-block">
+            <h3>Objetivo</h3>
+            <p>Reconocer los valores artísticos de todo el territorio nacional en propuestas de música y danza de carácter folklórico, brindando la oportunidad de llegar al <strong>Festival Nacional de Folklore de Cosquín</strong>.</p>
+          </div>
+
+          <div class="doc-block">
+            <h3>Requisitos para Participar</h3>
+            <ul>
+              <li><strong>Edad mínima:</strong> 16 años al momento de la inscripción</li>
+              <li><strong>Nacionalidad:</strong> Argentinos naturos o naturalizados</li>
+              <li><strong>No ser ganador anterior</strong> en la misma categoría</li>
+              <li><strong>Excepción:</strong> Conjunto de Baile Folklórico puede reingresar después de 5 años con propuesta completamente diferente</li>
+              <li>Presentar <strong>6 obras</strong> al momento de la inscripción (título, género, autor)</li>
+            </ul>
+          </div>
+
+          <div class="doc-block">
+            <h3>Presentación en Competencia</h3>
+            <ul>
+              <li>El participante interpreta <strong>2 obras</strong> (1 elegida por él + 1 elegida por el jurado)</li>
+              <li>Si avanza a la <strong>final</strong>: presenta 1 obra adicional (diferente a las anteriores)</li>
+              <li>El jurado puede solicitar una <strong>"segunda pasada"</strong> en malambo (contrapunto)</li>
+            </ul>
+          </div>
+
+          <div class="doc-block">
+            <h3>Reglas Escénicas</h3>
+            <ul>
+              <li><strong>NO</strong> se permite escenografía</li>
+              <li><strong>NO</strong> se permite audiovisual (solo una imagen como "postal" en pantalla)</li>
+              <li>Máximo <strong>2 asistentes de escena</strong> para ingreso/egreso de elementos</li>
+              <li><strong>20 segundos</strong> al inicio + 20 segundos al final para utilería (fuera del tiempo de presentación)</li>
+              <li><strong>Prohibido:</strong> fuego y elementos peligrosos</li>
+              <li>Prohibido presentarse en short, bermudas, musculosas, ojotas, etc.</li>
+            </ul>
+          </div>
+
+          <div class="doc-block">
+            <h3>Tolerancia de Tiempo</h3>
+            <p>Los tiempos estipulados tienen un límite de tolerancia de <strong>10 segundos</strong>. Superado dicho límite, cualquier reclamo es <strong>inapelable</strong>.</p>
+          </div>
+
+          <div class="doc-block">
+            <h3>Premiación</h3>
+            <ul>
+              <li>Actuación en el <strong>Festival Nacional de Folklore de Cosquín</strong></li>
+              <li>Certificado de acreditación</li>
+              <li>Premio en efectivo (a determinar por la Comisión)</li>
+              <li>Derecho a competir por el premio <strong>REVELACIÓN</strong> del Festival</li>
+              <li>Menciones especiales: Mejor Coreógrafo, Mejor Participante en Música, Mejor Participante en Danza, Mejor Puesta en Escena</li>
+            </ul>
+          </div>
+
+          <div class="doc-block">
+            <h3>Fechas del Festival 2027</h3>
+            <div class="doc-table">
+              <div class="table-row table-header">
+                <span>Instancia</span>
+                <span>Fecha</span>
+              </div>
+              <div class="table-row">
+                <span>Ronda Clasificatoria</span>
+                <span>4 - 15 de enero 2027</span>
+              </div>
+              <div class="table-row">
+                <span>Finales</span>
+                <span>16 - 17 de enero 2027</span>
+              </div>
+              <div class="table-row">
+                <span>Noche de Ganadores</span>
+                <span>18 de enero 2027</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: CATEGORÍAS MUSICA -->
+    <div class="accordion-section" [class.open]="openSection() === 'categorias-musica'">
+      <button class="accordion-trigger" (click)="toggleSection('categorias-musica')">
+        <div class="accordion-icon icon-musica">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <div class="accordion-text">
+          <h2>Categorías de Música</h2>
+          <p>10 categorías con tiempos y criterios de evaluación</p>
+        </div>
+        <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+          @for (cat of categoriasMusica; track cat.id) {
+            <div class="cat-card">
+              <div class="cat-card-header">
+                <h3>{{ cat.nombre }}</h3>
+                <span class="cat-time">{{ cat.tiempo }}</span>
+              </div>
+              <p class="cat-desc">{{ cat.desc }}</p>
+              <div class="cat-detail">
+                <span class="cat-label">Reglas:</span>
+                <p>{{ cat.reglas }}</p>
+              </div>
+              <div class="cat-criterios">
+                <span class="cat-label">Criterios de evaluación:</span>
+                <div class="criterios-tags">
+                  @for (c of formatCriterios(cat.criterios); track c) {
+                    <span class="criterio-tag">{{ c }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: CATEGORÍAS DANZA -->
+    <div class="accordion-section" [class.open]="openSection() === 'categorias-danza'">
+      <button class="accordion-trigger" (click)="toggleSection('categorias-danza')">
+        <div class="accordion-icon icon-danza">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"/><path d="M12 6v4l-3 5"/><path d="M12 10l3 5"/><path d="M9 21l3-6 3 6"/></svg>
+        </div>
+        <div class="accordion-text">
+          <h2>Categorías de Danza</h2>
+          <p>3 categorías con tiempos y criterios de evaluación</p>
+        </div>
+        <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+          @for (cat of categoriasDanza; track cat.id) {
+            <div class="cat-card">
+              <div class="cat-card-header">
+                <h3>{{ cat.nombre }}</h3>
+                <span class="cat-time">{{ cat.tiempo }}</span>
+              </div>
+              <p class="cat-desc">{{ cat.desc }}</p>
+              <div class="cat-detail">
+                <span class="cat-label">Reglas:</span>
+                <p>{{ cat.reglas }}</p>
+              </div>
+              <div class="cat-criterios">
+                <span class="cat-label">Criterios de evaluación:</span>
+                <div class="criterios-tags">
+                  @for (c of formatCriterios(cat.criterios); track c) {
+                    <span class="criterio-tag">{{ c }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 4: REQUISITOS TÉCNICOS -->
+    <div class="accordion-section" [class.open]="openSection() === 'tecnica'">
+      <button class="accordion-trigger" (click)="toggleSection('tecnica')">
+        <div class="accordion-icon icon-tecnica">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+        </div>
+        <div class="accordion-text">
+          <h2>Requisitos Técnicos</h2>
+          <p>Sonido, instrumentos y vestimenta</p>
+        </div>
+        <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+
+          <div class="doc-block">
+            <h3>Requisitos para Músicos</h3>
+            <ul>
+              <li>Instrumentos en <strong>perfecto estado</strong> de funcionamiento</li>
+              <li><strong>No modificar</strong> niveles de ganancia durante la prueba de sonido</li>
+              <li><strong>No modificar</strong> ecualización una vez en el escenario</li>
+              <li>Baterías nuevas y accesorios completos</li>
+              <li>Verificar que los conectores de salida ("Jack") estén firmes</li>
+              <li>Usar cables de señal de <strong>buena calidad</strong></li>
+              <li>Verificar conexiones de pedales de efectos</li>
+            </ul>
+          </div>
+
+          <div class="doc-block">
+            <h3>Clasificación de Instrumentos (Art. 31)</h3>
+            <div class="doc-split">
+              <div class="doc-split-col">
+                <h4>Instrumento Melódico</h4>
+                <p>Produce una nota a la vez. Permite líneas melódicas pero sin acordes simultáneos.</p>
+                <p class="doc-examples"><strong>Ejemplos:</strong> Violín, Bandoneón, Flauta traversa, Clarinete, Saxofón, Trompeta, Quena, Erke, Sikus</p>
+              </div>
+              <div class="doc-split-col">
+                <h4>Instrumento Armónico</h4>
+                <p>Produce varias notas simultáneamente (acordes).</p>
+                <p class="doc-examples"><strong>Ejemplos:</strong> Guitarra, Piano, Charango, Arpa, Acordeón</p>
+              </div>
+            </div>
+            <p class="doc-note">El solista instrumental puede ser acompañado por <strong>1 instrumento armónico</strong> de manera excepcional. El acompañamiento será de base, sin prominencia melódica.</p>
+          </div>
+
+          <div class="doc-block">
+            <h3>Microfonía</h3>
+            <ul>
+              <li>Se recomienda <strong>Shure SM58</strong> (o equivalente)</li>
+              <li>Distancia de la boca: <strong>4-5 cm</strong></li>
+              <li>Sistemas inalámbricos deben ser aprobados por la empresa de sonido</li>
+              <li><strong>Evitar banda VHF</strong> (usar UHF)</li>
+            </ul>
+          </div>
+
+          <div class="doc-block">
+            <h3>Vestimenta</h3>
+            <ul>
+              <li>La vestimenta debe tener la <strong>corrección necesaria</strong> para su presentación</li>
+              <li><strong>Prohibido:</strong> short, bermudas, pantalones cortos, musculosas, ojotas</li>
+              <li>No se permitirán hechos o manifestaciones que afecten la ética, moral o buenas costumbres</li>
+            </ul>
+          </div>
+
+          <div class="doc-block">
+            <h3>Instrumentos No Permitidos</h3>
+            <ul>
+              <li><strong>Batería:</strong> Solo permitida en Conjuntos Instrumentales</li>
+              <li><strong>Percusión menor:</strong> Permitida como acompañamiento (no como protagonista)</li>
+              <li><strong>Sintetizadores/Teclados:</strong> Solo como instrumento armónico (acordes), no como reemplazo de otros instrumentos</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 5: INFORMACIÓN DE SEDES -->
+    <div class="accordion-section" [class.open]="openSection() === 'sedes'">
+      <button class="accordion-trigger" (click)="toggleSection('sedes')">
+        <div class="accordion-icon icon-sedes">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="accordion-text">
+          <h2>Información de Sedes</h2>
+          <p>Canon de pago, cuentas bancarias y contactos</p>
+        </div>
+        <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+
+          <div class="doc-block">
+            <h3>Canon de Participación</h3>
+            <div class="doc-table">
+              <div class="table-row table-header">
+                <span>Fecha de pago</span>
+                <span>Monto</span>
+              </div>
+              <div class="table-row">
+                <span>Hasta el 30 de septiembre 2026</span>
+                <span class="doc-highlight">$3.900.000</span>
+              </div>
+              <div class="table-row">
+                <span>Hasta el 31 de octubre 2026</span>
+                <span class="doc-highlight">$4.300.000</span>
+              </div>
+              <div class="table-row">
+                <span>Hasta el 30 de noviembre 2026</span>
+                <span class="doc-highlight">$4.500.000</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="doc-block">
+            <h3>Cuentas Bancarias Oficiales</h3>
+            <div class="doc-split">
+              <div class="doc-split-col doc-bank">
+                <h4>Banco de la Nación Argentina</h4>
+                <p><strong>Sucursal:</strong> Cosquín N° 1635</p>
+                <p><strong>Cta Cte:</strong> 03 16352220013274</p>
+                <p><strong>CBU:</strong> 0110222420022200132745</p>
+              </div>
+              <div class="doc-split-col doc-bank">
+                <h4>Banco Provincia de Córdoba</h4>
+                <p><strong>Cuenta:</strong> 31501336906</p>
+                <p><strong>CBU:</strong> 0200315101000001336965</p>
+                <p><strong>Alias:</strong> MUNICMF369</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="doc-block">
+            <h3>Correos de Contacto</h3>
+            <ul>
+              <li><strong>Pagos:</strong> haciendafestivaldecosquin&#64;gmail.com</li>
+              <li><strong>Administración:</strong> precosquincmf&#64;gmail.com</li>
+              <li><strong>Teléfono:</strong> 3541-235377</li>
+              <li><strong>Contacto:</strong> Lic. Fernanda G. Rodríguez, Secretaria de Pre Cosquín</li>
+            </ul>
+          </div>
+
+          <div class="doc-block">
+            <h3>Nuevas Sedes 2026</h3>
+            <div class="sedes-tags">
+              <span class="sede-tag">San Rafael, Mendoza</span>
+              <span class="sede-tag">Reconquista, Santa Fe</span>
+              <span class="sede-tag">Tostado, Santa Fe</span>
+              <span class="sede-tag">Rufino, Santa Fe</span>
+              <span class="sede-tag">Caleta Olivia, Santa Cruz</span>
+              <span class="sede-tag">Azul, Buenos Aires</span>
+              <span class="sede-tag">Lomas de Zamora, Buenos Aires</span>
+              <span class="sede-tag">Ubajay, Entre Ríos</span>
+              <span class="sede-tag">Tigre, Buenos Aires</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 6: MÚSICA POPULAR -->
+    <div class="accordion-section" [class.open]="openSection() === 'musica-popular'">
+      <button class="accordion-trigger" (click)="toggleSection('musica-popular')">
+        <div class="accordion-icon icon-popular">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="accordion-text">
+          <h2>Música Popular de Raíz Folklórica</h2>
+          <p>Definición y alcance según el Ateneo de Sedes</p>
+        </div>
+        <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+          <div class="doc-block">
+            <h3>¿Qué es Música Popular de Raíz Folklórica?</h3>
+            <blockquote class="doc-quote">
+              "Aquellas canciones basadas en hechos culturales, producidas, reconocidas y reproducidas por el pueblo, con características implícitas de identidades regionales, imbuidas de un tratamiento artístico y compositivo relevante."
+            </blockquote>
+            <blockquote class="doc-quote doc-quote-attr">
+              — Leda Valladares
+            </blockquote>
+            <p class="doc-note">"Lo popular y lo folklórico no son voces sinónimas. Si bien lo folklórico es popular, no todo lo popular es folklórico."</p>
+          </div>
+          <div class="doc-block">
+            <h3>¿Qué NO es Folklórico?</h3>
+            <p>Canciones de creadores individuales que, aunque referenciadas en tradiciones regionales, <strong>no reflejan la identidad colectiva</strong> de una comunidad. Ejemplo: "La Llorona" (México) o "Cielito Lindo" (México) NO son folklóricas argentinas.</p>
+          </div>
+          <div class="doc-block">
+            <h3>Criterios para ser Folklórico</h3>
+            <ul>
+              <li>La obra debe ser <strong>conocida y aceptada por la gente</strong></li>
+              <li>Debe reflejar la <strong>identidad colectiva</strong> de una comunidad</li>
+              <li>Puede ser de autor conocido o desconocido</li>
+              <li>Puede no estar documentada pero debe estar <strong>viva en la memoria popular</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 7: LOCUTORES -->
+    <div class="accordion-section" [class.open]="openSection() === 'locutores'">
+      <button class="accordion-trigger" (click)="toggleSection('locutores')">
+        <div class="accordion-icon icon-locutores">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        </div>
+        <div class="accordion-text">
+          <h2>Locutores y Comunicación</h2>
+          <p>Requisitos para locutores del certamen</p>
+        </div>
+        <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+          <div class="doc-block">
+            <h3>Funciones del Locutor</h3>
+            <ul>
+              <li>Definir el <strong>tono</strong> del evento</li>
+              <li>Brindar <strong>seriedad, calidez y respeto</strong></li>
+              <li>Garantizar <strong>exactitud</strong> en datos: nombres, obras, autores, categorías</li>
+              <li>Solicitar el <strong>programa completo</strong> con anticipación</li>
+              <li>Conocer las <strong>reglas básicas</strong> del certamen</li>
+            </ul>
+          </div>
+          <div class="doc-block">
+            <h3>Cualidades Requeridas</h3>
+            <ul>
+              <li>Voz clara, natural y agradable</li>
+              <li>Buena dicción, ritmo y fluidez en la lectura</li>
+              <li>Comunicar con respeto y pausas</li>
+              <li>Conocimiento mínimo del repertorio folklórico</li>
+              <li>Presencia escénica profesional</li>
+              <li>Compromiso con los valores culturales</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="doc-ctas">
+      <a routerLink="/inscripcion" class="btn btn-primary btn-lg">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+        Inscribirme Ahora
+      </a>
+      <a routerLink="/" class="btn btn-secondary btn-lg">
+        Volver al Inicio
+      </a>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Angular
+.angular/
+
+# Build
+dist/
+
+# Environment
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+
+# Cache
+.cache/
+.eslintcache
+*.tsbuildinfo
+
+# Temporary
+tmp/
+temp/
+*.tmp

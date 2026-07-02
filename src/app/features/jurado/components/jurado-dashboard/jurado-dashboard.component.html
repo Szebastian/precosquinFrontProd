@@ -1,0 +1,187 @@
+<div class="dashboard">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="welcome-text">
+      <div class="welcome-icon">⭐</div>
+      <div>
+        <h1 class="welcome-title">Panel del Jurado</h1>
+        <p class="welcome-subtitle">{{ auth.profile()?.full_name || 'Jurado' }} — Evaluá a los artistas inscriptos en Pre-Cosquín</p>
+      </div>
+    </div>
+    <div class="welcome-actions">
+      <a routerLink="/panel/artistas" class="btn btn-secondary btn-sm">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Ver Artistas
+      </a>
+      <a routerLink="/panel/jurado/inscripciones" class="btn btn-primary btn-sm">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        Evaluar Inscripciones
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card-brand">
+      <div class="stat-card-inner">
+        <div class="stat-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-value">{{ stats()?.inscriptions_assigned || 0 }}</p>
+          <p class="stat-label">Inscripciones Asignadas</p>
+        </div>
+      </div>
+      <div class="stat-footer">
+        <span class="stat-info">Para tu evaluación</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-warning">
+      <div class="stat-card-inner">
+        <div class="stat-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-value">{{ stats()?.pending_evaluations || 0 }}</p>
+          <p class="stat-label">Pendientes de Evaluar</p>
+        </div>
+      </div>
+      <div class="stat-footer">
+        <a routerLink="/panel/jurado/inscripciones" class="stat-link">Evaluar ahora →</a>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-success">
+      <div class="stat-card-inner">
+        <div class="stat-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-value">{{ stats()?.completed_evaluations || 0 }}</p>
+          <p class="stat-label">Evaluaciones Completadas</p>
+        </div>
+      </div>
+      <div class="stat-footer">
+        <span class="stat-trend-up">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+            <polyline points="17 6 23 6 23 12"/>
+          </svg>
+          Progreso excelente
+        </span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-info">
+      <div class="stat-card-inner">
+        <div class="stat-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-value">{{ stats()?.average_score || 0 }}</p>
+          <p class="stat-label">Puntaje Promedio</p>
+        </div>
+      </div>
+      <div class="stat-footer">
+        <span class="stat-info">Sobre 10 puntos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar Section -->
+  <div class="card card-elevated progress-card">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">Progreso de Evaluaciones</h3>
+        <p class="card-description">Tu avance en el proceso de evaluación</p>
+      </div>
+      <span class="progress-badge">
+        {{ stats()?.completed_evaluations || 0 }} / {{ stats()?.inscriptions_assigned || 0 }}
+      </span>
+    </div>
+    <div class="progress-body">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" [style.width.%]="getProgressPercent()"></div>
+      </div>
+      <div class="progress-labels">
+        <span>{{ getProgressPercent() }}% completado</span>
+        <span>{{ stats()?.pending_evaluations || 0 }} pendientes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inscriptions to Evaluate -->
+  <div class="card card-elevated">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">Inscripciones para Evaluar</h3>
+        <p class="card-description">Artistas asignados a tu criterio evaluador</p>
+      </div>
+      <a routerLink="/panel/jurado/inscripciones" class="text-link">Ver todas →</a>
+    </div>
+    <div class="inscription-list">
+      @if (pendingInscriptions().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon-wrap">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <h4 class="empty-title">¡Todo evaluado!</h4>
+          <p class="empty-desc">No tenés inscripciones pendientes de evaluación.</p>
+        </div>
+      } @else {
+        @for (inscription of pendingInscriptions(); track inscription.id) {
+          <div class="inscription-item" [class.in-progress]="inscription.evaluation_status === 'in_progress'">
+            <div class="inscription-avatar" [class]="'cat-' + inscription.category.toLowerCase()">
+              {{ getInitials(inscription.artist_name) }}
+            </div>
+            <div class="inscription-info">
+              <h4 class="inscription-name">{{ inscription.artist_name }}</h4>
+              <p class="inscription-meta">
+                <span class="inscription-category">{{ inscription.category }} › {{ inscription.subcategory }}</span>
+                <span class="dot">·</span>
+                <span class="inscription-date">{{ formatDate(inscription.submitted_at) }}</span>
+              </p>
+            </div>
+            <div class="inscription-actions">
+              @if (inscription.evaluation_status === 'pending') {
+                <span class="status-badge status-pending">Pendiente</span>
+              } @else if (inscription.evaluation_status === 'in_progress') {
+                <span class="status-badge status-progress">En progreso</span>
+              } @else {
+                <span class="status-badge status-completed">Completada</span>
+              }
+              <a routerLink="/panel/jurado/inscripciones" class="eval-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                Evaluar
+              </a>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

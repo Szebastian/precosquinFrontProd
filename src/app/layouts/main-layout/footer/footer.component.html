@@ -1,0 +1,21 @@
+<footer class="app-footer" role="contentinfo">
+  <div class="sponsors-section" aria-label="Patrocinadores">
+    @for (sponsor of sponsors; track sponsor.src) {
+      <img
+        [ngSrc]="sponsor.src"
+        [alt]="sponsor.alt"
+        [width]="sponsor.width"
+        [height]="sponsor.height"
+        class="sponsor-logo"
+        loading="lazy"
+        fetchpriority="low"
+      >
+    }
+  </div>
+  <div class="footer-content">
+    <svg class="copyright-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+    </svg>
+    <span>&copy; {{ currentYear() }} Precosquin. Todos los derechos reservados.</span>
+  </div>
+</footer>

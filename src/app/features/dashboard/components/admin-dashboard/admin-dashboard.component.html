@@ -1,0 +1,257 @@
+<div class="dashboard">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div>
+      <h1 class="welcome-title">¡Bienvenido! 👋</h1>
+      <p class="welcome-subtitle">{{ auth.profile()?.full_name || 'Usuario' }} - Aquí tienes un resumen de Precosquín</p>
+    </div>
+    <div class="welcome-actions">
+      <span class="badge" [ngClass]="getRoleBadgeClass()">
+        {{ getRoleLabel() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card-brand">
+      <div class="stat-card-inner">
+        <div class="stat-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-value">{{ stats()?.total_inscripciones || 0 }}</p>
+          <p class="stat-label">Inscripciones Totales</p>
+        </div>
+      </div>
+      <div class="stat-footer">
+        <span class="stat-trend-up">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+            <polyline points="17 6 23 6 23 12"/>
+          </svg>
+          +12% esta semana
+        </span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-warning">
+      <div class="stat-card-inner">
+        <div class="stat-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-value">{{ stats()?.inscripciones_pendientes || 0 }}</p>
+          <p class="stat-label">Pendientes Revisión</p>
+        </div>
+      </div>
+      <div class="stat-footer">
+        <a routerLink="/panel/inscripciones" class="stat-link">Ver todos →</a>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-success">
+      <div class="stat-card-inner">
+        <div class="stat-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-value">{{ stats()?.artistas_confirmados || 0 }}</p>
+          <p class="stat-label">Artistas Confirmados</p>
+        </div>
+      </div>
+      <div class="stat-footer">
+        <a routerLink="/panel/artistas" class="stat-link">Ver artistas →</a>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-danger">
+      <div class="stat-card-inner">
+        <div class="stat-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" x2="12" y1="8" y2="12"/>
+            <line x1="12" x2="12.01" y1="16" y2="16"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <p class="stat-value">{{ stats()?.incidencias_abiertas || 0 }}</p>
+          <p class="stat-label">Incidencias Abiertas</p>
+        </div>
+      </div>
+      <div class="stat-footer">
+        <a routerLink="/panel/staff" class="stat-link">Ver incidencias →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="main-grid">
+    <!-- Quick Actions -->
+    <div class="card card-elevated">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">Acciones Rápidas</h3>
+          <p class="card-description">Las tareas más frecuentes</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="quick-actions">
+          <a routerLink="/panel/inscripciones" class="quick-action">
+            <div class="quick-action-icon action-brand">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+              </svg>
+            </div>
+            <div class="quick-action-content">
+              <p class="quick-action-title">Revisar Inscripciones</p>
+              <p class="quick-action-desc">{{ stats()?.inscripciones_pendientes || 0 }} pendientes</p>
+            </div>
+            <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+
+          <a routerLink="/panel/cronograma" class="quick-action">
+            <div class="quick-action-icon action-info">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+            </div>
+            <div class="quick-action-content">
+              <p class="quick-action-title">Ver Cronograma</p>
+              <p class="quick-action-desc">{{ stats()?.eventos_proximos || 0 }} eventos próximos</p>
+            </div>
+            <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+
+          <a routerLink="/panel/jurado" class="quick-action">
+            <div class="quick-action-icon action-success">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <div class="quick-action-content">
+              <p class="quick-action-title">Gestionar Jurado</p>
+              <p class="quick-action-desc">{{ stats()?.jurados_activos || 0 }} jurados activos</p>
+            </div>
+            <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+
+          <a routerLink="/panel/contratos" class="quick-action">
+            <div class="quick-action-icon action-warning">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/>
+                <path d="M14 2v6h6"/>
+                <path d="M16 13H8"/>
+                <path d="M16 17H8"/>
+                <path d="M10 9H8"/>
+              </svg>
+            </div>
+            <div class="quick-action-content">
+              <p class="quick-action-title">Gestionar Contratos</p>
+              <p class="quick-action-desc">{{ stats()?.contratos_pendientes || 5 }} pendientes</p>
+            </div>
+            <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+
+          <a routerLink="/panel/artistas" class="quick-action">
+            <div class="quick-action-icon action-purple">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div class="quick-action-content">
+              <p class="quick-action-title">Ver Artistas</p>
+              <p class="quick-action-desc">{{ stats()?.artistas_confirmados || 0 }} confirmados</p>
+            </div>
+            <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+
+          <a routerLink="/panel/reportes" class="quick-action">
+            <div class="quick-action-icon action-rose">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" x2="18" y1="20" y2="10"/>
+                <line x1="12" x2="12" y1="20" y2="4"/>
+                <line x1="6" x2="6" y1="20" y2="14"/>
+              </svg>
+            </div>
+            <div class="quick-action-content">
+              <p class="quick-action-title">Reportes</p>
+              <p class="quick-action-desc">Estadísticas generales</p>
+            </div>
+            <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card card-elevated">
+      <div class="card-header">
+        <h3 class="card-title">Actividad Reciente</h3>
+        <a routerLink="/panel/reportes" class="text-link">Ver todas</a>
+      </div>
+      <div class="card-body-list">
+        @for (activity of recentActivity; track activity.id) {
+          <div class="activity-item">
+            <div class="activity-avatar {{ activity.type }}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                @if (activity.type === 'submitted') {
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                  <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+                } @else if (activity.type === 'approved') {
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                } @else if (activity.type === 'signed') {
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/>
+                  <path d="M14 2v6h6"/>
+                } @else if (activity.type === 'pending') {
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                } @else {
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="15" x2="9" y1="9" y2="15"/>
+                  <line x1="9" x2="15" y1="9" y2="15"/>
+                }
+              </svg>
+            </div>
+            <div class="activity-content">
+              <p class="activity-text">{{ activity.description }}</p>
+              <p class="activity-time">{{ activity.time }}</p>
+            </div>
+            <a [routerLink]="activity.link" class="activity-link">Ver</a>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
