@@ -4,6 +4,7 @@ import { NgStyle, NgClass } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { IMAGE_PATHS } from '../../../shared/constants/image-paths';
 
 interface NewsItem {
   id: number;
@@ -1035,10 +1036,11 @@ interface NewsItem {
       margin: 0 auto;
       width: 100%;
       padding: var(--space-10) var(--space-4);
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: var(--space-8);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
       align-items: center;
+      gap: var(--space-8);
     }
 
     .footer-brand {
@@ -1363,9 +1365,26 @@ interface NewsItem {
       .sep-stat-value { font-size: 2rem; }
       
       .footer-main {
-        grid-template-columns: 1fr;
-        text-align: center;
+        flex-direction: column;
+        align-items: center;
         gap: var(--space-6);
+        text-align: center; /* Centrar el texto en el footer principal */
+      }
+
+      .footer-brand {
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .footer-links {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .footer-social {
+        align-items: center;
+        text-align: center; /* Centrar el texto social */
       }
     }\n  `]
 })
@@ -1384,14 +1403,14 @@ export class HomePageComponent implements OnInit, OnDestroy {
   ytIsLive = signal(true);
   ytChannelUrl = 'https://www.youtube.com/@PreCosquinPuertoPirámides';
 
-  private autoPlayInterval: any;
+  private autoPlayInterval: ReturnType<typeof setInterval> | null = null;
 
   newsItems = signal<NewsItem[]>([
     {
       id: 1,
       category: 'FESTIVAL 2026',
       title: 'Se abren las inscripciones para el certamen Nuevos Valores',
-      image: 'assets/home-background.jpg',
+      image: IMAGE_PATHS.HOME_BACKGROUND,
       thumbType: 'img',
       thumbSrc: 'assets/img/cruzBaila.png',
       thumbBg: 'bg-blue'
@@ -1418,7 +1437,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       id: 4,
       category: 'CRONOGRAMA',
       title: 'Cronograma oficial de la primera ronda clasificatoria',
-      image: 'assets/home-background.jpg',
+      image: IMAGE_PATHS.HOME_BACKGROUND,
       thumbType: 'icon',
       thumbSrc: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
       thumbBg: 'bg-gray'

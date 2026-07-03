@@ -3,6 +3,23 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export interface Theme {
+  title: string;
+  name?: string;
+  rhythm: string;
+  author: string;
+  composer?: string;
+  style?: string;
+}
+
+export interface Member {
+  name: string;
+  fullName?: string;
+  instrument?: string;
+  role?: string;
+  age?: number;
+}
+
 export interface Inscription {
   id: string;
   email: string;
@@ -26,8 +43,12 @@ export interface Inscription {
   choreographer_name?: string;
   style?: string;
   dance_list?: string;
-  themes?: any[];
-  members?: any[];
+  themes?: Theme[];
+  members?: Member[];
+}
+
+export interface StatusUpdateResponse {
+  message: string;
 }
 
 export interface InscriptionListResponse {
@@ -63,9 +84,9 @@ export class InscriptionsService {
     return this.http.get<Inscription>(`${this.apiUrl}/${id}`);
   }
 
-  updateStatus(id: string, status: string, reason?: string): Observable<any> {
+  updateStatus(id: string, status: string, reason?: string): Observable<StatusUpdateResponse> {
     let params = new HttpParams().set('new_status', status);
     if (reason) params = params.set('reason', reason);
-    return this.http.patch(`${this.apiUrl}/${id}/status`, null, { params });
+    return this.http.patch<StatusUpdateResponse>(`${this.apiUrl}/${id}/status`, null, { params });
   }
 }

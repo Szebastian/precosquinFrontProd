@@ -544,6 +544,29 @@ interface NewsItem {
       .featured-title { font-size: 1.375rem; }
       .articles-grid { grid-template-columns: 1fr; }
       .noticias-title { font-size: 1.75rem; }
+
+      .footer-main {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-6);
+        text-align: center; /* Centrar el texto en el footer principal */
+      }
+
+      .footer-brand {
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .footer-links {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .footer-social {
+        align-items: center;
+        text-align: center; /* Centrar el texto social */
+      }
     }
   `]
 })

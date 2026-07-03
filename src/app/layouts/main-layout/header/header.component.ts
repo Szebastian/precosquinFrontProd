@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
@@ -16,12 +16,12 @@ import { ToastService } from '@shared/components/toast/toast.service';
       <div class="header-inner">
         <div class="header-left">
           <button
-            (click)="sidebarOpen.set(!sidebarOpen())"
+            (click)="toggleSidebar.emit()"
             class="btn-ghost btn-icon mobile-menu-btn"
             aria-label="Toggle menu"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              @if (sidebarOpen()) {
+              @if (isSidebarOpen) {
                 <line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/>
               } @else {
                 <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
@@ -160,6 +160,12 @@ import { ToastService } from '@shared/components/toast/toast.service';
       padding: 0 var(--space-4);
     }
 
+    @media (max-width: 639px) { /* sm breakpoint */
+      .header-inner {
+        padding: 0 var(--space-2); /* Reducir padding en pantallas muy pequeñas */
+      }
+    }
+
     .header-left {
       display: flex;
       align-items: center;
@@ -200,11 +206,28 @@ import { ToastService } from '@shared/components/toast/toast.service';
       color: var(--gray-900);
     }
 
+    @media (max-width: 639px) {
+      .brand-text {
+        display: none; /* Ocultar el texto en pantallas muy pequeñas */
+      }
+    }
+
     .header-right {
       display: flex;
       align-items: center;
       gap: var(--space-3);
       position: relative;
+    }
+
+    @media (max-width: 639px) {
+      .header-right {
+        gap: var(--space-2); /* Reducir el espacio entre elementos en móviles */
+      }
+
+      .org-switcher,
+      .user-name {
+        display: none; /* Ocultar el selector de organización y el nombre de usuario en móviles */
+      }
     }
 
     .org-switcher {
@@ -374,6 +397,8 @@ import { ToastService } from '@shared/components/toast/toast.service';
   `]
 })
 export class HeaderComponent {
+  @Input() isSidebarOpen: boolean = false;
+  @Output() toggleSidebar = new EventEmitter<void>();
   auth = inject(AuthService);
   themeService = inject(ThemeService);
   orgStore = inject(OrganizationStore);
