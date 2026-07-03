@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common'; // Import CommonModule
 import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ThemeService } from '../../core/services/theme.service';
@@ -7,13 +8,13 @@ import { ThemeService } from '../../core/services/theme.service';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, SidebarComponent],
+  imports: [RouterOutlet, HeaderComponent, SidebarComponent, CommonModule], // Add CommonModule here
   template: `
     <div class="app-layout" [class.dark]="themeService.isDark()">
-      <app-header />
-      <div class="app-body">
-        <app-sidebar />
-        <main class="app-content">
+      <app-header (toggleSidebar)="toggleSidebar()" [isSidebarOpen]="isSidebarOpen" />
+      <div class="app-body" [class.sidebar-open]="isSidebarOpen && windowWidth < 1024" (click)="closeSidebarOnOverlayClick($event)">
+        <app-sidebar [class.sidebar-hidden]="!isSidebarOpen" />
+        <main class="app-content" [class.sidebar-open]="isSidebarOpen">
           <div class="content-wrapper">
             <router-outlet />
           </div>
@@ -26,12 +27,12 @@ import { ThemeService } from '../../core/services/theme.service';
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      background: #f1f5f9;
+      background: var(--gray-50);
       transition: background 0.3s ease;
     }
 
     .app-layout.dark {
-      background: #0f172a;
+      background: var(--gray-950);
     }
 
     .app-body {
@@ -45,55 +46,150 @@ import { ThemeService } from '../../core/services/theme.service';
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
-      background: #f1f5f9;
+      background: var(--gray-50);
       position: relative;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, margin-left 0.3s ease;
     }
 
     .app-layout.dark .app-content {
-      background: #0f172a;
+      background: var(--gray-950);
     }
 
+    /* Scrollbar styles - using custom properties */
     .app-content::-webkit-scrollbar {
-      width: 8px;
+      width: var(--space-2);
     }
 
     .app-content::-webkit-scrollbar-track {
-      background: #e2e8f0;
+      background: var(--gray-100);
     }
 
     .app-layout.dark .app-content::-webkit-scrollbar-track {
-      background: #1e293b;
+      background: var(--gray-800);
     }
 
     .app-content::-webkit-scrollbar-thumb {
-      background: #94a3b8;
-      border-radius: 4px;
+      background: var(--gray-400);
+      border-radius: var(--radius-sm);
     }
 
     .app-layout.dark .app-content::-webkit-scrollbar-thumb {
-      background: #475569;
+      background: var(--gray-600);
     }
 
     .app-content::-webkit-scrollbar-thumb:hover {
-      background: #64748b;
+      background: var(--gray-500);
     }
 
     .app-layout.dark .app-content::-webkit-scrollbar-thumb:hover {
-      background: #64748b;
+      background: var(--gray-700);
     }
 
     .content-wrapper {
       min-height: 100%;
+      padding: var(--space-4);
     }
 
-    @media (max-width: 1023px) {
+    /* Default desktop view */
+    app-sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 1023px) { /* Below lg breakpoint */
+      .app-body {
+        flex-direction: column; /* Stack header, sidebar, content */
+      }
+
+      app-sidebar {
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        height: calc(100vh - var(--header-height));
+        z-index: var(--z-fixed);
+        background: var(--gray-50);
+        box-shadow: var(--shadow-lg);
+        margin-left: calc(-1 * var(--sidebar-width)); /* Hidden by default */
+      }
+
+      .app-layout.dark app-sidebar {
+        background: var(--gray-950);
+      }
+
+      app-sidebar.sidebar-hidden {
+        margin-left: calc(-1 * var(--sidebar-width));
+      }
+
+      app-sidebar:not(.sidebar-hidden) {
+        margin-left: 0; /* Slide in */
+      }
+
       .app-content {
-        padding: 0;
+        padding: var(--space-4) var(--space-2); /* Adjust padding for mobile */
+      }
+
+      .content-wrapper {
+        padding: var(--space-2);
+      }
+
+      /* Overlay when sidebar is open */
+      .app-body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: var(--z-modal-backdrop);
+        pointer-events: none; /* Allow clicks to pass through by default */
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .app-body.sidebar-open::after {
+        opacity: 1;
+        pointer-events: auto; /* Enable clicks to close sidebar */
+      }
+    }
+
+    /* Desktop styles */
+    @media (min-width: 1024px) { /* lg breakpoint and up */
+      app-sidebar {
+        margin-left: 0; /* Always visible on desktop */
+      }
+
+      .app-content {
+        padding: var(--space-4);
       }
     }
   `]
 })
 export class MainLayoutComponent {
   themeService = inject(ThemeService);
+  isSidebarOpen: boolean = typeof window !== 'undefined' ? window.innerWidth >= 1024 : false; // Sidebar open by default on desktop, safe for SSR
+
+  // Safe access to window.innerWidth for template
+  get windowWidth(): number {
+    return typeof window !== 'undefined' ? window.innerWidth : 0;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(_event: Event) {
+    this.isSidebarOpen = this.windowWidth >= 1024;
+  }
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebarOnOverlayClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    // Only close if click is on the app-body itself and not on a child element within the sidebar
+    if (target.classList.contains('app-body') && this.isSidebarOpen && this.windowWidth < 1024) {
+      this.isSidebarOpen = false;
+    }
+  }
 }

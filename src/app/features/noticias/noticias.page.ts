@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { IMAGE_PATHS } from '../../shared/constants/image-paths';
 
 interface NewsItem {
   id?: number;
@@ -1569,7 +1570,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
   quickTags = ['FESTIVAL 2027', 'REGLAMENTO', 'URGENTE', 'CRONOGRAMA', 'JURADO', 'INSCRIPCIONES'];
 
   imagePresets = [
-    { value: 'assets/home-background.jpg', label: 'Principal' },
+    { value: IMAGE_PATHS.HOME_BACKGROUND, label: 'Principal' },
     { value: 'assets/rayentray.png', label: 'Rayentray' },
     { value: 'assets/hidro.jpeg', label: 'Histórico' },
   ];

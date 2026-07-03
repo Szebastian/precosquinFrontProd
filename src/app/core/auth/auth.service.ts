@@ -3,11 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
+export type UserRole = 'organizador' | 'admin' | 'staff' | 'jurado';
+
 export interface UserProfile {
   id: string;
   email: string;
   full_name: string;
-  role: 'organizador' | 'admin' | 'staff' | 'jurado';
+  role: UserRole;
   organization_id: string;
   avatar_url?: string;
   is_active: boolean;
@@ -15,13 +17,19 @@ export interface UserProfile {
   last_login_at: string;
 }
 
+export interface AuthSession {
+  access_token: string;
+  token_type: string;
+  user?: Record<string, unknown>;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private _user = signal<any>(null);
-  private _session = signal<any>(null);
+  private _user = signal<Record<string, unknown> | null>(null);
+  private _session = signal<AuthSession | null>(null);
   private _profile = signal<UserProfile | null>(null);
   private _loading = signal(false);
 
@@ -40,12 +48,13 @@ export class AuthService {
   async login(email: string, password: string): Promise<{ error: string | null }> {
     this._loading.set(true);
     try {
-      const data: any = await this.http.post(`${environment.apiUrl}/auth/login`, { email, password }).toPromise();
-      this._session.set(data);
+      const data = await this.http.post<AuthSession>(`${environment.apiUrl}/auth/login`, { email, password }).toPromise();
+      this._session.set(data ?? null);
       await this.loadProfile();
       return { error: null };
-    } catch (error: any) {
-      return { error: error.message };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error al iniciar sesión';
+      return { error: message };
     } finally {
       this._loading.set(false);
     }
@@ -56,8 +65,8 @@ export class AuthService {
     if (!session?.access_token) return;
 
     try {
-      const profile: any = await this.http.get(`${environment.apiUrl}/auth/profile`).toPromise();
-      this._profile.set(profile);
+      const profile = await this.http.get<UserProfile>(`${environment.apiUrl}/auth/profile`).toPromise();
+      this._profile.set(profile ?? null);
     } catch {
       this._decodeProfileFromToken(session.access_token);
     }
@@ -71,7 +80,7 @@ export class AuthService {
         id: payload.sub,
         email: payload.email || '',
         full_name: metadata.full_name || '',
-        role: (metadata.role || payload.role || 'staff') as any,
+        role: (metadata.role || payload.role || 'staff') as UserRole,
         organization_id: metadata.organization_id || null,
         is_active: true,
         permissions: metadata.permissions || [],
@@ -89,7 +98,7 @@ export class AuthService {
     await this.router.navigate(['/auth/login']);
   }
 
-  async getSession(): Promise<any> {
+  async getSession(): Promise<AuthSession | null> {
     return this._session();
   }
 
