@@ -99,6 +99,12 @@ export const appRoutes: Routes = [
     data: { title: 'Documentación' }
   },
   {
+    path: 'institucional/declaracion',
+    loadComponent: () => import('./features/public/institucional/declaracion.page').then(m => m.DeclaracionPageComponent),
+    canActivate: [publicGuard],
+    data: { title: 'Declaración N° 35/26 C.D.P.P' }
+  },
+  {
     path: 'firmar/:token',
     loadComponent: () => import('./features/public/firma-contrato/firma-contrato.page').then(m => m.FirmaContratoPageComponent),
     canActivate: [publicGuard],
@@ -111,6 +117,7 @@ export const appRoutes: Routes = [
   },
   {
     path: '**',
-    redirectTo: ''
+    loadComponent: () => import('./features/public/not-found/not-found.component').then(m => m.NotFoundComponent),
+    data: { title: 'Página no encontrada' }
   }
 ];

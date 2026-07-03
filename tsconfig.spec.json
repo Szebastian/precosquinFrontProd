@@ -15,8 +15,8 @@
     "noImplicitOverride": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "types": ["node", "jasmine", "vitest/globals"]
+    "types": ["node", "vitest/globals"]
   },
-  "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "src/**/*.stories.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }

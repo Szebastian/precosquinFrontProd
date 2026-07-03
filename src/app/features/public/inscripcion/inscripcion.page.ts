@@ -93,7 +93,7 @@ interface InscripcionData {
       @if (currentStep() < 8) {
         <nav class="form-nav">
           <a routerLink="/" class="nav-brand">
-            <img src="assets/logo.svg" alt="Precosquin" class="nav-logo" />
+            <img src="assets/img/logoballena.webp" alt="Precosquin" class="nav-logo" />
             <span>Precosquin</span>
           </a>
           <a routerLink="/" class="nav-link">Volver al inicio</a>
@@ -899,9 +899,9 @@ interface InscripcionData {
             }
           </form>
           <div class="sponsors-section">
-            <img src="assets/MUNI-LOGO2.svg" alt="Municipalidad" class="sponsor-logo sponsor-logo-inverted sponsor-logo-large" />
-            <img src="assets/rayentray.png" alt="Rayentray" class="sponsor-logo sponsor-logo-transparent" />
-            <img src="assets/hidro.jpeg" alt="Hidro" class="sponsor-logo sponsor-logo-transparent" />
+            <img src="assets/img/LPiramides.webp" alt="Municipalidad" class="sponsor-logo sponsor-logo-inverted sponsor-logo-large" />
+            <img src="assets/img/LRayentray.webp" alt="Rayentray" class="sponsor-logo sponsor-logo-transparent" />
+            <img src="assets/img/LHydro.webp" alt="Hidro" class="sponsor-logo sponsor-logo-transparent" />
           </div>
 
           <div class="social-container">
@@ -932,7 +932,7 @@ interface InscripcionData {
         <div class="constancia-page animate-scale-in" id="constancia">
           <div class="constancia-card">
             <div class="constancia-header">
-              <img src="assets/logo.svg" alt="Precosquin" class="constancia-logo-img" />
+              <img src="assets/img/logoballena.webp" alt="Precosquin" class="constancia-logo-img" />
               <div class="constancia-badge">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>

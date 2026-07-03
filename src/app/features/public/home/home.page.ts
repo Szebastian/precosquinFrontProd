@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IMAGE_PATHS } from '../../../shared/constants/image-paths';
+import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
 
 interface NewsItem {
   id: number;
@@ -20,12 +21,12 @@ interface NewsItem {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, NgStyle, NgClass],
+  imports: [RouterLink, NgStyle, NgClass, BackToTopComponent],
   template: `
     <div class="portal">
       <!-- HEADER PRINCIPAL -->
-      <header class="portal-header">
-        <div class="header-topbar">
+      <header class="portal-header" [class.header-scrolled]="scrollY() > 50">
+        <div class="header-topbar" [class.topbar-hidden]="scrollY() > 50">
           <div class="header-topbar-inner">
             <div class="header-topbar-left">
               <span class="topbar-info">PRE-COSQUÍN PUERTO PIRÁMIDES 2026</span>
@@ -42,7 +43,7 @@ interface NewsItem {
         </div>
         <div class="header-inner">
           <div class="header-left">
-            <img src="assets/img/logoballena.png" alt="Logo" class="header-logo" />
+            <img src="assets/img/logoballena.webp" alt="Logo" class="header-logo" />
             <div class="header-divider"></div>
             <div class="header-brand-text">
               <span class="header-brand-subtitle">PRE-COSQUÍN</span>
@@ -99,6 +100,13 @@ interface NewsItem {
                 ></button>
               }
             </div>
+            <!-- Flechas de navegación -->
+            <button class="carousel-arrow carousel-prev" (click)="prevSlide(); $event.preventDefault(); $event.stopPropagation()" aria-label="Anterior">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button class="carousel-arrow carousel-next" (click)="nextSlide(); $event.preventDefault(); $event.stopPropagation()" aria-label="Siguiente">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
           </a>
 
           <!-- Noticias Secundarias (Derecha) -->
@@ -162,6 +170,10 @@ interface NewsItem {
             <span class="cta-badge">INSCRIPCIONES 2026</span>
             <h2 class="cta-title">¿Listo para participar?</h2>
             <p class="cta-desc">Inscribí tu propuesta artística y formá parte del festival folclórico más importante de la Patagonia.</p>
+            <p class="cta-urgency">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Inscripciones abiertas hasta el 31 de agosto
+            </p>
           </div>
           <a routerLink="/inscripcion" class="cta-btn">
             INSCRIBIRME AHORA
@@ -221,12 +233,49 @@ interface NewsItem {
           </div>
         </div>
       </section>
+
+      <!-- DECLARACIÓN DE INTERÉS -->
+      <section class="declaracion-hero">
+        <div class="declaracion-hero-inner">
+          <div class="declaracion-hero-content">
+            <span class="declaracion-hero-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+              DOCUMENTO INSTITUCIONAL
+            </span>
+            <h2 class="declaracion-hero-title">Declarado de Interés Cultural, Turístico y Comunitario</h2>
+            <p class="declaracion-hero-desc">
+              El Concejo Deliberante de Puerto Pirámides respalda oficialmente el Pre-Cosquín 2026 como sede
+              del certamen que impulsa nuevos valores del folclore patagónico. Los días 5 y 6 de septiembre.
+            </p>
+            <div class="declaracion-hero-actions">
+              <a routerLink="/institucional/declaracion" class="declaracion-hero-btn">
+                VER DECLARACIÓN COMPLETA
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="declaracion-hero-highlight">
+            <div class="highlight-card">
+              <span class="highlight-value">N° 35/26</span>
+              <span class="highlight-label">Declaración C.D.P.P</span>
+            </div>
+            <div class="highlight-card">
+              <span class="highlight-value">5-6 Sept</span>
+              <span class="highlight-label">Fechas Oficiales</span>
+            </div>
+            <div class="highlight-card">
+              <span class="highlight-value">2024+</span>
+              <span class="highlight-label">Sede Desde</span>
+            </div>
+          </div>
+        </div>
+      </section>
       
       <!-- FOOTER PRINCIPAL -->
       <footer class="portal-footer">
         <div class="footer-sponsors">
           <div class="sponsors-inner">
-            <span class="sponsors-label">ORGANIZAN</span>
+            <span class="sponsors-label">COLABORAN</span>
             <div class="sponsors-grid">
               <img src="assets/img/LPiramides.png" alt="Puerto Pirámides" class="sponsor-logo" />
               <img src="assets/img/LRayentray.png" alt="Hotel Rayentray" class="sponsor-logo" />
@@ -237,7 +286,7 @@ interface NewsItem {
         
         <div class="footer-main">
           <div class="footer-brand">
-            <img src="assets/img/logoballena.png" alt="Precosquin" class="footer-logo" />
+            <img src="assets/img/logoballena.webp" alt="Precosquin" class="footer-logo" />
             <div class="brand-text">
               <h4>Festival Folclórico</h4>
               <p>Puerto Pirámides, Chubut</p>
@@ -320,6 +369,7 @@ interface NewsItem {
         }
       </div>
 
+      <app-back-to-top />
     </div>
   `,
   styles: [`
@@ -339,14 +389,31 @@ interface NewsItem {
       top: 0;
       z-index: 100;
       box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .portal-header.header-scrolled .header-inner {
+      height: 56px;
+    }
+
+    .portal-header.header-scrolled .header-logo {
+      height: 32px;
     }
 
     .header-topbar {
-      background-color: rgba(0, 0, 0, 0.05); /* Tono ligeramente más oscuro */
+      background-color: rgba(0, 0, 0, 0.05);
       border-bottom: 1px solid rgba(0, 0, 0, 0.08);
       height: 32px;
       display: flex;
       align-items: center;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .topbar-hidden {
+      height: 0;
+      opacity: 0;
+      border-bottom: none;
     }
 
     .header-topbar-inner {
@@ -367,7 +434,7 @@ interface NewsItem {
     .topbar-info {
       font-size: 10px;
       font-weight: var(--weight-bold);
-      color: var(--brand-800);
+      color: var(--brand-900);
       letter-spacing: 0.08em;
     }
 
@@ -434,7 +501,7 @@ interface NewsItem {
     .header-brand-subtitle {
       font-size: 9px;
       font-weight: var(--weight-extrabold);
-      color: var(--brand-600);
+      color: var(--brand-800);
       letter-spacing: 0.15em;
       text-transform: uppercase;
     }
@@ -458,7 +525,7 @@ interface NewsItem {
     .nav-link {
       font-size: var(--text-sm);
       font-weight: var(--weight-bold);
-      color: var(--gray-800);
+      color: var(--brand-900);
       text-transform: uppercase;
       text-decoration: none;
       height: 100%;
@@ -469,8 +536,8 @@ interface NewsItem {
     }
 
     .nav-link:hover, .nav-link.active {
-      color: var(--brand-800);
-      border-bottom-color: var(--brand-700);
+      color: var(--brand-900);
+      border-bottom-color: var(--brand-900);
     }
 
     .header-right {
@@ -486,13 +553,13 @@ interface NewsItem {
     }
 
     .search-box input {
-      background: transparent;
-      border: 1px solid var(--brand-300);
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--brand-400);
       border-radius: var(--radius-full);
       padding: 0.4rem 1rem;
       padding-right: 2.5rem;
       font-size: var(--text-sm);
-      color: var(--gray-800);
+      color: var(--brand-900);
       outline: none;
       width: 150px;
       transition: width var(--transition-base);
@@ -500,14 +567,14 @@ interface NewsItem {
 
     .search-box input:focus {
       width: 200px;
-      border-color: var(--brand-500);
-      background: rgba(255,255,255,0.5);
+      border-color: var(--brand-700);
+      background: rgba(255,255,255,0.85);
     }
 
     .search-box svg {
       position: absolute;
       right: 10px;
-      color: var(--gray-600);
+      color: var(--brand-700);
     }
 
     .login-btn {
@@ -664,7 +731,7 @@ interface NewsItem {
       background-size: cover;
       background-position: center;
     }
-    .bg-gray { background-color: var(--gray-300); color: var(--gray-700) !important; }
+    .bg-gray { background-color: var(--gray-400); color: var(--gray-900) !important; }
 
     /* Estado ACTIVO de la noticia secundaria seleccionada */
     .news-item-active {
@@ -720,6 +787,39 @@ interface NewsItem {
       background-color: rgba(255, 255, 255, 0.8);
     }
 
+    /* Flechas del carrusel */
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      transition: all 0.2s ease;
+      opacity: 0;
+    }
+
+    .featured-news:hover .carousel-arrow {
+      opacity: 1;
+    }
+
+    .carousel-arrow:hover {
+      background: rgba(255,255,255,0.4);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .carousel-prev { left: var(--space-4); }
+    .carousel-next { right: var(--space-4); }
+
     /* --- SECTION SEPARATORS --- */
     .section-separator {
       position: relative;
@@ -772,7 +872,7 @@ interface NewsItem {
       font-size: 10px;
       font-weight: var(--weight-bold);
       letter-spacing: 0.2em;
-      color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.8);
       margin-bottom: var(--space-3);
     }
 
@@ -837,7 +937,7 @@ interface NewsItem {
     .sep-stat-label {
       font-size: var(--text-xs);
       font-weight: var(--weight-bold);
-      color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.8);
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
@@ -872,7 +972,7 @@ interface NewsItem {
       font-size: 10px;
       font-weight: var(--weight-bold);
       letter-spacing: 0.15em;
-      color: var(--brand-200);
+      color: rgba(255,255,255,0.9);
       background: rgba(255,255,255,0.12);
       padding: 5px 14px;
       border-radius: var(--radius-full);
@@ -890,10 +990,21 @@ interface NewsItem {
 
     .cta-desc {
       font-size: var(--text-base);
-      color: rgba(255,255,255,0.8);
-      margin: 0;
+      color: rgba(255,255,255,0.85);
+      margin: 0 0 var(--space-2);
       max-width: 500px;
       line-height: 1.6;
+    }
+
+    .cta-urgency {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
+      color: var(--brand-accent);
+      margin: 0;
+      padding: 4px 0;
     }
 
     .cta-btn {
@@ -947,7 +1058,7 @@ interface NewsItem {
 
     .score-label {
       font-size: var(--text-xs);
-      color: var(--gray-500);
+      color: var(--gray-700);
       font-weight: var(--weight-bold);
     }
 
@@ -975,6 +1086,157 @@ interface NewsItem {
       transition: opacity var(--transition-fast);
     }
     .score-link:hover { opacity: 0.8; }
+
+    /* --- DECLARACIÓN HERO --- */
+    .declaracion-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%);
+      padding: var(--space-12) var(--space-4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .declaracion-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .declaracion-hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-10);
+    }
+
+    .declaracion-hero-content {
+      flex: 1;
+      max-width: 650px;
+    }
+
+    .declaracion-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 10px;
+      font-weight: var(--weight-bold);
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.1);
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: var(--space-4);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .declaracion-hero-title {
+      font-family: var(--font-display);
+      font-size: var(--text-3xl);
+      font-weight: var(--weight-extrabold);
+      color: #fff;
+      margin: 0 0 var(--space-4);
+      line-height: 1.15;
+    }
+
+    .declaracion-hero-desc {
+      font-size: var(--text-base);
+      color: rgba(255,255,255,0.8);
+      margin: 0 0 var(--space-6);
+      line-height: 1.6;
+      max-width: 550px;
+    }
+
+    .declaracion-hero-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--brand-accent);
+      color: var(--gray-900);
+      padding: 12px 24px;
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-extrabold);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .declaracion-hero-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .declaracion-hero-highlight {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      flex-shrink: 0;
+    }
+
+    .highlight-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4) var(--space-5);
+      backdrop-filter: blur(4px);
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .highlight-value {
+      display: block;
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: var(--weight-extrabold);
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .highlight-label {
+      display: block;
+      font-size: 10px;
+      font-weight: var(--weight-bold);
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1024px) {
+      .declaracion-hero-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .declaracion-hero-desc {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .declaracion-hero-highlight {
+        flex-direction: row;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .declaracion-hero-highlight {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .highlight-card {
+        min-width: auto;
+        width: 100%;
+      }
+    }
 
     /* --- FOOTER PRINCIPAL --- */
     .portal-footer {
@@ -1006,7 +1268,7 @@ interface NewsItem {
       font-size: 10px;
       font-weight: var(--weight-bold);
       letter-spacing: 0.2em;
-      color: var(--gray-500);
+      color: var(--gray-300);
     }
 
     .sponsors-grid {
@@ -1021,14 +1283,18 @@ interface NewsItem {
       height: 60px;
       width: auto;
       object-fit: contain;
-      opacity: 0.5;
       filter: grayscale(100%);
+      opacity: 0.5;
       transition: all 0.3s ease;
     }
 
     .sponsor-logo:hover {
-      opacity: 1;
       filter: grayscale(0%);
+      opacity: 1;
+    }
+
+    .sponsor-logo-sm {
+      height: 45px;
     }
 
     .footer-main {
@@ -1052,7 +1318,11 @@ interface NewsItem {
     .footer-logo {
       height: 60px;
       width: auto;
-      filter: brightness(0) invert(1) opacity(0.9);
+      opacity: 0.85;
+    }
+
+    .footer-logo:hover {
+      opacity: 1;
     }
 
     .brand-text h4 {
@@ -1064,7 +1334,7 @@ interface NewsItem {
 
     .brand-text p {
       margin: 0;
-      color: var(--gray-400);
+      color: var(--gray-300);
       font-size: var(--text-sm);
     }
 
@@ -1075,7 +1345,7 @@ interface NewsItem {
     }
 
     .footer-links a {
-      color: var(--gray-400);
+      color: var(--gray-300);
       text-decoration: none;
       font-size: var(--text-sm);
       font-weight: var(--weight-medium);
@@ -1096,7 +1366,7 @@ interface NewsItem {
     .footer-social p {
       margin: 0;
       font-size: var(--text-sm);
-      color: var(--gray-400);
+      color: var(--gray-300);
       font-weight: var(--weight-medium);
     }
 
@@ -1106,7 +1376,7 @@ interface NewsItem {
     }
 
     .social-icon {
-      color: var(--gray-400);
+      color: var(--gray-300);
       transition: all var(--transition-fast);
       display: flex;
       align-items: center;
@@ -1125,7 +1395,7 @@ interface NewsItem {
 
     .footer-copyright {
       background-color: rgba(0,0,0,0.4);
-      color: var(--gray-500);
+      color: var(--gray-300);
       text-align: center;
       padding: var(--space-4);
       font-size: var(--text-xs);
@@ -1368,7 +1638,7 @@ interface NewsItem {
         flex-direction: column;
         align-items: center;
         gap: var(--space-6);
-        text-align: center; /* Centrar el texto en el footer principal */
+        text-align: center;
       }
 
       .footer-brand {
@@ -1384,7 +1654,47 @@ interface NewsItem {
 
       .footer-social {
         align-items: center;
-        text-align: center; /* Centrar el texto social */
+        text-align: center;
+      }
+
+      .yt-fab {
+        bottom: 16px;
+        right: 16px;
+        padding: 8px 14px 8px 10px;
+      }
+
+      .yt-fab-icon {
+        width: 34px;
+        height: 34px;
+      }
+
+      .yt-fab-label {
+        font-size: 11px;
+      }
+
+      .carousel-arrow {
+        width: 34px;
+        height: 34px;
+        opacity: 1;
+        background: rgba(255,255,255,0.3);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .portal-header.header-scrolled .header-inner {
+        height: 48px;
+      }
+
+      .portal-header.header-scrolled .header-logo {
+        height: 28px;
+      }
+
+      .portal-header.header-scrolled .header-divider {
+        display: none;
+      }
+
+      .portal-header.header-scrolled .header-brand-subtitle {
+        display: none;
       }
     }\n  `]
 })
@@ -1419,7 +1729,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       id: 2,
       category: 'JURADO',
       title: 'Capacitación para el jurado de danza en el Hotel Rayentray',
-      image: 'assets/rayentray.png',
+      image: 'assets/img/LRayentray.webp',
       thumbType: 'img',
       thumbSrc: 'assets/img/cruzBaila.png',
       thumbBg: 'bg-blue'
@@ -1428,7 +1738,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       id: 3,
       category: 'REGLAMENTO',
       title: 'Modificación en el reglamento del rubro "Solista Vocal"',
-      image: 'assets/hidro.jpeg',
+      image: 'assets/img/LHydro.webp',
       thumbType: 'icon',
       thumbSrc: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>',
       thumbBg: 'bg-gold'
@@ -1492,6 +1802,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
   nextSlide(): void {
     const nextIndex = (this.activeIndex() + 1) % this.newsItems().length;
     this.selectNews(nextIndex);
+  }
+
+  prevSlide(): void {
+    const prevIndex = (this.activeIndex() - 1 + this.newsItems().length) % this.newsItems().length;
+    this.selectNews(prevIndex);
   }
 
   selectNews(index: number): void {

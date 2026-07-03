@@ -30,7 +30,7 @@ import { ToastService } from '@shared/components/toast/toast.service';
           </button>
           <a routerLink="/dashboard" class="header-brand">
             <div class="brand-icon">
-              <img src="assets/logoballena.png" alt="Precosquin Logo" class="h-full w-full object-contain" />
+              <img src="assets/img/logoballena.webp" alt="Precosquin Logo" class="h-full w-full object-contain" />
             </div>
             <span class="brand-text">Precosquin</span>
           </a>

@@ -6,7 +6,8 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
-    "test": "ng test",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "ng lint",
     "typecheck": "tsc --noEmit"
   },
@@ -26,10 +27,14 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.6.2",
+    "@analogjs/vitest-angular": "^2.6.2",
     "@angular/build": "^21.2.0",
     "@angular/cli": "^21.2.0",
     "@angular/compiler-cli": "^21.2.0",
-    "typescript": "~5.9.0"
+    "jsdom": "^29.1.1",
+    "typescript": "~5.9.0",
+    "vitest": "^4.1.9"
   },
   "overrides": {
     "browserslist": "4.27.0",

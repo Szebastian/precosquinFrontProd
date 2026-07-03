@@ -13,8 +13,8 @@ export class FooterComponent {
   readonly currentYear = computed(() => this._currentYear());
 
   readonly sponsors = [
-    { src: 'assets/MUNI-LOGO2.svg', alt: 'Municipalidad', width: 160, height: 80 },
-    { src: 'assets/rayentray.png', alt: 'Rayentray', width: 160, height: 80 },
-    { src: 'assets/hidro.jpeg', alt: 'Hidro', width: 160, height: 80 }
+    { src: 'assets/img/LPiramides.webp', alt: 'Municipalidad', width: 160, height: 80 },
+    { src: 'assets/img/LRayentray.webp', alt: 'Rayentray', width: 160, height: 80 },
+    { src: 'assets/img/LHydro.webp', alt: 'Hidro', width: 160, height: 80 }
   ];
 }

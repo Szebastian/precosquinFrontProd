@@ -1,25 +1,29 @@
 import { Component, inject, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ThemeService } from '../../core/services/theme.service';
+import { BackToTopComponent } from '../../shared/components/back-to-top/back-to-top.component';
+import { ToastContainerComponent } from '../../shared/components/toast/toast-container.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, SidebarComponent, CommonModule], // Add CommonModule here
+  imports: [RouterOutlet, HeaderComponent, SidebarComponent, CommonModule, BackToTopComponent, ToastContainerComponent],
   template: `
     <div class="app-layout" [class.dark]="themeService.isDark()">
       <app-header (toggleSidebar)="toggleSidebar()" [isSidebarOpen]="isSidebarOpen" />
       <div class="app-body" [class.sidebar-open]="isSidebarOpen && windowWidth < 1024" (click)="closeSidebarOnOverlayClick($event)">
         <app-sidebar [class.sidebar-hidden]="!isSidebarOpen" />
-        <main class="app-content" [class.sidebar-open]="isSidebarOpen">
+        <main id="main-content" class="app-content" [class.sidebar-open]="isSidebarOpen" tabindex="-1">
           <div class="content-wrapper">
             <router-outlet />
           </div>
         </main>
       </div>
+      <app-back-to-top />
+      <app-toast-container />
     </div>
   `,
   styles: [`
@@ -32,7 +36,7 @@ import { ThemeService } from '../../core/services/theme.service';
     }
 
     .app-layout.dark {
-      background: var(--gray-950);
+      background: #0a0d14;
     }
 
     .app-body {
@@ -52,7 +56,7 @@ import { ThemeService } from '../../core/services/theme.service';
     }
 
     .app-layout.dark .app-content {
-      background: var(--gray-950);
+      background: #0a0d14;
     }
 
     /* Scrollbar styles - using custom properties */

@@ -7,7 +7,7 @@ export type Theme = 'light' | 'dark';
 export class ThemeService {
   private platformId = inject(PLATFORM_ID);
 
-  private _theme = signal<Theme>('light');
+  private _theme = signal<Theme>('dark');
 
   readonly theme = this._theme.asReadonly();
   readonly isDark = this._theme.asReadonly();
@@ -16,7 +16,7 @@ export class ThemeService {
     if (isPlatformBrowser(this.platformId)) {
       const saved = localStorage.getItem('precosquin-theme') as Theme | null;
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const initial = saved || (prefersDark ? 'dark' : 'light');
+      const initial = saved || (prefersDark ? 'dark' : 'dark');
       this._theme.set(initial);
       this._apply(initial);
 
@@ -36,8 +36,9 @@ export class ThemeService {
     this._theme.set(theme);
   }
 
-  private _apply(_theme: Theme): void {
-    // Dark mode is applied via .app-layout in main-layout.component, not on <html>
-    // This prevents dark CSS variables from leaking into public pages (home, inscripcion)
+  private _apply(theme: Theme): void {
+    if (isPlatformBrowser(this.platformId)) {
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    }
   }
 }

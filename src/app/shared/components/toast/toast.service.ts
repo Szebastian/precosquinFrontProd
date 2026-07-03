@@ -1,10 +1,8 @@
 import { Injectable, signal, computed } from '@angular/core';
 
-export type ToastType = 'success' | 'error' | 'warning' | 'info';
-
 export interface Toast {
   id: string;
-  type: ToastType;
+  type: 'success' | 'error' | 'warning' | 'info';
   title: string;
   message?: string;
   duration?: number;
@@ -14,50 +12,44 @@ export interface Toast {
 @Injectable({ providedIn: 'root' })
 export class ToastService {
   private _toasts = signal<Toast[]>([]);
-
-  readonly toasts = this._toasts.asReadonly();
+  toasts = computed(() => this._toasts());
 
   private generateId(): string {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return Math.random().toString(36).substr(2, 9);
   }
 
-  private addToast(type: ToastType, title: string, message?: string, duration = 5000): void {
-    const toast: Toast = {
-      id: this.generateId(),
-      type,
-      title,
-      message,
-      duration
-    };
+  private add(toast: Omit<Toast, 'id'>) {
+    const id = this.generateId();
+    const newToast: Toast = { ...toast, id, duration: toast.duration ?? 5000 };
+    this._toasts.update(t => [...t, newToast]);
 
-    this._toasts.update(toasts => [...toasts, toast]);
-
-    if (duration > 0) {
-      setTimeout(() => this.remove(toast.id), duration);
+    if (newToast.duration && newToast.duration > 0) {
+      setTimeout(() => this.remove(id), newToast.duration);
     }
+    return id;
   }
 
-  success(title: string, message?: string, duration?: number): void {
-    this.addToast('success', title, message, duration);
+  success(title: string, message?: string, options?: { duration?: number; action?: Toast['action'] }) {
+    return this.add({ type: 'success', title, message, ...options });
   }
 
-  error(title: string, message?: string, duration?: number): void {
-    this.addToast('error', title, message, duration ?? 7000);
+  error(title: string, message?: string, options?: { duration?: number; action?: Toast['action'] }) {
+    return this.add({ type: 'error', title, message, duration: options?.duration ?? 8000, ...options });
   }
 
-  warning(title: string, message?: string, duration?: number): void {
-    this.addToast('warning', title, message, duration);
+  warning(title: string, message?: string, options?: { duration?: number; action?: Toast['action'] }) {
+    return this.add({ type: 'warning', title, message, ...options });
   }
 
-  info(title: string, message?: string, duration?: number): void {
-    this.addToast('info', title, message, duration);
+  info(title: string, message?: string, options?: { duration?: number; action?: Toast['action'] }) {
+    return this.add({ type: 'info', title, message, ...options });
   }
 
-  remove(id: string): void {
-    this._toasts.update(toasts => toasts.filter(t => t.id !== id));
+  remove(id: string) {
+    this._toasts.update(t => t.filter(x => x.id !== id));
   }
 
-  clear(): void {
+  clear() {
     this._toasts.set([]);
   }
 }

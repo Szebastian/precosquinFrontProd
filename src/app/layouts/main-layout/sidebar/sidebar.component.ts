@@ -13,7 +13,7 @@ import { AuthService } from '@core/auth/auth.service';
       <!-- Brand -->
       <div class="sidebar-brand">
         <div class="brand-logo">
-          <img src="assets/logoballena.png" alt="Precosquin" class="logo-img">
+          <img src="assets/img/logoballena.webp" alt="Precosquin" class="logo-img">
         </div>
         <span class="brand-name">Precosquin</span>
       </div>

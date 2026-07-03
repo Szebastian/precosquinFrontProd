@@ -7,9 +7,27 @@ import { ToastContainerComponent } from './shared/components/toast/toast-contain
   standalone: true,
   imports: [RouterOutlet, ToastContainerComponent],
   template: `
-    <router-outlet />
+    <div class="route-container">
+      <router-outlet />
+    </div>
     <app-toast-container />
   `,
+  styles: [`
+    .route-container {
+      animation: routeFadeIn 0.3s ease;
+    }
+
+    @keyframes routeFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `]
 })
 export class AppComponent {
   title = 'Precosquin';

@@ -1571,8 +1571,8 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
 
   imagePresets = [
     { value: IMAGE_PATHS.HOME_BACKGROUND, label: 'Principal' },
-    { value: 'assets/rayentray.png', label: 'Rayentray' },
-    { value: 'assets/hidro.jpeg', label: 'Histórico' },
+    { value: 'assets/img/LRayentray.webp', label: 'Rayentray' },
+    { value: 'assets/img/LHydro.webp', label: 'Histórico' },
   ];
 
   thumbColors = [
@@ -1583,7 +1583,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
 
   thumbImagePresets = [
     { value: 'assets/img/cruzBaila.png', label: 'Cruz' },
-    { value: 'assets/img/logoballena.png', label: 'Ballena' },
+    { value: 'assets/img/logoballena.webp', label: 'Ballena' },
   ];
 
   iconPresets = [
