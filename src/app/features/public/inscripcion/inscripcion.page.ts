@@ -103,6 +103,7 @@ export const subcategoriesByCategory: Record<string, { id: string; name: string 
   musica: [
     { id: 'solista_vocal', name: 'Solista Vocal' },
     { id: 'duo_vocal', name: 'Dúo Vocal' },
+    { id: 'narrador_constumbrista', name: 'Narrador costumbrista' },
     { id: 'conjunto_vocal', name: 'Conjunto Vocal' },
     { id: 'solista_instrumental', name: 'Solista Instrumental' },
     { id: 'conjunto_instrumental', name: 'Conjunto Instrumental' },
