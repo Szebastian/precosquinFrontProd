@@ -12,6 +12,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
+      if (req.url.includes('/check-email')) {
+        return throwError(() => error);
+      }
+
       const status = error.status;
       const message = error.error?.message || error.message || 'Error desconocido';
 

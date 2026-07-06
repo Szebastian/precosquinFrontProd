@@ -1,0 +1,17 @@
+<div class="circular-progress-container">
+  <svg class="circular-progress-svg" viewBox="0 0 100 100">
+    <circle class="circular-progress-background" cx="50" cy="50" r="45"></circle>
+    <circle
+      class="circular-progress-bar"
+      cx="50"
+      cy="50"
+      r="45"
+      [attr.stroke-dasharray]="circumference"
+      [attr.stroke-dashoffset]="strokeDashoffset"
+    ></circle>
+  </svg>
+  <div class="progress-text">
+    <span class="progress-percentage">{{ progress() }}%</span>
+    <span class="step-count">{{ currentStep() }}/{{ totalSteps() }}</span>
+  </div>
+</div>

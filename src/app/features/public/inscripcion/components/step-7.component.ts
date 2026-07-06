@@ -10,7 +10,7 @@ import { subcategoriesByCategory } from '../inscripcion.page';
   imports: [CommonModule, FormsModule],
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
-      <p class="step-desc" style="margin-top: 0;">Verificá tu información y aceptá las condiciones</p>
+      <p class="step-desc" style="margin-top: 0;">      Revisá que todo esté bien y aceptá las condiciones</p>
 
       <div class="declaration-section">
         <label class="checkbox-label">
@@ -226,32 +226,84 @@ import { subcategoriesByCategory } from '../inscripcion.page';
           }
         </div>
       </div>
+
+      <div class="reset-section">
+        <button type="button" class="btn-reset" (click)="confirmReset()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          Borrar datos y empezar de nuevo
+        </button>
+      </div>
     </div>
   `,
   styles: [`
-    .step-content { min-height: 200px; }
+    .step-content { min-height: 200px; padding-bottom: 1rem; }
     .slide-left { animation: slideLeft 0.3s ease-out; }
     .slide-right { animation: slideRight 0.3s ease-out; }
-    .declaration-section { display: flex; flex-direction: column; gap: var(--space-1); }
-    .review-divider { height: 1px; background: rgba(255, 255, 255, 0.1); margin: var(--space-5) 0; }
-    .review-section { margin-bottom: var(--space-5); }
-    .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
-    .review-header h3 { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: #e2e8f0; }
-    .btn-edit { font-size: var(--text-xs); color: var(--brand-400); background: none; border: none; cursor: pointer; font-weight: var(--weight-medium); padding: var(--space-1) var(--space-2); border-radius: var(--radius-md); transition: all var(--transition-fast); }
-    .btn-edit:hover { background: rgba(99, 102, 241, 0.1); }
-    .review-grid { background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
-    .review-item.full-width { grid-column: 1 / -1; }
-    .review-label { display: block; font-size: var(--text-xs); color: #94a3b8; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.03em; }
-    .review-value { display: block; font-size: var(--text-sm); font-weight: var(--weight-medium); color: #e2e8f0; }
-    .review-empty { color: #64748b; font-style: italic; font-weight: normal; }
     @keyframes slideLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+
+    .step-desc { font-size: 0.95rem; color: #94a3b8; margin-bottom: 1.5rem; line-height: 1.5; }
+
+    .declaration-section { display: flex; flex-direction: column; gap: 0.625rem; margin-bottom: 1.5rem; }
+    .checkbox-label { display: flex; align-items: flex-start; gap: 0.625rem; font-size: 0.9rem; color: #cbd5e1; cursor: pointer; padding: 0.5rem 0.75rem; border-radius: 0.5rem; transition: background 0.2s ease; }
+    .checkbox-label:hover { background: rgba(255, 255, 255, 0.03); }
+    .checkbox-label input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; accent-color: #4c8be6; flex-shrink: 0; cursor: pointer; }
+    .checkbox-label a { color: #4c8be6; text-decoration: none; }
+    .checkbox-label a:hover { text-decoration: underline; }
+
+    .review-divider { height: 1px; background: rgba(255, 255, 255, 0.06); margin: 1.5rem 0; }
+
+    .review-section { margin-bottom: 1.5rem; }
+    .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .review-header h3 { font-size: 0.85rem; font-weight: 600; color: #e2e8f0; margin: 0; }
+    .btn-edit { font-size: 0.75rem; color: #4c8be6; background: none; border: none; cursor: pointer; font-weight: 500; padding: 0.25rem 0.5rem; border-radius: 0.375rem; transition: all 0.2s ease; }
+    .btn-edit:hover { background: rgba(76, 139, 230, 0.1); }
+
+    .review-grid { background: rgba(255, 255, 255, 0.025); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0.625rem; padding: 1rem 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .review-item.full-width { grid-column: 1 / -1; }
+    .review-label { display: block; font-size: 0.7rem; color: #64748b; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .review-value { display: block; font-size: 0.85rem; font-weight: 500; color: #e2e8f0; line-height: 1.4; }
+    .review-empty { color: #475569; font-style: italic; font-weight: 400; }
+
+    @media (max-width: 640px) { .review-grid { grid-template-columns: 1fr; } }
+
+    .reset-section {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .btn-reset {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-reset:hover {
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.25);
+      background: rgba(239, 68, 68, 0.06);
+    }
+    .btn-reset:active { transform: scale(0.97); }
   `]
 })
 export class InscripcionStep7Component {
   data = input.required<InscripcionData>();
   lastDirection = input.required<'left' | 'right'>();
   goToStep = output<number>();
+  resetForm = output<void>();
 
   subcategoryName = computed(() => {
     const all = [
@@ -281,5 +333,11 @@ export class InscripcionStep7Component {
   hasRiderData(): boolean {
     const r = this.data().riderTecnico;
     return !!(r.sonido.microfonos.length > 0 || r.sonido.monitores || r.sonido.diBoxes || r.sonido.backline.length > 0 || r.otros);
+  }
+
+  confirmReset(): void {
+    if (confirm('¿Borrar todos los datos y empezar de nuevo? Esta acción no se puede deshacer.')) {
+      this.resetForm.emit();
+    }
   }
 }

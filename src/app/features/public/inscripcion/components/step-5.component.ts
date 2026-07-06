@@ -12,7 +12,7 @@ import { InscripcionData } from '../inscripcion.page';
       <div class="step-title-row">
         <span class="optional-badge">Opcional</span>
       </div>
-      <p class="step-desc" style="margin-top: 0;">Indicá qué necesitás para tu presentación en escenario. Podés avanzar sin completar esta sección.</p>
+      <p class="step-desc" style="margin-top: 0;">      Contanos qué necesitás para sonar bien. Si no necesitás nada especial, podés seguir adelante.</p>
 
       <!-- SONIDO -->
       <div class="rider-section">
@@ -22,7 +22,7 @@ import { InscripcionData } from '../inscripcion.page';
         </div>
 
         <div class="form-group">
-          <label class="form-label">Microfonos necesarios</label>
+          <label class="form-label">¿Qué microfonos necesitás?</label>
           <div class="rider-chips">
             @for (mic of micOptions; track mic) {
               <label class="rider-chip" [class.selected]="data().riderTecnico.sonido.microfonos.includes(mic)">
@@ -35,7 +35,7 @@ import { InscripcionData } from '../inscripcion.page';
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Monitores de escenario</label>
+            <label class="form-label">¿Cuántos monitores necesitás?</label>
             <select class="form-input" [(ngModel)]="data().riderTecnico.sonido.monitores" name="monitores">
               <option value="">No requiere</option>
               <option value="1">1 monitor</option>
@@ -52,7 +52,7 @@ import { InscripcionData } from '../inscripcion.page';
         </div>
 
         <div class="form-group">
-          <label class="form-label">Backline (equipamiento que lleva el artista)</label>
+          <label class="form-label">¿Qué equipamiento llevás?</label>
           <div class="rider-chips">
             @for (item of backlineOptions; track item) {
               <label class="rider-chip" [class.selected]="data().riderTecnico.sonido.backline.includes(item)">
@@ -72,7 +72,7 @@ import { InscripcionData } from '../inscripcion.page';
         </div>
 
         <div class="form-group">
-          <label class="form-label">Tipos de piso preferidos</label>
+          <label class="form-label">¿Qué tipo de piso preferís?</label>
           <div class="rider-chips">
             @for (piso of pisoOptions; track piso) {
               <label class="rider-chip" [class.selected]="data().riderTecnico.escenario.pisos.includes(piso)">
@@ -84,10 +84,10 @@ import { InscripcionData } from '../inscripcion.page';
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="cables">Cables o conectores especiales</label>
+          <label class="form-label" for="cables">¿Necesitás cables o conectores?</label>
           <input type="text" id="cables" class="form-input" [(ngModel)]="cablesInput" name="cables"
-            placeholder="Ej: cable XLR 10m, jack 1/4, adaptador mini-jack" />
-          <span class="form-hint">Separá múltiples ítems con coma</span>
+            placeholder="Ej: cable XLR 10m, jack 1/4" />
+          <span class="form-hint">Separá con coma si son varios</span>
         </div>
       </div>
 
@@ -95,14 +95,14 @@ import { InscripcionData } from '../inscripcion.page';
       <div class="rider-section">
         <div class="rider-section-header">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <h3>Otras Necesidades</h3>
+          <h3>¿Algo más?</h3>
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="otrosRider">Información adicional</label>
+          <label class="form-label" for="otrosRider">Contanos algo más</label>
           <textarea id="otrosRider" class="form-textarea" rows="3"
             [(ngModel)]="data().riderTecnico.otros" name="otrosRider"
-            placeholder="Cualquier otra necesidad técnica no contemplada en las secciones anteriores..."></textarea>
+            placeholder="Si te falta algo, decinos acá"></textarea>
         </div>
       </div>
     </div>

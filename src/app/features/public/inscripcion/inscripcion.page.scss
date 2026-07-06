@@ -53,6 +53,10 @@
   width: auto;
 }
 
+.mobile-step-name {
+  display: none;
+}
+
 /* --- Sidebar Progress --- */
 .sidebar-progress-section {
   display: flex;
@@ -189,12 +193,35 @@
   box-shadow: none;
   border-radius: var(--radius-xl);
   padding: var(--space-10);
+  position: relative;
+}
+
+.inscription-form {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  padding-right: var(--space-2);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+.inscription-form::-webkit-scrollbar {
+  width: 4px;
+}
+
+.inscription-form::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.inscription-form::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
 }
 
 /* --- Form Header (Conversational style) --- */
 .form-header {
   text-align: left;
   margin-bottom: var(--space-12);
+  position: relative;
 
   h1 {
     font-family: var(--font-display);
@@ -204,6 +231,27 @@
     margin: 0;
     line-height: 1.2;
     letter-spacing: -0.01em;
+  }
+}
+
+.back-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: var(--weight-medium);
+  color: rgba(255, 255, 255, 0.35);
+  text-decoration: none;
+  margin-bottom: var(--space-4);
+  transition: color 0.2s ease;
+  letter-spacing: 0.02em;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  svg {
+    opacity: 0.6;
   }
 }
 
@@ -330,7 +378,6 @@
   }
 }
 
-/* --- Bottom Nav Bar --- */
 .bottom-nav-bar {
   position: fixed;
   bottom: 0;
@@ -411,6 +458,82 @@
 
   &:hover {
     color: #94a3b8;
+  }
+}
+
+/* --- Mobile Bottom Nav --- */
+@media (max-width: 900px) {
+  .bottom-nav-bar {
+    left: 0;
+    right: 0;
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .bottom-nav-left,
+  .bottom-nav-center,
+  .bottom-nav-right {
+    flex: none;
+  }
+
+  .bottom-nav-left {
+    order: 1;
+  }
+
+  .bottom-nav-center {
+    order: 3;
+    display: none;
+  }
+
+  .bottom-nav-right {
+    order: 2;
+    flex: 1;
+    text-align: right;
+  }
+
+  .btn-ghost {
+    padding: var(--space-3) var(--space-4);
+    font-size: 0.85rem;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    min-height: 44px;
+    min-width: 44px;
+
+    &:hover,
+    &:active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+    }
+  }
+
+  .save-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    font-size: 0.8rem;
+    font-weight: var(--weight-medium);
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    min-height: 44px;
+    min-width: 44px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover,
+    &:active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+    }
+  }
+
+  .enter-hint {
+    display: none;
   }
 }
 
@@ -562,6 +685,188 @@ select.form-input {
   margin-top: 6px; /* mt-1.5, approximation */
   margin-left: 2px; /* ml-0.5, approximation */
   display: block;
+}
+
+/* ============================================
+   CONVERSATIONAL INPUT OVERRIDES (ng-deep)
+   Forces transparent backgrounds on ALL native
+   form elements inside step components
+   ============================================ */
+
+/* --- ALL native inputs, selects, textareas --- */
+::ng-deep input,
+::ng-deep select,
+::ng-deep textarea {
+  background-color: transparent !important;
+  color: var(--gray-100) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+::ng-deep input::placeholder,
+::ng-deep textarea::placeholder {
+  color: var(--gray-500) !important;
+}
+
+::ng-deep input:focus,
+::ng-deep select:focus,
+::ng-deep textarea:focus {
+  border-color: #4c8be6 !important;
+  outline: none !important;
+}
+
+::ng-deep select option {
+  background-color: #1a1d23 !important;
+  color: #f1f5f9 !important;
+}
+
+/* --- Conversational underline inputs --- */
+::ng-deep .minimal-input,
+::ng-deep .name-input {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 0 !important;
+  color: var(--gray-100) !important;
+  font-size: 1.5rem !important;
+  font-weight: 500 !important;
+  padding: 0.5rem 0 !important;
+  width: 100% !important;
+  transition: border-color 0.25s ease !important;
+}
+
+::ng-deep .minimal-input:focus,
+::ng-deep .name-input:focus {
+  border-bottom-color: #4c8be6 !important;
+  outline: none !important;
+}
+
+::ng-deep .minimal-input::placeholder,
+::ng-deep .name-input::placeholder {
+  color: var(--gray-600) !important;
+  font-weight: 400 !important;
+}
+
+::ng-deep .minimal-label,
+::ng-deep .name-label {
+  font-size: 0.7rem !important;
+  color: var(--gray-500) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  margin-bottom: 0.25rem !important;
+  font-weight: 600 !important;
+}
+
+::ng-deep .minimal-hint {
+  font-size: 0.75rem !important;
+  color: var(--gray-500) !important;
+  margin-top: 0.375rem !important;
+}
+
+::ng-deep .form-field-group {
+  margin-bottom: 1.25rem !important;
+}
+
+/* --- Card-style form inputs --- */
+::ng-deep .form-input,
+::ng-deep .form-textarea,
+::ng-deep select.form-input {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 0.5rem !important;
+  color: #f1f5f9 !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 1rem !important;
+}
+
+::ng-deep .form-input:focus,
+::ng-deep .form-textarea:focus,
+::ng-deep select.form-input:focus {
+  border-color: #4c8be6 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(76, 139, 230, 0.15) !important;
+}
+
+::ng-deep .form-label {
+  font-size: 0.75rem !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-weight: 600 !important;
+}
+
+/* --- Date picker selects --- */
+::ng-deep .date-select {
+  background: transparent !important;
+  color: var(--gray-100) !important;
+  border: none !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 0 !important;
+}
+
+::ng-deep .date-select:focus {
+  border-bottom-color: #4c8be6 !important;
+  outline: none !important;
+}
+
+::ng-deep .date-select option {
+  background: #1a1d23 !important;
+  color: #f1f5f9 !important;
+}
+
+/* --- Checkbox / radio overrides --- */
+::ng-deep input[type="checkbox"],
+::ng-deep input[type="radio"] {
+  background-color: transparent !important;
+  accent-color: #4c8be6 !important;
+}
+
+/* --- File input --- */
+::ng-deep input[type="file"] {
+  background: transparent !important;
+  color: var(--gray-100) !important;
+}
+
+::ng-deep input[type="file"]::file-selector-button {
+  background: var(--gray-200) !important;
+  color: var(--gray-100) !important;
+  border: 1px solid var(--gray-600) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  cursor: pointer !important;
+}
+
+::ng-deep input[type="file"]::file-selector-button:hover {
+  background: var(--gray-300) !important;
+}
+
+/* --- Date input dark scheme --- */
+::ng-deep input[type="date"] {
+  color-scheme: dark !important;
+}
+
+::ng-deep input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7) !important;
+}
+
+/* --- Browser autofill override (prevents white bg on fill) --- */
+::ng-deep input:-webkit-autofill,
+::ng-deep input:-webkit-autofill:hover,
+::ng-deep input:-webkit-autofill:focus,
+::ng-deep select:-webkit-autofill,
+::ng-deep textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  -webkit-text-fill-color: var(--gray-100) !important;
+  background-color: transparent !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+::ng-deep input:autofill,
+::ng-deep input:autofill:hover,
+::ng-deep input:autofill:focus,
+::ng-deep select:autofill,
+::ng-deep textarea:autofill {
+  background-color: transparent !important;
+  color: var(--gray-100) !important;
 }
 
 /* --- Step Title --- */
@@ -1512,49 +1817,191 @@ select.form-input {
     width: 100%;
     padding: var(--space-4) var(--space-5);
     border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     height: auto;
     position: relative;
-
-    .sidebar-progress-section {
-      display: none;
-    }
-
-    .sidebar-quote {
-      display: none;
-    }
-  }
-
-  .form-main-content {
-    padding: var(--space-8) var(--space-6);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    background: linear-gradient(135deg, #161b26 0%, #1a2033 100%);
   }
 
   .form-nav-vertical {
-    margin-bottom: 0;
-    padding-bottom: 0;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .nav-brand {
+    gap: var(--space-3);
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-brand .nav-logo {
+    display: none;
+  }
+
+  .nav-brand span {
+    display: block;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+  }
+
+  .sidebar-progress-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .sidebar-progress-section ::ng-deep .circular-progress-container {
+    width: 56px;
+    height: 56px;
+  }
+
+  .sidebar-progress-section ::ng-deep .progress-percentage {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .sidebar-progress-section ::ng-deep .step-count {
+    display: none;
+  }
+
+  .sidebar-progress-section ::ng-deep .circular-progress-background,
+  .sidebar-progress-section ::ng-deep .circular-progress-bar {
+    stroke-width: 4px;
+  }
+
+  .sidebar-steps-list {
+    display: none;
+  }
+
+  .sidebar-quote {
+    display: none;
+  }
+
+  .mobile-step-name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .mobile-step-name .step-label {
+    font-size: 0.85rem;
+    font-weight: var(--weight-bold);
+    color: #f1f5f9;
+    line-height: 1.3;
+  }
+
+  .mobile-step-name .step-sublabel {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .form-main-content {
+    padding: var(--space-8) var(--space-5);
+    padding-bottom: 100px;
+  }
+
+  .form-card {
+    padding: var(--space-8) var(--space-6);
+    border-radius: var(--radius-lg);
+  }
+
+  .form-header {
+    margin-bottom: var(--space-10);
+  }
+
+  .form-header h1 {
+    font-size: 1.4rem;
+    line-height: 1.35;
+  }
+
+  .question-counter {
+    font-size: 10px;
+    margin-bottom: var(--space-3);
+  }
+
+  .btn-next-large {
+    max-width: 100%;
+    padding: var(--space-5) var(--space-8);
+    font-size: 0.95rem;
+  }
+
+  .confirm-group {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .confirm-text {
+    font-size: 0.85rem;
+    width: 100%;
   }
 }
 
 @media (max-width: 640px) {
+  .form-sidebar {
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .nav-brand {
+    font-size: 1.05rem;
+  }
+
+  .sidebar-progress-section {
+    gap: var(--space-2);
+  }
+
+  .sidebar-progress-section ::ng-deep .circular-progress-container {
+    width: 46px;
+    height: 46px;
+  }
+
+  .mobile-step-name .step-label {
+    font-size: 0.8rem;
+  }
+
+  .mobile-step-name .step-sublabel {
+    font-size: 0.6rem;
+  }
+
   .form-main-content {
+    padding: var(--space-6) var(--space-4);
+    padding-bottom: 100px;
+  }
+
+  .form-card {
     padding: var(--space-6) var(--space-5);
   }
 
-  .form-header p {
-    font-size: 1.75rem;
+  .form-header {
+    margin-bottom: var(--space-8);
   }
 
-  .form-input,
-  .form-textarea {
-    font-size: 1.125rem;
+  .form-header h1 {
+    font-size: 1.25rem;
   }
 
-  .form-row {
-    gap: var(--space-6);
+  .bottom-nav-bar {
+    padding: var(--space-3) var(--space-4);
   }
 
-  .constancia-row {
-    grid-template-columns: 1fr;
+  .btn-next-large {
+    padding: var(--space-4) var(--space-6);
+    font-size: 0.9rem;
   }
 
   .subcategory-grid {
@@ -1568,10 +2015,6 @@ select.form-input {
     flex-shrink: 0;
   }
 
-  .confirm-submit-group {
-    flex-wrap: wrap;
-  }
-
   .category-cards {
     grid-template-columns: 1fr;
   }
@@ -1580,20 +2023,162 @@ select.form-input {
     grid-template-columns: 1fr;
   }
 
-  .btn-next {
-    max-width: 100%;
-  }
-
-  .bottom-nav-bar {
-    left: 0;
-    padding: var(--space-3) var(--space-5);
-  }
-
   .enter-hint {
     display: none;
   }
+}
 
-  .btn-next-large {
-    max-width: 100%;
-  }
+/* --- Constancia Modal --- */
+.constancia-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.constancia-modal {
+  position: relative;
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #1a1f2e;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.constancia-modal-close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  padding: 0;
+}
+
+.constancia-modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.constancia-modal-close:active {
+  transform: scale(0.95);
+}
+
+/* Override constancia styles for dark modal */
+.constancia-modal ::ng-deep .constancia-page {
+  min-height: auto;
+  padding: 0;
+  background: transparent;
+}
+
+.constancia-modal ::ng-deep .constancia-card {
+  background: #1a1f2e;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+
+.constancia-modal ::ng-deep .constancia-header {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.constancia-modal ::ng-deep .constancia-badge {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+}
+
+.constancia-modal ::ng-deep .constancia-title {
+  color: #e2e8f0;
+}
+
+.constancia-modal ::ng-deep .constancia-label {
+  color: #64748b;
+}
+
+.constancia-modal ::ng-deep .constancia-value {
+  color: #e2e8f0;
+}
+
+.constancia-modal ::ng-deep .constancia-id {
+  color: #60a5fa;
+}
+
+.constancia-modal ::ng-deep .constancia-category {
+  color: #60a5fa;
+}
+
+.constancia-modal ::ng-deep .constancia-status {
+  color: #fbbf24;
+}
+
+.constancia-modal ::ng-deep .constancia-divider {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.constancia-modal ::ng-deep .constancia-note {
+  background: rgba(76, 139, 230, 0.06);
+  border-color: rgba(76, 139, 230, 0.12);
+}
+
+.constancia-modal ::ng-deep .constancia-note svg {
+  color: #60a5fa;
+}
+
+.constancia-modal ::ng-deep .constancia-note p {
+  color: #94a3b8;
+}
+
+.constancia-modal ::ng-deep .constancia-footer {
+  padding-bottom: var(--space-6);
+}
+
+.constancia-modal ::ng-deep .btn-primary {
+  background: #4c8be6;
+}
+
+.constancia-modal ::ng-deep .btn-primary:hover {
+  background: #3b7dd8;
+}
+
+.constancia-modal ::ng-deep .btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.constancia-modal ::ng-deep .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
 }

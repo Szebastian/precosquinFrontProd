@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnDestroy, OnInit, HostListener, output } from '@angular/core';
+import { Component, signal, computed, inject, OnDestroy, OnInit, HostListener, output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -175,6 +175,10 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
               [currentStep]="currentStep()"
               [totalSteps]="steps.length">
             </app-circular-progress>
+            <div class="mobile-step-name">
+              <span class="step-label">{{ steps[currentStep() - 1].label }}</span>
+              <span class="step-sublabel">Paso {{ currentStep() }} de {{ steps.length }}</span>
+            </div>
             <ul class="sidebar-steps-list">
               @for (step of steps; track step.number) {
                 <li [class.active]="currentStep() === step.number" [class.completed]="currentStep() > step.number">
@@ -188,7 +192,7 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
           <div class="sidebar-quote">
             <p>"La música es el lenguaje universal del alma."</p>
             <div class="quote-author">
-              <span>— Precosquin 2027</span>
+              <span> — Precosquin 2027</span>
             </div>
           </div>
         </div>
@@ -197,6 +201,10 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
           <div class="w-full max-w-4xl mx-auto px-4 py-8"> <!-- Added wrapper for width and centering -->
             <div class="form-card animate-scale-in">
               <div class="form-header">
+                <a routerLink="/" class="back-home-link">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  Inicio
+                </a>
                 <span class="question-counter">PREGUNTA {{ currentStep() }} / {{ steps.length }}</span>
                 <h1>{{ stepTitles[currentStep() - 1] }}</h1>
               </div>
@@ -239,34 +247,28 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
               <app-inscripcion-step-6
                 [data]="data"
                 [lastDirection]="lastDirection()"
-                (fileSelected)="handleFileSelected($event)" />
+                (fileSelected)="handleFileSelected($event)"
+                (removeFile)="handleFileRemove($any($event))" />
             }
             @if (currentStep() === 7) {
               <app-inscripcion-step-7
                 [data]="data"
-                [lastDirection]="lastDirection()" />
-            }
-
-            @if (submitted() && currentStep() === 8) {
-              <div class="step-content success-content animate-scale-in">
-                <div class="success-icon">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </div>
-                <h2>Inscripción Enviada</h2>
-                <p>Generando tu constancia...</p>
-              </div>
-            }
-
-            @if (submitted() && currentStep() === 8 && inscriptionResult()) {
-              <app-inscripcion-constancia
-                [result]="inscriptionResult()!"
-                [data]="data"
-                [subcategoryName]="getSubcategoryName(data.subcategory)"
-                (printRequested)="printConstancia()"
-                (resetRequested)="resetForm()" />
+                [lastDirection]="lastDirection()"
+                (goToStep)="goToStep($event)"
+                (resetForm)="resetForm()" />
             }
             </div>
             </form>
+        </div>
+
+        @if (currentStep() < 7) {
+          <button type="button" class="next-question-arrow" id="nextQuestionBtn"
+            (click)="scrollToNextQuestion()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+        }
 
             @if (!submitted()) {
               <div class="next-section" @fadeIn>
@@ -323,44 +325,54 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
             }
         </div>
       </div>
-      </div>
-      }
-      @else if (currentStep() === 8) {
-        <app-inscripcion-constancia
-          [result]="inscriptionResult()!"
-          [data]="data"
-          [subcategoryName]="getSubcategoryName(data.subcategory)"
-          (printRequested)="printConstancia()"
-          (resetRequested)="resetForm()" />
       }
     </div>
+
+    @if (showConstanciaModal() && inscriptionResult()) {
+      <div class="constancia-modal-overlay" (click)="closeConstanciaModal()">
+        <div class="constancia-modal" (click)="$event.stopPropagation()">
+          <button type="button" class="constancia-modal-close" (click)="closeConstanciaModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <app-inscripcion-constancia
+            [result]="inscriptionResult()!"
+            [data]="data"
+            [subcategoryName]="getSubcategoryName(data.subcategory)"
+            (printRequested)="printConstancia()"
+            (resetRequested)="resetForm()" />
+        </div>
+      </div>
+    }
   `
 })
 
 export class InscripcionPageComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   
+  @ViewChild(InscripcionStep1Component) step1Component?: InscripcionStep1Component;
 
   currentStep = signal(1);
 
   readonly steps = [
-    { number: 1, label: 'Datos Generales' },
-    { number: 2, label: 'Experiencia Artística' },
-    { number: 3, label: 'Integrantes del Grupo' },
-    { number: 4, label: 'Requerimientos Técnicos' },
-    { number: 5, label: 'Rider Técnico' },
-    { number: 6, label: 'Material de Difusión' },
-    { number: 7, label: 'Declaración Jurada' },
+    { number: 1, label: 'Tus datos' },
+    { number: 2, label: 'Tu arte' },
+    { number: 3, label: 'Tu grupo' },
+    { number: 4, label: 'Tu show' },
+    { number: 5, label: 'Equipo técnico' },
+    { number: 6, label: 'Archivos' },
+    { number: 7, label: 'Confirmar' },
   ];
 
   readonly stepTitles = [
-    '¿Cuáles son tus datos personales?',
-    '¿Qué categoría querés?',
-    '¿Quiénes son los integrantes?',
-    '¿Qué necesitás para actuar?',
-    'Detallá tu rider técnico',
-    'Adjuntá archivos',
-    'Revisá y confirmá tu inscripción',
+    '¿Cómo te llamás?',
+    '¿Qué vas a presentar?',
+    '¿Quiénes van en el grupo?',
+    '¿Qué necesitás para sonar bien?',
+    'Contanos de tu equipo técnico',
+    'Mandanos los archivos',
+    'Revisá todo antes de enviar',
   ];
   submitted = signal(false);
   submitting = signal(false);
@@ -370,6 +382,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   showConfirmSubmit = signal(false);
   submittingText = signal('Enviando inscripción...');
   lastDirection = signal<'left' | 'right'>('left');
+  showConstanciaModal = signal(false);
 
   private draftKey = 'precosquin_inscripcion_draft';
 
@@ -538,6 +551,23 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     return Math.round(((current - 1) / (total - 1)) * 100);
   }
 
+  scrollToNextQuestion(): void {
+    const groups = document.querySelectorAll('.question-group');
+    if (!groups.length) return;
+    const viewMid = window.innerHeight / 2;
+    for (const group of groups) {
+      const rect = group.getBoundingClientRect();
+      if (rect.top > viewMid) {
+        group.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+    }
+    const last = groups[groups.length - 1];
+    if (last) {
+      last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
   resetForm(): void {
     this.clearDraft();
     this.data = {
@@ -568,7 +598,12 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     this.submitting.set(false);
     this.inscriptionResult.set(null);
     this.showConfirmSubmit.set(false);
+    this.showConstanciaModal.set(false);
     this.filePreviews = {};
+  }
+
+  closeConstanciaModal(): void {
+    this.showConstanciaModal.set(false);
   }
 
   private validateDni(dni: string): boolean {
@@ -653,6 +688,19 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  handleFileRemove(fieldName: string): void {
+    const nameMap: Record<string, string> = {
+      dniFrontFile: 'dniFrontName', dniBackFile: 'dniBackName',
+      promoPhotoFile: 'promoPhotoName', lyricsFile: 'lyricsFileName', scoreFile: 'scoreFileName',
+    };
+    (this.data as any)[fieldName] = null;
+    (this.data as any)[nameMap[fieldName]] = '';
+    if (this.filePreviews[fieldName]) {
+      URL.revokeObjectURL(this.filePreviews[fieldName]);
+      delete this.filePreviews[fieldName];
+    }
+  }
+
   subcategories = computed(() => this.subcategoriesByCategory[this.data.category] || []);
 
   subcategoryName = computed(() => {
@@ -704,7 +752,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   canProceed(): boolean {
     switch (this.currentStep()) {
       case 1:
-        return !!(
+        return this.step1Component ? this.step1Component.isFormValid() : !!(
           this.data.fullName &&
           this.validateDni(this.data.dni) &&
           this.data.birthDate &&
@@ -733,6 +781,10 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   }
 
   nextStep(): void {
+    if (this.currentStep() === 1 && this.step1Component) {
+      const valid = this.step1Component.runAllValidations();
+      if (!valid) return;
+    }
     if (this.canProceed() && this.currentStep() < 7) {
       let next = this.currentStep() + 1;
       if (next === 3 && !this.isGroupType()) {
@@ -834,7 +886,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     if (files.length === 0) {
       this.submitting.set(false);
       this.submitted.set(true);
-      this.currentStep.set(8);
+      this.showConstanciaModal.set(true);
       return;
     }
 
@@ -854,7 +906,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
           if (uploaded === total) {
             this.submitting.set(false);
             this.submitted.set(true);
-            this.currentStep.set(8);
+            this.showConstanciaModal.set(true);
           }
         },
         error: () => {
@@ -862,7 +914,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
           if (uploaded === total) {
             this.submitting.set(false);
             this.submitted.set(true);
-            this.currentStep.set(8);
+            this.showConstanciaModal.set(true);
           }
         },
       });

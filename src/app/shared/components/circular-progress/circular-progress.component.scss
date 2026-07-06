@@ -1,0 +1,58 @@
+.circular-progress-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+}
+
+.circular-progress-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.circular-progress-background {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 4px;
+  fill: transparent;
+}
+
+.circular-progress-bar {
+  stroke: #4c8be6;
+  stroke-width: 4px;
+  fill: transparent;
+  transition: stroke-dashoffset 0.4s ease;
+}
+
+.progress-text {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-percentage {
+  font-size: 32px;
+  font-weight: var(--weight-extrabold);
+  color: #f1f5f9;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.step-count {
+  font-size: var(--text-xs);
+  color: #475569;
+  margin-top: var(--space-1);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}

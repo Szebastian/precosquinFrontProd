@@ -365,7 +365,7 @@ textarea:focus-visible {
   font-size: var(--text-base);
   border-radius: var(--radius-md);
   border: 1px solid var(--gray-300);
-  background-color: white;
+  background-color: transparent;
   color: var(--gray-900);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -391,7 +391,7 @@ textarea:focus-visible {
 }
 
 .form-card {
-  background-color: white;
+  background-color: var(--gray-50);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   padding: var(--space-6);
@@ -1013,6 +1013,46 @@ textarea:focus-visible {
 }
 
 /* ============================================
+   DARK MODE — NATIVE FORM ELEMENTS
+   Forces transparent/dark backgrounds on ALL
+   native inputs, selects, textareas and options
+   ============================================ */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: transparent !important;
+  color: var(--gray-100) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--gray-500) !important;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #4c8be6 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(76, 139, 230, 0.15) !important;
+}
+
+.dark select option {
+  background-color: #1a1d23 !important;
+  color: #f1f5f9 !important;
+  padding: 0.5rem !important;
+}
+
+.dark input[type="date"] {
+  color-scheme: dark;
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+}
+
+/* ============================================
    2. CSS RESET / NORMALIZE
    ============================================ */
 *,
@@ -1266,7 +1306,7 @@ code {
   padding: 0.625rem var(--space-3);
   font-size: var(--text-sm);
   color: var(--gray-900);
-  background-color: #fff;
+  background-color: transparent;
   border: 1.5px solid var(--gray-300);
   border-radius: var(--radius-lg);
   outline: none;
@@ -1492,4 +1532,122 @@ code {
 
 .dark .user-role {
   color: var(--gray-400);
+}
+
+/* ============================================
+   PARALLAX - One Question at a Time
+   ============================================ */
+
+.question-group {
+  scroll-snap-align: start;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-8) 0;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: questionReveal 0.5s ease forwards;
+}
+
+.question-group:nth-child(1) { animation-delay: 0.05s; }
+.question-group:nth-child(2) { animation-delay: 0.1s; }
+.question-group:nth-child(3) { animation-delay: 0.15s; }
+.question-group:nth-child(4) { animation-delay: 0.2s; }
+.question-group:nth-child(5) { animation-delay: 0.25s; }
+.question-group:nth-child(6) { animation-delay: 0.3s; }
+.question-group:nth-child(7) { animation-delay: 0.35s; }
+.question-group:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes questionReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-animated-wrapper {
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+.step-animated-wrapper::-webkit-scrollbar {
+  width: 4px;
+}
+
+.step-animated-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.step-animated-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+  .question-group {
+    min-height: 40vh;
+    padding: var(--space-6) 0;
+  }
+}
+
+/* ============================================
+   NEXT QUESTION ARROW
+   ============================================ */
+
+.next-question-arrow {
+  position: fixed;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(76, 139, 230, 0.15);
+  border: 1px solid rgba(76, 139, 230, 0.3);
+  color: #60a5fa;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  backdrop-filter: blur(8px);
+  animation: arrowBounce 2s ease-in-out infinite;
+  box-shadow: 0 4px 16px rgba(76, 139, 230, 0.15);
+}
+
+.next-question-arrow:hover {
+  background: rgba(76, 139, 230, 0.3);
+  border-color: rgba(76, 139, 230, 0.5);
+  color: #93bbfd;
+  transform: translateX(-50%) translateY(-3px);
+  box-shadow: 0 8px 24px rgba(76, 139, 230, 0.3);
+  animation: none;
+}
+
+.next-question-arrow:active {
+  transform: translateX(-50%) translateY(0);
+}
+
+.next-question-arrow.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes arrowBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(5px); }
+}
+
+@media (max-width: 900px) {
+  .next-question-arrow {
+    width: 44px;
+    height: 44px;
+    bottom: 68px;
+  }
 }
