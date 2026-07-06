@@ -197,8 +197,8 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
           <div class="w-full max-w-4xl mx-auto px-4 py-8"> <!-- Added wrapper for width and centering -->
             <div class="form-card animate-scale-in">
               <div class="form-header">
-                <p class="text-sm text-gray-500 mb-2">Paso {{ currentStep() }} de {{ steps.length }}</p>
-                <h1 class="text-3xl font-bold text-white">{{ stepTitles[currentStep() - 1] }}</h1>
+                <span class="question-counter">PREGUNTA {{ currentStep() }} / {{ steps.length }}</span>
+                <h1>{{ stepTitles[currentStep() - 1] }}</h1>
               </div>
 
             <form (submit)="onSubmit($event)" class="inscription-form">
@@ -266,54 +266,61 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
                 (resetRequested)="resetForm()" />
             }
             </div>
+            </form>
 
             @if (!submitted()) {
-              <div class="form-actions" @fadeIn>
-                @if (currentStep() > 1) {
-                  <button type="button" class="btn btn-secondary btn-sm" (click)="prevStep()">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
-                    Anterior
+              <div class="next-section" @fadeIn>
+                @if (currentStep() < 7) {
+                  <button type="button" class="btn-next-large" (click)="nextStep()" [disabled]="!canProceed()">
+                    SIGUIENTE
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
                   </button>
                 } @else {
-                  <div></div>
-                }
-                <div class="form-actions-center">
-                  @if (error()) {
-                    <span class="form-error">{{ error() }}</span>
-                  }
-                  @if (currentStep() < 7) {
-                    <button type="button" class="btn btn-primary btn-next font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2" (click)="nextStep()" [disabled]="!canProceed()">
-                      <span>Siguiente</span>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+                  @if (!showConfirmSubmit()) {
+                    <button type="button" class="btn-next-large btn-submit" (click)="showConfirmSubmit.set(true)" [disabled]="!canProceed() || submitting()">
+                      ENVIAR INSCRIPCIÓN
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                     </button>
                   } @else {
-                    @if (!showConfirmSubmit()) {
-                      <button type="button" class="btn btn-primary btn-lg btn-next font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2" (click)="showConfirmSubmit.set(true)" [disabled]="!canProceed() || submitting()">
-                        <span>Enviar Inscripción</span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                    <div class="confirm-group">
+                      <span class="confirm-text">¿Confirmás el envío?</span>
+                      <button type="button" class="btn-cancel" (click)="showConfirmSubmit.set(false)">Cancelar</button>
+                      <button type="submit" class="btn-confirm" (click)="onSubmit($event)" [disabled]="submitting()">
+                        @if (submitting()) {
+                          <span class="spinner"></span> {{ submittingText() }}
+                        } @else {
+                          Sí, enviar
+                        }
                       </button>
-                    } @else {
-                      <div class="confirm-submit-group">
-                        <span class="confirm-text">¿Confirmás el envío?</span>
-                        <button type="button" class="btn btn-secondary btn-sm" (click)="showConfirmSubmit.set(false)">Cancelar</button>
-                        <button type="submit" class="btn btn-primary btn-lg" [disabled]="submitting()">
-                          @if (submitting()) {
-                            <span class="spinner"></span> {{ submittingText() }}
-                          } @else {
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            Sí, enviar
-                          }
-                        </button>
-                      </div>
-                    }
+                    </div>
+                  }
+                }
+                @if (error()) {
+                  <span class="form-error">{{ error() }}</span>
+                }
+              </div>
+
+              <div class="bottom-nav-bar">
+                <div class="bottom-nav-left">
+                  @if (currentStep() > 1) {
+                    <button type="button" class="btn-ghost" (click)="prevStep()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+                      Anterior
+                    </button>
                   }
                 </div>
-                <div class="form-actions-right">
-                  <a routerLink="/" class="save-later-link text-sm text-gray-500 hover:text-blue-400 transition-colors duration-200">Guardar y salir</a>
+                <div class="bottom-nav-center">
+                  @if (currentStep() < 7) {
+                    <span class="enter-hint">
+                      Presioná <kbd>ENTER</kbd> para continuar
+                    </span>
+                  }
+                </div>
+                <div class="bottom-nav-right">
+                  <a routerLink="/" class="save-link">Guardar y continuar más tarde</a>
                 </div>
               </div>
             }
-          </form>
         </div>
       </div>
       </div>
@@ -474,6 +481,18 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     if (this.currentStep() > 1 && !this.submitted()) {
       this.saveDraft();
       e.returnValue = '';
+    }
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement;
+    const isTextArea = target.tagName === 'TEXTAREA';
+    if (event.key === 'Enter' && !isTextArea && !this.submitted() && !this.submitting() && this.currentStep() < 8) {
+      event.preventDefault();
+      if (this.canProceed()) {
+        this.nextStep();
+      }
     }
   }
 
