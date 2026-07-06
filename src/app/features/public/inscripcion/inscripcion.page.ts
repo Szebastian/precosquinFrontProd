@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { trigger, transition, style, animate, query, animateChild } from '@angular/animations';
 import { environment } from '../../../../environments/environment';
 import { InscripcionConstanciaComponent } from './components/constancia.component';
 import { InscripcionStep1Component } from './components/step-1.component';
@@ -139,6 +140,24 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, CircularProgressComponent],
   styleUrl: './inscripcion.page.scss',
+  animations: [
+    trigger('stepSlide', [
+      transition(':increment', [
+        style({ opacity: 0, transform: 'translateX(30px)' }),
+        animate('280ms cubic-bezier(0.25, 0.1, 0.25, 1)', style({ opacity: 1, transform: 'translateX(0)' })),
+      ]),
+      transition(':decrement', [
+        style({ opacity: 0, transform: 'translateX(-30px)' }),
+        animate('280ms cubic-bezier(0.25, 0.1, 0.25, 1)', style({ opacity: 1, transform: 'translateX(0)' })),
+      ]),
+    ]),
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(8px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+    ]),
+  ],
   template: `
     <div class="public-page form-layout">
       @if (currentStep() < 8) {
@@ -175,14 +194,16 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
         </div>
 
         <div class="form-main-content">
-          <div class="form-card animate-scale-in">
-            <div class="form-header">
-              <h1>Paso {{ currentStep() }} de {{ steps.length }}</h1>
-              <p>{{ stepTitles[currentStep() - 1] }}</p>
-            </div>
+          <div class="w-full max-w-4xl mx-auto px-4 py-8"> <!-- Added wrapper for width and centering -->
+            <div class="form-card animate-scale-in">
+              <div class="form-header">
+                <p class="text-sm text-gray-500 mb-2">Paso {{ currentStep() }} de {{ steps.length }}</p>
+                <h1 class="text-3xl font-bold text-white">{{ stepTitles[currentStep() - 1] }}</h1>
+              </div>
 
             <form (submit)="onSubmit($event)" class="inscription-form">
 
+            <div [@stepSlide]="currentStep()" class="step-animated-wrapper">
             @if (currentStep() === 1) {
               <app-inscripcion-step-1
                 [data]="data"
@@ -244,9 +265,10 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
                 (printRequested)="printConstancia()"
                 (resetRequested)="resetForm()" />
             }
+            </div>
 
             @if (!submitted()) {
-              <div class="form-actions">
+              <div class="form-actions" @fadeIn>
                 @if (currentStep() > 1) {
                   <button type="button" class="btn btn-secondary btn-sm" (click)="prevStep()">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
@@ -260,14 +282,14 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
                     <span class="form-error">{{ error() }}</span>
                   }
                   @if (currentStep() < 7) {
-                    <button type="button" class="btn btn-primary btn-next" (click)="nextStep()" [disabled]="!canProceed()">
-                      Siguiente
+                    <button type="button" class="btn btn-primary btn-next font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2" (click)="nextStep()" [disabled]="!canProceed()">
+                      <span>Siguiente</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
                     </button>
                   } @else {
                     @if (!showConfirmSubmit()) {
-                      <button type="button" class="btn btn-primary btn-lg btn-next" (click)="showConfirmSubmit.set(true)" [disabled]="!canProceed() || submitting()">
-                        Enviar Inscripción
+                      <button type="button" class="btn btn-primary btn-lg btn-next font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2" (click)="showConfirmSubmit.set(true)" [disabled]="!canProceed() || submitting()">
+                        <span>Enviar Inscripción</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                       </button>
                     } @else {
@@ -287,20 +309,22 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
                   }
                 </div>
                 <div class="form-actions-right">
-                  <a routerLink="/" class="save-later-link">Guardar y salir</a>
+                  <a routerLink="/" class="save-later-link text-sm text-gray-500 hover:text-blue-400 transition-colors duration-200">Guardar y salir</a>
                 </div>
               </div>
             }
           </form>
         </div>
-        </div>
+      </div>
+      </div>
       }
       @else if (currentStep() === 8) {
         <app-inscripcion-constancia
           [result]="inscriptionResult()!"
           [data]="data"
           [subcategoryName]="getSubcategoryName(data.subcategory)"
-        ></app-inscripcion-constancia>
+          (printRequested)="printConstancia()"
+          (resetRequested)="resetForm()" />
       }
     </div>
   `

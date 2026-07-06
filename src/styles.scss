@@ -467,6 +467,7 @@ textarea:focus-visible {
 .text-gradient-blue-gold {
   background: linear-gradient(to right, var(--brand-500), var(--brand-accent));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
