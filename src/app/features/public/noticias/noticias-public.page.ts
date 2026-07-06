@@ -26,7 +26,7 @@ interface NewsItem {
         <div class="header-topbar">
           <div class="header-topbar-inner">
             <div class="header-topbar-left">
-              <span class="topbar-info">PRE-COSQUÍN PUERTO PIRÁMIDES 2026</span>
+              <span class="topbar-info">PRE-COSQUÍN PUERTO PIRÁMIDES 2027</span>
             </div>
             <div class="header-topbar-right">
               <a href="https://www.instagram.com/precosquinpuertopiramides" target="_blank" class="topbar-social-icon" title="Instagram">
@@ -148,7 +148,7 @@ interface NewsItem {
           </div>
         </div>
         <div class="footer-copyright">
-          <p>&copy; 2026 Precosquin Pirámides. Todos los derechos reservados.</p>
+          <p>&copy; 2027 Precosquin Pirámides. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>

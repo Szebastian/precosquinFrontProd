@@ -10,8 +10,7 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
   imports: [CommonModule, FormsModule],
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
-      <h2 class="step-title">Rubro de Participación</h2>
-      <p class="step-desc">Seleccioná la categoría y subcategoría de tu presentación</p>
+      <p class="step-desc" style="margin-top: 0;">Seleccioná la categoría y subcategoría de tu presentación</p>
 
       <div class="form-group">
         <label class="form-label">Categoría *</label>

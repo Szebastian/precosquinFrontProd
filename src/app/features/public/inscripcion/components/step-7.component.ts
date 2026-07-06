@@ -10,8 +10,7 @@ import { subcategoriesByCategory } from '../inscripcion.page';
   imports: [CommonModule, FormsModule],
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
-      <h2 class="step-title">Declaración Jurada y Revisión</h2>
-      <p class="step-desc">Verificá tu información y aceptá las condiciones</p>
+      <p class="step-desc" style="margin-top: 0;">Verificá tu información y aceptá las condiciones</p>
 
       <div class="declaration-section">
         <label class="checkbox-label">

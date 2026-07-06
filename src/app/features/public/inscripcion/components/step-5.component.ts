@@ -10,10 +10,9 @@ import { InscripcionData } from '../inscripcion.page';
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
       <div class="step-title-row">
-        <h2 class="step-title">Rider Técnico</h2>
         <span class="optional-badge">Opcional</span>
       </div>
-      <p class="step-desc">Indicá qué necesitás para tu presentación en escenario. Podés avanzar sin completar esta sección.</p>
+      <p class="step-desc" style="margin-top: 0;">Indicá qué necesitás para tu presentación en escenario. Podés avanzar sin completar esta sección.</p>
 
       <!-- SONIDO -->
       <div class="rider-section">

@@ -11,8 +11,7 @@ import { subcategoriesByCategory } from '../inscripcion.page';
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
       @if (data().category === 'musica') {
-        <h2 class="step-title">Información Artística — Música</h2>
-        <p class="step-desc">Completá los datos de tu presentación musical</p>
+        <p class="step-desc" style="margin-top: 0;">Completá los datos de tu presentación musical</p>
 
         @if (data().subcategory === 'cancion_inedita') {
           <div class="alert-info" style="margin-bottom: var(--space-4);">
@@ -54,8 +53,7 @@ import { subcategoriesByCategory } from '../inscripcion.page';
       }
 
       @if (data().category === 'danza') {
-        <h2 class="step-title">Información Artística — Danza</h2>
-        <p class="step-desc">Completá los datos de tu presentación de danza</p>
+        <p class="step-desc" style="margin-top: 0;">Completá los datos de tu presentación de danza</p>
 
         <div class="form-group">
           <label class="form-label" for="proposalName">Nombre de la propuesta</label>

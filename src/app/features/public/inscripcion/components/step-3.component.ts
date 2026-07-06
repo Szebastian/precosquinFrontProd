@@ -10,8 +10,7 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
   imports: [CommonModule, FormsModule],
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
-      <h2 class="step-title">Integrantes del Grupo</h2>
-      <p class="step-desc">Agregá los datos de cada integrante</p>
+      <p class="step-desc" style="margin-top: 0;">Agregá los datos de cada integrante</p>
 
       @for (member of data().members; track $index; let i = $index) {
         <div class="member-card">

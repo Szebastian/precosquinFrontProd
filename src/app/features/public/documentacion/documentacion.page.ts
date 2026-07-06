@@ -26,7 +26,7 @@ export class DocumentacionPageComponent {
     { id: 'smf', nombre: 'Solista de Malambo Femenino', tiempo: '2-4 min', desc: 'Malambo femenino en solitario.', reglas: 'Mismas reglas que el masculino. Estilo norteño o sureño.', criterios: 'Mismos criterios que Malambo Masculino' },
     { id: 'cm', nombre: 'Conjunto de Malambo', tiempo: '3-4 min', desc: 'Grupo de 4 a 8 bailarines de malambo.', reglas: 'Mínimo 4, máximo 8 integrantes. Máximo 4 músicos en vivo. Puede cambiar estilo entre ronda y final.', criterios: 'Estilo · Rutina Coreográfica · Interpretación · Puesta' },
     { id: 'ci2', nombre: 'Canción Inédita', tiempo: '5 min', desc: 'Obra musical inédita del participante.', reglas: 'Presentar la obra completa. Evaluación de producción, arreglo y métrica.', criterios: 'Propuesta (producción, arreglo) · Música (forma, estructura armónica) · Métrica (rima, regionalismo)' },
-    { id: 'eof', nombre: 'Expresión Oral Folklórica', tiempo: '5-8 min', desc: 'Narradores, recitadores, "decidores". NUEVA CATEGORÍA.', reglas: 'Mínimo 5 min, máximo 8 min. Categoría nueva desde 2026.', criterios: 'Interpretación y expresión oral · Contenido, identidad cultural y valor folklórico · Presencia Escénica y Desempeño Artístico' },
+    { id: 'eof', nombre: 'Expresión Oral Folklórica', tiempo: '5-8 min', desc: 'Narradores, recitadores, "decidores". NUEVA CATEGORÍA.', reglas: 'Mínimo 5 min, máximo 8 min. Categoría nueva desde 2027.', criterios: 'Interpretación y expresión oral · Contenido, identidad cultural y valor folklórico · Presencia Escénica y Desempeño Artístico' },
   ];
 
   categoriasDanza = [

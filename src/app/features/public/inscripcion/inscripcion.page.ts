@@ -12,6 +12,7 @@ import { InscripcionStep4Component } from './components/step-4.component';
 import { InscripcionStep5Component } from './components/step-5.component';
 import { InscripcionStep6Component } from './components/step-6.component';
 import { InscripcionStep7Component } from './components/step-7.component';
+import { CircularProgressComponent } from '../../../shared/components/circular-progress/circular-progress.component';
 
 export function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -136,50 +137,48 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
 @Component({
   selector: 'app-inscripcion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component],
+  imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, CircularProgressComponent],
   styleUrl: './inscripcion.page.scss',
   template: `
-    <div class="public-page">
+    <div class="public-page form-layout">
       @if (currentStep() < 8) {
-        <nav class="form-nav">
-          <a routerLink="/" class="nav-brand">
-            <img src="assets/img/logoballena.webp" alt="Precosquin" class="nav-logo" />
-            <span>Precosquin</span>
-          </a>
-          <a routerLink="/" class="nav-link">Volver al inicio</a>
-        </nav>
-      }
+        <div class="form-sidebar">
+          <nav class="form-nav-vertical">
+            <a routerLink="/" class="nav-brand">
+              <img src="assets/img/logoballena.webp" alt="Precosquin" class="nav-logo" />
+              <span>Precosquin</span>
+            </a>
+          </nav>
 
-      @if (currentStep() < 8) {
-        <div class="form-wrapper">
+          <div class="sidebar-progress-section">
+            <app-circular-progress
+              [progress]="getProgressPercentage()"
+              [currentStep]="currentStep()"
+              [totalSteps]="steps.length">
+            </app-circular-progress>
+            <ul class="sidebar-steps-list">
+              @for (step of steps; track step.number) {
+                <li [class.active]="currentStep() === step.number" [class.completed]="currentStep() > step.number">
+                  <span class="step-marker"></span>
+                  <span class="step-label-sidebar">{{ step.label }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <div class="sidebar-quote">
+            <p>"La música es el lenguaje universal del alma."</p>
+            <div class="quote-author">
+              <span>— Precosquin 2027</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-main-content">
           <div class="form-card animate-scale-in">
             <div class="form-header">
-              <h1>Inscripción de Artista</h1>
-              <p>Completá los pasos para participar en Precosquin</p>
-            </div>
-
-            <div class="steps-indicator">
-              <div class="progress-bar-wrapper">
-                <div class="progress-bar-fill" [style.width.%]="getProgressPercentage()"></div>
-                <span class="progress-bar-text">{{ getProgressPercentage() }}% completado</span>
-              </div>
-              <div class="steps-row">
-                @for (step of visibleSteps(); track step.number; let i = $index) {
-                  <div class="step" [class.active]="currentStep() === step.number" [class.completed]="currentStep() > step.number">
-                    <div class="step-circle">
-                      @if (currentStep() > step.number) {
-                        <!-- SVG removed -->
-                      } @else {
-                        {{ step.number }}
-                      }
-                    </div>
-                    <span class="step-label">{{ step.label }}</span>
-                  </div>
-                  @if (i < visibleSteps().length - 1) {
-                    <div class="step-line" [class.completed]="currentStep() > step.number"></div>
-                  }
-                }
-              </div>
+              <h1>Paso {{ currentStep() }} de {{ steps.length }}</h1>
+              <p>{{ stepTitles[currentStep() - 1] }}</p>
             </div>
 
             <form (submit)="onSubmit($event)" class="inscription-form">
@@ -230,7 +229,7 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
             @if (submitted() && currentStep() === 8) {
               <div class="step-content success-content animate-scale-in">
                 <div class="success-icon">
-                  <!-- SVG removed -->
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <h2>Inscripción Enviada</h2>
                 <p>Generando tu constancia...</p>
@@ -249,63 +248,59 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
             @if (!submitted()) {
               <div class="form-actions">
                 @if (currentStep() > 1) {
-                  <button type="button" class="btn btn-secondary" (click)="prevStep()">
-                    <!-- SVG removed -->
+                  <button type="button" class="btn btn-secondary btn-sm" (click)="prevStep()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
                     Anterior
                   </button>
-                }
-                <div class="spacer"></div>
-                @if (error()) {
-                  <span class="form-error">{{ error() }}</span>
-                }
-                @if (currentStep() < 7) {
-                  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!canProceed()">
-                    Siguiente
-                    <!-- SVG removed -->
-                  </button>
                 } @else {
-                  @if (!showConfirmSubmit()) {
-                    <button type="button" class="btn btn-primary btn-lg" (click)="showConfirmSubmit.set(true)" [disabled]="!canProceed() || submitting()">
-                      Enviar Inscripción
+                  <div></div>
+                }
+                <div class="form-actions-center">
+                  @if (error()) {
+                    <span class="form-error">{{ error() }}</span>
+                  }
+                  @if (currentStep() < 7) {
+                    <button type="button" class="btn btn-primary btn-next" (click)="nextStep()" [disabled]="!canProceed()">
+                      Siguiente
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
                     </button>
                   } @else {
-                    <div class="confirm-submit-group">
-                      <span class="confirm-text">¿Confirmás el envío?</span>
-                      <button type="button" class="btn btn-secondary btn-sm" (click)="showConfirmSubmit.set(false)">Cancelar</button>
-                      <button type="submit" class="btn btn-primary btn-lg" [disabled]="submitting()">
-                        @if (submitting()) {
-                          <span class="spinner"></span> {{ submittingText() }}
-                        } @else {
-                          Sí, enviar
-                        }
+                    @if (!showConfirmSubmit()) {
+                      <button type="button" class="btn btn-primary btn-lg btn-next" (click)="showConfirmSubmit.set(true)" [disabled]="!canProceed() || submitting()">
+                        Enviar Inscripción
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                       </button>
-                    </div>
+                    } @else {
+                      <div class="confirm-submit-group">
+                        <span class="confirm-text">¿Confirmás el envío?</span>
+                        <button type="button" class="btn btn-secondary btn-sm" (click)="showConfirmSubmit.set(false)">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-lg" [disabled]="submitting()">
+                          @if (submitting()) {
+                            <span class="spinner"></span> {{ submittingText() }}
+                          } @else {
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Sí, enviar
+                          }
+                        </button>
+                      </div>
+                    }
                   }
-                }
+                </div>
+                <div class="form-actions-right">
+                  <a routerLink="/" class="save-later-link">Guardar y salir</a>
+                </div>
               </div>
             }
           </form>
-          <div class="sponsors-section">
-            <img src="assets/img/LPiramides.webp" alt="Municipalidad" class="sponsor-logo sponsor-logo-inverted sponsor-logo-large" />
-            <img src="assets/img/LRayentray.webp" alt="Rayentray" class="sponsor-logo sponsor-logo-transparent" />
-            <img src="assets/img/LHydro.webp" alt="Hidro" class="sponsor-logo sponsor-logo-transparent" />
-          </div>
-
-          <div class="social-container">
-            <p class="social-label">Seguinos en las redes:</p>
-            <div class="social-section">
-              <a href="https://www.instagram.com/precosquinpuertopiramides?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="social-link">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                <span>Instagram</span>
-              </a>
-              <a href="https://www.youtube.com/@PreCosquinPuertoPirámides" target="_blank" rel="noopener noreferrer" class="social-link">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.13C5.12 19.56 12 19.56 12 19.56s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
-                <span>YouTube</span>
-              </a>
-            </div>
-          </div>
         </div>
         </div>
+      }
+      @else if (currentStep() === 8) {
+        <app-inscripcion-constancia
+          [result]="inscriptionResult()!"
+          [data]="data"
+          [subcategoryName]="getSubcategoryName(data.subcategory)"
+        ></app-inscripcion-constancia>
       }
     </div>
   `
@@ -316,6 +311,26 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   
 
   currentStep = signal(1);
+
+  readonly steps = [
+    { number: 1, label: 'Datos Generales' },
+    { number: 2, label: 'Experiencia Artística' },
+    { number: 3, label: 'Integrantes del Grupo' },
+    { number: 4, label: 'Requerimientos Técnicos' },
+    { number: 5, label: 'Rider Técnico' },
+    { number: 6, label: 'Material de Difusión' },
+    { number: 7, label: 'Declaración Jurada' },
+  ];
+
+  readonly stepTitles = [
+    '¿Cuáles son tus datos personales?',
+    '¿Qué categoría querés?',
+    '¿Quiénes son los integrantes?',
+    '¿Qué necesitás para actuar?',
+    'Detallá tu rider técnico',
+    'Adjuntá archivos',
+    'Revisá y confirmá tu inscripción',
+  ];
   submitted = signal(false);
   submitting = signal(false);
   error = signal('');
@@ -335,15 +350,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     'Santa Fe', 'Santiago del Estero', 'Tierra del Fuego', 'Tucumán'
   ];
 
-  steps = [
-    { number: 1, label: 'Datos' },
-    { number: 2, label: 'Rubro' },
-    { number: 3, label: 'Integrantes' },
-    { number: 4, label: 'Arte' },
-    { number: 5, label: 'Rider' },
-    { number: 6, label: 'Archivos' },
-    { number: 7, label: 'Confirmar' },
-  ];
+
 
   data: InscripcionData = {
     fullName: '',
@@ -613,12 +620,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 
   isGroupType = computed(() => this.groupSubcategories.includes(this.data.subcategory));
 
-  visibleSteps = computed(() => {
-    if (this.isGroupType()) {
-      return this.steps;
-    }
-    return this.steps.filter(s => s.number !== 3);
-  });
+  visibleSteps = computed(() => this.steps.filter(step => step.number < 8));
 
   onCategoryChange(): void {
     this.data.subcategory = '';

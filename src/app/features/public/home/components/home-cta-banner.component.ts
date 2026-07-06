@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
     <section class="cta-banner">
       <div class="cta-inner">
         <div class="cta-content">
-          <span class="cta-badge">INSCRIPCIONES 2026</span>
+          <span class="cta-badge">INSCRIPCIONES 2027</span>
           <h2 class="cta-title">¿Listo para participar?</h2>
           <p class="cta-desc">Inscribí tu propuesta artística y formá parte del festival folclórico más importante de la Patagonia.</p>
           <p class="cta-urgency">

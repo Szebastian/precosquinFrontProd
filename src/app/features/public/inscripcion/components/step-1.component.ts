@@ -16,9 +16,6 @@ export interface Member {
   imports: [CommonModule, FormsModule],
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
-      <h2 class="step-title">Datos Generales del Participante</h2>
-      <p class="step-desc">Completá tus datos personales de contacto</p>
-
       <div class="form-group">
         <label class="form-label" for="fullName">Nombre y apellido *</label>
         <input type="text" id="fullName" name="fullName" required class="form-input"

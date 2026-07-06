@@ -9,8 +9,7 @@ import { InscripcionData } from '../inscripcion.page';
   imports: [CommonModule, FormsModule],
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
-      <h2 class="step-title">Archivos a Adjuntar</h2>
-      <p class="step-desc">Subí los archivos requeridos para completar tu inscripción</p>
+      <p class="step-desc" style="margin-top: 0;">Subí los archivos requeridos para completar tu inscripción</p>
 
       <div class="form-group">
         <label class="form-label">Foto de DNI — Frente</label>

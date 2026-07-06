@@ -91,7 +91,7 @@ export class HomePageComponent implements OnInit {
 
   newsItems = signal<NewsItem[]>([
     {
-      id: 1, category: 'FESTIVAL 2026', title: 'Se abren las inscripciones para el certamen Nuevos Valores',
+      id: 1, category: 'FESTIVAL 2027', title: 'Se abren las inscripciones para el certamen Nuevos Valores',
       image: IMAGE_PATHS.HOME_BACKGROUND, thumbType: 'img', thumbSrc: 'assets/img/cruzBaila.png', thumbBg: 'bg-blue'
     },
     {

@@ -15,7 +15,7 @@ import { RouterLink } from '@angular/router';
           </span>
           <h2 class="declaracion-hero-title">Declarado de Interés Cultural, Turístico y Comunitario</h2>
           <p class="declaracion-hero-desc">
-            El Concejo Deliberante de Puerto Pirámides respalda oficialmente el Pre-Cosquín 2026 como sede
+            El Concejo Deliberante de Puerto Pirámides respalda oficialmente el Pre-Cosquín 2027 como sede
             del certamen que impulsa nuevos valores del folclore patagónico. Los días 5 y 6 de septiembre.
           </p>
           <div class="declaracion-hero-actions">
