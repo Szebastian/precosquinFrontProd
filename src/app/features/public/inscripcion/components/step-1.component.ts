@@ -648,8 +648,6 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
       && this.phoneValid()
       && email.length > 0
       && this.isValidEmailFormat(email)
-      && this.emailValid()
-      && !this.emailChecking()
       && !this.hasAnyError();
   }
 }

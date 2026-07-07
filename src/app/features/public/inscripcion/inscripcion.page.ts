@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnDestroy, OnInit, HostListener, output, ViewChild } from '@angular/core';
+import { Component, signal, computed, inject, OnDestroy, OnInit, HostListener, output, ViewChild, ElementRef, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -103,7 +103,7 @@ export const subcategoriesByCategory: Record<string, { id: string; name: string 
   musica: [
     { id: 'solista_vocal', name: 'Solista Vocal' },
     { id: 'duo_vocal', name: 'Dúo Vocal' },
-    { id: 'narrador_constumbrista', name: 'Narrador costumbrista' },
+    { id: 'expresion_oral_folclorica', name: 'Expresión Oral Folclórica' },
     { id: 'conjunto_vocal', name: 'Conjunto Vocal' },
     { id: 'solista_instrumental', name: 'Solista Instrumental' },
     { id: 'conjunto_instrumental', name: 'Conjunto Instrumental' },
@@ -198,7 +198,7 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
           </div>
         </div>
 
-        <div class="form-main-content">
+        <div class="form-main-content" #formMainContent>
           <div class="w-full max-w-4xl mx-auto px-4 py-8"> <!-- Added wrapper for width and centering -->
             <div class="form-card animate-scale-in">
               <div class="form-header">
@@ -262,7 +262,7 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
             </form>
         </div>
 
-        @if (currentStep() < 7) {
+        @if (currentStep() < 7 && !atBottom()) {
           <button type="button" class="next-question-arrow" id="nextQuestionBtn"
             (click)="scrollToNextQuestion()">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -272,7 +272,7 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
         }
 
             @if (!submitted()) {
-              <div class="next-section" @fadeIn>
+              <div class="next-section" @fadeIn #nextSection>
                 @if (currentStep() < 7) {
                   <button type="button" class="btn-next-large" (click)="nextStep()" [disabled]="!canProceed()">
                     SIGUIENTE
@@ -353,6 +353,8 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   
   @ViewChild(InscripcionStep1Component) step1Component?: InscripcionStep1Component;
+  @ViewChild('nextSection') nextSectionRef?: ElementRef<HTMLElement>;
+  @ViewChild('formMainContent') formMainContentRef?: ElementRef<HTMLDivElement>;
 
   currentStep = signal(1);
 
@@ -384,6 +386,8 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   submittingText = signal('Enviando inscripción...');
   lastDirection = signal<'left' | 'right'>('left');
   showConstanciaModal = signal(false);
+  atBottom = signal(false);
+  private observer?: IntersectionObserver;
 
   private draftKey = 'precosquin_inscripcion_draft';
 
@@ -488,6 +492,18 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadDraft();
+    setTimeout(() => {
+      const nextEl = this.nextSectionRef?.nativeElement;
+      if (nextEl) {
+        this.observer = new IntersectionObserver(
+          ([entry]) => {
+            this.atBottom.set(entry.isIntersecting);
+          },
+          { threshold: 0.1 }
+        );
+        this.observer.observe(nextEl);
+      }
+    });
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -744,6 +760,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     Object.values(this.filePreviews).forEach(url => URL.revokeObjectURL(url));
+    this.observer?.disconnect();
   }
 
   getFilledThemesCount(): number {
