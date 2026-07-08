@@ -78,6 +78,7 @@ export const appRoutes: Routes = [
     path: 'inscripcion',
     loadComponent: () => import('./features/public/inscripcion/inscripcion.page').then(m => m.InscripcionPageComponent),
     canActivate: [publicGuard],
+    canDeactivate: [() => import('./features/public/inscripcion/inscripcion-deactivate.guard').then(m => m.inscripcionDeactivateGuard)],
     data: { title: 'Inscripción de Artista' }
   },
   {

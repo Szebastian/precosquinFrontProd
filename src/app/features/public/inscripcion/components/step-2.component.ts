@@ -23,19 +23,19 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
           </div>
           <div class="category-info">
             <span class="category-name">Música</span>
-            <span class="category-count">6 subcategorías</span>
+            <span class="category-count">{{ musicaCount() }} subcategorías</span>
           </div>
         </label>
         <label class="category-card" [class.selected]="data().category === 'danza'">
           <input type="radio" name="category" value="danza" [(ngModel)]="data().category" (ngModelChange)="onCategoryChange()" />
           <div class="category-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+              <circle cx="12" cy="5" r="3"/><path d="M12 8v4l-3 5"/><path d="M12 12l3 5"/><path d="M9 22l3-5 3 5"/>
             </svg>
           </div>
           <div class="category-info">
             <span class="category-name">Danza</span>
-            <span class="category-count">6 subcategorías</span>
+            <span class="category-count">{{ danzaCount() }} subcategorías</span>
           </div>
         </label>
       </div>
@@ -231,6 +231,8 @@ export class InscripcionStep2Component {
 
   subcategories = computed(() => subcategoriesByCategory[this.data().category] || []);
   groupSubcategories = groupSubcategories;
+  musicaCount = computed(() => subcategoriesByCategory['musica']?.length || 0);
+  danzaCount = computed(() => subcategoriesByCategory['danza']?.length || 0);
 
   get currentSubcategories() {
     return subcategoriesByCategory[this.data().category] || [];

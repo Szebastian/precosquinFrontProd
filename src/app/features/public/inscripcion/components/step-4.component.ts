@@ -40,15 +40,23 @@ import { subcategoriesByCategory } from '../inscripcion.page';
               <tbody>
                 @for (theme of data().themes; track $index; let i = $index) {
                   <tr>
-                    <td class="theme-number">{{ i + 1 }}</td>
-                    <td><input type="text" class="form-input table-input" [(ngModel)]="theme.title" [name]="'themeTitle' + i" placeholder="Nombre del tema" /></td>
-                    <td><input type="text" class="form-input table-input" [(ngModel)]="theme.rhythm" [name]="'themeRhythm' + i" placeholder="Ej: Chacarera" /></td>
-                    <td><input type="text" class="form-input table-input" [(ngModel)]="theme.author" [name]="'themeAuthor' + i" placeholder="Autor o compositor" /></td>
+                    <td class="theme-number" data-label="#">{{ i + 1 }}</td>
+                    <td data-label="Tema"><input type="text" class="form-input table-input" [(ngModel)]="theme.title" [name]="'themeTitle' + i" placeholder="Nombre del tema" /></td>
+                    <td data-label="Ritmo"><input type="text" class="form-input table-input" [(ngModel)]="theme.rhythm" [name]="'themeRhythm' + i" placeholder="Ej: Chacarera" /></td>
+                    <td data-label="Autor"><input type="text" class="form-input table-input" [(ngModel)]="theme.author" [name]="'themeAuthor' + i" placeholder="Autor o compositor" /></td>
                   </tr>
                 }
               </tbody>
             </table>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="biography">Contanos sobre vos o tu grupo</label>
+          <textarea id="biography" name="biography" class="form-textarea" rows="4" maxlength="500"
+            [(ngModel)]="data().biography"
+            placeholder="Trayectoria, logros, experiencia..."></textarea>
+          <span class="char-count">{{ (data().biography || '').length }} / 500</span>
         </div>
       }
 
@@ -69,16 +77,26 @@ import { subcategoriesByCategory } from '../inscripcion.page';
 
         <div class="form-group">
           <label class="form-label" for="style">¿Qué estilo tiene?</label>
-          <textarea id="style" name="style" class="form-textarea" rows="4"
+          <textarea id="style" name="style" class="form-textarea" rows="4" maxlength="300"
             [(ngModel)]="data().style"
             placeholder="Contanos un poco del estilo: folklórico, contemporáneo..."></textarea>
+          <span class="char-count">{{ (data().style || '').length }} / 300</span>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="danceList">¿Qué danzas incluye?</label>
-          <textarea id="danceList" name="danceList" class="form-textarea" rows="4"
+          <textarea id="danceList" name="danceList" class="form-textarea" rows="4" maxlength="400"
             [(ngModel)]="data().danceList"
             placeholder="Listá las danzas o cuadros que componen tu presentación"></textarea>
+          <span class="char-count">{{ (data().danceList || '').length }} / 400</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="biography">Contanos sobre vos o tu grupo</label>
+          <textarea id="biography" name="biography" class="form-textarea" rows="4" maxlength="500"
+            [(ngModel)]="data().biography"
+            placeholder="Trayectoria, logros, experiencia..."></textarea>
+          <span class="char-count">{{ (data().biography || '').length }} / 500</span>
         </div>
       }
     </div>
@@ -107,6 +125,22 @@ import { subcategoriesByCategory } from '../inscripcion.page';
     .themes-table td { padding: 0.5rem 0.625rem; }
     .theme-number { color: #475569; font-weight: 600; width: 30px; font-size: 0.8rem; }
     .table-input { padding: 0.5rem 0.625rem !important; font-size: 0.85rem !important; border-radius: 0.375rem !important; }
+    .char-count { display: block; text-align: right; font-size: 0.7rem; color: #475569; margin-top: 4px; }
+
+    @media (max-width: 640px) {
+      .themes-table-wrapper { border: none; overflow: visible; }
+      .themes-table { display: block; }
+      .themes-table thead { display: none; }
+      .themes-table tbody { display: flex; flex-direction: column; gap: 1rem; }
+      .themes-table tr {
+        display: flex; flex-direction: column; gap: 0.5rem;
+        padding: 0.75rem; background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 0.5rem;
+      }
+      .themes-table td { padding: 0; display: flex; flex-direction: column; gap: 0.25rem; }
+      .themes-table td::before { content: attr(data-label); font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+      .theme-number { width: auto; font-size: 0.75rem; margin-bottom: 0.25rem; }
+    }
   `]
 })
 export class InscripcionStep4Component {

@@ -85,7 +85,7 @@ import { InscripcionData } from '../inscripcion.page';
 
         <div class="form-group">
           <label class="form-label" for="cables">¿Necesitás cables o conectores?</label>
-          <input type="text" id="cables" class="form-input" [(ngModel)]="cablesInput" name="cables"
+          <input type="text" id="cables" class="form-input" [ngModel]="cablesInput()" (ngModelChange)="onCablesChange($event)" name="cables"
             placeholder="Ej: cable XLR 10m, jack 1/4" />
           <span class="form-hint">Separá con coma si son varios</span>
         </div>
@@ -100,9 +100,10 @@ import { InscripcionData } from '../inscripcion.page';
 
         <div class="form-group">
           <label class="form-label" for="otrosRider">Contanos algo más</label>
-          <textarea id="otrosRider" class="form-textarea" rows="3"
+          <textarea id="otrosRider" class="form-textarea" rows="3" maxlength="300"
             [(ngModel)]="data().riderTecnico.otros" name="otrosRider"
             placeholder="Si te falta algo, decinos acá"></textarea>
+          <span class="char-count">{{ (data().riderTecnico.otros || '').length }} / 300</span>
         </div>
       </div>
     </div>
@@ -121,6 +122,7 @@ import { InscripcionData } from '../inscripcion.page';
     .rider-chip.selected { border-color: var(--brand-400); background: rgba(99, 102, 241, 0.2); color: var(--brand-300); font-weight: var(--weight-medium); }
     @keyframes slideLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    .char-count { display: block; text-align: right; font-size: 0.7rem; color: #475569; margin-top: 4px; }
   `]
 })
 export class InscripcionStep5Component implements OnInit {
@@ -147,5 +149,10 @@ export class InscripcionStep5Component implements OnInit {
 
   ngOnInit() {
     this.cablesInput.set(this.data().riderTecnico.sonido.cables.join(', '));
+  }
+
+  onCablesChange(value: string): void {
+    this.cablesInput.set(value);
+    (this.data() as any).riderTecnico.sonido.cables = value.split(',').map((s: string) => s.trim()).filter((s: string) => s);
   }
 }

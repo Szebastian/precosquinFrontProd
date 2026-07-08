@@ -240,7 +240,7 @@ import { InscripcionData } from '../inscripcion.page';
   `]
 })
 export class InscripcionStep6Component {
-  data = input.required<any>();
+  data = input.required<InscripcionData>();
   lastDirection = input.required<'left' | 'right'>();
 
   fileSelected = output<{ fieldName: string; file: File }>();

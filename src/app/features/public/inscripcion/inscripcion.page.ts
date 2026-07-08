@@ -1,7 +1,7 @@
-import { Component, signal, computed, inject, OnDestroy, OnInit, HostListener, output, ViewChild, ElementRef, afterNextRender } from '@angular/core';
+import { Component, signal, computed, inject, OnDestroy, OnInit, HostListener, output, ViewChild, ElementRef, afterNextRender, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { trigger, transition, style, animate, query, animateChild } from '@angular/animations';
 import { environment } from '../../../../environments/environment';
@@ -123,18 +123,6 @@ export const groupSubcategories = [
   'duo_vocal', 'conjunto_vocal', 'conjunto_instrumental',
   'conjunto_malambo', 'pareja_tradicional', 'pareja_estilizada', 'conjunto_baile',
 ];
-
-const provincias = [
-  'Buenos Aires', 'CABA', 'Catamarca', 'Chaco', 'Chubut',
-  'Córdoba', 'Corrientes', 'Entre Ríos', 'Formosa', 'Jujuy',
-  'La Pampa', 'La Rioja', 'Mendoza', 'Misiones', 'Neuquén',
-  'Río Negro', 'Salta', 'San Juan', 'San Luis', 'Santa Cruz',
-  'Santa Fe', 'Santiago del Estero', 'Tierra del Fuego', 'Tucumán'
-];
-
-const micOptions = ['Dinámico (SM58)', 'Condensador de solista', 'Inalámbrico', 'Overhead', 'Para acordeón/guitarra', 'Para percusión'];
-const backlineOptions = ['Guitarra eléctrica', 'Guitarra acústica', 'Bajo', 'Batería', 'Acordeón', 'Teclado', 'Percusión menor'];
-const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin preferencia'];
 
 @Component({
   selector: 'app-inscripcion',
@@ -288,9 +276,9 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
                     <div class="confirm-group">
                       <span class="confirm-text">¿Confirmás el envío?</span>
                       <button type="button" class="btn-cancel" (click)="showConfirmSubmit.set(false)">Cancelar</button>
-                      <button type="submit" class="btn-confirm" (click)="onSubmit($event)" [disabled]="submitting()">
+                       <button type="submit" class="btn-confirm" (click)="onSubmit($event)" [disabled]="submitting()">
                         @if (submitting()) {
-                          <span class="spinner"></span> {{ submittingText() }}
+                          <span class="spinner"></span> {{ uploadProgress() || submittingText() }}
                         } @else {
                           Sí, enviar
                         }
@@ -299,7 +287,10 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
                   }
                 }
                 @if (error()) {
-                  <span class="form-error">{{ error() }}</span>
+                   <span class="form-error" role="alert">{{ error() }}</span>
+                   @if (error()) {
+                     <button type="button" class="retry-post-btn" (click)="onSubmit($event)">Reintentar</button>
+                   }
                 }
               </div>
 
@@ -320,7 +311,7 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
                   }
                 </div>
                 <div class="bottom-nav-right">
-                  <a routerLink="/" class="save-link">Guardar y continuar más tarde</a>
+                  <button type="button" class="save-link" (click)="saveDraftAndExit()">Guardar y continuar más tarde</button>
                 </div>
               </div>
             }
@@ -332,11 +323,23 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
     @if (showConstanciaModal() && inscriptionResult()) {
       <div class="constancia-modal-overlay" (click)="closeConstanciaModal()">
         <div class="constancia-modal" (click)="$event.stopPropagation()">
-          <button type="button" class="constancia-modal-close" (click)="closeConstanciaModal()">
+          <button type="button" class="constancia-modal-close" #modalClose (click)="closeConstanciaModal()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
           </button>
+          @if (uploadFailedFiles().length > 0) {
+            <div class="upload-warning">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <div>
+                <strong>Algunos archivos no se subieron:</strong>
+                <span>{{ uploadFailedFiles().join(', ') }}</span>
+              </div>
+              <button type="button" class="retry-btn" (click)="retryFailedUploads()">Reintentar</button>
+            </div>
+          }
           <app-inscripcion-constancia
             [result]="inscriptionResult()!"
             [data]="data"
@@ -351,9 +354,11 @@ const pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin pref
 
 export class InscripcionPageComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
+  private router = inject(Router);
   
   @ViewChild(InscripcionStep1Component) step1Component?: InscripcionStep1Component;
   @ViewChild('nextSection') nextSectionRef?: ElementRef<HTMLElement>;
+  @ViewChild('modalClose') modalCloseRef?: ElementRef<HTMLButtonElement>;
   @ViewChild('formMainContent') formMainContentRef?: ElementRef<HTMLDivElement>;
 
   currentStep = signal(1);
@@ -387,19 +392,17 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   lastDirection = signal<'left' | 'right'>('left');
   showConstanciaModal = signal(false);
   atBottom = signal(false);
+  uploadFailedFiles = signal<string[]>([]);
+  uploadProgress = signal('');
   private observer?: IntersectionObserver;
 
+  private modalFocusEffect = effect(() => {
+    if (this.showConstanciaModal()) {
+      setTimeout(() => this.modalCloseRef?.nativeElement?.focus());
+    }
+  });
+
   private draftKey = 'precosquin_inscripcion_draft';
-
-  provincias = [
-    'Buenos Aires', 'CABA', 'Catamarca', 'Chaco', 'Chubut',
-    'Córdoba', 'Corrientes', 'Entre Ríos', 'Formosa', 'Jujuy',
-    'La Pampa', 'La Rioja', 'Mendoza', 'Misiones', 'Neuquén',
-    'Río Negro', 'Salta', 'San Juan', 'San Luis', 'Santa Cruz',
-    'Santa Fe', 'Santiago del Estero', 'Tierra del Fuego', 'Tucumán'
-  ];
-
-
 
   data: InscripcionData = {
     fullName: '',
@@ -460,29 +463,8 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     acceptDataTruth: false,
   };
 
-  private subcategoriesByCategory: Record<string, { id: string; name: string }[]> = {
-    musica: [
-      { id: 'solista_vocal', name: 'Solista Vocal' },
-      { id: 'duo_vocal', name: 'Dúo Vocal' },
-      { id: 'conjunto_vocal', name: 'Conjunto Vocal' },
-      { id: 'solista_instrumental', name: 'Solista Instrumental' },
-      { id: 'conjunto_instrumental', name: 'Conjunto Instrumental' },
-      { id: 'cancion_inedita', name: 'Canción Inédita' },
-    ],
-    danza: [
-      { id: 'malambo_masculino', name: 'Solista de Malambo Masculino' },
-      { id: 'malambo_femenino', name: 'Solista de Malambo Femenino' },
-      { id: 'conjunto_malambo', name: 'Conjunto de Malambo' },
-      { id: 'pareja_tradicional', name: 'Pareja de Baile Tradicional' },
-      { id: 'pareja_estilizada', name: 'Pareja de Baile Estilizada' },
-      { id: 'conjunto_baile', name: 'Conjunto de Baile Folklórico' },
-    ],
-  };
-
-  private groupSubcategories = [
-    'duo_vocal', 'conjunto_vocal', 'conjunto_instrumental',
-    'conjunto_malambo', 'pareja_tradicional', 'pareja_estilizada', 'conjunto_baile',
-  ];
+  private subcategoriesByCategory = subcategoriesByCategory;
+  private groupSubcategories = groupSubcategories;
 
   micOptions = ['Dinámico (SM58)', 'Condensador de solista', 'Inalámbrico', 'Overhead', 'Para acordeón/guitarra', 'Para percusión'];
   backlineOptions = ['Guitarra eléctrica', 'Guitarra acústica', 'Bajo', 'Batería', 'Acordeón', 'Teclado', 'Percusión menor'];
@@ -516,9 +498,14 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && this.showConstanciaModal()) {
+      this.closeConstanciaModal();
+      return;
+    }
     const target = event.target as HTMLElement;
-    const isTextArea = target.tagName === 'TEXTAREA';
-    if (event.key === 'Enter' && !isTextArea && !this.submitted() && !this.submitting() && this.currentStep() < 8) {
+    const tag = target.tagName;
+    const isTextInput = tag === 'INPUT' && ['text', 'email', 'tel', 'number', 'search', 'url', 'password'].includes((target as HTMLInputElement).type);
+    if (event.key === 'Enter' && isTextInput && !this.submitted() && !this.submitting() && this.currentStep() < 8) {
       event.preventDefault();
       if (this.canProceed()) {
         this.nextStep();
@@ -536,6 +523,11 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       delete (draft as any).scoreFile;
       localStorage.setItem(this.draftKey, JSON.stringify(draft));
     } catch {}
+  }
+
+  saveDraftAndExit(): void {
+    this.saveDraft();
+    this.router.navigate(['/']);
   }
 
   loadDraft(): void {
@@ -616,6 +608,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     this.inscriptionResult.set(null);
     this.showConfirmSubmit.set(false);
     this.showConstanciaModal.set(false);
+    this.uploadFailedFiles.set([]);
     this.filePreviews = {};
   }
 
@@ -784,13 +777,18 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       case 2:
         return !!(this.data.category && this.data.subcategory);
       case 3:
-        return this.isGroupType() ? this.data.members.length >= 1 : true;
+        return this.isGroupType()
+          ? this.data.members.length >= 1 && this.data.members.every(m => m.fullName.trim() && m.dni.trim() && m.role)
+          : true;
       case 4:
         return true;
       case 5:
         return true;
       case 6:
-        return true;
+        return !!(
+          this.data.dniFrontFile && this.data.dniBackFile && this.data.promoPhotoFile
+          && (this.data.subcategory !== 'cancion_inedita' || (this.data.lyricsFile && this.data.scoreFile))
+        );
       case 7:
         return this.data.acceptRegulations && this.data.acceptImageRights && this.data.acceptDataTruth;
       default:
@@ -811,6 +809,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       this.lastDirection.set('left');
       this.currentStep.set(next);
       this.saveDraft();
+      this.focusFirstInput();
     }
   }
 
@@ -822,6 +821,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       }
       this.lastDirection.set('right');
       this.currentStep.set(prev);
+      this.focusFirstInput();
     }
   }
 
@@ -831,6 +831,15 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     } else {
       this.currentStep.set(step);
     }
+    this.focusFirstInput();
+  }
+
+  private focusFirstInput(): void {
+    setTimeout(() => {
+      this.formMainContentRef?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+      const el = document.querySelector('.step-content input:not([type="hidden"]), .step-content select') as HTMLElement;
+      el?.focus();
+    });
   }
 
   getSubcategoryName(id: string): string {
@@ -910,6 +919,16 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 
     let uploaded = 0;
     const total = files.length;
+    const failed: string[] = [];
+    this.uploadProgress.set(`subiendo 0/${total}`);
+
+    const fileLabels: Record<string, string> = {
+      dni_front: 'DNI frontal',
+      dni_back: 'DNI dorso',
+      promo_photo: 'Foto promocional',
+      lyrics: 'Letra',
+      score: 'Partitura',
+    };
 
     for (const { file, type } of files) {
       const formData = new FormData();
@@ -921,21 +940,38 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: () => {
           uploaded++;
+          this.uploadProgress.set(`subiendo ${uploaded}/${total}`);
           if (uploaded === total) {
+            this.uploadProgress.set('');
             this.submitting.set(false);
             this.submitted.set(true);
+            this.uploadFailedFiles.set(failed);
             this.showConstanciaModal.set(true);
           }
         },
         error: () => {
+          failed.push(fileLabels[type] || type);
           uploaded++;
+          this.uploadProgress.set(`subiendo ${uploaded}/${total}`);
           if (uploaded === total) {
+            this.uploadProgress.set('');
             this.submitting.set(false);
             this.submitted.set(true);
+            this.uploadFailedFiles.set(failed);
             this.showConstanciaModal.set(true);
           }
         },
       });
     }
+  }
+
+  retryFailedUploads(): void {
+    const result = this.inscriptionResult();
+    if (!result) return;
+    this.uploadFailedFiles.set([]);
+    this.showConstanciaModal.set(false);
+    this.submitting.set(true);
+    this.submittingText.set('Reintentando archivos...');
+    this.uploadFiles(result.id);
   }
 }

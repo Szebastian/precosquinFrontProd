@@ -29,7 +29,7 @@ export interface Member {
               [class.input-valid]="firstName().length >= 2 && !firstNameError()"
               [(ngModel)]="firstName" (ngModelChange)="updateFullName(); validateFirstName()" />
             @if (firstNameError()) {
-              <span class="field-error">{{ firstNameError() }}</span>
+              <span class="field-error" role="alert">{{ firstNameError() }}</span>
             }
           </div>
           <div class="form-field-group flex flex-col items-start w-full">
@@ -40,7 +40,7 @@ export interface Member {
               [class.input-valid]="lastName().length >= 2 && !lastNameError()"
               [(ngModel)]="lastName" (ngModelChange)="updateFullName(); validateLastName()" />
             @if (lastNameError()) {
-              <span class="field-error">{{ lastNameError() }}</span>
+              <span class="field-error" role="alert">{{ lastNameError() }}</span>
             }
           </div>
         </div>
@@ -54,8 +54,8 @@ export interface Member {
               placeholder="42.567.891" class="minimal-input"
               [class.input-error]="dniError()"
               [class.input-valid]="dniValid() && !dniError()"
-              maxlength="8"
-              [(ngModel)]="data().dni" (ngModelChange)="validateDni()" />
+              maxlength="11"
+              [ngModel]="dniDisplay()" (ngModelChange)="onDniInput($event)" />
             @if (dniValid() && !dniError()) {
               <span class="input-icon icon-valid">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -68,7 +68,7 @@ export interface Member {
             }
           </div>
           @if (dniError()) {
-            <span class="field-error">{{ dniError() }}</span>
+            <span class="field-error" role="alert">{{ dniError() }}</span>
           } @else {
             <span class="minimal-hint">Solo números, 7 u 8 dígitos. Ej: 42.567.891</span>
           }
@@ -117,10 +117,10 @@ export interface Member {
               </span>
             }
             @if (birthDateError()) {
-              <span class="field-error">{{ birthDateError() }}</span>
+              <span class="field-error" role="alert">{{ birthDateError() }}</span>
             }
             @if (ageError()) {
-              <span class="field-error">{{ ageError() }}</span>
+              <span class="field-error" role="alert">{{ ageError() }}</span>
             }
           </div>
         </div>
@@ -136,7 +136,7 @@ export interface Member {
               [class.input-valid]="data().address.length >= 3 && !addressError()"
               [(ngModel)]="data().address" (ngModelChange)="validateAddress()" />
             @if (addressError()) {
-              <span class="field-error">{{ addressError() }}</span>
+              <span class="field-error" role="alert">{{ addressError() }}</span>
             }
           </div>
           <div class="form-field-group flex flex-col items-start w-full">
@@ -147,7 +147,7 @@ export interface Member {
               [class.input-valid]="data().locality.length >= 2 && !localityError()"
               [(ngModel)]="data().locality" (ngModelChange)="validateLocality()" />
             @if (localityError()) {
-              <span class="field-error">{{ localityError() }}</span>
+              <span class="field-error" role="alert">{{ localityError() }}</span>
             }
           </div>
         </div>
@@ -167,7 +167,7 @@ export interface Member {
               }
             </select>
             @if (provinceError()) {
-              <span class="field-error">{{ provinceError() }}</span>
+              <span class="field-error" role="alert">{{ provinceError() }}</span>
             }
           </div>
           <div class="form-field-group flex flex-col items-start w-full">
@@ -178,7 +178,7 @@ export interface Member {
               [class.input-valid]="phoneValid() && !phoneError()"
               [(ngModel)]="data().phone" (ngModelChange)="validatePhone()" />
             @if (phoneError()) {
-              <span class="field-error">{{ phoneError() }}</span>
+              <span class="field-error" role="alert">{{ phoneError() }}</span>
             } @else {
               <span class="minimal-hint">Con código de área</span>
             }
@@ -213,7 +213,7 @@ export interface Member {
             }
           </div>
           @if (emailError()) {
-            <span class="field-error">{{ emailError() }}</span>
+            <span class="field-error" role="alert">{{ emailError() }}</span>
           } @else {
             <span class="minimal-hint">Ahí te mandamos la confirmación</span>
           }
@@ -380,6 +380,7 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
   firstName = signal<string>('');
   lastName = signal<string>('');
 
+  dniDisplay = signal('');
   birthDay = signal<string>('');
   birthMonth = signal<string>('');
   birthYear = signal<string>('');
@@ -415,6 +416,11 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
     const fullNameParts = this.data().fullName.split(' ');
     this.firstName.set(fullNameParts[0] || '');
     this.lastName.set(fullNameParts.slice(1).join(' ') || '');
+
+    if (this.data().dni) {
+      const raw = this.data().dni.replace(/\D/g, '');
+      this.dniDisplay.set(raw.replace(/(\d{2})(\d{0,3})(\d{0,3})/, (_, a, b, c) => [a, b, c].filter(Boolean).join('.')));
+    }
 
     if (this.data().birthDate) {
       const parts = this.data().birthDate.split('-');
@@ -484,6 +490,14 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
   validateLastName(): void {
     const v = this.lastName().trim();
     this.lastNameError.set(v.length === 0 ? 'El apellido es obligatorio' : v.length < 2 ? 'Mínimo 2 caracteres' : '');
+  }
+
+  onDniInput(value: string): void {
+    const raw = value.replace(/\D/g, '').slice(0, 8);
+    const formatted = raw.replace(/(\d{2})(\d{0,3})(\d{0,3})/, (_, a, b, c) => [a, b, c].filter(Boolean).join('.'));
+    this.dniDisplay.set(formatted);
+    (this.data() as any).dni = raw;
+    this.validateDni();
   }
 
   validateDni(): void {

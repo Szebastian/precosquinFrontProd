@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { InscripcionResult, InscripcionData } from '../inscripcion.page';
+import { InscripcionResult, InscripcionData, formatDate } from '../inscripcion.page';
 
 @Component({
   selector: 'app-inscripcion-constancia',
@@ -195,6 +195,6 @@ export class InscripcionConstanciaComponent {
   resetRequested = output();
 
   formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' });
+    return formatDate(dateStr);
   }
 }

@@ -693,182 +693,6 @@ select.form-input {
    form elements inside step components
    ============================================ */
 
-/* --- ALL native inputs, selects, textareas --- */
-::ng-deep input,
-::ng-deep select,
-::ng-deep textarea {
-  background-color: transparent !important;
-  color: var(--gray-100) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-::ng-deep input::placeholder,
-::ng-deep textarea::placeholder {
-  color: var(--gray-500) !important;
-}
-
-::ng-deep input:focus,
-::ng-deep select:focus,
-::ng-deep textarea:focus {
-  border-color: #4c8be6 !important;
-  outline: none !important;
-}
-
-::ng-deep select option {
-  background-color: #1a1d23 !important;
-  color: #f1f5f9 !important;
-}
-
-/* --- Conversational underline inputs --- */
-::ng-deep .minimal-input,
-::ng-deep .name-input {
-  background: transparent !important;
-  border: none !important;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 0 !important;
-  color: var(--gray-100) !important;
-  font-size: 1.5rem !important;
-  font-weight: 500 !important;
-  padding: 0.5rem 0 !important;
-  width: 100% !important;
-  transition: border-color 0.25s ease !important;
-}
-
-::ng-deep .minimal-input:focus,
-::ng-deep .name-input:focus {
-  border-bottom-color: #4c8be6 !important;
-  outline: none !important;
-}
-
-::ng-deep .minimal-input::placeholder,
-::ng-deep .name-input::placeholder {
-  color: var(--gray-600) !important;
-  font-weight: 400 !important;
-}
-
-::ng-deep .minimal-label,
-::ng-deep .name-label {
-  font-size: 0.7rem !important;
-  color: var(--gray-500) !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
-  margin-bottom: 0.25rem !important;
-  font-weight: 600 !important;
-}
-
-::ng-deep .minimal-hint {
-  font-size: 0.75rem !important;
-  color: var(--gray-500) !important;
-  margin-top: 0.375rem !important;
-}
-
-::ng-deep .form-field-group {
-  margin-bottom: 1.25rem !important;
-}
-
-/* --- Card-style form inputs --- */
-::ng-deep .form-input,
-::ng-deep .form-textarea,
-::ng-deep select.form-input {
-  background: transparent !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 0.5rem !important;
-  color: #f1f5f9 !important;
-  font-size: 1rem !important;
-  padding: 0.75rem 1rem !important;
-}
-
-::ng-deep .form-input:focus,
-::ng-deep .form-textarea:focus,
-::ng-deep select.form-input:focus {
-  border-color: #4c8be6 !important;
-  outline: none !important;
-  box-shadow: 0 0 0 3px rgba(76, 139, 230, 0.15) !important;
-}
-
-::ng-deep .form-label {
-  font-size: 0.75rem !important;
-  color: #64748b !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  font-weight: 600 !important;
-}
-
-/* --- Date picker selects --- */
-::ng-deep .date-select {
-  background: transparent !important;
-  color: var(--gray-100) !important;
-  border: none !important;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 0 !important;
-}
-
-::ng-deep .date-select:focus {
-  border-bottom-color: #4c8be6 !important;
-  outline: none !important;
-}
-
-::ng-deep .date-select option {
-  background: #1a1d23 !important;
-  color: #f1f5f9 !important;
-}
-
-/* --- Checkbox / radio overrides --- */
-::ng-deep input[type="checkbox"],
-::ng-deep input[type="radio"] {
-  background-color: transparent !important;
-  accent-color: #4c8be6 !important;
-}
-
-/* --- File input --- */
-::ng-deep input[type="file"] {
-  background: transparent !important;
-  color: var(--gray-100) !important;
-}
-
-::ng-deep input[type="file"]::file-selector-button {
-  background: var(--gray-200) !important;
-  color: var(--gray-100) !important;
-  border: 1px solid var(--gray-600) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.5rem 1rem !important;
-  cursor: pointer !important;
-}
-
-::ng-deep input[type="file"]::file-selector-button:hover {
-  background: var(--gray-300) !important;
-}
-
-/* --- Date input dark scheme --- */
-::ng-deep input[type="date"] {
-  color-scheme: dark !important;
-}
-
-::ng-deep input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.7) !important;
-}
-
-/* --- Browser autofill override (prevents white bg on fill) --- */
-::ng-deep input:-webkit-autofill,
-::ng-deep input:-webkit-autofill:hover,
-::ng-deep input:-webkit-autofill:focus,
-::ng-deep select:-webkit-autofill,
-::ng-deep textarea:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
-  -webkit-text-fill-color: var(--gray-100) !important;
-  background-color: transparent !important;
-  transition: background-color 5000s ease-in-out 0s !important;
-}
-
-::ng-deep input:autofill,
-::ng-deep input:autofill:hover,
-::ng-deep input:autofill:focus,
-::ng-deep select:autofill,
-::ng-deep textarea:autofill {
-  background-color: transparent !important;
-  color: var(--gray-100) !important;
-}
-
 /* --- Step Title --- */
 .step-title {
   font-size: var(--text-lg);
@@ -1472,6 +1296,22 @@ select.form-input {
   font-size: var(--text-sm);
 }
 
+.retry-post-btn {
+  margin-top: 8px;
+  padding: 6px 16px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: rgba(239, 68, 68, 0.2); }
+  &:active { transform: scale(0.97); }
+}
+
 /* --- Buttons --- */
 .btn {
   display: inline-flex;
@@ -1802,9 +1642,25 @@ select.form-input {
     width: 100%;
     padding: 40px;
     background: #fff;
+    color: #000;
   }
+  .constancia-modal-overlay {
+    position: static !important;
+    background: none !important;
+    backdrop-filter: none !important;
+  }
+  .constancia-modal {
+    position: static !important;
+    background: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .constancia-modal-close { display: none !important; }
+  .upload-warning { display: none !important; }
   .constancia-footer { display: none; }
-  .constancia-badge { border: 1px solid var(--success-600); }
+  .constancia-badge { border: 1px solid #22c55e; background: rgba(34, 197, 94, 0.1) !important; }
 }
 
 /* --- Responsive --- */
@@ -2095,6 +1951,47 @@ select.form-input {
 
 .constancia-modal-close:active {
   transform: scale(0.95);
+}
+
+.upload-warning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: 10px;
+  color: #fbbf24;
+  font-size: 0.85rem;
+
+  svg { flex-shrink: 0; }
+
+  div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    strong { color: #fde68a; font-weight: 600; }
+    span { color: rgba(251, 191, 36, 0.7); font-size: 0.8rem; }
+  }
+}
+
+.retry-btn {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  border-radius: 8px;
+  background: rgba(234, 179, 8, 0.15);
+  color: #fbbf24;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: rgba(234, 179, 8, 0.25); }
+  &:active { transform: scale(0.97); }
 }
 
 /* Override constancia styles for dark modal */
