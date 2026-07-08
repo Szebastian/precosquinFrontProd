@@ -54,11 +54,6 @@ interface RiderTecnico {
     cables: string[];
     backline: string[];
   };
-  escenario: {
-    metrosLineales: number | null;
-    fondoEscenario: string;
-    pisos: string[];
-  };
   otros: string;
 }
 
@@ -229,8 +224,7 @@ export const groupSubcategories = [
                 [lastDirection]="lastDirection()"
                 (goToStep)="goToStep($event)"
                 (onMicChange)="toggleMic($event)"
-                (onBacklineChange)="toggleBackline($event)"
-                (onPisoChange)="togglePiso($event)" />
+                (onBacklineChange)="toggleBackline($event)" />
             }
             @if (currentStep() === 6) {
               <app-inscripcion-step-6
@@ -428,21 +422,16 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     ],
     technicalNeeds: '',
     riderTecnico: {
-      sonido: {
-        microfonos: [],
-        monitores: '',
-        consola: '',
-        diBoxes: null,
-        cables: [],
-        backline: [],
+        sonido: {
+          microfonos: [],
+          monitores: '',
+          consola: '',
+          diBoxes: null,
+          cables: [],
+          backline: [],
+        },
+        otros: '',
       },
-      escenario: {
-        metrosLineales: null,
-        fondoEscenario: '',
-        pisos: [],
-      },
-      otros: '',
-    },
     proposalName: '',
     choreographerName: '',
     style: '',
@@ -468,7 +457,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 
   micOptions = ['Dinámico (SM58)', 'Condensador de solista', 'Inalámbrico', 'Overhead', 'Para acordeón/guitarra', 'Para percusión'];
   backlineOptions = ['Guitarra eléctrica', 'Guitarra acústica', 'Bajo', 'Batería', 'Acordeón', 'Teclado', 'Percusión menor'];
-  pisoOptions = ['Madera', 'Marley', 'Cemento', 'Hierba / tierra', 'Sin preferencia'];
+
 
   cablesInput = '';
 
@@ -594,7 +583,6 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       technicalNeeds: '',
         riderTecnico: {
         sonido: { microfonos: [], monitores: '', consola: '', diBoxes: null, cables: [], backline: [] },
-        escenario: { metrosLineales: null, fondoEscenario: '', pisos: [] },
         otros: '',
       },
       proposalName: '', choreographerName: '', style: '', danceList: '', biography: '',
@@ -642,14 +630,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  togglePiso(piso: string): void {
-    const idx = this.data.riderTecnico.escenario.pisos.indexOf(piso);
-    if (idx >= 0) {
-      this.data.riderTecnico.escenario.pisos.splice(idx, 1);
-    } else {
-      this.data.riderTecnico.escenario.pisos.push(piso);
-    }
-  }
+
 
   hasRiderData(): boolean {
     const r = this.data.riderTecnico;

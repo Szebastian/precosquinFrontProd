@@ -23,13 +23,13 @@ export interface NewsItem {
       <a
         routerLink="/noticias"
         class="featured-news"
-        [ngStyle]="{ 'background-image': 'url(' + activeNews().image + ')' }"
-        [style.background-position]="activeNews().imagePosition || 'center center'"
+        [ngStyle]="{ 'background-image': 'url(' + activeNews()?.image + ')' }"
+        [style.background-position]="activeNews()?.imagePosition || 'center center'"
       >
         <div class="featured-overlay"></div>
         <div class="featured-content featured-fade" [class.fade-in]="!isTransitioning()">
-          <span class="news-category">{{ activeNews().category }}</span>
-          <h1 class="featured-title">{{ activeNews().title }}</h1>
+          <span class="news-category">{{ activeNews()?.category }}</span>
+          <h1 class="featured-title">{{ activeNews()?.title }}</h1>
         </div>
         <div class="carousel-dots">
           @for (item of newsItems(); track item.id) {
@@ -161,7 +161,11 @@ export class NewsCarouselComponent implements OnInit, OnDestroy {
 
   private autoPlayInterval: ReturnType<typeof setInterval> | null = null;
 
-  activeNews = computed(() => this.newsItems()[this.activeIndex()]);
+  activeNews = computed<NewsItem | undefined>(() => {
+    const items = this.newsItems();
+    const index = this.activeIndex();
+    return items.length > 0 && index >= 0 && index < items.length ? items[index] : undefined;
+  });
 
   ngOnInit(): void { this.startCarousel(); }
   ngOnDestroy(): void { this.stopCarousel(); }

@@ -89,28 +89,7 @@ export class HomePageComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private http = inject(HttpClient);
 
-  newsItems = signal<NewsItem[]>([
-    {
-      id: 1, category: 'FESTIVAL 2027', title: 'Se abren las inscripciones para el certamen Nuevos Valores',
-      image: IMAGE_PATHS.HOME_BACKGROUND, thumbType: 'img', thumbSrc: 'assets/img/cruzBaila.png', thumbBg: 'bg-blue'
-    },
-    {
-      id: 2, category: 'JURADO', title: 'Capacitación para el jurado de danza en el Hotel Rayentray',
-      image: 'assets/img/LRayentray.webp', thumbType: 'img', thumbSrc: 'assets/img/cruzBaila.png', thumbBg: 'bg-blue'
-    },
-    {
-      id: 3, category: 'REGLAMENTO', title: 'Modificación en el reglamento del rubro "Solista Vocal"',
-      image: 'assets/img/LHydro.webp', thumbType: 'icon',
-      thumbSrc: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>',
-      thumbBg: 'bg-gold'
-    },
-    {
-      id: 4, category: 'CRONOGRAMA', title: 'Cronograma oficial de la primera ronda clasificatoria',
-      image: IMAGE_PATHS.HOME_BACKGROUND, thumbType: 'icon',
-      thumbSrc: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
-      thumbBg: 'bg-gray'
-    }
-  ]);
+  newsItems = signal<NewsItem[]>([]);
 
   ngOnInit(): void {
     this.http.get<NewsItem[]>(`${environment.apiUrl}/news`).subscribe({
