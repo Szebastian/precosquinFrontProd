@@ -1,17 +1,10 @@
-import { Component, input, signal, output, OnInit, inject, OnDestroy } from '@angular/core';
+import { Component, input, signal, output, OnInit, inject, OnDestroy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { InscripcionData } from '../inscripcion.page';
+import { InscripcionData, Member } from '../inscripcion.page';
 import { environment } from '../../../../../environments/environment';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil, timeout } from 'rxjs';
-
-export interface Member {
-  fullName: string;
-  dni: string;
-  age: number | null;
-  role: string;
-}
 
 @Component({
   selector: 'app-inscripcion-step-1',
@@ -19,6 +12,31 @@ export interface Member {
   imports: [CommonModule, FormsModule],
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
+      <!-- Field Progress Indicator -->
+      <div class="step-progress-bar">
+        <div class="progress-info">
+          <span class="progress-title">Completá tus datos</span>
+          <span class="progress-count">{{ completedCount() }}/{{ totalFields() }}</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="progressPercent()"></div>
+        </div>
+        <div class="progress-dots">
+          @for (field of requiredFields(); track field.key) {
+            <div class="progress-dot" [class.completed]="field.valid()" [title]="field.label">
+              <div class="dot-circle">
+                @if (field.valid()) {
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                }
+              </div>
+              <span class="dot-label">{{ field.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
       <div class="question-group">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
           <div class="form-field-group flex flex-col items-start w-full">
@@ -78,9 +96,11 @@ export interface Member {
       <div class="question-group">
         <div class="form-field-group flex flex-col items-start w-full">
           <label class="minimal-label" for="birthDate">¿Cuándo naciste? *</label>
-          <div class="date-picker-row">
+          <!-- Desktop: 3 dropdowns -->
+          <div class="date-picker-row date-desktop">
             <div class="date-col">
-              <select class="date-select" [class.input-error]="birthDateError()"
+              <label class="date-select-label" for="birthDay">Día</label>
+              <select id="birthDay" class="date-select" [class.input-error]="birthDateError()"
                 [(ngModel)]="birthDay" (ngModelChange)="syncBirthDate(); validateBirthDate()">
                 <option value="" disabled>Día</option>
                 @for (d of days; track d) {
@@ -89,7 +109,8 @@ export interface Member {
               </select>
             </div>
             <div class="date-col">
-              <select class="date-select" [class.input-error]="birthDateError()"
+              <label class="date-select-label" for="birthMonth">Mes</label>
+              <select id="birthMonth" class="date-select" [class.input-error]="birthDateError()"
                 [(ngModel)]="birthMonth" (ngModelChange)="syncBirthDate(); validateBirthDate()">
                 <option value="" disabled>Mes</option>
                 @for (m of months; track m.value) {
@@ -98,7 +119,8 @@ export interface Member {
               </select>
             </div>
             <div class="date-col">
-              <select class="date-select" [class.input-error]="birthDateError()"
+              <label class="date-select-label" for="birthYear">Año</label>
+              <select id="birthYear" class="date-select" [class.input-error]="birthDateError()"
                 [(ngModel)]="birthYear" (ngModelChange)="syncBirthDate(); validateBirthDate()">
                 <option value="" disabled>Año</option>
                 @for (y of years; track y) {
@@ -107,6 +129,12 @@ export interface Member {
               </select>
             </div>
           </div>
+          <!-- Mobile: native date input -->
+          <input type="date" class="date-native date-mobile"
+            [class.input-error]="birthDateError()"
+            [max]="maxDateAttr()"
+            [value]="nativeDateValue()"
+            (change)="onNativeDateChange($event)" />
           <div class="date-bottom-row">
             @if (data().age !== null) {
               <span class="date-age-badge" [class.age-error]="data().age !== null && data().age! < 16">
@@ -240,6 +268,14 @@ export interface Member {
       flex-direction: column;
       position: relative;
     }
+    .date-select-label {
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
     .date-select {
       width: 100%;
       background: transparent;
@@ -355,9 +391,171 @@ export interface Member {
       animation: fadeIn 0.2s ease;
     }
 
+    .step-progress-bar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin-bottom: 2rem;
+      padding: 1rem 1.25rem;
+      background: rgba(22, 27, 38, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.75rem;
+      margin-left: -2.5rem;
+      margin-right: -2.5rem;
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+    }
+    .progress-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.625rem;
+    }
+    .progress-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .progress-count {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #60a5fa;
+      background: rgba(76, 139, 230, 0.1);
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+    }
+    .progress-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+      border-radius: 2px;
+      transition: width 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+    }
+    .progress-dots {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0;
+    }
+    .progress-dot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.375rem;
+      flex: 1;
+      min-width: 0;
+    }
+    .dot-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      color: transparent;
+      transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+      flex-shrink: 0;
+    }
+    .progress-dot.completed .dot-circle {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border-color: #22c55e;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+      animation: dotPop 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    @keyframes dotPop {
+      0% { transform: scale(0.7); }
+      60% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .dot-label {
+      font-size: 0.6rem;
+      font-weight: 500;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.2;
+      transition: color 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      padding: 0 2px;
+    }
+    .progress-dot.completed .dot-label {
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    .date-desktop { display: flex; }
+    .date-mobile { display: none; }
+
+    .date-native {
+      width: 100%;
+      padding: 0.6rem 0;
+      font-size: 1.25rem;
+      font-family: inherit;
+      color: var(--text);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .date-native:focus {
+      border-bottom-color: #4c8be6;
+    }
+    .date-native.input-error {
+      border-bottom-color: #f87171;
+    }
+
     @media (max-width: 640px) {
+      .step-progress-bar {
+        padding: 0.75rem 1rem;
+        margin-left: -1.5rem;
+        margin-right: -1.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .progress-info { margin-bottom: 0.5rem; }
+      .progress-title { font-size: 0.65rem; }
+      .progress-count { font-size: 0.7rem; padding: 0.15rem 0.5rem; }
+      .progress-dots { gap: 0; }
+      .dot-circle { width: 18px; height: 18px; }
+      .dot-label { font-size: 0.5rem; }
+      .progress-track { margin-bottom: 0.625rem; }
       .date-picker-row { flex-direction: column; gap: 0.5rem; }
-      .date-select { font-size: 1.15rem; }
+      .date-select { font-size: 1.1rem; }
+      .date-desktop { display: none; }
+      .date-mobile { display: block; }
+      .field-error { font-size: 0.7rem; }
+    }
+
+    @media (max-width: 480px) {
+      .step-progress-bar {
+        padding: 0.5rem 0.75rem;
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+      .dot-circle { width: 16px; height: 16px; }
+      .dot-label { font-size: 0.45rem; }
+      .date-select { font-size: 0.95rem; padding: 0.4rem 0; }
+      .date-age-badge { font-size: 0.75rem; padding: 0.2rem 0.6rem; }
+      .field-error { font-size: 0.65rem; margin-top: 0.25rem; }
     }
   `]
 })
@@ -384,7 +582,8 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
   birthDay = signal<string>('');
   birthMonth = signal<string>('');
   birthYear = signal<string>('');
-
+  nativeDateValue = signal('');
+  maxDateAttr = signal('');
   days = Array.from({ length: 31 }, (_, i) => String(i + 1));
   months = [
     { value: '01', label: 'Enero' }, { value: '02', label: 'Febrero' },
@@ -412,7 +611,30 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
   phoneValid = signal(false);
   validated = signal(false);
 
+  // Required fields for progress indicator
+  requiredFields = computed(() => [
+    { key: 'firstName', label: 'Nombre', valid: () => this.firstName().trim().length >= 2 && !this.firstNameError() },
+    { key: 'lastName', label: 'Apellido', valid: () => this.lastName().trim().length >= 2 && !this.lastNameError() },
+    { key: 'dni', label: 'DNI', valid: () => this.dniValid() && !this.dniError() },
+    { key: 'birthDate', label: 'Fecha nac.', valid: () => this.birthDay() && this.birthMonth() && this.birthYear() && !this.birthDateError() && (this.data() as any).age !== null && (this.data() as any).age >= 16 && !this.ageError() },
+    { key: 'address', label: 'Domicilio', valid: () => this.data().address.trim().length >= 3 && !this.addressError() },
+    { key: 'locality', label: 'Localidad', valid: () => this.data().locality.trim().length >= 2 && !this.localityError() },
+    { key: 'province', label: 'Provincia', valid: () => this.data().province.length > 0 && !this.provinceError() },
+    { key: 'phone', label: 'Teléfono', valid: () => this.phoneValid() && !this.phoneError() },
+    { key: 'email', label: 'Email', valid: () => this.emailValid() && !this.emailError() && !this.emailChecking() },
+  ]);
+
+  completedCount = computed(() => this.requiredFields().filter(f => f.valid()).length);
+  totalFields = computed(() => this.requiredFields().length);
+  progressPercent = computed(() => Math.round((this.completedCount() / this.totalFields()) * 100));
+
   ngOnInit(): void {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    this.maxDateAttr.set(`${yyyy}-${mm}-${dd}`);
+
     const fullNameParts = this.data().fullName.split(' ');
     this.firstName.set(fullNameParts[0] || '');
     this.lastName.set(fullNameParts.slice(1).join(' ') || '');
@@ -428,6 +650,7 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
         this.birthYear.set(parts[0]);
         this.birthMonth.set(parts[1]);
         this.birthDay.set(parts[2]);
+        this.nativeDateValue.set(this.data().birthDate);
       }
     }
 
@@ -449,7 +672,24 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
     const y = this.birthYear();
     if (d && m && y) {
       (this.data() as any).birthDate = `${y}-${m}-${d.padStart(2, '0')}`;
+      this.nativeDateValue.set(this.data().birthDate);
       this.onBirthDateChange();
+    }
+  }
+
+  onNativeDateChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    if (value) {
+      (this.data() as any).birthDate = value;
+      this.nativeDateValue.set(value);
+      const parts = value.split('-');
+      if (parts.length === 3) {
+        this.birthYear.set(parts[0]);
+        this.birthMonth.set(parts[1]);
+        this.birthDay.set(parts[2]);
+      }
+      this.onBirthDateChange();
+      this.validateBirthDate();
     }
   }
 

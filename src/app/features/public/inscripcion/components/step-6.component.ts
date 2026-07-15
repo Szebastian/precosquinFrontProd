@@ -11,6 +11,15 @@ import { InscripcionData } from '../inscripcion.page';
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
       <p class="step-desc" style="margin-top: 0;">      Subí los archivos que necesitamos para completar tu inscripción</p>
 
+      @if (!data().dniFrontFile || !data().dniBackFile || !data().promoPhotoFile) {
+        <div class="file-hint">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Subí todos los archivos marcados con * para continuar
+        </div>
+      }
+
       <!-- DNI: FREnte + DORSO side by side -->
       <div class="upload-grid-2col">
         <!-- DNI FRENTE -->
@@ -42,7 +51,7 @@ import { InscripcionData } from '../inscripcion.page';
               <input type="file" #dniFrontInput accept="image/*" hidden (change)="onFileSelect($event, 'dniFrontFile')" />
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <span class="drop-text">Subir archivo</span>
-              <span class="drop-hint">JPG, PNG</span>
+              <span class="drop-hint">JPG, PNG — Máx. 5MB</span>
             </div>
           }
         </div>
@@ -76,7 +85,7 @@ import { InscripcionData } from '../inscripcion.page';
               <input type="file" #dniBackInput accept="image/*" hidden (change)="onFileSelect($event, 'dniBackFile')" />
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <span class="drop-text">Subir archivo</span>
-              <span class="drop-hint">JPG, PNG</span>
+              <span class="drop-hint">JPG, PNG — Máx. 5MB</span>
             </div>
           }
         </div>
@@ -148,7 +157,7 @@ import { InscripcionData } from '../inscripcion.page';
                 <input type="file" #lyricsInput accept=".pdf,.doc,.docx,.txt" hidden (change)="onFileSelect($event, 'lyricsFile')" />
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 <span class="drop-text">Subir archivo</span>
-                <span class="drop-hint">PDF, DOC, TXT</span>
+                <span class="drop-hint">PDF, DOC, TXT — Máx. 10MB</span>
               </div>
             }
           </div>
@@ -178,7 +187,7 @@ import { InscripcionData } from '../inscripcion.page';
                 <input type="file" #scoreInput accept=".pdf,.png,.jpg,.jpeg" hidden (change)="onFileSelect($event, 'scoreFile')" />
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 <span class="drop-text">Subir archivo</span>
-                <span class="drop-hint">PDF, PNG, JPG</span>
+                <span class="drop-hint">PDF, PNG, JPG — Máx. 5MB</span>
               </div>
             }
           </div>
@@ -196,21 +205,35 @@ import { InscripcionData } from '../inscripcion.page';
 
     .step-desc { font-size: 0.95rem; color: #94a3b8; margin-bottom: 1.25rem; line-height: 1.5; }
 
+    .file-hint {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.8rem;
+      color: #eab308;
+      background: rgba(234, 179, 8, 0.08);
+      border: 1px solid rgba(234, 179, 8, 0.15);
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .file-hint svg { flex-shrink: 0; }
+
     .upload-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
 
-    .upload-card { border: 1.5px solid rgba(255, 255, 255, 0.06); border-radius: 0.625rem; background: rgba(255, 255, 255, 0.015); overflow: hidden; transition: border-color 0.25s ease; margin-bottom: 0.75rem; }
-    .upload-card-header { display: flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.75rem 0; }
-    .upload-card-label { font-size: 0.65rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; }
+    .upload-card { border: 1.5px solid rgba(255, 255, 255, 0.1); border-radius: 0.625rem; background: rgba(255, 255, 255, 0.03); overflow: hidden; transition: border-color 0.25s ease; margin-bottom: 0.75rem; }
+    .upload-card-header { display: flex; align-items: center; gap: 0.3rem; padding: 0.625rem 0.875rem 0; }
+    .upload-card-label { font-size: 0.7rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; }
     .upload-card-required { color: #ef4444; font-size: 0.7rem; }
 
-    .file-drop-zone.compact { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; padding: 1rem; margin: 0.375rem 0.5rem 0.5rem; border: 1.5px dashed rgba(255, 255, 255, 0.08); border-radius: 0.5rem; background: rgba(255, 255, 255, 0.01); transition: all 0.25s ease; cursor: pointer; }
-    .file-drop-zone.compact:hover { border-color: rgba(76, 139, 230, 0.3); background: rgba(76, 139, 230, 0.03); }
-    .file-drop-zone.compact.drag-over { border-color: #4c8be6; background: rgba(76, 139, 230, 0.06); }
+    .file-drop-zone.compact { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; padding: 1.5rem; margin: 0.375rem 0.5rem 0.5rem; border: 2px dashed rgba(96, 165, 250, 0.35); border-radius: 0.5rem; background: rgba(96, 165, 250, 0.06); transition: all 0.25s ease; cursor: pointer; }
+    .file-drop-zone.compact:hover { border-color: rgba(96, 165, 250, 0.6); background: rgba(96, 165, 250, 0.1); }
+    .file-drop-zone.compact.drag-over { border-color: #60a5fa; background: rgba(96, 165, 250, 0.15); }
 
-    .file-drop-zone.compact svg { color: #475569; }
-    .file-drop-zone.compact:hover svg { color: #64748b; }
-    .drop-text { font-size: 0.78rem; color: #64748b; }
-    .drop-hint { font-size: 0.65rem; color: #3b3f4e; }
+    .file-drop-zone.compact svg { color: #60a5fa; }
+    .file-drop-zone.compact:hover svg { color: #93c5fd; }
+    .drop-text { font-size: 0.85rem; color: #e2e8f0; font-weight: 500; }
+    .drop-hint { font-size: 0.7rem; color: #94a3b8; }
 
     .upload-preview { padding: 0.5rem 0.625rem; display: flex; align-items: center; gap: 0.625rem; animation: fadeIn 0.3s ease; }
 
@@ -236,6 +259,22 @@ import { InscripcionData } from '../inscripcion.page';
 
     @media (max-width: 640px) {
       .upload-grid-2col { grid-template-columns: 1fr; }
+      .btn-preview { width: 36px; height: 36px; }
+      .preview-image { width: 44px; height: 44px; }
+      .preview-placeholder { width: 44px; height: 44px; }
+      .file-drop-zone.compact { padding: 0.75rem; }
+      .upload-card-header { padding: 0.4rem 0.625rem 0; }
+      .upload-card-label { font-size: 0.6rem; }
+    }
+
+    @media (max-width: 480px) {
+      .btn-preview { width: 34px; height: 34px; }
+      .preview-image { width: 40px; height: 40px; }
+      .preview-placeholder { width: 40px; height: 40px; }
+      .preview-filename { font-size: 0.72rem; }
+      .file-drop-zone.compact { padding: 0.625rem; }
+      .drop-text { font-size: 0.72rem; }
+      .drop-hint { font-size: 0.6rem; }
     }
   `]
 })

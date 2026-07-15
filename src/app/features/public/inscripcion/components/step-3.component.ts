@@ -13,9 +13,12 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
       <p class="step-desc" style="margin-top: 0;">Sumá a cada persona que integra tu grupo</p>
 
       @for (member of data().members; track $index; let i = $index) {
-        <div class="member-card">
+        <div class="member-card" [class.incomplete]="!member.fullName.trim() || !member.dni.trim() || !member.role">
           <div class="member-header">
             <h3 class="member-number">Persona {{ i + 1 }}</h3>
+            @if (!member.fullName.trim() || !member.dni.trim() || !member.role) {
+              <span class="member-incomplete-badge">Incompleto</span>
+            }
             @if (data().members.length > 1) {
               <button type="button" class="btn-remove" (click)="removeMember.emit(i)">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -78,16 +81,31 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
     .form-input::placeholder, .form-textarea::placeholder { color: #475569; }
     .form-input option { background: #1a1d23; color: #f1f5f9; }
 
-    .member-card { background: rgba(255, 255, 255, 0.02); border: 1.5px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
+    .member-card { background: rgba(255, 255, 255, 0.02); border: 1.5px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; transition: border-color 0.2s ease; }
+    .member-card.incomplete { border-color: rgba(234, 179, 8, 0.3); }
     .member-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
     .member-number { font-size: 0.8rem; font-weight: 600; color: #4c8be6; margin: 0; }
+    .member-incomplete-badge { font-size: 0.65rem; font-weight: 600; color: #eab308; background: rgba(234, 179, 8, 0.1); padding: 0.2rem 0.5rem; border-radius: 9999px; }
     .btn-remove { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 500; padding: 0.25rem 0.5rem; border-radius: 0.375rem; transition: all 0.2s ease; }
     .btn-remove:hover { background: rgba(239, 68, 68, 0.1); }
     .btn-add-member { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border-radius: 0.625rem; border: 1.5px dashed rgba(76, 139, 230, 0.35); background: rgba(76, 139, 230, 0.04); color: #4c8be6; cursor: pointer; transition: all 0.2s ease; }
     .btn-add-member:hover { border-color: #4c8be6; background: rgba(76, 139, 230, 0.08); }
     .btn-add-member:active { transform: scale(0.98); }
 
-    @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; }
+      .member-card { padding: 1rem; }
+      .btn-remove { min-height: 44px; min-width: 44px; font-size: 0.8rem; }
+      .btn-add-member { min-height: 44px; width: 100%; justify-content: center; }
+      .form-input { padding: 0.6rem 0.75rem; font-size: 0.9rem; }
+    }
+
+    @media (max-width: 480px) {
+      .member-card { padding: 0.875rem; }
+      .member-number { font-size: 0.75rem; }
+      .form-label { font-size: 0.65rem; }
+      .form-input { padding: 0.5rem 0.625rem; font-size: 0.85rem; }
+    }
   `]
 })
 export class InscripcionStep3Component {

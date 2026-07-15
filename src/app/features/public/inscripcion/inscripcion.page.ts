@@ -13,7 +13,9 @@ import { InscripcionStep4Component } from './components/step-4.component';
 import { InscripcionStep5Component } from './components/step-5.component';
 import { InscripcionStep6Component } from './components/step-6.component';
 import { InscripcionStep7Component } from './components/step-7.component';
+import { InscripcionStepAccessosComponent } from './components/step-accessos.component';
 import { CircularProgressComponent } from '../../../shared/components/circular-progress/circular-progress.component';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 
 export function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -32,7 +34,7 @@ export interface InscripcionResult {
   created_at: string;
 }
 
-interface Member {
+export interface Member {
   fullName: string;
   dni: string;
   age: number | null;
@@ -45,16 +47,46 @@ interface ThemeRow {
   author: string;
 }
 
+export interface InputChannel {
+  source: string;
+  micType: string;
+  fxInsert: string;
+  monitorMix: string;
+  phantom: boolean;
+}
+
+export interface MonitorMix {
+  label: string;
+  items: string[];
+}
+
+export interface Instrument {
+  id: string;
+  type: string;
+  x: number;
+  y: number;
+  label: string;
+  channel: string;
+  rotation: number;
+}
+
 interface RiderTecnico {
   sonido: {
     microfonos: string[];
-    monitores: string;
-    consola: string;
     diBoxes: number | null;
     cables: string[];
     backline: string[];
   };
+  inputList: InputChannel[];
+  monitorCount: number;
+  monitorMixes: MonitorMix[];
+  stagePlotInstruments: Instrument[];
   otros: string;
+}
+
+export interface AccompanyingPerson {
+  fullName: string;
+  dni: string;
 }
 
 export interface InscripcionData {
@@ -72,7 +104,6 @@ export interface InscripcionData {
   members: Member[];
   artisticName: string;
   themes: ThemeRow[];
-  technicalNeeds: string;
   riderTecnico: RiderTecnico;
   proposalName: string;
   choreographerName: string;
@@ -92,7 +123,27 @@ export interface InscripcionData {
   acceptRegulations: boolean;
   acceptImageRights: boolean;
   acceptDataTruth: boolean;
+  // Solista Instrumental - Art. 31
+  instrumentType: string;
+  instrumentName: string;
+  hasAccompaniment: boolean;
+  accompanimentInstrument: string;
+  accompanimentMusician: string;
+  // Personas que acompañan al artista (acceso a Puerto Pirámides)
+  accompanyingPersons: AccompanyingPerson[];
 }
+
+// Art. 31 - Instrumentos Melódicos (pueden tener 1 acompañamiento armónico)
+export const MELODIC_INSTRUMENTS = [
+  'Violín', 'Flauta Traversa', 'Clarinete', 'Saxofón',
+  'Trompeta', 'Quena', 'Erke', 'Siku', 'Otro'
+];
+
+// Art. 31 - Instrumentos Armónicos
+export const HARMONIC_INSTRUMENTS = [
+  'Guitarra', 'Piano', 'Bandoneón', 'Acordeón',
+  'Charango', 'Arpa', 'Otro'
+];
 
 export const subcategoriesByCategory: Record<string, { id: string; name: string }[]> = {
   musica: [
@@ -122,7 +173,7 @@ export const groupSubcategories = [
 @Component({
   selector: 'app-inscripcion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, CircularProgressComponent],
+  imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, InscripcionStepAccessosComponent, CircularProgressComponent],
   styleUrl: './inscripcion.page.scss',
   animations: [
     trigger('stepSlide', [
@@ -165,8 +216,18 @@ export const groupSubcategories = [
             </div>
             <ul class="sidebar-steps-list">
               @for (step of steps; track step.number) {
-                <li [class.active]="currentStep() === step.number" [class.completed]="currentStep() > step.number">
-                  <span class="step-marker"></span>
+                <li [class.active]="currentStep() === step.number"
+                    [class.completed]="currentStep() > step.number"
+                    [class.clickable]="currentStep() > step.number"
+                    [attr.tabindex]="currentStep() > step.number ? 0 : -1"
+                    [attr.role]="currentStep() > step.number ? 'button' : null"
+                    (click)="currentStep() > step.number ? goToStep(step.number) : null"
+                    (keydown.enter)="currentStep() > step.number ? goToStep(step.number) : null">
+                  <span class="step-marker">
+                    @if (currentStep() > step.number) {
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </span>
                   <span class="step-label-sidebar">{{ step.label }}</span>
                 </li>
               }
@@ -180,6 +241,7 @@ export const groupSubcategories = [
             </div>
           </div>
         </div>
+      }
 
         <div class="form-main-content" #formMainContent>
           <div class="w-full max-w-4xl mx-auto px-4 py-8"> <!-- Added wrapper for width and centering -->
@@ -191,11 +253,12 @@ export const groupSubcategories = [
                 </a>
                 <span class="question-counter">PREGUNTA {{ currentStep() }} / {{ steps.length }}</span>
                 <h1>{{ stepTitles[currentStep() - 1] }}</h1>
+                <p class="required-legend">Los campos marcados con <span class="required-asterisk">*</span> son obligatorios</p>
               </div>
 
             <form (submit)="onSubmit($event)" class="inscription-form">
 
-            <div [@stepSlide]="currentStep()" class="step-animated-wrapper">
+            <div [@stepSlide]="currentStep()" class="step-animated-wrapper" aria-live="polite" aria-atomic="true">
             @if (currentStep() === 1) {
               <app-inscripcion-step-1
                 [data]="data"
@@ -234,6 +297,13 @@ export const groupSubcategories = [
                 (removeFile)="handleFileRemove($any($event))" />
             }
             @if (currentStep() === 7) {
+              <app-inscripcion-step-accessos
+                [data]="data"
+                [lastDirection]="lastDirection()"
+                (addPerson)="addAccompanyingPerson()"
+                (removePerson)="removeAccompanyingPerson($event)" />
+            }
+            @if (currentStep() === 8) {
               <app-inscripcion-step-7
                 [data]="data"
                 [lastDirection]="lastDirection()"
@@ -244,7 +314,7 @@ export const groupSubcategories = [
             </form>
         </div>
 
-        @if (currentStep() < 7 && !atBottom()) {
+        @if (currentStep() < 8 && !atBottom()) {
           <button type="button" class="next-question-arrow" id="nextQuestionBtn"
             (click)="scrollToNextQuestion()">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -255,11 +325,19 @@ export const groupSubcategories = [
 
             @if (!submitted()) {
               <div class="next-section" @fadeIn #nextSection>
-                @if (currentStep() < 7) {
+                @if (currentStep() < 8) {
                   <button type="button" class="btn-next-large" (click)="nextStep()" [disabled]="!canProceed()">
                     SIGUIENTE
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
                   </button>
+                  @if (!canProceed() && getMissingFieldsMessage()) {
+                    <div class="missing-fields-hint">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                      </svg>
+                      {{ getMissingFieldsMessage() }}
+                    </div>
+                  }
                 } @else {
                   @if (!showConfirmSubmit()) {
                     <button type="button" class="btn-next-large btn-submit" (click)="showConfirmSubmit.set(true)" [disabled]="!canProceed() || submitting()">
@@ -298,20 +376,28 @@ export const groupSubcategories = [
                   }
                 </div>
                 <div class="bottom-nav-center">
-                  @if (currentStep() < 7) {
+                  @if (showSavedIndicator()) {
+                    <span class="saved-indicator">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Guardado
+                    </span>
+                  } @else if (currentStep() < 8) {
                     <span class="enter-hint">
                       Presioná <kbd>ENTER</kbd> para continuar
                     </span>
                   }
                 </div>
                 <div class="bottom-nav-right">
-                  <button type="button" class="save-link" (click)="saveDraftAndExit()">Guardar y continuar más tarde</button>
-                </div>
-              </div>
-            }
-        </div>
-      </div>
-      }
+                  <a href="mailto:inscripciones@precosquin.com" class="help-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    ¿Necesitás ayuda?
+                  </a>
+                   <button type="button" class="save-link" (click)="saveDraftAndExit()">Guardar y continuar más tarde</button>
+                 </div>
+               </div>
+             }
+           </div>
+         </div>
     </div>
 
     @if (showConstanciaModal() && inscriptionResult()) {
@@ -349,6 +435,7 @@ export const groupSubcategories = [
 export class InscripcionPageComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private toast = inject(ToastService);
   
   @ViewChild(InscripcionStep1Component) step1Component?: InscripcionStep1Component;
   @ViewChild('nextSection') nextSectionRef?: ElementRef<HTMLElement>;
@@ -364,7 +451,8 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     { number: 4, label: 'Tu show' },
     { number: 5, label: 'Equipo técnico' },
     { number: 6, label: 'Archivos' },
-    { number: 7, label: 'Confirmar' },
+    { number: 7, label: 'Acceso' },
+    { number: 8, label: 'Confirmar' },
   ];
 
   readonly stepTitles = [
@@ -374,6 +462,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     '¿Qué necesitás para sonar bien?',
     'Contanos de tu equipo técnico',
     'Mandanos los archivos',
+    '¿Quiénes te acompañan?',
     'Revisá todo antes de enviar',
   ];
   submitted = signal(false);
@@ -388,13 +477,49 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   atBottom = signal(false);
   uploadFailedFiles = signal<string[]>([]);
   uploadProgress = signal('');
+  validationErrors = signal<string[]>([]);
+  showSavedIndicator = signal(false);
   private observer?: IntersectionObserver;
+  private modalTrapCleanup?: () => void;
 
   private modalFocusEffect = effect(() => {
     if (this.showConstanciaModal()) {
-      setTimeout(() => this.modalCloseRef?.nativeElement?.focus());
+      setTimeout(() => {
+        this.modalCloseRef?.nativeElement?.focus();
+        this.trapFocusInModal();
+      });
     }
   });
+
+  private trapFocusInModal(): void {
+    const modal = document.querySelector('.constancia-modal') as HTMLElement;
+    if (!modal) return;
+
+    const focusableElements = modal.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    };
+
+    modal.addEventListener('keydown', handleTab);
+    this.modalTrapCleanup = () => modal.removeEventListener('keydown', handleTab);
+  }
 
   private draftKey = 'precosquin_inscripcion_draft';
 
@@ -412,24 +537,21 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     subcategory: '',
     members: [],
     artisticName: '',
-    themes: [
-      { title: '', rhythm: '', author: '' },
-      { title: '', rhythm: '', author: '' },
-      { title: '', rhythm: '', author: '' },
-      { title: '', rhythm: '', author: '' },
-      { title: '', rhythm: '', author: '' },
-      { title: '', rhythm: '', author: '' },
-    ],
-    technicalNeeds: '',
-    riderTecnico: {
+      themes: [
+        { title: '', rhythm: '', author: '' },
+        { title: '', rhythm: '', author: '' },
+      ],
+      riderTecnico: {
         sonido: {
           microfonos: [],
-          monitores: '',
-          consola: '',
           diBoxes: null,
           cables: [],
           backline: [],
         },
+        inputList: [],
+        monitorCount: 0,
+        monitorMixes: [],
+        stagePlotInstruments: [],
         otros: '',
       },
     proposalName: '',
@@ -450,6 +572,13 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     acceptRegulations: false,
     acceptImageRights: false,
     acceptDataTruth: false,
+    // Solista Instrumental - Art. 31
+    instrumentType: '',
+    instrumentName: '',
+    hasAccompaniment: false,
+    accompanimentInstrument: '',
+    accompanimentMusician: '',
+    accompanyingPersons: [],
   };
 
   private subcategoriesByCategory = subcategoriesByCategory;
@@ -491,6 +620,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       this.closeConstanciaModal();
       return;
     }
+    if (!window.matchMedia('(hover: hover)').matches) return;
     const target = event.target as HTMLElement;
     const tag = target.tagName;
     const isTextInput = tag === 'INPUT' && ['text', 'email', 'tel', 'number', 'search', 'url', 'password'].includes((target as HTMLInputElement).type);
@@ -511,11 +641,14 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       delete (draft as any).lyricsFile;
       delete (draft as any).scoreFile;
       localStorage.setItem(this.draftKey, JSON.stringify(draft));
+      this.showSavedIndicator.set(true);
+      setTimeout(() => this.showSavedIndicator.set(false), 2500);
     } catch {}
   }
 
   saveDraftAndExit(): void {
     this.saveDraft();
+    this.toast.success('Borrador guardado', 'Podés continuar después desde este mismo navegador.');
     this.router.navigate(['/']);
   }
 
@@ -575,20 +708,21 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       artisticName: '', themes: [
         { title: '', rhythm: '', author: '' },
         { title: '', rhythm: '', author: '' },
-        { title: '', rhythm: '', author: '' },
-        { title: '', rhythm: '', author: '' },
-        { title: '', rhythm: '', author: '' },
-        { title: '', rhythm: '', author: '' },
       ],
-      technicalNeeds: '',
         riderTecnico: {
-        sonido: { microfonos: [], monitores: '', consola: '', diBoxes: null, cables: [], backline: [] },
+        sonido: { microfonos: [], diBoxes: null, cables: [], backline: [] },
+        inputList: [],
+        monitorCount: 0,
+        monitorMixes: [],
+        stagePlotInstruments: [],
         otros: '',
       },
       proposalName: '', choreographerName: '', style: '', danceList: '', biography: '',
       dniFrontFile: null, dniBackFile: null, promoPhotoFile: null, lyricsFile: null, scoreFile: null,
       dniFrontName: '', dniBackName: '', promoPhotoName: '', lyricsFileName: '', scoreFileName: '',
       acceptRegulations: false, acceptImageRights: false, acceptDataTruth: false,
+      instrumentType: '', instrumentName: '', hasAccompaniment: false, accompanimentInstrument: '', accompanimentMusician: '',
+      accompanyingPersons: [],
     };
     this.currentStep.set(1);
     this.submitted.set(false);
@@ -600,8 +734,9 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     this.filePreviews = {};
   }
 
-  closeConstanciaModal(): void {
+closeConstanciaModal(): void {
     this.showConstanciaModal.set(false);
+    this.modalTrapCleanup?.();
   }
 
   private validateDni(dni: string): boolean {
@@ -636,7 +771,6 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     const r = this.data.riderTecnico;
     return !!(
       r.sonido.microfonos.length > 0 ||
-      r.sonido.monitores ||
       r.sonido.diBoxes ||
       r.sonido.backline.length > 0 ||
       r.otros
@@ -732,6 +866,14 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     this.data.members.splice(index, 1);
   }
 
+  addAccompanyingPerson(): void {
+    this.data.accompanyingPersons.push({ fullName: '', dni: '' });
+  }
+
+  removeAccompanyingPerson(index: number): void {
+    this.data.accompanyingPersons.splice(index, 1);
+  }
+
   ngOnDestroy(): void {
     Object.values(this.filePreviews).forEach(url => URL.revokeObjectURL(url));
     this.observer?.disconnect();
@@ -771,9 +913,66 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
           && (this.data.subcategory !== 'cancion_inedita' || (this.data.lyricsFile && this.data.scoreFile))
         );
       case 7:
+        return true;
+      case 8:
         return this.data.acceptRegulations && this.data.acceptImageRights && this.data.acceptDataTruth;
       default:
         return false;
+    }
+  }
+
+  getMissingFieldsMessage(): string {
+    switch (this.currentStep()) {
+      case 1: {
+        const missing: string[] = [];
+        if (!this.data.fullName || this.data.fullName.trim().length < 2) missing.push('Nombre y apellido');
+        if (!this.data.dni || this.data.dni.length < 7) missing.push('DNI');
+        if (!this.data.birthDate) missing.push('Fecha de nacimiento');
+        if (this.data.age !== null && this.data.age < 16) missing.push('Debés tener al menos 16 años');
+        if (!this.data.address || this.data.address.trim().length < 3) missing.push('Domicilio');
+        if (!this.data.locality || this.data.locality.trim().length < 2) missing.push('Localidad');
+        if (!this.data.province) missing.push('Provincia');
+        if (!this.data.phone) missing.push('Teléfono');
+        if (!this.data.email || !this.validateEmail(this.data.email)) missing.push('Email válido');
+        return missing.length ? `Faltan completar: ${missing.join(', ')}` : '';
+      }
+      case 2: {
+        const missing: string[] = [];
+        if (!this.data.category) missing.push('Categoría');
+        if (!this.data.subcategory) missing.push('Subcategoría');
+        return missing.length ? `Faltan completar: ${missing.join(', ')}` : '';
+      }
+      case 3: {
+        if (!this.isGroupType()) return '';
+        const missing: string[] = [];
+        if (this.data.members.length === 0) missing.push('Al menos un integrante');
+        this.data.members.forEach((m, i) => {
+          if (!m.fullName.trim()) missing.push(`Nombre del integrante ${i + 1}`);
+          if (!m.dni.trim()) missing.push(`DNI del integrante ${i + 1}`);
+          if (!m.role) missing.push(`Rol del integrante ${i + 1}`);
+        });
+        return missing.length ? `Faltan completar: ${missing.join(', ')}` : '';
+      }
+      case 6: {
+        const missing: string[] = [];
+        if (!this.data.dniFrontFile) missing.push('DNI frontal');
+        if (!this.data.dniBackFile) missing.push('DNI dorso');
+        if (!this.data.promoPhotoFile) missing.push('Foto promocional');
+        if (this.data.subcategory === 'cancion_inedita') {
+          if (!this.data.lyricsFile) missing.push('Letra de la canción');
+          if (!this.data.scoreFile) missing.push('Partitura');
+        }
+        return missing.length ? `Faltan subir: ${missing.join(', ')}` : '';
+      }
+      case 8: {
+        const missing: string[] = [];
+        if (!this.data.acceptRegulations) missing.push('Aceptar reglamento');
+        if (!this.data.acceptImageRights) missing.push('Aceptar derechos de imagen');
+        if (!this.data.acceptDataTruth) missing.push('Declarar veracidad de datos');
+        return missing.length ? `Faltan completar: ${missing.join(', ')}` : '';
+      }
+      default:
+        return '';
     }
   }
 
@@ -782,7 +981,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       const valid = this.step1Component.runAllValidations();
       if (!valid) return;
     }
-    if (this.canProceed() && this.currentStep() < 7) {
+    if (this.canProceed() && this.currentStep() < 8) {
       let next = this.currentStep() + 1;
       if (next === 3 && !this.isGroupType()) {
         next = 4;
@@ -867,6 +1066,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
         ? this.data.themes.filter(t => t.title || t.rhythm || t.author)
         : null,
       'members': this.isGroupType() ? this.data.members : null,
+      'accompanying_persons': this.data.accompanyingPersons.length > 0 ? this.data.accompanyingPersons : null,
     };
 
     this.http.post<InscripcionResult>(`${environment.apiUrl}/inscriptions/`, payload).subscribe({

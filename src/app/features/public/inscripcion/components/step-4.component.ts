@@ -35,6 +35,7 @@ import { subcategoriesByCategory } from '../inscripcion.page';
                   <th>Tema</th>
                   <th>Ritmo</th>
                   <th>¿Quién lo compuso?</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -44,11 +45,24 @@ import { subcategoriesByCategory } from '../inscripcion.page';
                     <td data-label="Tema"><input type="text" class="form-input table-input" [(ngModel)]="theme.title" [name]="'themeTitle' + i" placeholder="Nombre del tema" /></td>
                     <td data-label="Ritmo"><input type="text" class="form-input table-input" [(ngModel)]="theme.rhythm" [name]="'themeRhythm' + i" placeholder="Ej: Chacarera" /></td>
                     <td data-label="Autor"><input type="text" class="form-input table-input" [(ngModel)]="theme.author" [name]="'themeAuthor' + i" placeholder="Autor o compositor" /></td>
+                    <td class="theme-actions">
+                      @if (data().themes.length > 1) {
+                        <button type="button" class="btn-remove-theme" (click)="removeTheme(i)" title="Quitar tema">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                      }
+                    </td>
                   </tr>
                 }
               </tbody>
             </table>
           </div>
+          @if (data().themes.length < 10) {
+            <button type="button" class="btn-add-theme" (click)="addTheme()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Agregar tema
+            </button>
+          }
         </div>
 
         <div class="form-group">
@@ -140,10 +154,44 @@ import { subcategoriesByCategory } from '../inscripcion.page';
       .themes-table td { padding: 0; display: flex; flex-direction: column; gap: 0.25rem; }
       .themes-table td::before { content: attr(data-label); font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
       .theme-number { width: auto; font-size: 0.75rem; margin-bottom: 0.25rem; }
+      .table-input { padding: 0.45rem 0.5rem !important; font-size: 0.8rem !important; }
+      .form-textarea { min-height: 80px; }
+      .char-count { font-size: 0.65rem; }
     }
+
+    @media (max-width: 480px) {
+      .table-input { padding: 0.4rem 0.45rem !important; font-size: 0.75rem !important; }
+      .form-textarea { min-height: 70px; font-size: 0.85rem; }
+      .themes-table tr { padding: 0.5rem; }
+    }
+
+    .theme-actions { width: 30px; }
+    .btn-remove-theme {
+      background: none; border: none; color: #64748b; cursor: pointer;
+      padding: 0.25rem; border-radius: 0.25rem; transition: all 0.15s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-remove-theme:hover { color: #f87171; background: rgba(248, 113, 113, 0.1); }
+
+    .btn-add-theme {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 0.75rem; padding: 0.5rem 0.875rem;
+      font-size: 0.8rem; font-weight: 600; color: #4ade80;
+      background: rgba(74, 222, 128, 0.06); border: 1.5px dashed rgba(74, 222, 128, 0.25);
+      border-radius: 0.5rem; cursor: pointer; transition: all 0.15s ease;
+    }
+    .btn-add-theme:hover { background: rgba(74, 222, 128, 0.12); border-color: rgba(74, 222, 128, 0.4); }
   `]
 })
 export class InscripcionStep4Component {
   data = input.required<InscripcionData>();
   lastDirection = input.required<'left' | 'right'>();
+
+  addTheme(): void {
+    (this.data() as any).themes.push({ title: '', rhythm: '', author: '' });
+  }
+
+  removeTheme(index: number): void {
+    (this.data() as any).themes.splice(index, 1);
+  }
 }

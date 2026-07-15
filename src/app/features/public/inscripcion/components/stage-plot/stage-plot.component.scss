@@ -1,0 +1,288 @@
+.stage-plot-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background-color: transparent;
+  color: var(--gray-100);
+  font-family: var(--font-family-body);
+  border-radius: 10px;
+}
+.stage-plot-container.readonly {
+  padding: 0;
+}
+
+.instrument-palette {
+  width: 100%;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.palette-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 8px;
+}
+
+.instrument-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 4px 8px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: grab;
+  transition: all 0.2s ease;
+  text-align: center;
+  user-select: none;
+}
+
+.instrument-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.instrument-item:active {
+  cursor: grabbing;
+  transform: translateY(0);
+}
+
+.instrument-icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    pointer-events: none;
+  }
+}
+
+.instrument-label {
+  font-size: 0.6rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.stage-area-wrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stage-area {
+  flex-grow: 1;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.stage-background-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 4px 12px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.stage-background-label.top {
+  top: 8px;
+}
+
+.stage-background-label.bottom {
+  bottom: 8px;
+}
+
+.stage-grid-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.stage-hint {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 1.1em;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.placed-instrument {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px 4px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+  transition: box-shadow 0.15s ease;
+  z-index: 5;
+  min-width: 56px;
+}
+
+.placed-instrument:hover {
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.placed-instrument.selected {
+  outline: 2px dashed rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+  z-index: 10;
+}
+
+.placed-instrument-icon {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    pointer-events: none;
+  }
+}
+
+.placed-instrument-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.65rem;
+  white-space: nowrap;
+}
+
+.instrument-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: flex-end;
+}
+
+.instrument-controls .form-group {
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 140px;
+}
+
+.instrument-controls .form-label {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.25rem;
+}
+
+.instrument-controls .form-input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  background-color: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  color: var(--gray-100);
+}
+
+.instrument-controls .form-input:focus {
+  border-color: rgba(255, 255, 255, 0.4);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.control-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.rotate-button {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.rotate-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.delete-button {
+  background-color: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+.delete-button:hover {
+  background-color: rgba(239, 68, 68, 0.25);
+}
+
+.control-button svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+}
+
+@media (max-width: 640px) {
+  .stage-plot-container { padding: 12px; gap: 12px; }
+  .instrument-palette { padding: 8px; }
+  .palette-row { grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 6px; }
+  .instrument-item { padding: 8px 2px 6px; }
+  .instrument-icon { width: 24px; height: 24px; }
+  .instrument-label { font-size: 0.5rem; }
+  .stage-area { min-height: 280px; }
+  .placed-instrument { min-width: 48px; padding: 4px 6px 3px; }
+  .placed-instrument-icon { width: 22px; height: 22px; }
+  .placed-instrument-label { font-size: 0.55rem; }
+  .instrument-controls { gap: 8px; padding: 10px; }
+  .control-button { padding: 6px 10px; font-size: 0.75rem; }
+}

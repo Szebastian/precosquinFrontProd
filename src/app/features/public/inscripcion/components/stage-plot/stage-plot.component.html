@@ -1,0 +1,70 @@
+<div class="stage-plot-container" [class.readonly]="readonly">
+  @if (!readonly) {
+    <div class="instrument-palette">
+      <div class="palette-row">
+        @for (instrumentType of instrumentKeys; track instrumentType) {
+          <div class="instrument-item" draggable="true" (dragstart)="onPaletteDragStart($event, instrumentType)">
+            <div class="instrument-icon">
+              <img [src]="getIcon(instrumentType)" [alt]="getLabel(instrumentType)" draggable="false" width="32" height="32" />
+            </div>
+            <span class="instrument-label">{{ getLabel(instrumentType) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="stage-area-wrapper">
+    <div class="stage-area" [class.readonly-stage]="readonly"
+         [attr.draggable]="!readonly"
+         (dragover)="!readonly && allowDrop($event)"
+         (drop)="!readonly && drop($event)"
+         (click)="!readonly && (selectedInstrument = null)">
+      <div class="stage-background-label top">FONDO DEL ESCENARIO</div>
+      <div class="stage-grid-lines"></div>
+      @if (instruments.length === 0) {
+        <p class="stage-hint">{{ readonly ? 'Sin posiciones configuradas' : 'Arrastrá y soltá elementos sobre el escenario' }}</p>
+      }
+
+      @for (instrument of instruments; track instrument.id) {
+        <div class="placed-instrument"
+             [style.left.px]="instrument.x"
+             [style.top.px]="instrument.y"
+             [style.transform]="'translate(-50%, -50%) rotate(' + instrument.rotation + 'deg)'"
+             [attr.draggable]="!readonly"
+             (dragstart)="!readonly && dragStart($event, instrument)"
+             (click)="!readonly && selectInstrument(instrument); $event.stopPropagation();"
+             [class.selected]="instrument === selectedInstrument">
+          <div class="placed-instrument-icon">
+            <img [src]="getIcon(instrument.type)" [alt]="instrument.label" draggable="false" width="28" height="28" />
+          </div>
+          <span class="placed-instrument-label">{{ instrument.label }}</span>
+        </div>
+      }
+      <div class="stage-background-label bottom">PÚBLICO</div>
+    </div>
+
+    @if (selectedInstrument && !readonly) {
+      <div class="instrument-controls">
+        <div class="form-group">
+          <label class="form-label">Etiqueta</label>
+          <input type="text" class="form-input" [ngModel]="selectedInstrument.label"
+                 (ngModelChange)="updateInstrumentProperty('label', $event)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Canal #</label>
+          <input type="text" class="form-input" [ngModel]="selectedInstrument.channel"
+                 (ngModelChange)="updateInstrumentProperty('channel', $event)" />
+        </div>
+        <button class="control-button rotate-button" (click)="rotateSelectedInstrument()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M21.5 13a9 9 0 1 1-18 0c0-4.28 3.5-10 9-10s9 5.72 9 10Z"/></svg>
+          Rotar
+        </button>
+        <button class="control-button delete-button" (click)="removeInstrument(selectedInstrument)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          Eliminar
+        </button>
+      </div>
+    }
+  </div>
+</div>

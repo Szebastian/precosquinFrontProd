@@ -285,6 +285,24 @@ import { InscriptionsService, Inscription } from '../../core/services/inscriptio
                             </div>
                           </div>
                         }
+                        @if (inscription.accompanying_persons && inscription.accompanying_persons.length > 0) {
+                          <div class="detail-item full-width">
+                            <span class="detail-label">Acompañantes (Acceso a Puerto Pirámides)</span>
+                            <div class="members-list">
+                              @for (person of inscription.accompanying_persons; track $index) {
+                                <div class="member-item">
+                                  <span class="member-avatar-sm">{{ getInitials(person.fullName || '') }}</span>
+                                  <div class="member-info">
+                                    <strong>{{ person.fullName || 'Sin nombre' }}</strong>
+                                    @if (person.dni) {
+                                      <span class="member-role">DNI {{ person.dni }}</span>
+                                    }
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        }
                       </div>
                       <div class="detail-footer">
                         <span class="detail-date">Inscrito: {{ formatDate(inscription.created_at) }}</span>

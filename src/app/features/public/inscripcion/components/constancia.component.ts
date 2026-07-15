@@ -185,6 +185,8 @@ import { InscripcionResult, InscripcionData, formatDate } from '../inscripcion.p
     .btn-secondary:hover { background: var(--gray-200); }
     .animate-scale-in { animation: scaleIn 0.5s ease; }
     @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    .constancia-badge svg { animation: checkDraw 0.6s ease 0.3s both; }
+    @keyframes checkDraw { from { stroke-dashoffset: 30; } to { stroke-dashoffset: 0; } }
   `]
 })
 export class InscripcionConstanciaComponent {

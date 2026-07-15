@@ -1,13 +1,14 @@
-import { Component, input, computed, output } from '@angular/core';
+import { Component, input, computed, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InscripcionData, InscripcionResult } from '../inscripcion.page';
 import { subcategoriesByCategory } from '../inscripcion.page';
+import { StagePlotComponent } from './stage-plot/stage-plot.component';
 
 @Component({
   selector: 'app-inscripcion-step-7',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StagePlotComponent],
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
       <p class="step-desc" style="margin-top: 0;">      Revisá que todo esté bien y aceptá las condiciones</p>
@@ -91,6 +92,42 @@ import { subcategoriesByCategory } from '../inscripcion.page';
         </div>
       </div>
 
+      <!-- Solista Instrumental Details -->
+      @if (data().subcategory === 'solista_instrumental') {
+        <div class="review-section">
+          <div class="review-header">
+            <h3>Detalles del Instrumento (Art. 31)</h3>
+            <button type="button" class="btn-edit" (click)="goToStep.emit(2)">Editar</button>
+          </div>
+          <div class="review-grid">
+            <div class="review-item">
+              <span class="review-label">Tipo de Instrumento</span>
+              <span class="review-value">{{ data().instrumentType === 'melodico' ? 'Melódico' : data().instrumentType === 'armonico' ? 'Armónico' : '-' }}</span>
+            </div>
+            <div class="review-item">
+              <span class="review-label">Instrumento</span>
+              <span class="review-value">{{ data().instrumentName || '-' }}</span>
+            </div>
+            @if (data().instrumentType === 'melodico') {
+              <div class="review-item">
+                <span class="review-label">Acompañamiento</span>
+                <span class="review-value">{{ data().hasAccompaniment ? 'Sí' : 'No' }}</span>
+              </div>
+            }
+            @if (data().hasAccompaniment) {
+              <div class="review-item">
+                <span class="review-label">Instrumento Acompañante</span>
+                <span class="review-value">{{ data().accompanimentInstrument || '-' }}</span>
+              </div>
+              <div class="review-item">
+                <span class="review-label">Músico Acompañante</span>
+                <span class="review-value">{{ data().accompanimentMusician || '-' }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
       @if (isGroupType()) {
         <div class="review-section">
           <div class="review-header">
@@ -166,10 +203,10 @@ import { subcategoriesByCategory } from '../inscripcion.page';
               <span class="review-value">{{ data().riderTecnico.sonido.microfonos.join(', ') }}</span>
             </div>
           }
-          @if (data().riderTecnico.sonido.monitores) {
+          @if (data().riderTecnico.monitorCount > 0) {
             <div class="review-item">
               <span class="review-label">Monitores</span>
-              <span class="review-value">{{ data().riderTecnico.sonido.monitores }}</span>
+              <span class="review-value">{{ data().riderTecnico.monitorCount }} monitor(es)</span>
             </div>
           }
           @if (data().riderTecnico.sonido.diBoxes) {
@@ -184,9 +221,45 @@ import { subcategoriesByCategory } from '../inscripcion.page';
               <span class="review-value">{{ data().riderTecnico.sonido.backline.join(', ') }}</span>
             </div>
           }
+          @if (data().riderTecnico.otros) {
+            <div class="review-item full-width">
+              <span class="review-label">Otros requerimientos técnicos</span>
+              <span class="review-value">{{ data().riderTecnico.otros }}</span>
+            </div>
+          }
           @if (!hasRiderData()) {
             <div class="review-item full-width">
               <span class="review-value review-empty">Sin rider técnico configurado</span>
+            </div>
+          }
+        </div>
+        @if (data().riderTecnico.stagePlotInstruments.length > 0) {
+          <div class="stage-plot-review">
+            <span class="review-label">Stage Plot</span>
+            <app-stage-plot
+              [initialInstruments]="data().riderTecnico.stagePlotInstruments"
+              [readonly]="true">
+            </app-stage-plot>
+          </div>
+        }
+      </div>
+
+      <div class="review-section">
+        <div class="review-header">
+          <h3>Personas Acompañantes</h3>
+          <button type="button" class="btn-edit" (click)="goToStep.emit(7)">Editar</button>
+        </div>
+        <div class="review-grid">
+          @if (data().accompanyingPersons.length > 0) {
+            @for (person of data().accompanyingPersons; track $index; let i = $index) {
+              <div class="review-item">
+                <span class="review-label">Acompañante {{ i + 1 }}</span>
+                <span class="review-value">{{ person.fullName }} — DNI {{ person.dni }}</span>
+              </div>
+            }
+          } @else {
+            <div class="review-item full-width">
+              <span class="review-value review-empty">Sin personas acompañantes registradas</span>
             </div>
           }
         </div>
@@ -236,6 +309,25 @@ import { subcategoriesByCategory } from '../inscripcion.page';
           Borrar datos y empezar de nuevo
         </button>
       </div>
+
+      @if (showResetModal()) {
+        <div class="reset-modal-overlay" (click)="cancelReset()">
+          <div class="reset-modal" (click)="$event.stopPropagation()" role="alertdialog" aria-modal="true" aria-labelledby="resetModalTitle" aria-describedby="resetModalDesc">
+            <div class="reset-modal-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <h3 id="resetModalTitle" class="reset-modal-title">¿Borrar todo y empezar de nuevo?</h3>
+            <p id="resetModalDesc" class="reset-modal-desc">Se eliminarán todos los datos completados. Esta acción no se puede deshacer.</p>
+            <div class="reset-modal-actions">
+              <button type="button" class="reset-btn-cancel" (click)="cancelReset()">Cancelar</button>
+              <button type="button" class="reset-btn-confirm" (click)="executeReset()">Sí, borrar todo</button>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -267,8 +359,23 @@ import { subcategoriesByCategory } from '../inscripcion.page';
     .review-label { display: block; font-size: 0.7rem; color: #64748b; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
     .review-value { display: block; font-size: 0.85rem; font-weight: 500; color: #e2e8f0; line-height: 1.4; }
     .review-empty { color: #475569; font-style: italic; font-weight: 400; }
+    .stage-plot-review { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
 
-    @media (max-width: 640px) { .review-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) {
+      .review-grid { grid-template-columns: 1fr; }
+      .checkbox-label { padding: 0.75rem 1rem; font-size: 0.85rem; }
+      .checkbox-label input[type="checkbox"] { width: 22px; height: 22px; }
+      .declaration-section { gap: 0.5rem; }
+      .review-value { font-size: 0.8rem; }
+      .btn-reset { min-height: 44px; width: 100%; justify-content: center; }
+    }
+
+    @media (max-width: 480px) {
+      .checkbox-label { padding: 0.625rem 0.75rem; font-size: 0.8rem; }
+      .review-label { font-size: 0.65rem; }
+      .review-value { font-size: 0.75rem; }
+      .btn-edit { min-height: 40px; font-size: 0.75rem; }
+    }
 
     .reset-section {
       display: flex;
@@ -297,6 +404,44 @@ import { subcategoriesByCategory } from '../inscripcion.page';
       background: rgba(239, 68, 68, 0.06);
     }
     .btn-reset:active { transform: scale(0.97); }
+
+    .reset-modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      animation: fadeIn 0.2s ease;
+    }
+    .reset-modal {
+      background: #1e2330; border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px; padding: 2rem; max-width: 400px; width: 100%;
+      text-align: center;
+      animation: scaleIn 0.2s ease;
+    }
+    .reset-modal-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(239, 68, 68, 0.12); display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 1rem; color: #ef4444;
+    }
+    .reset-modal-title { font-size: 1.1rem; font-weight: 600; color: #e2e8f0; margin: 0 0 0.5rem; }
+    .reset-modal-desc { font-size: 0.85rem; color: #94a3b8; margin: 0 0 1.5rem; line-height: 1.5; }
+    .reset-modal-actions { display: flex; gap: 0.75rem; justify-content: center; }
+    .reset-btn-cancel {
+      padding: 0.6rem 1.25rem; border-radius: 0.5rem; font-size: 0.85rem;
+      font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+    }
+    .reset-btn-cancel:hover { background: rgba(255, 255, 255, 0.1); }
+    .reset-btn-confirm {
+      padding: 0.6rem 1.25rem; border-radius: 0.5rem; font-size: 0.85rem;
+      font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+      background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+    }
+    .reset-btn-confirm:hover { background: rgba(239, 68, 68, 0.25); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   `]
 })
 export class InscripcionStep7Component {
@@ -305,10 +450,13 @@ export class InscripcionStep7Component {
   goToStep = output<number>();
   resetForm = output<void>();
 
+  showResetModal = signal(false);
+
   subcategoryName = computed(() => {
     const all = [
       { id: 'solista_vocal', name: 'Solista Vocal' },
       { id: 'duo_vocal', name: 'Dúo Vocal' },
+      { id: 'expresion_oral_folclorica', name: 'Expresión Oral Folclórica' },
       { id: 'conjunto_vocal', name: 'Conjunto Vocal' },
       { id: 'solista_instrumental', name: 'Solista Instrumental' },
       { id: 'conjunto_instrumental', name: 'Conjunto Instrumental' },
@@ -332,12 +480,19 @@ export class InscripcionStep7Component {
 
   hasRiderData(): boolean {
     const r = this.data().riderTecnico;
-    return !!(r.sonido.microfonos.length > 0 || r.sonido.monitores || r.sonido.diBoxes || r.sonido.backline.length > 0 || r.otros);
+    return !!(r.sonido.microfonos.length > 0 || r.monitorCount > 0 || r.sonido.diBoxes || r.sonido.backline.length > 0 || r.otros);
   }
 
   confirmReset(): void {
-    if (confirm('¿Borrar todos los datos y empezar de nuevo? Esta acción no se puede deshacer.')) {
-      this.resetForm.emit();
-    }
+    this.showResetModal.set(true);
+  }
+
+  cancelReset(): void {
+    this.showResetModal.set(false);
+  }
+
+  executeReset(): void {
+    this.showResetModal.set(false);
+    this.resetForm.emit();
   }
 }

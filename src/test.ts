@@ -24,7 +24,6 @@ import './app/core/services/inscriptions.service';
 import './app/core/auth/auth.service';
 
 // Additional component files from inscripcion page
-import './app/features/public/inscripcion/components/step-indicator.component';
 import './app/features/public/inscripcion/components/constancia.component';
 import './app/features/public/inscripcion/components/step-1.component';
 import './app/features/public/inscripcion/components/step-2.component';
@@ -33,3 +32,4 @@ import './app/features/public/inscripcion/components/step-4.component';
 import './app/features/public/inscripcion/components/step-5.component';
 import './app/features/public/inscripcion/components/step-6.component';
 import './app/features/public/inscripcion/components/step-7.component';
+import './app/features/public/inscripcion/components/step-accessos.component';

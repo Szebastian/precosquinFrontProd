@@ -95,25 +95,41 @@
   &.completed {
     color: #4ade80;
   }
+
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(74, 222, 128, 0.08);
+      transform: translateX(4px);
+    }
+  }
 }
 
 .step-marker {
-  width: 6px;
-  height: 6px;
-  background: #334155;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
 
   .active & {
     background: var(--brand-400);
+    border-color: var(--brand-400);
     box-shadow: 0 0 0 3px rgba(76, 139, 230, 0.2);
-    transform: scale(1.3);
+    transform: scale(1.1);
   }
 
   .completed & {
     background: #4ade80;
-    transform: scale(1.1);
+    border-color: #4ade80;
+    color: #fff;
+    transform: scale(1.05);
   }
 }
 
@@ -233,6 +249,18 @@
   }
 }
 
+.required-legend {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0.5rem 0 0;
+  line-height: 1.4;
+}
+
+.required-asterisk {
+  color: #f87171;
+  font-weight: 600;
+}
+
 .back-home-link {
   display: inline-flex;
   align-items: center;
@@ -321,6 +349,25 @@
   }
 }
 
+.missing-fields-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--warning-500);
+  background: rgba(234, 179, 8, 0.08);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  border-radius: var(--radius-md);
+  animation: fadeIn 0.2s ease;
+  text-align: left;
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
 .confirm-group {
   display: flex;
   align-items: center;
@@ -404,6 +451,10 @@
 
 .bottom-nav-right {
   text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
 }
 
 .btn-ghost {
@@ -449,6 +500,19 @@
   }
 }
 
+.saved-indicator {
+  font-size: var(--text-xs);
+  color: #4ade80;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  animation: savedFade 0.3s ease;
+}
+@keyframes savedFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .save-link {
   font-size: var(--text-sm);
   color: #475569;
@@ -457,6 +521,23 @@
 
   &:hover {
     color: #94a3b8;
+  }
+}
+
+.help-link {
+  font-size: var(--text-xs);
+  color: #475569;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  &:hover {
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.04);
   }
 }
 
@@ -1804,6 +1885,60 @@ select.form-input {
     font-size: 0.85rem;
     width: 100%;
   }
+
+  /* Touch target fixes for mobile */
+  .btn-remove {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2) var(--space-3);
+    font-size: 0.8rem;
+  }
+
+  .btn-edit {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2) var(--space-3);
+    font-size: 0.8rem;
+  }
+
+  .btn-preview {
+    width: 36px;
+    height: 36px;
+  }
+
+  .constancia-modal-close {
+    width: 44px;
+    height: 44px;
+  }
+
+  .retry-btn,
+  .retry-post-btn {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Remove hover transforms on touch devices */
+  .btn-next-large:hover,
+  .category-card:hover,
+  .subcategory-chip:hover {
+    transform: none;
+  }
+
+  /* Virtual keyboard accommodation */
+  .form-main-content {
+    padding-bottom: 120px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1880,6 +2015,234 @@ select.form-input {
 
   .enter-hint {
     display: none;
+  }
+
+  /* Font size fixes for small phones */
+  .minimal-input {
+    font-size: 1.1rem;
+  }
+
+  .date-select {
+    font-size: 1rem;
+  }
+
+  .question-counter {
+    font-size: 11px;
+  }
+
+  .mobile-step-name .step-sublabel {
+    font-size: 0.65rem;
+  }
+
+  /* Constancia modal mobile fixes */
+  .constancia-modal {
+    max-height: 85vh;
+    margin: var(--space-2);
+  }
+
+  .constancia-modal ::ng-deep .constancia-card {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .constancia-modal ::ng-deep .constancia-row {
+    grid-template-columns: 1fr;
+  }
+
+  .constancia-modal ::ng-deep .constancia-footer {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .constancia-modal ::ng-deep .constancia-footer button {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .constancia-modal ::ng-deep .constancia-logo-img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .constancia-modal ::ng-deep .constancia-title {
+    font-size: var(--text-lg);
+  }
+
+  /* Step 5 rider sections */
+  .rider-section {
+    padding: var(--space-4);
+  }
+
+  .rider-chip {
+    min-height: 40px;
+    padding: var(--space-2) var(--space-3);
+    font-size: 0.8rem;
+  }
+
+  /* Member cards */
+  .member-card {
+    padding: 1rem;
+  }
+
+  /* File upload zones */
+  .file-drop-zone.compact {
+    padding: 0.75rem;
+  }
+
+  .upload-card {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Missing fields hint */
+  .missing-fields-hint {
+    font-size: 0.75rem;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  /* Bottom nav bar further reduction */
+  .bottom-nav-bar {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .btn-ghost,
+  .save-link {
+    font-size: 0.8rem;
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* --- Small phones (iPhone SE, etc.) --- */
+@media (max-width: 480px) {
+  .form-main-content {
+    padding: var(--space-4) var(--space-3);
+    padding-bottom: 140px;
+  }
+
+  .form-card {
+    padding: var(--space-5) var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  .form-header h1 {
+    font-size: 1.1rem;
+  }
+
+  .form-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .btn-next-large {
+    padding: var(--space-4) var(--space-5);
+    font-size: 0.85rem;
+    border-radius: var(--radius-md);
+  }
+
+  .minimal-input {
+    font-size: 1rem;
+    padding: var(--space-2) 0;
+  }
+
+  .minimal-label {
+    font-size: 0.65rem;
+  }
+
+  .date-select {
+    font-size: 0.9rem;
+    padding: var(--space-2);
+  }
+
+  .date-picker-row {
+    gap: var(--space-2);
+  }
+
+  .category-card {
+    padding: 1rem;
+  }
+
+  .category-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .category-name {
+    font-size: 0.9rem;
+  }
+
+  .subcategory-chip {
+    padding: var(--space-2) var(--space-3);
+    font-size: 0.8rem;
+  }
+
+  .member-card {
+    padding: 0.875rem;
+  }
+
+  .form-row {
+    gap: 0.75rem;
+  }
+
+  .rider-section {
+    padding: var(--space-3);
+  }
+
+  .rider-chip {
+    min-height: 38px;
+    padding: 6px var(--space-2);
+    font-size: 0.75rem;
+  }
+
+  .upload-grid-2col {
+    gap: 0.5rem;
+  }
+
+  .file-drop-zone.compact {
+    padding: 0.625rem;
+  }
+
+  .preview-image {
+    width: 44px;
+    height: 44px;
+  }
+
+  .preview-placeholder {
+    width: 44px;
+    height: 44px;
+  }
+
+  .constancia-modal {
+    margin: var(--space-1);
+    max-height: 80vh;
+  }
+
+  .constancia-modal ::ng-deep .constancia-card {
+    padding: var(--space-5) var(--space-3);
+  }
+
+  .constancia-modal ::ng-deep .constancia-logo-img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .constancia-modal ::ng-deep .constancia-title {
+    font-size: var(--text-base);
+  }
+
+  .constancia-modal ::ng-deep .constancia-value {
+    font-size: 0.8rem;
+  }
+
+  .bottom-nav-bar {
+    padding: var(--space-2);
+  }
+
+  .btn-ghost,
+  .save-link {
+    font-size: 0.75rem;
+    min-height: 40px;
+  }
+
+  .missing-fields-hint {
+    font-size: 0.7rem;
+    padding: var(--space-2);
   }
 }
 
@@ -2078,3 +2441,5 @@ select.form-input {
   background: rgba(255, 255, 255, 0.1);
   color: #e2e8f0;
 }
+
+

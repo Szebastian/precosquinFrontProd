@@ -45,6 +45,8 @@ export interface Inscription {
   dance_list?: string;
   themes?: Theme[];
   members?: Member[];
+  accompanying_persons?: { fullName: string; dni: string }[];
+  rider_tecnico?: any;
 }
 
 export interface StatusUpdateResponse {
