@@ -1033,7 +1033,253 @@ closeConstanciaModal(): void {
 
 
   printConstancia(): void {
-    window.print();
+    const el = document.getElementById('constancia');
+    if (!el) { window.print(); return; }
+
+    const win = window.open('', '_blank', 'width=800,height=900');
+    if (!win) { window.print(); return; }
+
+    const d = this.data;
+    const subcat = this.getSubcategoryName(d.subcategory);
+    const catLabel = d.category === 'musica' ? 'Música' : 'Danza';
+    const result = this.inscriptionResult()!;
+    const createdDate = formatDate(result.created_at);
+
+    const f = (label: string, value: string, cls = '') =>
+      `<div class="field"><span class="label">${label}</span><span class="value ${cls}">${value || '-'}</span></div>`;
+
+    let bodyHtml = '';
+    bodyHtml += f('N° de Inscripción', result.id, 'constancia-id');
+    bodyHtml += f('Fecha de Inscripción', createdDate);
+    bodyHtml += '<hr class="divider">';
+    bodyHtml += '<div class="section-title">Datos Personales</div>';
+    bodyHtml += f('Nombre Completo', d.fullName, 'constancia-name');
+    bodyHtml += `<div class="grid-3">${f('DNI', d.dni)}${f('Nacimiento', d.birthDate)}${f('Edad', d.age !== null ? d.age + ' años' : '-')}</div>`;
+    bodyHtml += `<div class="grid-3">${f('Domicilio', d.address)}${f('Localidad', d.locality)}${f('Provincia', d.province)}</div>`;
+    bodyHtml += `<div class="grid-2">${f('Teléfono', d.phone)}${f('Email', d.email)}</div>`;
+    bodyHtml += '<hr class="divider">';
+    bodyHtml += '<div class="section-title">Participación</div>';
+    bodyHtml += `<div class="grid-2">${f('Categoría', catLabel, 'constancia-category')}${f('Subcategoría', subcat, 'constancia-category')}</div>`;
+    if (d.category === 'musica' && d.artisticName) bodyHtml += f('Nombre Artístico', d.artisticName);
+    if (d.category === 'danza') {
+      if (d.proposalName) bodyHtml += f('Nombre de la Propuesta', d.proposalName);
+      if (d.style) bodyHtml += f('Estilo', d.style);
+    }
+
+    if (d.category === 'musica' && d.instrumentType) {
+      bodyHtml += '<hr class="divider">';
+      bodyHtml += '<div class="section-title">Detalles del Instrumento (Art. 31)</div>';
+      bodyHtml += `<div class="grid-2">${f('Tipo', d.instrumentType === 'melodico' ? 'Melódico' : 'Armónico')}${f('Instrumento', d.instrumentName)}</div>`;
+      if (d.hasAccompaniment) {
+        bodyHtml += `<div class="grid-2">${f('Acompañamiento', d.accompanimentInstrument)}${f('Músico Acompañante', d.accompanimentMusician)}</div>`;
+      }
+    }
+
+    if (d.members.length > 0) {
+      bodyHtml += '<hr class="divider">';
+      bodyHtml += '<div class="section-title">Integrantes</div>';
+      d.members.forEach((m, i) => {
+        bodyHtml += `<div class="grid-3">${f('Nombre', m.fullName)}${f('Rol', m.role)}${f('DNI', m.dni)}</div>`;
+      });
+    }
+
+    if (d.themes.length > 0) {
+      bodyHtml += '<hr class="divider">';
+      bodyHtml += '<div class="section-title">Temas / Obras</div>';
+      d.themes.forEach((t, i) => {
+        bodyHtml += `<div class="grid-3">${f('Tema ' + (i + 1), t.title)}${f('Ritmo', t.rhythm)}${f('Autor', t.author)}</div>`;
+      });
+    }
+
+    const r = d.riderTecnico;
+    const hasInputList = r.inputList.length > 0;
+    const hasStagePlot = r.stagePlotInstruments.length > 0;
+    const hasMonitors = r.monitorCount > 0 && r.monitorMixes.length > 0;
+    const hasSonido = r.sonido.microfonos.length > 0 || r.sonido.diBoxes || r.sonido.backline.length > 0;
+
+    if (hasInputList || hasStagePlot || hasMonitors || hasSonido || r.otros) {
+      bodyHtml += '<hr class="divider">';
+      bodyHtml += '<div class="section-title">Rider Técnico</div>';
+
+      if (hasInputList) {
+        bodyHtml += '<div class="subsection">Canales de Entrada</div>';
+        bodyHtml += '<table class="data-table"><thead><tr><th>#</th><th>Fuente</th><th>Micrófono / DI</th><th>Phantom</th></tr></thead><tbody>';
+        r.inputList.forEach((ch, i) => {
+          bodyHtml += `<tr><td>${i + 1}</td><td>${ch.source || '-'}</td><td>${ch.micType || '-'}</td><td>${ch.phantom ? 'Sí' : 'No'}</td></tr>`;
+        });
+        bodyHtml += '</tbody></table>';
+      }
+
+      if (hasStagePlot) {
+        bodyHtml += '<div class="subsection">Stage Plot (Posiciones en Escenario)</div>';
+        const typeColors: Record<string, string> = {
+          'drums': '#ef4444', 'guitar': '#3b82f6', 'bass': '#8b5cf6',
+          'keyboard': '#10b981', 'microphone': '#f59e0b', 'amp': '#6b7280',
+          'monitor': '#06b6d4', 'micstand': '#ec4899', 'musician': '#1e293b',
+          'di-box': '#f97316', 'ac-power': '#eab308'
+        };
+        const typeShort: Record<string, string> = {
+          'drums': 'BAT', 'guitar': 'GTR', 'bass': 'BAJ',
+          'keyboard': 'TEC', 'microphone': 'MIC', 'amp': 'AMP',
+          'monitor': 'MON', 'micstand': 'MT', 'musician': 'MUS',
+          'di-box': 'DI', 'ac-power': 'ENE'
+        };
+        const typeLabels: Record<string, string> = {
+          'drums': 'Batería', 'guitar': 'Guitarra', 'bass': 'Bajo',
+          'keyboard': 'Teclado', 'microphone': 'Micrófono', 'amp': 'Amplificador',
+          'monitor': 'Monitor', 'micstand': 'Mic Tripie', 'musician': 'Músico',
+          'di-box': 'DI Box', 'ac-power': 'Energía'
+        };
+
+        const pad = 50;
+        let maxX = 200, maxY = 200;
+        r.stagePlotInstruments.forEach(inst => {
+          if (inst.x + pad > maxX) maxX = inst.x + pad;
+          if (inst.y + pad * 2 > maxY) maxY = inst.y + pad * 2;
+        });
+        const svgW = Math.max(maxX + pad, 300);
+        const svgH = Math.max(maxY + pad, 200);
+
+        let svg = `<div class="stage-plot-svg"><svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:100%;">`;
+
+        svg += `<rect x="0" y="0" width="${svgW}" height="${svgH}" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>`;
+        for (let i = 1; i < 4; i++) {
+          const lx = (svgW / 4) * i;
+          const ly = (svgH / 4) * i;
+          svg += `<line x1="${lx}" y1="0" x2="${lx}" y2="${svgH}" stroke="#cbd5e1" stroke-width="0.5" stroke-dasharray="4,4"/>`;
+          svg += `<line x1="0" y1="${ly}" x2="${svgW}" y2="${ly}" stroke="#cbd5e1" stroke-width="0.5" stroke-dasharray="4,4"/>`;
+        }
+        svg += `<rect x="0" y="0" width="${svgW}" height="24" fill="#1e3a8a" rx="6"/>`;
+        svg += `<rect x="0" y="20" width="${svgW}" height="4" fill="#1e3a8a"/>`;
+        svg += `<text x="${svgW/2}" y="16" text-anchor="middle" fill="white" font-size="9" font-weight="700" font-family="sans-serif">FONDO DEL ESCENARIO</text>`;
+        svg += `<rect x="0" y="${svgH-22}" width="${svgW}" height="22" fill="#e0e7ff"/>`;
+        svg += `<rect x="0" y="${svgH-22}" width="${svgW}" height="1.5" fill="#93c5fd"/>`;
+        svg += `<text x="${svgW/2}" y="${svgH-7}" text-anchor="middle" fill="#1e3a8a" font-size="9" font-weight="700" font-family="sans-serif">PÚBLICO</text>`;
+
+        const stageTop = 30;
+        r.stagePlotInstruments.forEach(inst => {
+          const px = inst.x;
+          const py = stageTop + inst.y;
+          const color = typeColors[inst.type] || '#64748b';
+          const short = typeShort[inst.type] || '•';
+          const fullLbl = typeLabels[inst.type] || inst.type;
+          const extra = [inst.label, inst.channel].filter(Boolean).join(' ');
+
+          svg += `<circle cx="${px}" cy="${py}" r="16" fill="${color}"/>`;
+          svg += `<text x="${px}" y="${py + 1}" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="7" font-weight="700" font-family="sans-serif">${short}</text>`;
+
+          const labelY = py + 24;
+          svg += `<rect x="${px - 28}" y="${labelY - 8}" width="56" height="14" rx="3" fill="white" stroke="${color}" stroke-width="0.7"/>`;
+          svg += `<text x="${px}" y="${labelY + 1}" text-anchor="middle" fill="${color}" font-size="7" font-weight="600" font-family="sans-serif">${fullLbl}</text>`;
+
+          if (extra) {
+            svg += `<text x="${px}" y="${labelY + 12}" text-anchor="middle" fill="#64748b" font-size="6" font-family="sans-serif">${extra}</text>`;
+          }
+        });
+
+        svg += '</svg></div>';
+        bodyHtml += svg;
+      }
+
+      if (hasMonitors) {
+        bodyHtml += '<div class="subsection">Monitores</div>';
+        bodyHtml += f('Cantidad de Monitores', r.monitorCount + '');
+        r.monitorMixes.forEach(mix => {
+          bodyHtml += f(mix.label, mix.items.join(', ') || 'Sin mezcla configurada');
+        });
+      }
+
+      if (hasSonido) {
+        bodyHtml += '<div class="subsection">Sonido y Backline</div>';
+        if (r.sonido.microfonos.length > 0) bodyHtml += f('Micrófocos / Accesorios', r.sonido.microfonos.join(', '));
+        if (r.sonido.diBoxes) bodyHtml += f('DI Boxes', r.sonido.diBoxes + '');
+        if (r.sonido.cables.length > 0) bodyHtml += f('Cables / Conexiones', r.sonido.cables.join(', '));
+        if (r.sonido.backline.length > 0) bodyHtml += f('Backline Propio', r.sonido.backline.join(', '));
+      }
+
+      if (r.otros) {
+        bodyHtml += f('Otros Requerimientos', r.otros);
+      }
+    }
+
+    if (d.accompanyingPersons.length > 0) {
+      bodyHtml += '<hr class="divider">';
+      bodyHtml += '<div class="section-title">Acompañantes</div>';
+      d.accompanyingPersons.forEach(p => {
+        bodyHtml += `<div class="grid-2">${f('Nombre', p.fullName)}${f('DNI', p.dni)}</div>`;
+      });
+    }
+
+    win.document.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Constancia - ${d.fullName}</title>
+<style>
+  @page { size: A4 portrait; margin: 15mm 12mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: #0f172a; background: white; }
+  .card { border: 2px solid #1e3a8a; }
+  .top-bar { height: 3mm; background: #1e3a8a; }
+  .header { display: flex; flex-direction: column; align-items: center; gap: 3mm; padding: 8mm 10mm 5mm; border-bottom: 2px solid #1e3a8a; }
+  .header img { height: 12mm; }
+  .event-name { font-size: 14pt; font-weight: 700; color: #0f172a; }
+  .badge { background: #dcfce7; color: #166534; padding: 4px 14px; border-radius: 999px; font-size: 9pt; font-weight: 700; }
+  .title-row { display: flex; justify-content: space-between; align-items: center; padding: 4mm 10mm; border-bottom: 1px solid #cbd5e1; }
+  .title { font-size: 16pt; font-weight: 800; }
+  .fecha { font-size: 9pt; color: #475569; }
+  .body { padding: 5mm 10mm 6mm; display: flex; flex-direction: column; gap: 2.5mm; }
+  .field { display: flex; flex-direction: column; gap: 0.5mm; }
+  .label { font-size: 7.5pt; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; }
+  .value { font-size: 10pt; color: #0f172a; font-weight: 500; line-height: 1.3; }
+  .constancia-name { font-size: 12pt; font-weight: 800; color: #0f172a; }
+  .constancia-id { font-family: 'Courier New', monospace; font-size: 9pt; font-weight: 700; color: #1e3a8a; }
+  .constancia-category { font-weight: 700; color: #1e3a8a; }
+  .section-title { font-size: 10pt; font-weight: 700; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.08em; padding-top: 1mm; padding-bottom: 1mm; border-bottom: 1px solid #93c5fd; }
+  .divider { border: none; border-top: 1px solid #e2e8f0; margin: 0.5mm 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; }
+  .note { padding: 3mm 4mm; background: #eff6ff; border: 1px solid #3b82f6; border-radius: 4px; font-size: 8pt; color: #334155; line-height: 1.4; }
+  .subsection { font-size: 9pt; font-weight: 700; color: #334155; margin-top: 1.5mm; padding-bottom: 0.5mm; border-bottom: 1px dashed #93c5fd; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 8pt; margin-top: 1mm; }
+  .data-table th { background: #f1f5f9; color: #475569; text-transform: uppercase; font-size: 7pt; letter-spacing: 0.05em; padding: 1.5mm 2mm; text-align: left; border-bottom: 1px solid #cbd5e1; }
+  .data-table td { padding: 1.5mm 2mm; border-bottom: 1px solid #e2e8f0; color: #0f172a; vertical-align: top; }
+  .data-table.stage-grid td { border: 1px solid #cbd5e1; padding: 2mm; font-size: 7.5pt; min-width: 50mm; height: 15mm; }
+  .data-table.stage-grid th { background: #e0e7ff; color: #1e3a8a; font-size: 7.5pt; }
+  .data-table.stage-grid .fondo-label { background: #f1f5f9; color: #64748b; text-align: center; font-style: italic; font-size: 7pt; }
+  .stage-plot-svg { margin-top: 1.5mm; text-align: center; }
+  .stage-plot-svg svg { border: 1px solid #cbd5e1; border-radius: 4px; }
+  .footer { padding: 4mm 10mm; border-top: 1px solid #cbd5e1; text-align: center; font-size: 7pt; color: #94a3b8; }
+  @media print {
+    body { margin: 0; }
+    .card { border: none; }
+    .top-bar { background: #1e3a8a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .badge { background: #dcfce7 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .note { background: #eff6ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="top-bar"></div>
+  <div class="header">
+    <img src="assets/img/logoballena.webp" alt="Precosquín">
+    <div class="event-name">Festival Precosquín 2027</div>
+    <div class="badge">✓ Inscripción Registrada</div>
+  </div>
+  <div class="title-row">
+    <div class="title">Constancia de Inscripción</div>
+    <div class="fecha">Fecha: ${createdDate}</div>
+  </div>
+  <div class="body">
+    ${bodyHtml}
+    <div class="note">Conservá esta constancia como comprobante. Tu inscripción será revisada por el jurado. Recibirás un email con los próximos pasos.</div>
+  </div>
+  <div class="footer">Festival Precosquín 2027 — precosquin.com</div>
+</div>
+</body></html>`);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 600);
   }
 
   async onSubmit(event: Event): Promise<void> {
