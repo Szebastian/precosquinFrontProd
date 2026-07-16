@@ -1,7 +1,7 @@
 import { Component, input, signal, computed, output, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { InscripcionData, InputChannel, Instrument } from '../inscripcion.page';
+import { InscripcionData, Instrument } from '../inscripcion.page';
 import { StagePlotComponent } from './stage-plot/stage-plot.component';
 
 @Component({
@@ -72,18 +72,6 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
         </div>
         @if (!sectionCollapsed['sonido']) {
           <div class="section-body">
-
-        <div class="form-group">
-          <label class="form-label">¿Qué microfonos necesitás?</label>
-          <div class="rider-chips">
-            @for (mic of micOptions; track mic) {
-              <label class="rider-chip" [class.selected]="data().riderTecnico.sonido.microfonos.includes(mic)">
-                <input type="checkbox" [checked]="data().riderTecnico.sonido.microfonos.includes(mic)" (change)="onMicChange.emit(mic)" />
-                {{ mic }}
-              </label>
-            }
-          </div>
-        </div>
 
         <div class="form-group">
           <label class="form-label">¿Qué equipamiento llevás?</label>
@@ -196,135 +184,10 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
         </div> <!-- /rider-section tips-section -->
       }
 
-      <!-- SISTEMAS INALÁMBRICOS -->
-      <div class="rider-section wireless-section">
-        <div class="rider-section-header clickable-section" (click)="toggleSection('wireless')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
-            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
-            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
-            <line x1="12" y1="20" x2="12.01" y2="20"/>
-          </svg>
-          <h3>Sistemas Inalámbricos</h3>
-          <span class="chevron" [class.rotated]="!sectionCollapsed['wireless']"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-        </div>
-        @if (!sectionCollapsed['wireless']) {
-          <div class="section-body">
-            <div class="wireless-notice">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-              <div>
-                <strong>Aviso importante:</strong>
-                <p>Los sistemas inalámbricos quedan sujetos a aprobación técnica de la empresa de sonido contratada. Se recomienda no usar equipos en banda VHF debido a interferencias. Comunicarse vía mail con el técnico contratado antes de la llegada a Cosquín.</p>
-              </div>
-            </div>
-          </div>
-        }
-      </div>
-
-      <!-- AMPLIFICADORES -->
-      <div class="rider-section">
-        <div class="rider-section-header clickable-section" (click)="toggleSection('amp')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/>
-          </svg>
-          <h3>Amplificadores</h3>
-          <span class="chevron" [class.rotated]="!sectionCollapsed['amp']"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-        </div>
-        @if (!sectionCollapsed['amp']) {
-          <div class="section-body">
-            <div class="amp-notice">
-              <p>Si usás amplificador de instrumento, avisá con anticipación para su inclusión en la planta técnica. Especificá la conexión: micrófono, salida de línea o combinación.</p>
-              <p class="amp-warning">La puesta a tierra del equipo debe estar técnicamente normalizada por temas de seguridad eléctrica.</p>
-            </div>
-          </div>
-        }
-      </div>
-
-      <!-- INPUT LIST -->
-      <div class="rider-section">
-        <div class="rider-section-header clickable-section" (click)="toggleSection('inputlist')">
-          <span class="section-number">4</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/>
-          </svg>
-          <h3>Input List (Canales de Audio)</h3>
-          <span class="chevron" [class.rotated]="!sectionCollapsed['inputlist']"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-        </div>
-        @if (!sectionCollapsed['inputlist']) {
-          <div class="section-body">
-            <p class="section-hint">Detallá los canales de audio que necesitás. Si no sabés, dejalo vacío y el técnico lo definirá.</p>
-            <div class="inputlist-presets">
-              <button type="button" class="btn-preset" (click)="applyPreset('banda_completa')">Preset: Banda Completa</button>
-              <button type="button" class="btn-preset" (click)="applyPreset('solo_bateria')">Preset: Solo Batería</button>
-              <button type="button" class="btn-preset" (click)="applyPreset('dj_set')">Preset: DJ Set</button>
-              <button type="button" class="btn-preset" (click)="applyPreset('acustico')">Preset: Acústico</button>
-            </div>
-            <div class="inputlist-table-wrapper">
-              <table class="inputlist-table">
-                <thead>
-                  <tr>
-                    <th>CH</th>
-                    <th>Fuente / Instrumento</th>
-                    <th>Micrófono / DI</th>
-                    <th>FX INSERT</th>
-                    <th>MONITOR MIX</th>
-                    <th>+48V</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (ch of data().riderTecnico.inputList; track $index; let i = $index) {
-                    <tr>
-                      <td class="channel-num">{{ i + 1 }}</td>
-                      <td><input type="text" class="form-input table-input" [(ngModel)]="ch.source" [name]="'chSource' + i" placeholder="Ej: Voz, Guitarra, Bombo" /></td>
-                      <td>
-                        <select class="form-input table-input" [(ngModel)]="ch.micType" [name]="'chMic' + i">
-                          <option value="">Elegí</option>
-                          <option value="SM58">Shure SM58</option>
-                          <option value="SM57">Shure SM57</option>
-                          <option value="SM81">Shure SM81</option>
-                          <option value="e835">Sennheiser e835</option>
-                          <option value="e604">Sennheiser e604</option>
-                          <option value="MD421">Sennheiser MD421</option>
-                          <option value="ATM650">Audio-Technica ATM650</option>
-                          <option value="AT4050">Audio-Technica AT4050</option>
-                          <option value="Beta52A">Shure Beta 52A</option>
-                          <option value="DI">DI Box</option>
-                          <option value="Line">Salida de línea</option>
-                          <option value="Otro">Otro</option>
-                        </select>
-                      </td>
-                      <td><input type="text" class="form-input table-input" [(ngModel)]="ch.fxInsert" [name]="'chFxInsert' + i" placeholder="Ej: Reverb, Delay" /></td>
-                      <td><input type="text" class="form-input table-input" [(ngModel)]="ch.monitorMix" [name]="'chMonitorMix' + i" placeholder="Ej: Voz + Guitarra" /></td>
-                      <td class="cell-center">
-                        <input type="checkbox" [(ngModel)]="ch.phantom" [name]="'chPhantom' + i" />
-                      </td>
-                      <td class="cell-actions">
-                        <button type="button" class="btn-remove-theme" (click)="removeChannel(i)" title="Quitar canal">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        </button>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-            @if (data().riderTecnico.inputList.length < 24) {
-              <button type="button" class="btn-add-theme" (click)="addChannel()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Agregar canal
-              </button>
-            }
-          </div>
-        }
-      </div>
-
       <!-- STAGE PLOT -->
       <div class="rider-section">
         <div class="rider-section-header clickable-section" (click)="toggleSection('stageplot')">
-          <span class="section-number">5</span>
+          <span class="section-number">4</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
           </svg>
@@ -344,7 +207,7 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
       <!-- MONITOR MIXES -->
       <div class="rider-section">
         <div class="rider-section-header clickable-section" (click)="toggleSection('monitors')">
-          <span class="section-number">6</span>
+          <span class="section-number">5</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
           </svg>
@@ -688,10 +551,8 @@ export class InscripcionStep5Component implements OnInit {
   cablesInput = signal('');
 
   goToStep = output<number>();
-  onMicChange = output<string>();
   onBacklineChange = output<string>();
 
-  micOptions = ['Dinámico (SM58)', 'Condensador de solista', 'Inalámbrico', 'Overhead', 'Para acordeón/guitarra', 'Para percusión'];
   backlineOptions = ['Guitarra eléctrica', 'Guitarra acústica', 'Bajo', 'Batería', 'Acordeón', 'Teclado', 'Percusión menor'];
 
   sectionCollapsed: Record<string, boolean> = {
@@ -700,9 +561,6 @@ export class InscripcionStep5Component implements OnInit {
     conexiones: false,
     equipo: false,
     consejos: false,
-    wireless: false,
-    amp: false,
-    inputlist: false,
     stageplot: false,
     monitors: false,
   };
@@ -715,66 +573,6 @@ export class InscripcionStep5Component implements OnInit {
 
   onStagePlotInstrumentsChange(instruments: Instrument[]): void {
     (this.data() as any).riderTecnico.stagePlotInstruments = instruments;
-  }
-
-  addChannel(): void {
-    (this.data() as any).riderTecnico.inputList.push({ source: '', micType: '', fxInsert: '', monitorMix: '', phantom: false });
-  }
-
-  removeChannel(index: number): void {
-    (this.data() as any).riderTecnico.inputList.splice(index, 1);
-  }
-
-  applyPreset(presetName: string): void {
-    let presetChannels: InputChannel[] = [];
-
-    switch (presetName) {
-      case 'banda_completa':
-        presetChannels = [
-          { source: 'Bombo', micType: 'Beta52A', fxInsert: '', monitorMix: 'Bombo', phantom: false },
-          { source: 'Caja', micType: 'SM57', fxInsert: 'Comp', monitorMix: 'Caja', phantom: false },
-          { source: 'Hi-Hat', micType: 'SM81', fxInsert: '', monitorMix: '', phantom: true },
-          { source: 'Overhead L', micType: 'ATM650', fxInsert: '', monitorMix: '', phantom: true },
-          { source: 'Overhead R', micType: 'ATM650', fxInsert: '', monitorMix: '', phantom: true },
-          { source: 'Bajo', micType: 'DI', fxInsert: 'Comp', monitorMix: 'Bajo', phantom: false },
-          { source: 'Guitarra L', micType: 'SM57', fxInsert: 'Reverb', monitorMix: 'Guitarra', phantom: false },
-          { source: 'Guitarra R', micType: 'SM57', fxInsert: 'Reverb', monitorMix: 'Guitarra', phantom: false },
-          { source: 'Voz Principal', micType: 'SM58', fxInsert: 'Reverb', monitorMix: 'Voz', phantom: true },
-          { source: 'Voz Coro 1', micType: 'e835', fxInsert: 'Reverb', monitorMix: 'Coros', phantom: true },
-          { source: 'Voz Coro 2', micType: 'e835', fxInsert: 'Reverb', monitorMix: 'Coros', phantom: true },
-          { source: 'Teclado L', micType: 'Line', fxInsert: '', monitorMix: 'Teclado', phantom: false },
-          { source: 'Teclado R', micType: 'Line', fxInsert: '', monitorMix: 'Teclado', phantom: false },
-        ];
-        break;
-      case 'solo_bateria':
-        presetChannels = [
-          { source: 'Bombo', micType: 'Beta52A', fxInsert: '', monitorMix: 'Bombo', phantom: false },
-          { source: 'Caja', micType: 'SM57', fxInsert: 'Comp', monitorMix: 'Caja', phantom: false },
-          { source: 'Hi-Hat', micType: 'SM81', fxInsert: '', monitorMix: '', phantom: true },
-          { source: 'Tom 1', micType: 'e604', fxInsert: '', monitorMix: 'Toms', phantom: false },
-          { source: 'Tom 2', micType: 'e604', fxInsert: '', monitorMix: 'Toms', phantom: false },
-          { source: 'Floor Tom', micType: 'e604', fxInsert: '', monitorMix: 'Toms', phantom: false },
-          { source: 'Overhead L', micType: 'ATM650', fxInsert: '', monitorMix: '', phantom: true },
-          { source: 'Overhead R', micType: 'ATM650', fxInsert: '', monitorMix: '', phantom: true },
-        ];
-        break;
-      case 'dj_set':
-        presetChannels = [
-          { source: 'DJ L', micType: 'Line', fxInsert: '', monitorMix: 'DJ', phantom: false },
-          { source: 'DJ R', micType: 'Line', fxInsert: '', monitorMix: 'DJ', phantom: false },
-          { source: 'Voz DJ', micType: 'SM58', fxInsert: 'Reverb', monitorMix: 'Voz', phantom: true },
-        ];
-        break;
-      case 'acustico':
-        presetChannels = [
-          { source: 'Guitarra Acústica', micType: 'DI', fxInsert: 'Reverb', monitorMix: 'Guitarra', phantom: false },
-          { source: 'Voz Principal', micType: 'SM58', fxInsert: 'Reverb', monitorMix: 'Voz', phantom: true },
-          { source: 'Cajón Peruano', micType: 'SM57', fxInsert: '', monitorMix: 'Percusión', phantom: false },
-        ];
-        break;
-    }
-
-    (this.data() as any).riderTecnico.inputList = presetChannels;
   }
 
   onMonitorCountChange(count: number): void {

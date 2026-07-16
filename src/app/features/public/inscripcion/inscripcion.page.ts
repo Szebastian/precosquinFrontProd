@@ -286,7 +286,6 @@ export const groupSubcategories = [
                 [data]="data"
                 [lastDirection]="lastDirection()"
                 (goToStep)="goToStep($event)"
-                (onMicChange)="toggleMic($event)"
                 (onBacklineChange)="toggleBackline($event)" />
             }
             @if (currentStep() === 6) {
@@ -745,15 +744,6 @@ closeConstanciaModal(): void {
 
   private validateEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  toggleMic(mic: string): void {
-    const idx = this.data.riderTecnico.sonido.microfonos.indexOf(mic);
-    if (idx >= 0) {
-      this.data.riderTecnico.sonido.microfonos.splice(idx, 1);
-    } else {
-      this.data.riderTecnico.sonido.microfonos.push(mic);
-    }
   }
 
   toggleBackline(item: string): void {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Instrument } from '../../inscripcion.page';
@@ -20,21 +20,41 @@ export class StagePlotComponent implements OnInit {
 
   private nextInstrumentId = 0;
 
-  instrumentKeys = ['drums', 'guitar', 'bass', 'keyboard', 'microphone', 'amp', 'monitor', 'micstand', 'musician', 'di-box', 'ac-power'] as const;
+  instrumentKeys = [
+    'guitarra-criolla', 'guitarron', 'charango', 'violin', 'violonchelo', 'contrabajo',
+    'quena', 'siku', 'sicus', 'flauta-traversa', 'erke',
+    'piano', 'acordeon', 'bandoneon',
+    'bombo-leguero', 'caja-chayera', 'percusion-menor',
+    'microfono-alt', 'monitor-alt', 'amplificador-alt', 'energia-alt', 'musico-alt',
+  ] as const;
 
-  instrumentConfig: { [key: string]: { label: string; icon: string } } = {
-    drums:       { label: 'Batería',             icon: 'assets/iconoForm/bateria.webp' },
-    guitar:      { label: 'Guitarra',            icon: 'assets/iconoForm/guitarra.webp' },
-    bass:        { label: 'Bajo',                icon: 'assets/iconoForm/guitarra-electrica.webp' },
-    keyboard:    { label: 'Teclado',             icon: 'assets/iconoForm/teclado.webp' },
-    microphone:  { label: 'Micrófono',           icon: 'assets/iconoForm/microfono.webp' },
-    amp:         { label: 'Amplificador',        icon: 'assets/iconoForm/amplificador.webp' },
-    monitor:     { label: 'Monitor',             icon: 'assets/iconoForm/altavoz-de-musica.webp' },
-    micstand:    { label: 'Micrófono (trípode)', icon: 'assets/iconoForm/microfono-tripode.webp' },
-    musician:    { label: 'Músico',              icon: 'assets/iconoForm/usuario.webp' },
-    'di-box':    { label: 'DI Box',              icon: 'assets/iconoForm/dibox.webp' },
-    'ac-power':  { label: 'Energía',             icon: 'assets/iconoForm/energia.webp' },
+  instrumentConfig: { [key: string]: { label: string; icon: string; group: string } } = {
+    'guitarra-criolla': { label: 'Guitarra Criolla',  icon: 'assets/iconoForm/guitarra.webp',         group: 'Cuerdas' },
+    'guitarron':        { label: 'Guitarrón',          icon: 'assets/iconoForm/guitarron.webp',        group: 'Cuerdas' },
+    'charango':         { label: 'Charango',           icon: 'assets/iconoForm/charango.webp',         group: 'Cuerdas' },
+    'violin':           { label: 'Violín',             icon: 'assets/iconoForm/violin.webp',           group: 'Cuerdas' },
+    'violonchelo':      { label: 'Violonchelo',        icon: 'assets/iconoForm/violonchelo.webp',      group: 'Cuerdas' },
+    'contrabajo':       { label: 'Contrabajo',         icon: 'assets/iconoForm/contrabajo.webp',       group: 'Cuerdas' },
+    'quena':            { label: 'Quena',              icon: 'assets/iconoForm/quena.webp',            group: 'Vientos' },
+    'siku':             { label: 'Siku',               icon: 'assets/iconoForm/siku.webp',             group: 'Vientos' },
+    'sicus':            { label: 'Sicus',              icon: 'assets/iconoForm/sicus.webp',            group: 'Vientos' },
+    'flauta-traversa':  { label: 'Flauta Traversa',   icon: 'assets/iconoForm/flauta-traversa.webp',  group: 'Vientos' },
+    'erke':             { label: 'Erke',               icon: 'assets/iconoForm/erke.webp',             group: 'Vientos' },
+    'piano':            { label: 'Piano',              icon: 'assets/iconoForm/teclado.webp',          group: 'Teclados' },
+    'acordeon':         { label: 'Acordeón',           icon: 'assets/iconoForm/acordeon.webp',         group: 'Teclados' },
+    'bandoneon':        { label: 'Bandoneón',          icon: 'assets/iconoForm/bandoneon.webp',        group: 'Teclados' },
+    'bombo-leguero':    { label: 'Bombo Legüero',     icon: 'assets/iconoForm/bombo-leguero.webp',    group: 'Percusión' },
+    'caja-chayera':     { label: 'Caja Chayera',       icon: 'assets/iconoForm/caja-chayera.webp',     group: 'Percusión' },
+    'percusion-menor':  { label: 'Percusión Menor',    icon: 'assets/iconoForm/percusion-menor.webp',  group: 'Percusión' },
+    'microfono-alt':    { label: 'Micrófono',           icon: 'assets/iconoForm/microfono.webp',        group: 'Equipo' },
+    'monitor-alt':      { label: 'Monitor',             icon: 'assets/iconoForm/altavoz-de-musica.webp', group: 'Equipo' },
+    'amplificador-alt': { label: 'Amplificador',        icon: 'assets/iconoForm/amplificador.webp',     group: 'Equipo' },
+    'energia-alt':      { label: 'Energía',             icon: 'assets/iconoForm/energia.webp',          group: 'Equipo' },
+    'musico-alt':       { label: 'Músico',              icon: 'assets/iconoForm/usuario.webp',          group: 'Equipo' },
   };
+
+  paletteGroups = ['Cuerdas', 'Vientos', 'Teclados', 'Percusión', 'Equipo'];
+  expandedGroups = signal<Set<string>>(new Set(['Cuerdas']));
 
   constructor() { }
 
@@ -51,6 +71,35 @@ export class StagePlotComponent implements OnInit {
 
   getLabel(type: string): string {
     return this.instrumentConfig[type]?.label || type;
+  }
+
+  getInstrumentsByGroup(group: string): string[] {
+    return this.instrumentKeys.filter(k => this.instrumentConfig[k]?.group === group);
+  }
+
+  isGroupExpanded(group: string): boolean {
+    return this.expandedGroups().has(group);
+  }
+
+  toggleGroup(group: string): void {
+    this.expandedGroups.update(current => {
+      const next = new Set(current);
+      if (next.has(group)) {
+        next.delete(group);
+      } else {
+        next.add(group);
+      }
+      return next;
+    });
+  }
+
+  getGroupItemCount(group: string): number {
+    return this.getInstrumentsByGroup(group).length;
+  }
+
+  getPlacedCountByGroup(group: string): number {
+    const keys = this.getInstrumentsByGroup(group);
+    return this.instruments.filter(i => keys.includes(i.type)).length;
   }
 
   allowDrop(event: DragEvent): void {
