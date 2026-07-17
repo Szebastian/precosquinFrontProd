@@ -37,6 +37,7 @@ import { RouterLink } from '@angular/router';
           <a routerLink="/noticias" class="nav-link">Noticias</a>
           <a routerLink="/inscripcion" class="nav-link">Inscripciones</a>
           <a href="#" class="nav-link">Cronograma</a>
+          <a routerLink="/patrocinio" class="nav-link">Patrocinio</a>
           <a routerLink="/documentacion" class="nav-link">Documentación</a>
         </nav>
 
@@ -89,3 +90,4 @@ export class HomeHeaderComponent {
   @HostListener('window:scroll')
   onScroll() { this.scrollY.set(window.scrollY); }
 }
+

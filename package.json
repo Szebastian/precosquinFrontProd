@@ -34,11 +34,13 @@
     "@angular/compiler-cli": "^21.2.0",
     "@types/node": "^26.1.0",
     "autoprefixer": "^10.5.2",
+    "http-server": "^14.1.1",
     "jsdom": "^29.1.1",
     "postcss": "^8.5.16",
     "tailwindcss": "^4.3.2",
     "typescript": "~5.9.0",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.9",
+    "ws": "^8.21.1"
   },
   "overrides": {
     "browserslist": "4.27.0",

@@ -1,0 +1,236 @@
+<div class="pat-page">
+
+  <!-- HERO -->
+  <header class="pat-hero">
+    <div class="pat-hero-inner">
+      <a routerLink="/" class="pat-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+        Volver al inicio
+      </a>
+      <span class="pat-hero-badge">Propuesta de Patrocinio Multicanal</span>
+      <h1 class="pat-hero-title">Impulsá tu marca en el evento cultural más importante de la región</h1>
+      <p class="pat-hero-date">Auspiciá el Pre-Cosquín · Sede Puerto Pirámides · 5 y 6 de Septiembre</p>
+      <p class="pat-hero-lead">Llega a miles de pantallas en toda la Patagonia. Posicioná tu comercio en una plataforma digital integrada con visibilidad desde el momento de tu contratación.</p>
+      <div class="pat-hero-actions">
+        <a href="#planes" class="btn btn-primary btn-lg btn-arrow">
+          Ver Planes de Patrocinio
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a [href]="whatsappLink()" target="_blank" class="btn btn-secondary btn-lg">Hablar por WhatsApp</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- SOCIOS / LOGOS -->
+  <div class="pat-hero-media">
+    <div class="pat-socios">
+      <p class="pat-socios-label">Ellos ya son parte del encuentro</p>
+      <ul class="pat-socios-list">
+        @for (socio of socios; track socio.nombre) {
+          <li class="pat-socio">
+            <img [src]="socio.logo" [alt]="socio.nombre" loading="lazy" decoding="async" />
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <!-- VALOR DE AUDIENCIA -->
+  <section class="pat-section pat-value">
+    <div class="pat-container">
+      <span class="pat-eyebrow">¿Por qué sumarte hoy?</span>
+      <h2 class="pat-section-title">El valor de nuestra audiencia</h2>
+      <p class="pat-section-intro">Al sumarte como patrocinador este mes de julio, tu marca se beneficia de toda la campaña de comunicación previa durante julio y agosto.</p>
+
+      <div class="pat-canales">
+        @for (canal of canales; track canal.icono) {
+          <div class="pat-canal">
+            <div class="pat-canal-icon" [attr.data-icon]="canal.icono">
+              @if (canal.icono === 'web') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18"/></svg>
+              } @else if (canal.icono === 'youtube') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 7.2a2.8 2.8 0 0 0-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 1.5 12a29 29 0 0 0 .5 4.8 2.8 2.8 0 0 0 2 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22.5 12a29 29 0 0 0-.5-4.8z"/><polygon points="9.5 8.5 15.5 12 9.5 15.5" fill="currentColor"/></svg>
+              } @else {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>
+              }
+            </div>
+            <h3 class="pat-canal-nombre">{{ canal.nombre }}</h3>
+            <p class="pat-canal-desc">{{ canal.descripcion }}</p>
+          </div>
+        }
+      </div>
+
+      <ul class="pat-ventajas">
+        @for (v of ventajas; track v.titulo) {
+          <li class="pat-ventaja">
+            <span class="pat-ventaja-icon" [attr.data-icon]="v.icono">
+              @if (v.icono === 'ojo') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              } @else if (v.icono === 'mapa') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              } @else if (v.icono === 'calendario') {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+              } @else {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 19 12 6 20 6 4"/></svg>
+              }
+            </span>
+            <div class="pat-ventaja-texto">
+              <h4>{{ v.titulo }}</h4>
+              <p>{{ v.texto }}</p>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- BENEFICIOS DE JULIO (URGENCIA) -->
+  <section class="pat-section pat-julio">
+    <div class="pat-container">
+      <span class="pat-eyebrow">Tu estrategia de cierre rápido</span>
+      <h2 class="pat-section-title">Beneficios de sumarte en julio</h2>
+      <p class="pat-section-intro">Poner la pauta ahora, en julio, es tu mejor movimiento comercial. Mirá por qué conviene cerrar antes de ver las tarifas.</p>
+      <div class="pat-julio-grid">
+        @for (b of beneficiosJulio; track b.titulo) {
+          <div class="pat-julio-card">
+            <div class="pat-julio-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>
+            </div>
+            <h3>{{ b.titulo }}</h3>
+            <p>{{ b.texto }}</p>
+          </div>
+        }
+      </div>
+      <a href="#planes" class="pat-julio-cta btn btn-primary btn-lg btn-arrow">
+        Ver tarifas y reservar
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- PLANES -->
+  <section id="planes" class="pat-section pat-planes">
+    <div class="pat-container">
+      <span class="pat-eyebrow">Paquetes folclóricos</span>
+      <h2 class="pat-section-title">Elegí cómo brillar en el fogón</h2>
+      <p class="pat-section-intro">Tres niveles de presencia, desde la primera luz del candil hasta el corazón del gran fogón. Todos incluyen visibilidad en la web oficial y campaña activa desde tu contratación.</p>
+
+      <div class="pat-planes-grid">
+        @for (plan of planes; track plan.id) {
+          <article class="pat-plan" [class.popular]="plan.popular" [style.--plan-color]="plan.color">
+            @if (plan.popular) {
+              <span class="pat-plan-flag">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z"/></svg>
+                Recomendado
+              </span>
+            }
+            <div class="pat-plan-head">
+              <h3 class="pat-plan-nombre">{{ plan.nombre }}</h3>
+              <p class="pat-plan-tagline">{{ plan.tagline }}</p>
+              <p class="pat-plan-resumen">{{ plan.resumen }}</p>
+            </div>
+
+            <div class="pat-plan-precio">
+              <span class="pat-plan-precio-valor">{{ plan.precio }}</span>
+              <span class="pat-plan-precio-label">{{ plan.precioLabel }}</span>
+            </div>
+
+            <div class="pat-plan-comparacion">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>{{ plan.comparacion }}</span>
+            </div>
+
+            <div class="pat-plan-canales">
+              @if (plan.web.length) {
+                <div class="pat-plan-canal">
+                  <span class="pat-plan-canal-tag">Web</span>
+                  <ul>
+                    @for (b of plan.web; track b.texto) {
+                      <li>{{ b.texto }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+              @if (plan.youtube.length) {
+                <div class="pat-plan-canal">
+                  <span class="pat-plan-canal-tag youtube">YouTube en Vivo</span>
+                  <ul>
+                    @for (b of plan.youtube; track b.texto) {
+                      <li>{{ b.texto }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+              @if (plan.instagram.length) {
+                <div class="pat-plan-canal">
+                  <span class="pat-plan-canal-tag ig">Instagram</span>
+                  <ul>
+                    @for (b of plan.instagram; track b.texto) {
+                      <li>{{ b.texto }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+
+            <div class="pat-plan-cierre">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+              <span>{{ plan.cierre }}</span>
+            </div>
+
+            <a [href]="planWhatsapp(plan.nombre)" target="_blank" class="btn btn-plan btn-arrow" [class.btn-plan-popular]="plan.popular">
+              Reservar este plan
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="pat-section pat-cta">
+    <div class="pat-container pat-cta-inner">
+      <span class="pat-cta-eyebrow">¿Listo para participar?</span>
+      <h2>Suma tu marca al encuentro folclórico más importante del país</h2>
+      <p>Escribinos ahora y aseguramos tu espacio. Tu logo puede estar en la web oficial desde esta misma semana.</p>
+      <div class="pat-cta-actions">
+        <a [href]="whatsappLink()" target="_blank" class="btn btn-primary btn-lg btn-arrow btn-cta-main">
+          Quiero inscribirme como patrocinador
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a [href]="contacto.instagram" target="_blank" class="btn btn-secondary btn-lg">Instagram</a>
+        <a [href]="'mailto:' + contacto.email" class="btn btn-secondary btn-lg">Enviar email</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section class="pat-contacto">
+    <div class="pat-container pat-contacto-inner">
+      <h3>Otras formas de contactarnos</h3>
+      <div class="pat-contacto-actions">
+        <a [href]="whatsappLink()" target="_blank" class="btn btn-contacto">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.5 14.4c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.9-2.9-1.6-4-3.5-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5 0-.1-.7-1.7-.9-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.4zM12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12 2z"/></svg>
+          WhatsApp
+        </a>
+        <a [href]="contacto.instagram" target="_blank" class="btn btn-contacto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>
+          Instagram
+        </a>
+        <a [href]="'mailto:' + contacto.email" class="btn btn-contacto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>
+          Email
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="pat-footer">
+    <div class="pat-container">
+      <p>Pre-Cosquín Puerto Pirámides 2026 · Sede declarada de interés cultural, turístico y comunitario.</p>
+    </div>
+  </footer>
+
+</div>
+

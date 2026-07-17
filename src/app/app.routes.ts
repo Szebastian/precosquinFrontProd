@@ -106,6 +106,12 @@ export const appRoutes: Routes = [
     data: { title: 'Declaración N° 35/26 C.D.P.P' }
   },
   {
+    path: 'patrocinio',
+    loadComponent: () => import('./features/public/patrocinio/patrocinio.page').then(m => m.PatrocinioPageComponent),
+    canActivate: [publicGuard],
+    data: { title: 'Patrocinio' }
+  },
+  {
     path: 'firmar/:token',
     loadComponent: () => import('./features/public/firma-contrato/firma-contrato.page').then(m => m.FirmaContratoPageComponent),
     canActivate: [publicGuard],
