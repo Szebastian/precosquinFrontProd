@@ -27,12 +27,8 @@ interface Plan {
   precioLabel: string;
   popular?: boolean;
   color: string;
-  resumen: string;
-  web: Beneficio[];
-  youtube: Beneficio[];
-  instagram: Beneficio[];
-  cierre: string;
-  comparacion: string;
+  destacado: string;
+  incluye: string[];
 }
 
 @Component({
@@ -53,41 +49,36 @@ export class PatrocinioPageComponent {
   canales: Canal[] = [
     {
       icono: 'web',
-      nombre: 'La Web Oficial de la Sede',
-      descripcion: 'El punto de encuentro obligatorio donde participantes de toda la Patagonia ya están ingresando para descargar las bases e inscribirse.'
+      nombre: 'Público Federal',
+      descripcion: 'Espectadores de todo el país y la región.'
     },
     {
       icono: 'youtube',
-      nombre: 'Transmisión en Vivo (YouTube · 5 y 6 Sept.)',
-      descripcion: 'El canal con mayor tiempo de permanencia. Familias de todo el país se conectan en tiempo real y la transmisión queda grabada de forma permanente.'
+      nombre: 'Alcance Digital',
+      descripcion: 'Transmisión en vivo de alta fidelidad y redes activas.'
     },
     {
       icono: 'instagram',
-      nombre: 'Instagram Activo',
-      descripcion: 'El motor del día a día, donde generamos interacción y expectativa creciente rumbo al primer fin de semana de septiembre.'
+      nombre: 'Identidad Tradicional',
+      descripcion: 'Un público con fuerte sentido de pertenencia.'
     }
   ];
 
   ventajas: VentajaAudiencia[] = [
     {
       icono: 'ojo',
-      titulo: 'Visibilidad inmediata',
-      texto: 'Tu marca se activa desde el momento de tu contratación, no solo los días del evento.'
+      titulo: 'Público Federal',
+      texto: 'Espectadores de todo el país y la región.'
     },
     {
       icono: 'mapa',
-      titulo: 'Alcance multicanal',
-      texto: 'Llegás a nivel local, provincial y nacional durante las jornadas del 5 y 6 de septiembre.'
-    },
-    {
-      icono: 'calendario',
-      titulo: 'Campaña previa',
-      texto: 'Sumate en julio y agosto: la comunicación ya está en marcha y creciendo.'
+      titulo: 'Alcance Digital',
+      texto: 'Transmisión en vivo de alta fidelidad y redes activas.'
     },
     {
       icono: 'play',
-      titulo: 'Exposición permanente',
-      texto: 'La transmisión grabada en YouTube sigue sumando visualizaciones meses después.'
+      titulo: 'Identidad Tradicional',
+      texto: 'Un público con fuerte sentido de pertenencia.'
     }
   ];
 
@@ -95,81 +86,64 @@ export class PatrocinioPageComponent {
     {
       id: 'candil',
       nombre: 'El Candil',
-      tagline: 'Presencia Comercial Inicial',
-      precio: '$60.000',
-      precioLabel: 'Inversión única',
-      color: 'var(--brand-500)',
-      resumen: 'La primera luz que se enciende en el fogón. Ideal para pequeños comercios, artesanos y emprendedores de la región.',
-      web: [
-        { texto: 'Logotipo en la sección Sponsors Oficiales de la web.' }
-      ],
-      youtube: [],
-      instagram: [
-        { texto: 'Mención en publicación grupal a los comercios que apoyan la cultura local.' }
-      ],
-      cierre: 'Tu marca activa en la web durante todo el proceso de inscripción de los artistas.',
-      comparacion: 'Logotipo en Sponsors + mención en Instagram'
-    },
-    {
-      id: 'trunca',
-      nombre: 'La Trunca',
-      tagline: 'Destacado Multicanal — El más elegido',
-      precio: '$180.000',
-      precioLabel: 'Inversión única',
+      tagline: 'Presencia Comercial',
+      precio: '$130.000',
+      precioLabel: 'Inversión · Julio',
       popular: true,
-      color: 'var(--brand-600)',
-      resumen: 'La chacarera trunca tiene un acento fuerte y llamativo. Para comercios medianos, prestadores turísticos y restaurantes.',
-      web: [
-        { texto: 'Logotipo destacado (tamaño mediano) en panel lateral y cabecera.' }
-      ],
-      youtube: [
-        { texto: '3 menciones en vivo por jornada agradeciendo tu marca.' },
-        { texto: 'Placa rotativa con tu logo en las pausas técnicas.' }
-      ],
-      instagram: [
-        { texto: '1 Historia individual exclusiva con enlace a tu propuesta.' },
-        { texto: 'Mención en el posteo de agradecimiento general.' }
-      ],
-      cierre: 'Ideal para captar al turista que planifica su viaje a Puerto Pirámides.',
-      comparacion: 'Logo destacado + 3 menciones en vivo + Historia exclusiva'
+      color: 'var(--brand-500)',
+      destacado: 'Logo en pantallas y menciones en vivo.',
+      incluye: [
+        'Banner digital rotativo en streaming (YouTube/Insta).',
+        '1 mención del locutor por jornada.',
+        'Logo en la web oficial del festival.'
+      ]
     },
     {
-      id: 'fogon',
-      nombre: 'El Gran Fogón',
-      tagline: 'Sponsor Principal — Cupos Limitados',
-      precio: '$450.000',
-      precioLabel: 'Inversión única',
+      id: 'juntada',
+      nombre: 'La Juntada',
+      tagline: 'Destacado Multicanal',
+      precio: '$250.000',
+      precioLabel: 'Inversión · Julio',
+      color: 'var(--brand-600)',
+      destacado: 'Espacio físico y publicidad preferencial.',
+      incluye: [
+        'Stand / espacio publicitario en el predio.',
+        'Banner fijo en la transmisión en vivo.',
+        '3 menciones del locutor por jornada.',
+        'Presencia destacada en redes y folletería.'
+      ]
+    },
+    {
+      id: 'padrino',
+      nombre: 'El Gran Padrino',
+      tagline: 'Sponsor Oficial Exclusivo',
+      precio: '$500.000',
+      precioLabel: 'Inversión · Julio',
       color: 'var(--brand-900)',
-      resumen: 'El corazón del encuentro, donde se concentra toda la atención. Para empresas líderes, grandes cadenas hoteleras e instituciones.',
-      web: [
-        { texto: 'Banner principal exclusivo en la portada durante julio, agosto y septiembre.' }
-      ],
-      youtube: [
-        { texto: 'Zócalo publicitario (Lower Third) fijo en pantalla en bloques seleccionados.' },
-        { texto: 'Agradecimiento estelar al inicio, intermedios y cierre de cada jornada.' },
-        { texto: 'Placa a pantalla completa al inicio y cierre de las transmisiones.' }
-      ],
-      instagram: [
-        { texto: '1 posteo o Reel en formato colaboración (Collab) mostrando tu apoyo.' },
-        { texto: '3 menciones en historias durante el fin de semana del evento.' }
-      ],
-      cierre: 'Exclusividad de marca y máxima exposición. Tu inversión sigue rindiendo cuando los ganadores compartan sus videos.',
-      comparacion: 'Banner exclusivo + Lower Third + Placa a pantalla completa'
+      destacado: 'Sponsor Oficial Exclusivo del festival.',
+      incluye: [
+        'Publicidad exclusiva en pantalla principal de YouTube.',
+        'Banner central gigante en el escenario.',
+        'Menciones continuas de los locutores principales.',
+        'Presencia total en gráfica, vía pública y prensa.'
+      ]
     }
   ];
+
+  planActivo: string = this.planes[0].id;
 
   beneficiosJulio = [
     {
       titulo: 'Exposición Temprana',
-      texto: 'Si cerramos tu pauta ahora, tu logo ya empieza a figurar en la web oficial desde esta semana, captando todas las visitas de inscripciones de julio y agosto totalmente gratis.'
+      texto: 'Presencia en campañas publicitarias desde ahora.'
     },
     {
-      titulo: 'Financiación en 2 Cuotas',
-      texto: '50% en julio para asegurar el espacio, y 50% restante antes del 31 de agosto. Montos sumamente cómodos para cualquier comercio de la zona.'
+      titulo: 'Mejor Precio',
+      texto: 'Tarifas promocionales por contratación anticipada.'
     },
     {
-      titulo: 'El Fin de Semana de Septiembre',
-      texto: 'El 5 y 6 de septiembre Puerto Pirámides recibe una enorme afluencia de artistas, acompañantes, jurados y público folclórico. La oportunidad perfecta para gastronomía, hoteles y turismo.'
+      titulo: 'Ubicación Premium',
+      texto: 'Prioridad en los espacios físicos y digitales más visuales.'
     }
   ];
 
