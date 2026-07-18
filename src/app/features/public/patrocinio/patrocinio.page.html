@@ -8,11 +8,16 @@
         Volver al inicio
       </a>
       <span class="pat-hero-badge">Propuesta de Patrocinio Multicanal</span>
-      <h1 class="pat-hero-title">Impulsá tu marca en el encuentro cultural más importante de la región</h1>
-      <p class="pat-hero-date">Pre-Cosquín Puerto Pirámides • Chubut</p>
-      <p class="pat-hero-lead">Formá parte del festival folclórico con mayor alcance de la Patagonia. Posicioná tu negocio ante miles de espectadores presenciales y vía streaming.</p>
+      <p class="pat-hero-date"><span class="pat-hero-date-fest">Pre-Cosquín</span> Puerto Pirámides <span class="pat-hero-date-loc">• Chubut</span></p>
+      <div class="pat-hero-fecha">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+        <span class="pat-hero-fecha-dias">5 y 6 de Septiembre</span>
+        <span class="pat-hero-fecha-anio">2026</span>
+      </div>
+      <h1 class="pat-hero-title">Impulsá tu marca en el evento cultural más importante de la región</h1>
+      <p class="pat-hero-lead">Llegá a miles de espectadores presenciales y vía streaming.</p>
       <div class="pat-hero-actions">
-        <a href="#planes" class="btn btn-primary btn-lg">Ver Planes</a>
+        <a href="#planes" class="btn btn-primary btn-lg" (click)="irAPlanes($event)">Ver Planes</a>
         <a [href]="whatsappLink()" target="_blank" class="btn btn-secondary btn-lg">Contactar</a>
       </div>
     </div>
@@ -95,15 +100,15 @@
             class="pat-tab"
             [class.active]="planActivo === plan.id"
             [attr.aria-selected]="planActivo === plan.id"
-            (click)="planActivo = plan.id">
+            (click)="seleccionarPlan(plan.id)">
             {{ plan.nombre }}
           </button>
         }
       </div>
 
-      @for (plan of planes; track plan.id) {
-        @if (planActivo === plan.id) {
-          <article class="pat-plan" [class.popular]="plan.popular" [style.--plan-color]="plan.color">
+      <div class="pat-planes-cards">
+        @for (plan of planes; track plan.id) {
+          <article class="pat-plan" [class.active]="planActivo === plan.id" [class.popular]="plan.popular" [style.--plan-color]="plan.color">
             @if (plan.popular) {
               <span class="pat-plan-flag">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z"/></svg>
@@ -137,7 +142,7 @@
             </a>
           </article>
         }
-      }
+      </div>
     </div>
   </section>
 
@@ -152,6 +157,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
+      <a class="pat-alianza-tel" [href]="contacto.telefonoLink" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.5 14.4c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.9-2.9-1.6-4-3.5-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5 0-.1-.7-1.7-.9-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.4zM12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12 2z"/></svg>
+        {{ contacto.telefono }}
+      </a>
     </div>
   </section>
 

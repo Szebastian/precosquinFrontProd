@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -38,12 +38,11 @@ interface Plan {
   templateUrl: './patrocinio.page.html',
   styleUrl: './patrocinio.page.scss'
 })
-export class PatrocinioPageComponent {
+export class PatrocinioPageComponent implements OnInit, OnDestroy {
   socios = [
     { nombre: 'Rayentray', logo: 'assets/img/LRayentray.webp' },
     { nombre: 'Hydro', logo: 'assets/img/LHydro.webp' },
     { nombre: 'Piramides', logo: 'assets/img/LPiramides.webp' },
-    { nombre: 'Pre-Cosquín', logo: 'assets/img/logoballena.webp' },
   ];
 
   canales: Canal[] = [
@@ -132,6 +131,40 @@ export class PatrocinioPageComponent {
 
   planActivo: string = this.planes[0].id;
 
+  private intervalo?: ReturnType<typeof setInterval>;
+  private pausado = false;
+
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    this.intervalo = setInterval(() => {
+      if (this.pausado) return;
+      const idx = this.planes.findIndex(p => p.id === this.planActivo);
+      const next = this.planes[(idx + 1) % this.planes.length];
+      this.planActivo = next.id;
+      this.cdr.markForCheck();
+    }, 5000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalo) clearInterval(this.intervalo);
+  }
+
+  seleccionarPlan(id: string): void {
+    this.planActivo = id;
+    this.pausado = true;
+    if (this.intervalo) clearInterval(this.intervalo);
+    this.cdr.markForCheck();
+  }
+
+  irAPlanes(event: Event): void {
+    const destino = document.getElementById('planes');
+    if (!destino) return;
+    event.preventDefault();
+    destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+
   beneficiosJulio = [
     {
       titulo: 'Exposición Temprana',
@@ -148,7 +181,9 @@ export class PatrocinioPageComponent {
   ];
 
   contacto = {
-    whatsappBase: 'https://wa.me/5492804000000?text=',
+    whatsappBase: 'https://wa.me/5492804872996?text=',
+    telefono: '+54 9 280 487-2996',
+    telefonoLink: 'https://wa.me/5492804872996',
     instagram: 'https://www.instagram.com/precosquinpuertopiramides',
     email: 'precosquinpuertopiramides@gmail.com'
   };
