@@ -161,7 +161,30 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
     const destino = document.getElementById('planes');
     if (!destino) return;
     event.preventDefault();
-    destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const top = destino.getBoundingClientRect().top + window.scrollY;
+
+    let contenedor: HTMLElement | Window = window;
+    let el: HTMLElement | null = destino.parentElement;
+    while (el) {
+      if (el.scrollHeight > el.clientHeight + 1 && getComputedStyle(el).overflowY !== 'visible') {
+        contenedor = el;
+        break;
+      }
+      el = el.parentElement;
+    }
+
+    const smooth = (contenedor as HTMLElement).scrollTo
+      ? { behavior: 'smooth' as ScrollBehavior }
+      : { behavior: 'smooth' as ScrollBehavior };
+
+    if (contenedor === window) {
+      window.scrollTo({ top, ...smooth });
+    } else {
+      const c = contenedor as HTMLElement;
+      const cTop = c.getBoundingClientRect().top + window.scrollY;
+      c.scrollTo({ top: top - cTop, ...smooth });
+    }
   }
 
 
