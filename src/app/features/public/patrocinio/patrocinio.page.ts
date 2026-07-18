@@ -60,6 +60,11 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
       icono: 'instagram',
       nombre: 'Identidad Tradicional',
       descripcion: 'Un público con fuerte sentido de pertenencia.'
+    },
+    {
+      icono: 'globe',
+      nombre: 'Público Turístico',
+      descripcion: 'Visitantes nacionales y extranjeros que se acercan a la ciudad durante el festival.'
     }
   ];
 
@@ -90,10 +95,10 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
       precioLabel: 'Inversión · Julio',
       popular: true,
       color: 'var(--brand-500)',
-      destacado: 'Logo en pantallas y menciones en vivo.',
+      destacado: 'Logo en pantallas y menciones en digital.',
       incluye: [
         'Banner digital rotativo en streaming (YouTube/Insta).',
-        '1 mención del locutor por jornada.',
+        '1 mención en redes por jornada.',
         'Logo en la web oficial del festival.'
       ]
     },
@@ -104,12 +109,11 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
       precio: '$250.000',
       precioLabel: 'Inversión · Julio',
       color: 'var(--brand-600)',
-      destacado: 'Espacio físico y publicidad preferencial.',
+      destacado: 'Publicidad digital preferencial.',
       incluye: [
-        'Stand / espacio publicitario en el predio.',
         'Banner fijo en la transmisión en vivo.',
-        '3 menciones del locutor por jornada.',
-        'Presencia destacada en redes y folletería.'
+        '3 menciones en redes por jornada.',
+        'Presencia destacada en redes y sitio web.'
       ]
     },
     {
@@ -122,9 +126,8 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
       destacado: 'Sponsor Oficial Exclusivo del festival.',
       incluye: [
         'Publicidad exclusiva en pantalla principal de YouTube.',
-        'Banner central gigante en el escenario.',
-        'Menciones continuas de los locutores principales.',
-        'Presencia total en gráfica, vía pública y prensa.'
+        'Menciones continuas en redes y transmisión.',
+        'Presencia total en gráfica digital y sitio web.'
       ]
     }
   ];
@@ -205,8 +208,6 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
 
   contacto = {
     whatsappBase: 'https://wa.me/5492804872996?text=',
-    telefono: '+54 9 280 487-2996',
-    telefonoLink: 'https://wa.me/5492804872996',
     instagram: 'https://www.instagram.com/precosquinpuertopiramides',
     email: 'precosquinpuertopiramides@gmail.com'
   };

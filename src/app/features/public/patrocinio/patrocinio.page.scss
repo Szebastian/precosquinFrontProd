@@ -156,11 +156,24 @@
   font-size: clamp(1.9rem, 4.6vw, 3.4rem);
   font-weight: 900;
   line-height: 1.08;
-  margin: var(--space-4) 0 var(--space-3);
+  margin: var(--space-4) 0 var(--space-2);
   color: #ffffff;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
   letter-spacing: -0.01em;
   max-width: 18ch;
+}
+
+.pat-hero-subtitle {
+  font-size: clamp(1.05rem, 2.8vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.35;
+  margin: 0 0 var(--space-4);
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.005em;
+}
+.pat-hero-subtitle strong {
+  color: #ffffff;
+  font-weight: 800;
 }
 
 .pat-hero-date {
@@ -679,20 +692,6 @@
   justify-content: center;
 }
 
-.pat-alianza-tel {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: var(--space-5);
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #fff;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.pat-alianza-tel:hover { color: var(--brand-300); }
-.pat-alianza-tel svg { color: #4ade80; }
-
 /* CTA FINAL */
 .pat-cta {
   background: linear-gradient(160deg, var(--brand-900), #14233f);
@@ -851,6 +850,7 @@
   .pat-contacto-actions .btn { width: 100%; }
 
   .pat-hero-title { font-size: clamp(1.6rem, 7.2vw, 2.2rem); }
+  .pat-hero-subtitle { font-size: 0.95rem; }
   .pat-hero-lead { font-size: 1.02rem; }
 
   .btn-cta-main {
