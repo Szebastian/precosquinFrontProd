@@ -88,8 +88,8 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
 
   planes: Plan[] = [
     {
-      id: 'candil',
-      nombre: 'El Candil',
+      id: 'bordon',
+      nombre: 'El Bordón',
       tagline: 'Presencia Comercial',
       precio: '$130.000',
       precioLabel: 'Inversión · Julio',
@@ -103,8 +103,8 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      id: 'juntada',
-      nombre: 'La Juntada',
+      id: 'repique',
+      nombre: 'El Repique',
       tagline: 'Destacado Multicanal',
       precio: '$250.000',
       precioLabel: 'Inversión · Julio',
@@ -117,8 +117,8 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      id: 'padrino',
-      nombre: 'El Gran Padrino',
+      id: 'payador',
+      nombre: 'El Payador',
       tagline: 'Sponsor Oficial Exclusivo',
       precio: '$500.000',
       precioLabel: 'Inversión · Julio',
