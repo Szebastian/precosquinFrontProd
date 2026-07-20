@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, Input, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Instrument } from '../../inscripcion.page';
@@ -10,10 +10,12 @@ import { Instrument } from '../../inscripcion.page';
   templateUrl: './stage-plot.component.html',
   styleUrl: './stage-plot.component.scss'
 })
-export class StagePlotComponent implements OnInit {
+export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() initialInstruments: Instrument[] = [];
   @Input() readonly = false;
   @Output() instrumentsChange = new EventEmitter<Instrument[]>();
+  @ViewChild('stageArea') stageAreaRef?: ElementRef<HTMLDivElement>;
+  private resizeObserver?: ResizeObserver;
 
   instruments: Instrument[] = [];
   selectedInstrument: Instrument | null = null;
@@ -63,20 +65,53 @@ export class StagePlotComponent implements OnInit {
     this.nextInstrumentId = this.instruments.length > 0
       ? Math.max(...this.instruments.map(i => parseInt(i.id.split('-')[1]))) + 1
       : 0;
+  }
 
-    if (this.instruments.length === 0) {
-      const defaultMusician: Instrument = {
-        id: `instrument-${this.nextInstrumentId++}`,
-        type: 'musico-alt',
-        x: 95,
-        y: 90,
-        label: 'Músico',
-        channel: '',
-        rotation: 0,
-      };
-      this.instruments.push(defaultMusician);
-      this.emitInstrumentsChange();
+  ngAfterViewInit() {
+    this.retryCenter(5);
+
+    if (this.stageAreaRef) {
+      this.resizeObserver = new ResizeObserver(() => {
+        if (this.instruments.length === 1 && this.instruments[0].type === 'musico-alt') {
+          this.centerDefaultMusician();
+        }
+      });
+      this.resizeObserver.observe(this.stageAreaRef.nativeElement);
     }
+  }
+
+  ngOnDestroy() {
+    this.resizeObserver?.disconnect();
+  }
+
+  private retryCenter(attempts: number): void {
+    if (attempts <= 0) return;
+    requestAnimationFrame(() => {
+      const centered = this.centerDefaultMusician();
+      if (!centered && attempts > 1) {
+        setTimeout(() => this.retryCenter(attempts - 1), 150);
+      }
+    });
+  }
+
+  private centerDefaultMusician(): boolean {
+    if (this.instruments.length > 0 || !this.stageAreaRef) return false;
+    const el = this.stageAreaRef.nativeElement;
+    const w = el.offsetWidth;
+    const h = el.offsetHeight;
+    if (w === 0 || h === 0) return false;
+    const defaultMusician: Instrument = {
+      id: `instrument-${this.nextInstrumentId++}`,
+      type: 'musico-alt',
+      x: Math.round(w / 2),
+      y: Math.round(h / 2),
+      label: 'Músico',
+      channel: '',
+      rotation: 0,
+    };
+    this.instruments.push(defaultMusician);
+    this.emitInstrumentsChange();
+    return true;
   }
 
   getIcon(type: string): string {
@@ -191,10 +226,15 @@ export class StagePlotComponent implements OnInit {
   }
 
   clickToAddInstrument(instrumentType: string): void {
-    const stageWidth = 400;
-    const stageHeight = 200;
+    let stageWidth = 400;
+    let stageHeight = 300;
+    if (this.stageAreaRef) {
+      const rect = this.stageAreaRef.nativeElement.getBoundingClientRect();
+      stageWidth = rect.width;
+      stageHeight = rect.height;
+    }
     const padding = 60;
-    const cols = Math.floor((stageWidth - padding * 2) / 70);
+    const cols = Math.max(1, Math.floor((stageWidth - padding * 2) / 70));
     const count = this.instruments.length;
     const col = count % cols;
     const row = Math.floor(count / cols);

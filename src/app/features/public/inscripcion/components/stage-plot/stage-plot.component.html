@@ -35,7 +35,7 @@
   }
 
   <div class="stage-area-wrapper">
-    <div class="stage-area" [class.readonly-stage]="readonly"
+    <div class="stage-area" #stageArea [class.readonly-stage]="readonly"
          [attr.draggable]="!readonly"
          (dragover)="!readonly && allowDrop($event)"
          (drop)="!readonly && drop($event)"
