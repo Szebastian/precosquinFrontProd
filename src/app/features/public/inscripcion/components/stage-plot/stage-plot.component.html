@@ -1,4 +1,4 @@
-<div class="stage-plot-container" [class.readonly]="readonly">
+﻿<div class="stage-plot-container" [class.readonly]="readonly">
   @if (!readonly) {
     <div class="instrument-palette">
       @for (group of paletteGroups; track group) {
@@ -19,6 +19,7 @@
             <div class="palette-row">
               @for (instrumentType of getInstrumentsByGroup(group); track instrumentType) {
                 <div class="instrument-item" draggable="true" (dragstart)="onPaletteDragStart($event, instrumentType)"
+                     (click)="clickToAddInstrument(instrumentType)"
                      [title]="getLabel(instrumentType)">
                   <div class="instrument-icon">
                     <img [src]="getIcon(instrumentType)" [alt]="getLabel(instrumentType)" draggable="false" width="28" height="28" />
@@ -42,7 +43,7 @@
       <div class="stage-background-label top">FONDO DEL ESCENARIO</div>
       <div class="stage-grid-lines"></div>
       @if (instruments.length === 0) {
-        <p class="stage-hint">{{ readonly ? 'Sin posiciones configuradas' : 'Arrastrá y soltá elementos sobre el escenario' }}</p>
+        <p class="stage-hint">{{ readonly ? 'Sin posiciones configuradas' : 'Hacé click en un instrumento o arrastralo al escenario' }}</p>
       }
 
       @for (instrument of instruments; track instrument.id) {

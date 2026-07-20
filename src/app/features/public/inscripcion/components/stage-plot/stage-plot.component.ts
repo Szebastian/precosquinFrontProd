@@ -63,6 +63,20 @@ export class StagePlotComponent implements OnInit {
     this.nextInstrumentId = this.instruments.length > 0
       ? Math.max(...this.instruments.map(i => parseInt(i.id.split('-')[1]))) + 1
       : 0;
+
+    if (this.instruments.length === 0) {
+      const defaultMusician: Instrument = {
+        id: `instrument-${this.nextInstrumentId++}`,
+        type: 'musico-alt',
+        x: 95,
+        y: 90,
+        label: 'Músico',
+        channel: '',
+        rotation: 0,
+      };
+      this.instruments.push(defaultMusician);
+      this.emitInstrumentsChange();
+    }
   }
 
   getIcon(type: string): string {
@@ -173,6 +187,31 @@ export class StagePlotComponent implements OnInit {
     if (this.selectedInstrument === instrumentToRemove) {
       this.selectedInstrument = null;
     }
+    this.emitInstrumentsChange();
+  }
+
+  clickToAddInstrument(instrumentType: string): void {
+    const stageWidth = 400;
+    const stageHeight = 200;
+    const padding = 60;
+    const cols = Math.floor((stageWidth - padding * 2) / 70);
+    const count = this.instruments.length;
+    const col = count % cols;
+    const row = Math.floor(count / cols);
+    const x = padding + col * 70 + 35;
+    const y = padding + row * 60 + 30;
+
+    const newInstrument: Instrument = {
+      id: `instrument-${this.nextInstrumentId++}`,
+      type: instrumentType,
+      x: Math.min(x, stageWidth - padding),
+      y: Math.min(y, stageHeight - padding),
+      label: this.getLabel(instrumentType),
+      channel: '',
+      rotation: 0,
+    };
+    this.instruments.push(newInstrument);
+    this.selectedInstrument = newInstrument;
     this.emitInstrumentsChange();
   }
 

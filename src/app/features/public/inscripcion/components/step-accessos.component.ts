@@ -9,7 +9,7 @@ import { InscripcionData, AccompanyingPerson } from '../inscripcion.page';
   imports: [CommonModule, FormsModule],
   template: `
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
-      <p class="step-desc" style="margin-top: 0;">Registrá a las personas que te acompañan para habilitar su ingreso a Puerto Pirámides</p>
+      <p class="step-desc" style="margin-top: 0;">Registrá a las personas que te acompañan</p>
 
       @for (person of data().accompanyingPersons; track $index; let i = $index) {
         <div class="person-card">

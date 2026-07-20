@@ -88,45 +88,10 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
         }
       </div>
 
-      <!-- CONEXIONES -->
-      <div class="rider-section">
-        <div class="rider-section-header clickable-section" (click)="toggleSection('conexiones')">
-          <span class="section-number">2</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v20M2 12h20"/>
-            <circle cx="12" cy="12" r="4"/>
-          </svg>
-          <h3>Conexiones</h3>
-          <span class="chevron" [class.rotated]="!sectionCollapsed['conexiones']"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-        </div>
-        @if (!sectionCollapsed['conexiones']) {
-          <div class="section-body">
-
-        <div class="form-group">
-          <label class="form-label">Cables y conectores</label>
-          <input type="text" class="form-input" placeholder="Ej: cable jack 6m, adaptador XLR a Jack"
-            [ngModel]="cablesInput()" (ngModelChange)="onCablesChange($event)" name="cables" />
-          <div class="field-help">Separá los items con comas</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">DI Boxes necesarios</label>
-          <select class="form-input" [(ngModel)]="data().riderTecnico.sonido.diBoxes" name="diBoxes">
-            <option [ngValue]="null">No requiere</option>
-            <option [ngValue]="1">1 DI Box</option>
-            <option [ngValue]="2">2 DI Boxes</option>
-            <option [ngValue]="3">3 DI Boxes</option>
-            <option [ngValue]="4">4 DI Boxes</option>
-          </select>
-        </div>
-        </div> <!-- /conexiones section-body -->
-        }
-      </div>
-
       <!-- TÉCNICAS ESPECÍFICAS -->
       <div class="rider-section">
         <div class="rider-section-header clickable-section" (click)="toggleSection('equipo')">
-          <span class="section-number">3</span>
+          <span class="section-number">2</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
             <circle cx="9" cy="7" r="4"/>
@@ -187,7 +152,7 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
       <!-- STAGE PLOT -->
       <div class="rider-section">
         <div class="rider-section-header clickable-section" (click)="toggleSection('stageplot')">
-          <span class="section-number">4</span>
+          <span class="section-number">3</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
           </svg>
@@ -207,7 +172,7 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
       <!-- MONITOR MIXES -->
       <div class="rider-section">
         <div class="rider-section-header clickable-section" (click)="toggleSection('monitors')">
-          <span class="section-number">5</span>
+          <span class="section-number">4</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
           </svg>
@@ -548,7 +513,6 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
 export class InscripcionStep5Component implements OnInit {
   data = input.required<InscripcionData>();
   lastDirection = input.required<'left' | 'right'>();
-  cablesInput = signal('');
 
   goToStep = output<number>();
   onBacklineChange = output<string>();
@@ -558,7 +522,6 @@ export class InscripcionStep5Component implements OnInit {
   sectionCollapsed: Record<string, boolean> = {
     annex: true,
     sonido: false,
-    conexiones: false,
     equipo: false,
     consejos: false,
     stageplot: false,
@@ -619,12 +582,5 @@ export class InscripcionStep5Component implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.cablesInput.set(this.data().riderTecnico.sonido.cables.join(', '));
-  }
-
-  onCablesChange(value: string): void {
-    this.cablesInput.set(value);
-    (this.data() as any).riderTecnico.sonido.cables = value.split(',').map((s: string) => s.trim()).filter((s: string) => s);
-  }
+  ngOnInit(): void {}
 }
