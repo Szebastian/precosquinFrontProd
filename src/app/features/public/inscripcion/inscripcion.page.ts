@@ -360,7 +360,7 @@ export const groupSubcategories = [
                 }
                 @if (error()) {
                    <span class="form-error" role="alert">{{ error() }}</span>
-                   @if (error()) {
+                   @if (error() && errorStatus() !== 409) {
                      <button type="button" class="retry-post-btn" (click)="onSubmit($event)">Reintentar</button>
                    }
                 }
@@ -468,6 +468,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   submitted = signal(false);
   submitting = signal(false);
   error = signal('');
+  errorStatus = signal(0);
   inscriptionResult = signal<InscripcionResult | null>(null);
   filePreviews: Record<string, string> = {};
   showConfirmSubmit = signal(false);
@@ -791,6 +792,7 @@ closeConstanciaModal(): void {
     }
 
     this.error.set('');
+    this.errorStatus.set(0);
     (this.data as any)[fieldName] = file;
     const nameMap: Record<string, string> = {
       dniFrontFile: 'dniFrontName', dniBackFile: 'dniBackName',
@@ -1279,6 +1281,7 @@ closeConstanciaModal(): void {
 
     this.submitting.set(true);
     this.error.set('');
+    this.errorStatus.set(0);
 
     const payload: Record<string, any> = {
       'full_name': this.data.fullName,
@@ -1314,7 +1317,13 @@ closeConstanciaModal(): void {
       },
       error: (err: any) => {
         this.submitting.set(false);
-        this.error.set(err.error?.detail || 'Error al enviar la inscripción. Intentá de nuevo.');
+        this.showConfirmSubmit.set(false);
+        this.errorStatus.set(err.status || 0);
+        if (err.status === 409) {
+          this.error.set('Ya existe una inscripción con esos datos. Si creés que es un error, contactanos.');
+        } else {
+          this.error.set(err.error?.detail || 'Error al enviar la inscripción. Intentá de nuevo.');
+        }
       },
     });
   }
