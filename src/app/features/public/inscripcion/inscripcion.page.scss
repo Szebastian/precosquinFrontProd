@@ -1971,10 +1971,12 @@ select.form-input {
   .form-main-content {
     padding: var(--space-6) var(--space-4);
     padding-bottom: 100px;
+    overflow: visible;
   }
 
   .form-card {
     padding: var(--space-6) var(--space-5);
+    overflow: visible;
   }
 
   .form-header {
@@ -1992,6 +1994,11 @@ select.form-input {
   .btn-next-large {
     padding: var(--space-4) var(--space-6);
     font-size: 0.9rem;
+  }
+
+  .inscription-form {
+    overflow: visible;
+    max-height: none;
   }
 
   .subcategory-grid {

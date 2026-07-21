@@ -20,6 +20,9 @@
               @for (instrumentType of getInstrumentsByGroup(group); track instrumentType) {
                 <div class="instrument-item" draggable="true" (dragstart)="onPaletteDragStart($event, instrumentType)"
                      (click)="clickToAddInstrument(instrumentType)"
+                     (touchstart)="onPaletteTouchStart($event, instrumentType)"
+                     (touchmove)="onPaletteTouchMove($event, instrumentType)"
+                     (touchend)="onPaletteTouchEnd($event, instrumentType)"
                      [title]="getLabel(instrumentType)">
                   <div class="instrument-icon">
                     <img [src]="getIcon(instrumentType)" [alt]="getLabel(instrumentType)" draggable="false" width="28" height="28" />
@@ -39,6 +42,8 @@
          [attr.draggable]="!readonly"
          (dragover)="!readonly && allowDrop($event)"
          (drop)="!readonly && drop($event)"
+         (touchmove)="!readonly && onStageTouchMove($event)"
+         (touchend)="!readonly && onStageTouchEnd($event)"
          (click)="!readonly && (selectedInstrument = null)">
       <div class="stage-background-label top">FONDO DEL ESCENARIO</div>
       <div class="stage-grid-lines"></div>
@@ -48,11 +53,12 @@
 
       @for (instrument of instruments; track instrument.id) {
         <div class="placed-instrument"
-             [style.left.px]="instrument.x"
-             [style.top.px]="instrument.y"
+             [style.left]="instrument.centered ? '50%' : instrument.x + 'px'"
+             [style.top]="instrument.centered ? '50%' : instrument.y + 'px'"
              [style.transform]="'translate(-50%, -50%) rotate(' + instrument.rotation + 'deg)'"
              [attr.draggable]="!readonly"
              (dragstart)="!readonly && dragStart($event, instrument)"
+             (touchstart)="!readonly && onInstrumentTouchStart($event, instrument)"
              (click)="!readonly && selectInstrument(instrument); $event.stopPropagation();"
              [class.selected]="instrument === selectedInstrument">
           <div class="placed-instrument-icon">

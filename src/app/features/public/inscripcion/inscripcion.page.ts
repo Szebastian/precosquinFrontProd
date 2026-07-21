@@ -68,6 +68,7 @@ export interface Instrument {
   label: string;
   channel: string;
   rotation: number;
+  centered?: boolean;
 }
 
 interface RiderTecnico {

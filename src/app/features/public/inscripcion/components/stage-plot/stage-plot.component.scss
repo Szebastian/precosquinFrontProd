@@ -211,10 +211,8 @@
   border-radius: 8px;
   position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 400px;
+  touch-action: none;
 }
 
 .stage-background-label {
@@ -275,6 +273,7 @@
   transition: box-shadow 0.15s ease;
   z-index: 5;
   min-width: 56px;
+  touch-action: none;
 }
 
 .placed-instrument:hover {
@@ -396,7 +395,14 @@
   .instrument-item { padding: 8px 2px 6px; }
   .instrument-icon { width: 24px; height: 24px; }
   .instrument-label { font-size: 0.5rem; }
-  .stage-area { min-height: 280px; }
+  .stage-area-wrapper { overflow: visible; }
+  .stage-area {
+    height: 320px;
+    min-height: 320px;
+    max-height: 320px;
+    max-width: 100%;
+    overflow: hidden;
+  }
   .placed-instrument { min-width: 48px; padding: 4px 6px 3px; }
   .placed-instrument-icon { width: 22px; height: 22px; }
   .placed-instrument-label { font-size: 0.55rem; }

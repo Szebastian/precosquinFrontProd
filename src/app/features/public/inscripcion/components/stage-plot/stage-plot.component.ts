@@ -14,8 +14,7 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() initialInstruments: Instrument[] = [];
   @Input() readonly = false;
   @Output() instrumentsChange = new EventEmitter<Instrument[]>();
-  @ViewChild('stageArea') stageAreaRef?: ElementRef<HTMLDivElement>;
-  private resizeObserver?: ResizeObserver;
+  @ViewChild('stageArea')   stageAreaRef?: ElementRef<HTMLDivElement>;
 
   instruments: Instrument[] = [];
   selectedInstrument: Instrument | null = null;
@@ -68,46 +67,23 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.retryCenter(5);
-
-    if (this.stageAreaRef) {
-      this.resizeObserver = new ResizeObserver(() => {
-        if (this.instruments.length === 1 && this.instruments[0].type === 'musico-alt') {
-          this.centerDefaultMusician();
-        }
-      });
-      this.resizeObserver.observe(this.stageAreaRef.nativeElement);
-    }
+    this.centerDefaultMusician();
   }
 
   ngOnDestroy() {
-    this.resizeObserver?.disconnect();
-  }
-
-  private retryCenter(attempts: number): void {
-    if (attempts <= 0) return;
-    requestAnimationFrame(() => {
-      const centered = this.centerDefaultMusician();
-      if (!centered && attempts > 1) {
-        setTimeout(() => this.retryCenter(attempts - 1), 150);
-      }
-    });
   }
 
   private centerDefaultMusician(): boolean {
     if (this.instruments.length > 0 || !this.stageAreaRef) return false;
-    const el = this.stageAreaRef.nativeElement;
-    const w = el.offsetWidth;
-    const h = el.offsetHeight;
-    if (w === 0 || h === 0) return false;
     const defaultMusician: Instrument = {
       id: `instrument-${this.nextInstrumentId++}`,
       type: 'musico-alt',
-      x: Math.round(w / 2),
-      y: Math.round(h / 2),
+      x: 50,
+      y: 50,
       label: 'Músico',
       channel: '',
       rotation: 0,
+      centered: true,
     };
     this.instruments.push(defaultMusician);
     this.emitInstrumentsChange();
@@ -184,6 +160,7 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
     if (existingInstrument) {
       existingInstrument.x = x;
       existingInstrument.y = y;
+      existingInstrument.centered = false;
     } else if (data) {
       const newInstrument: Instrument = {
         id: `instrument-${this.nextInstrumentId++}`,
@@ -257,5 +234,87 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private emitInstrumentsChange(): void {
     this.instrumentsChange.emit(this.instruments);
+  }
+
+  private touchDragData: { instrumentId?: string; instrumentType?: string; offsetX: number; offsetY: number } | null = null;
+
+  onPaletteTouchStart(event: TouchEvent, instrumentType: string): void {
+    event.preventDefault();
+    this.touchDragData = { instrumentType, offsetX: 0, offsetY: 0 };
+  }
+
+  onPaletteTouchMove(_event: TouchEvent, _instrumentType: string): void {
+  }
+
+  onPaletteTouchEnd(_event: TouchEvent, instrumentType: string): void {
+    if (this.touchDragData?.instrumentType === instrumentType) {
+      this.clickToAddInstrument(instrumentType);
+      this.touchDragData = null;
+    }
+  }
+
+  onInstrumentTouchStart(event: TouchEvent, instrument: Instrument): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const touch = event.touches[0];
+    const el = event.currentTarget as HTMLElement;
+    const rect = el.getBoundingClientRect();
+    this.touchDragData = {
+      instrumentId: instrument.id,
+      offsetX: touch.clientX - rect.left - rect.width / 2,
+      offsetY: touch.clientY - rect.top - rect.height / 2,
+    };
+    this.selectInstrument(instrument);
+  }
+
+  onStageTouchMove(event: TouchEvent): void {
+    if (!this.touchDragData || !this.stageAreaRef) return;
+    event.preventDefault();
+    const touch = event.touches[0];
+    const stageRect = this.stageAreaRef.nativeElement.getBoundingClientRect();
+    const x = touch.clientX - stageRect.left;
+    const y = touch.clientY - stageRect.top;
+
+    if (this.touchDragData.instrumentId) {
+      const inst = this.instruments.find(i => i.id === this.touchDragData!.instrumentId);
+      if (inst) {
+        inst.x = Math.max(0, Math.min(x, stageRect.width));
+        inst.y = Math.max(0, Math.min(y, stageRect.height));
+        inst.centered = false;
+        this.emitInstrumentsChange();
+      }
+    }
+  }
+
+  onStageTouchEnd(event: TouchEvent): void {
+    if (!this.touchDragData || !this.stageAreaRef) return;
+    const touch = event.changedTouches[0];
+    const stageRect = this.stageAreaRef.nativeElement.getBoundingClientRect();
+    const x = touch.clientX - stageRect.left;
+    const y = touch.clientY - stageRect.top;
+
+    if (this.touchDragData.instrumentType) {
+      const newInstrument: Instrument = {
+        id: `instrument-${this.nextInstrumentId++}`,
+        type: this.touchDragData.instrumentType,
+        x: Math.max(0, Math.min(x, stageRect.width)),
+        y: Math.max(0, Math.min(y, stageRect.height)),
+        label: this.getLabel(this.touchDragData.instrumentType),
+        channel: '',
+        rotation: 0,
+      };
+      this.instruments.push(newInstrument);
+      this.selectedInstrument = newInstrument;
+      this.emitInstrumentsChange();
+    } else if (this.touchDragData.instrumentId) {
+      const inst = this.instruments.find(i => i.id === this.touchDragData!.instrumentId);
+      if (inst) {
+        inst.x = Math.max(0, Math.min(x, stageRect.width));
+        inst.y = Math.max(0, Math.min(y, stageRect.height));
+        inst.centered = false;
+        this.emitInstrumentsChange();
+      }
+    }
+    this.touchDragData = null;
   }
 }
