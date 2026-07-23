@@ -12,6 +12,16 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
     <div [class]="lastDirection() === 'left' ? 'step-content slide-left' : 'step-content slide-right'">
       <p class="step-desc" style="margin-top: 0;">Sumá a cada persona que integra tu grupo</p>
 
+      <!-- Info de cantidad por subcategoría -->
+      @if (getMembersInfo()) {
+        <div class="members-info-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <span>{{ getMembersInfo() }}</span>
+        </div>
+      }
+
       @for (member of data().members; track $index; let i = $index) {
         <div class="member-card" [class.incomplete]="!member.fullName.trim() || !member.dni.trim() || !member.role">
           <div class="member-header">
@@ -56,11 +66,15 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
         </div>
       }
 
-      <button type="button" class="btn btn-add-member" (click)="addMember.emit()">
+      <button type="button" class="btn btn-add-member" (click)="addMember.emit()" [disabled]="data().members.length >= getMaxMembers()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 5v14"/><path d="M5 12h14"/>
         </svg>
-        Agregar otra persona
+        @if (data().members.length >= getMaxMembers()) {
+          Máximo {{ getMaxMembers() }} personas
+        } @else {
+          Agregar otra persona
+        }
       </button>
     </div>
   `,
@@ -89,8 +103,12 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
     .btn-remove { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 500; padding: 0.25rem 0.5rem; border-radius: 0.375rem; transition: all 0.2s ease; }
     .btn-remove:hover { background: rgba(239, 68, 68, 0.1); }
     .btn-add-member { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border-radius: 0.625rem; border: 1.5px dashed rgba(76, 139, 230, 0.35); background: rgba(76, 139, 230, 0.04); color: #4c8be6; cursor: pointer; transition: all 0.2s ease; }
-    .btn-add-member:hover { border-color: #4c8be6; background: rgba(76, 139, 230, 0.08); }
-    .btn-add-member:active { transform: scale(0.98); }
+    .btn-add-member:hover:not(:disabled) { border-color: #4c8be6; background: rgba(76, 139, 230, 0.08); }
+    .btn-add-member:active:not(:disabled) { transform: scale(0.98); }
+    .btn-add-member:disabled { opacity: 0.4; cursor: not-allowed; border-color: rgba(255, 255, 255, 0.08); background: transparent; color: #64748b; }
+
+    .members-info-banner { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.875rem 1rem; background: rgba(76, 139, 230, 0.06); border: 1px solid rgba(76, 139, 230, 0.15); border-radius: 0.75rem; margin-bottom: 1.5rem; font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
+    .members-info-banner svg { color: #60a5fa; flex-shrink: 0; margin-top: 2px; }
 
     @media (max-width: 640px) {
       .form-row { grid-template-columns: 1fr; }
@@ -115,7 +133,30 @@ export class InscripcionStep3Component {
   removeMember = output<number>();
 
   roles = [
-    'Cantante', 'Guitarrista', 'Bailarín', 'Baterista', 'Bajista', 'Tecladista',
+    'Bailarín', 'Cantante', 'Guitarrista', 'Baterista', 'Bajista', 'Tecladista',
     'Violinista', 'Acordeonista', 'Percusionista', 'Corista', 'Otro'
   ];
+
+  getMaxMembers(): number {
+    const sub = this.data().subcategory;
+    if (sub === 'conjunto_baile') return 40;
+    if (sub === 'conjunto_malambo') return 8;
+    if (sub === 'pareja_tradicional' || sub === 'pareja_estilizada') return 2;
+    return 10;
+  }
+
+  getMembersInfo(): string {
+    const sub = this.data().subcategory;
+    switch (sub) {
+      case 'conjunto_malambo':
+        return 'Conjunto de malambo: mínimo 4 y máximo 8 integrantes.';
+      case 'pareja_tradicional':
+      case 'pareja_estilizada':
+        return 'Pareja: necesitás exactamente 2 bailarines.';
+      case 'conjunto_baile':
+        return 'Conjunto de baile folklórico: mínimo 8, hasta 40 integrantes.';
+      default:
+        return '';
+    }
+  }
 }

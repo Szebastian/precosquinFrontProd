@@ -185,6 +185,40 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
           </div>
         </div>
       }
+
+      <!-- DANZA - Estilo del Malambo -->
+      @if (isDanza() && data().subcategory) {
+        <div class="danza-section" @fadeIn>
+          <div class="danza-info-banner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <span>{{ getDanzaInfo() }}</span>
+          </div>
+
+          @if (needsDanceStyle()) {
+            <div class="dance-style-selector">
+              <span class="section-label">Estilo del Malambo *</span>
+              <div class="dance-style-cards">
+                <label class="dance-style-card" [class.selected]="data().danceStyle === 'norteno'">
+                  <input type="radio" name="danceStyle" value="norteno" [(ngModel)]="data().danceStyle" />
+                  <div class="dance-style-info">
+                    <span class="dance-style-name">Norteño</span>
+                    <span class="dance-style-desc">Ritmo enérgico del norte</span>
+                  </div>
+                </label>
+                <label class="dance-style-card" [class.selected]="data().danceStyle === 'sureno'">
+                  <input type="radio" name="danceStyle" value="sureno" [(ngModel)]="data().danceStyle" />
+                  <div class="dance-style-info">
+                    <span class="dance-style-name">Sureño</span>
+                    <span class="dance-style-desc">Ritmo melancólico del sur</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          }
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -284,6 +318,21 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
     .rules-summary ul { margin: 0; padding-left: 1.25rem; list-style: disc; }
     .rules-summary li { font-size: 0.75rem; color: #94a3b8; line-height: 1.6; }
 
+    /* Danza Section */
+    .danza-section { animation: fadeIn 0.4s ease-out; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+    .danza-info-banner { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.875rem 1rem; background: rgba(76, 139, 230, 0.06); border: 1px solid rgba(76, 139, 230, 0.15); border-radius: 0.75rem; margin-bottom: 1.5rem; font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
+    .danza-info-banner svg { color: #60a5fa; flex-shrink: 0; margin-top: 2px; }
+
+    .dance-style-selector { margin-top: 1rem; }
+    .dance-style-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .dance-style-card { display: flex; align-items: center; gap: 0.875rem; padding: 1rem; border: 1.5px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem; background: rgba(255, 255, 255, 0.02); cursor: pointer; transition: all 0.25s ease; }
+    .dance-style-card input[type="radio"] { display: none; }
+    .dance-style-card:hover { border-color: rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.04); }
+    .dance-style-card.selected { border-color: #4c8be6; background: rgba(76, 139, 230, 0.08); }
+    .dance-style-info { display: flex; flex-direction: column; gap: 0.15rem; }
+    .dance-style-name { font-size: 0.9rem; font-weight: 600; color: #e2e8f0; }
+    .dance-style-desc { font-size: 0.75rem; color: #94a3b8; }
+
     @media (max-width: 640px) {
       .category-cards { grid-template-columns: 1fr; }
       .category-card { padding: 1rem; }
@@ -311,6 +360,7 @@ export class InscripcionStep2Component {
   data = input.required<InscripcionData>();
   lastDirection = input.required<'left' | 'right'>();
   goToStep = output<number>();
+  subcategoryChanged = output<void>();
 
   melodicInstruments = MELODIC_INSTRUMENTS;
   harmonicInstruments = HARMONIC_INSTRUMENTS;
@@ -319,10 +369,14 @@ export class InscripcionStep2Component {
     (this.data() as any).category = this.data().category;
     (this.data() as any).subcategory = '';
     this.resetInstrumentFields();
+    this.resetDanceFields();
+    this.subcategoryChanged.emit();
   }
 
   onSubcategoryChange(): void {
     this.resetInstrumentFields();
+    this.resetDanceFields();
+    this.subcategoryChanged.emit();
   }
 
   onInstrumentTypeChange(): void {
@@ -345,6 +399,41 @@ export class InscripcionStep2Component {
     (this.data() as any).hasAccompaniment = false;
     (this.data() as any).accompanimentInstrument = '';
     (this.data() as any).accompanimentMusician = '';
+  }
+
+  private resetDanceFields(): void {
+    (this.data() as any).danceStyle = '';
+    (this.data() as any).danceThemes = [{ title: '' }, { title: '' }, { title: '' }];
+    (this.data() as any).danceMp3File = null;
+    (this.data() as any).danceMp3FileName = '';
+    (this.data() as any).workTitle = '';
+    (this.data() as any).assistantsCount = 0;
+  }
+
+  isDanza(): boolean {
+    return this.data().category === 'danza';
+  }
+
+  needsDanceStyle(): boolean {
+    return ['malambo_masculino', 'malambo_femenino'].includes(this.data().subcategory);
+  }
+
+  getDanzaInfo(): string {
+    switch (this.data().subcategory) {
+      case 'malambo_masculino':
+      case 'malambo_femenino':
+        return 'Malambo solista. Necesitás 4 músicos acompañantes y planta de sonido.';
+      case 'conjunto_malambo':
+        return 'Conjunto de malambo: mínimo 4 y máximo 8 integrantes. Necesitás 4 músicos acompañantes y planta de sonido.';
+      case 'pareja_tradicional':
+        return 'Pareja de baile tradicional: 2 bailarines. 3 danzas con música MP3. Necesitás 4 músicos acompañantes, planta de sonido y 2 asistentes.';
+      case 'pareja_estilizada':
+        return 'Pareja de baile estilizada: 2 bailarines. 3 danzas con música MP3. Necesitás 4 músicos acompañantes y planta de sonido.';
+      case 'conjunto_baile':
+        return 'Conjunto de baile folklórico: mínimo 8 integrantes (hasta 40). 1 obra con archivo MP3.';
+      default:
+        return '';
+    }
   }
 
   subcategories = computed(() => subcategoriesByCategory[this.data().category] || []);

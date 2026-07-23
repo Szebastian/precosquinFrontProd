@@ -17,6 +17,15 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
         <span>Este paso es <strong>opcional</strong>. Completá solo lo que necesites. El equipo técnico definitivo se define en los ensayos.</span>
       </div>
 
+      @if (needsMusiciansInfo()) {
+        <div class="danza-tech-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <span>Tu presentación requiere <strong>4 músicos acompañantes</strong> y <strong>planta de sonido</strong>. Los valores fueron pre-configurados. Podés modificarlos si es necesario.</span>
+        </div>
+      }
+
       <!-- ANNEX I - Technical Rules -->
       <div class="annex-section">
         <div class="annex-header clickable-section" (click)="toggleSection('annex')">
@@ -230,6 +239,15 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
     }
     .optional-banner svg { flex-shrink: 0; margin-top: 1px; color: #60a5fa; }
     .optional-banner strong { color: #93c5fd; font-weight: 600; }
+
+    .danza-tech-banner {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.875rem 1rem; margin-bottom: 1.5rem;
+      background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 0.75rem; font-size: 0.8rem; color: #94a3b8; line-height: 1.5;
+    }
+    .danza-tech-banner svg { flex-shrink: 0; margin-top: 2px; color: #f59e0b; }
+    .danza-tech-banner strong { color: #fbbf24; font-weight: 600; }
 
     .clickable-section { cursor: pointer; user-select: none; }
     .clickable-section:hover { opacity: 0.9; }
@@ -530,6 +548,10 @@ export class InscripcionStep5Component implements OnInit {
 
   toggleSection(key: string): void {
     this.sectionCollapsed[key] = !this.sectionCollapsed[key];
+  }
+
+  needsMusiciansInfo(): boolean {
+    return ['malambo_masculino', 'malambo_femenino', 'conjunto_malambo', 'pareja_tradicional', 'pareja_estilizada'].includes(this.data().subcategory);
   }
 
   monitorMixOptions = ['Voz principal', 'Voz secundaria', 'Guitarra', 'Bajo', 'Teclado', 'Percusión', 'Otro instrumento', 'Click / Track', 'Tambor (todos)', 'Coros'];

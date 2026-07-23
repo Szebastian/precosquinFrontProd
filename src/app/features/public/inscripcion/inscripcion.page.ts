@@ -47,6 +47,16 @@ interface ThemeRow {
   author: string;
 }
 
+export interface DanceTheme {
+  title: string;
+  song: string;
+}
+
+export interface BandMember {
+  fullName: string;
+  instrument: string;
+}
+
 export interface InputChannel {
   source: string;
   micType: string;
@@ -124,12 +134,22 @@ export interface InscripcionData {
   acceptRegulations: boolean;
   acceptImageRights: boolean;
   acceptDataTruth: boolean;
+  acceptNoPriorWin: boolean;
+  acceptNotJurorOrg: boolean;
   // Solista Instrumental - Art. 31
   instrumentType: string;
   instrumentName: string;
   hasAccompaniment: boolean;
   accompanimentInstrument: string;
   accompanimentMusician: string;
+  // Danza
+  danceStyle: string;
+  danceThemes: DanceTheme[];
+  danceMp3File: File | null;
+  danceMp3FileName: string;
+  workTitle: string;
+  assistantsCount: number;
+  bandMembers: BandMember[];
   // Personas que acompañan al artista (acceso a Puerto Pirámides)
   accompanyingPersons: AccompanyingPerson[];
 }
@@ -268,7 +288,8 @@ export const groupSubcategories = [
             @if (currentStep() === 2) {
               <app-inscripcion-step-2
                 [data]="data"
-                [lastDirection]="lastDirection()" />
+                [lastDirection]="lastDirection()"
+                (subcategoryChanged)="onSubcategoryChange()" />
             }
             @if (currentStep() === 3) {
               <app-inscripcion-step-3
@@ -280,7 +301,10 @@ export const groupSubcategories = [
             @if (currentStep() === 4) {
               <app-inscripcion-step-4
                 [data]="data"
-                [lastDirection]="lastDirection()" />
+                [lastDirection]="lastDirection()"
+                (fileSelected)="handleFileSelected($event)"
+                (addBandMember)="addBandMember()"
+                (removeBandMember)="removeBandMember($event)" />
             }
             @if (currentStep() === 5) {
               <app-inscripcion-step-5
@@ -573,12 +597,22 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     acceptRegulations: false,
     acceptImageRights: false,
     acceptDataTruth: false,
+    acceptNoPriorWin: false,
+    acceptNotJurorOrg: false,
     // Solista Instrumental - Art. 31
     instrumentType: '',
     instrumentName: '',
     hasAccompaniment: false,
     accompanimentInstrument: '',
     accompanimentMusician: '',
+    // Danza
+    danceStyle: '',
+    danceThemes: [{ title: '', song: '' }, { title: '', song: '' }, { title: '', song: '' }],
+    danceMp3File: null,
+    danceMp3FileName: '',
+    workTitle: '',
+    assistantsCount: 0,
+    bandMembers: [],
     accompanyingPersons: [],
   };
 
@@ -641,6 +675,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       delete (draft as any).promoPhotoFile;
       delete (draft as any).lyricsFile;
       delete (draft as any).scoreFile;
+      delete (draft as any).danceMp3File;
       localStorage.setItem(this.draftKey, JSON.stringify(draft));
       this.showSavedIndicator.set(true);
       setTimeout(() => this.showSavedIndicator.set(false), 2500);
@@ -721,8 +756,9 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       proposalName: '', choreographerName: '', style: '', danceList: '', biography: '',
       dniFrontFile: null, dniBackFile: null, promoPhotoFile: null, lyricsFile: null, scoreFile: null,
       dniFrontName: '', dniBackName: '', promoPhotoName: '', lyricsFileName: '', scoreFileName: '',
-      acceptRegulations: false, acceptImageRights: false, acceptDataTruth: false,
+      acceptRegulations: false, acceptImageRights: false, acceptDataTruth: false, acceptNoPriorWin: false, acceptNotJurorOrg: false,
       instrumentType: '', instrumentName: '', hasAccompaniment: false, accompanimentInstrument: '', accompanimentMusician: '',
+      danceStyle: '', danceThemes: [{ title: '', song: '' }, { title: '', song: '' }, { title: '', song: '' }], danceMp3File: null, danceMp3FileName: '', workTitle: '', assistantsCount: 0, bandMembers: [],
       accompanyingPersons: [],
     };
     this.currentStep.set(1);
@@ -797,6 +833,7 @@ closeConstanciaModal(): void {
     const nameMap: Record<string, string> = {
       dniFrontFile: 'dniFrontName', dniBackFile: 'dniBackName',
       promoPhotoFile: 'promoPhotoName', lyricsFile: 'lyricsFileName', scoreFile: 'scoreFileName',
+      danceMp3File: 'danceMp3FileName',
     };
     (this.data as any)[nameMap[fieldName]] = file.name;
 
@@ -810,6 +847,7 @@ closeConstanciaModal(): void {
     const nameMap: Record<string, string> = {
       dniFrontFile: 'dniFrontName', dniBackFile: 'dniBackName',
       promoPhotoFile: 'promoPhotoName', lyricsFile: 'lyricsFileName', scoreFile: 'scoreFileName',
+      danceMp3File: 'danceMp3FileName',
     };
     (this.data as any)[fieldName] = null;
     (this.data as any)[nameMap[fieldName]] = '';
@@ -829,10 +867,104 @@ closeConstanciaModal(): void {
 
   isGroupType = computed(() => this.groupSubcategories.includes(this.data.subcategory));
 
+  isDanza = computed(() => this.data.category === 'danza');
+
+  needsDanceStyle(): boolean {
+    return ['malambo_masculino', 'malambo_femenino'].includes(this.data.subcategory);
+  }
+
+  needsDanceThemes(): boolean {
+    return ['pareja_tradicional', 'pareja_estilizada'].includes(this.data.subcategory);
+  }
+
+  needsDanceMp3(): boolean {
+    return ['pareja_tradicional', 'pareja_estilizada', 'conjunto_baile'].includes(this.data.subcategory);
+  }
+
+  needsWorkTitle(): boolean {
+    return this.data.subcategory === 'conjunto_baile';
+  }
+
+  needsAssistants(): boolean {
+    return this.data.subcategory === 'pareja_tradicional';
+  }
+
+  needsMusiciansInfo(): boolean {
+    return ['malambo_masculino', 'malambo_femenino', 'conjunto_malambo', 'pareja_tradicional', 'pareja_estilizada'].includes(this.data.subcategory);
+  }
+
+  maxMembersForSubcategory(): number {
+    if (this.data.subcategory === 'conjunto_baile') return 40;
+    if (this.data.subcategory === 'conjunto_malambo') return 8;
+    if (['pareja_tradicional', 'pareja_estilizada'].includes(this.data.subcategory)) return 2;
+    return 10;
+  }
+
+  needsBandMembers(): boolean {
+    return this.data.subcategory === 'pareja_tradicional';
+  }
+
+  addBandMember(): void {
+    this.data.bandMembers.push({ fullName: '', instrument: '' });
+  }
+
+  removeBandMember(index: number): void {
+    this.data.bandMembers.splice(index, 1);
+  }
+
   visibleSteps = computed(() => this.steps.filter(step => step.number < 8));
 
   onCategoryChange(): void {
     this.data.subcategory = '';
+    this.resetDanceFields();
+  }
+
+  onSubcategoryChange(): void {
+    this.resetDanceFields();
+    this.preselectDanceTechRider();
+  }
+
+  private preselectDanceTechRider(): void {
+    const sub = this.data.subcategory;
+    const needsMusicians = ['malambo_masculino', 'malambo_femenino', 'conjunto_malambo', 'pareja_tradicional', 'pareja_estilizada'].includes(sub);
+    if (!needsMusicians) return;
+
+    if (this.data.riderTecnico.stagePlotInstruments.length === 0) {
+      for (let i = 0; i < 4; i++) {
+        this.data.riderTecnico.stagePlotInstruments.push({
+          id: `musician-${i}`,
+          type: 'musico-alt',
+          x: 0,
+          y: 0,
+          label: `Músico ${i + 1}`,
+          channel: '',
+          rotation: 0,
+          centered: true,
+        });
+      }
+    }
+
+    if (this.data.riderTecnico.inputList.length === 0) {
+      for (let i = 0; i < 4; i++) {
+        this.data.riderTecnico.inputList.push({
+          source: `Músico ${i + 1}`,
+          micType: '',
+          fxInsert: '',
+          monitorMix: '',
+          phantom: false,
+        });
+      }
+    }
+  }
+
+  private resetDanceFields(): void {
+    this.data.danceStyle = '';
+    this.data.danceThemes = [{ title: '', song: '' }, { title: '', song: '' }, { title: '', song: '' }];
+    this.data.danceMp3File = null;
+    this.data.danceMp3FileName = '';
+    this.data.workTitle = '';
+    this.data.assistantsCount = 0;
+    this.data.bandMembers = [];
   }
 
   onBirthDateChange(): void {
@@ -852,7 +984,9 @@ closeConstanciaModal(): void {
   }
 
   addMember(): void {
-    this.data.members.push({ fullName: '', dni: '', age: null, role: '' });
+    if (this.data.members.length >= this.maxMembersForSubcategory()) return;
+    const defaultRole = this.data.category === 'danza' ? 'Bailarín' : '';
+    this.data.members.push({ fullName: '', dni: '', age: null, role: defaultRole });
   }
 
   removeMember(index: number): void {
@@ -891,11 +1025,18 @@ closeConstanciaModal(): void {
           this.validateEmail(this.data.email)
         );
       case 2:
-        return !!(this.data.category && this.data.subcategory);
+        return !!(
+          this.data.category && this.data.subcategory
+          && (!this.needsDanceStyle() || this.data.danceStyle)
+        );
       case 3:
-        return this.isGroupType()
-          ? this.data.members.length >= 1 && this.data.members.every(m => m.fullName.trim() && m.dni.trim() && m.role)
-          : true;
+        if (!this.isGroupType()) return true;
+        const minMembers = this.data.subcategory === 'conjunto_baile' ? 8
+          : this.data.subcategory === 'conjunto_malambo' ? 4
+          : ['pareja_tradicional', 'pareja_estilizada'].includes(this.data.subcategory) ? 2
+          : 1;
+        return this.data.members.length >= minMembers
+          && this.data.members.every(m => m.fullName.trim() && m.dni.trim() && m.role);
       case 4:
         return true;
       case 5:
@@ -904,11 +1045,13 @@ closeConstanciaModal(): void {
         return !!(
           this.data.dniFrontFile && this.data.dniBackFile && this.data.promoPhotoFile
           && (this.data.subcategory !== 'cancion_inedita' || (this.data.lyricsFile && this.data.scoreFile))
+          && (!this.needsDanceMp3() || this.data.danceMp3File)
         );
       case 7:
         return true;
       case 8:
-        return this.data.acceptRegulations && this.data.acceptImageRights && this.data.acceptDataTruth;
+        return this.data.acceptRegulations && this.data.acceptImageRights && this.data.acceptDataTruth
+          && this.data.acceptNoPriorWin && this.data.acceptNotJurorOrg;
       default:
         return false;
     }
@@ -933,12 +1076,17 @@ closeConstanciaModal(): void {
         const missing: string[] = [];
         if (!this.data.category) missing.push('Categoría');
         if (!this.data.subcategory) missing.push('Subcategoría');
+        if (this.needsDanceStyle() && !this.data.danceStyle) missing.push('Estilo del malambo');
         return missing.length ? `Faltan completar: ${missing.join(', ')}` : '';
       }
       case 3: {
         if (!this.isGroupType()) return '';
+        const minMembers = this.data.subcategory === 'conjunto_baile' ? 8
+          : this.data.subcategory === 'conjunto_malambo' ? 4
+          : ['pareja_tradicional', 'pareja_estilizada'].includes(this.data.subcategory) ? 2
+          : 1;
         const missing: string[] = [];
-        if (this.data.members.length === 0) missing.push('Al menos un integrante');
+        if (this.data.members.length < minMembers) missing.push(`Mínimo ${minMembers} integrantes`);
         this.data.members.forEach((m, i) => {
           if (!m.fullName.trim()) missing.push(`Nombre del integrante ${i + 1}`);
           if (!m.dni.trim()) missing.push(`DNI del integrante ${i + 1}`);
@@ -955,6 +1103,7 @@ closeConstanciaModal(): void {
           if (!this.data.lyricsFile) missing.push('Letra de la canción');
           if (!this.data.scoreFile) missing.push('Partitura');
         }
+        if (this.needsDanceMp3() && !this.data.danceMp3File) missing.push('Música MP3 de danzas');
         return missing.length ? `Faltan subir: ${missing.join(', ')}` : '';
       }
       case 8: {
@@ -962,6 +1111,8 @@ closeConstanciaModal(): void {
         if (!this.data.acceptRegulations) missing.push('Aceptar reglamento');
         if (!this.data.acceptImageRights) missing.push('Aceptar derechos de imagen');
         if (!this.data.acceptDataTruth) missing.push('Declarar veracidad de datos');
+        if (!this.data.acceptNoPriorWin) missing.push('Declarar no haber ganado anteriormente');
+        if (!this.data.acceptNotJurorOrg) missing.push('Declarar no ser jurado ni parte de la organización');
         return missing.length ? `Faltan completar: ${missing.join(', ')}` : '';
       }
       default:
@@ -1307,6 +1458,15 @@ closeConstanciaModal(): void {
         : null,
       'members': this.isGroupType() ? this.data.members : null,
       'accompanying_persons': this.data.accompanyingPersons.length > 0 ? this.data.accompanyingPersons : null,
+      // Danza
+      'dance_style': this.data.danceStyle || null,
+      'dance_themes': this.needsDanceThemes() ? this.data.danceThemes.filter(t => t.title || t.song) : null,
+      'work_title': this.data.workTitle || null,
+      'assistants_count': this.data.assistantsCount || null,
+      'band_members': this.needsBandMembers() && this.data.bandMembers.length > 0 ? this.data.bandMembers : null,
+      // Declaraciones de elegibilidad
+      'accept_no_prior_win': this.data.acceptNoPriorWin,
+      'accept_not_juror_org': this.data.acceptNotJurorOrg,
     };
 
     this.http.post<InscripcionResult>(`${environment.apiUrl}/inscriptions/`, payload).subscribe({
@@ -1336,6 +1496,7 @@ closeConstanciaModal(): void {
     if (this.data.promoPhotoFile) files.push({ file: this.data.promoPhotoFile, type: 'promo_photo' });
     if (this.data.lyricsFile) files.push({ file: this.data.lyricsFile, type: 'lyrics' });
     if (this.data.scoreFile) files.push({ file: this.data.scoreFile, type: 'score' });
+    if (this.data.danceMp3File) files.push({ file: this.data.danceMp3File, type: 'dance_mp3' });
 
     if (files.length === 0) {
       this.submitting.set(false);
@@ -1355,6 +1516,7 @@ closeConstanciaModal(): void {
       promo_photo: 'Foto promocional',
       lyrics: 'Letra',
       score: 'Partitura',
+      dance_mp3: 'Música danzas',
     };
 
     for (const { file, type } of files) {

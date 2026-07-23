@@ -193,6 +193,27 @@ import { InscripcionData } from '../inscripcion.page';
           </div>
         </div>
       }
+
+      <!-- DANZA: Música MP3 (solo visualización) -->
+      @if (data().category === 'danza' && data().danceMp3FileName) {
+        <div class="file-section-divider">
+          <h3 class="section-subtitle">Música de Danzas</h3>
+        </div>
+        <div class="upload-card">
+          <div class="upload-card-header">
+            <span class="upload-card-label">Música (MP3)</span>
+          </div>
+          <div class="upload-preview">
+            <div class="preview-placeholder preview-doc">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </div>
+            <div class="preview-info">
+              <span class="preview-filename">{{ data().danceMp3FileName }}</span>
+              <span class="preview-filestatus">Cargado en Paso 4</span>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -245,6 +266,7 @@ import { InscripcionData } from '../inscripcion.page';
     .preview-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.1rem; }
     .preview-filename { font-size: 0.78rem; font-weight: 500; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .preview-filesize { font-size: 0.65rem; color: #64748b; }
+    .preview-filestatus { font-size: 0.65rem; color: #4ade80; }
 
     .preview-actions { display: flex; gap: 0.25rem; flex-shrink: 0; }
     .btn-preview { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 0.375rem; cursor: pointer; transition: all 0.2s ease; background: transparent; padding: 0; }

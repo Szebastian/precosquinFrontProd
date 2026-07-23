@@ -26,6 +26,14 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
           <input type="checkbox" [(ngModel)]="data().acceptDataTruth" name="acceptDataTruth" />
           <span>Declaro que los datos consignados son veraces *</span>
         </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="data().acceptNoPriorWin" name="acceptNoPriorWin" />
+          <span>Declaro no haber ganado el Premio Cosquín en la misma categoría en los últimos 5 años, o no participar con el mismo cuadro completo *</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="data().acceptNotJurorOrg" name="acceptNotJurorOrg" />
+          <span>Declaro no ser jurado, delegado, integrante de la organización ni de la Comisión Municipal de Folklore *</span>
+        </label>
       </div>
 
       <div class="review-divider"></div>
@@ -167,6 +175,12 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
             </div>
           }
           @if (data().category === 'danza') {
+            @if (data().danceStyle) {
+              <div class="review-item">
+                <span class="review-label">Estilo del Malambo</span>
+                <span class="review-value">{{ data().danceStyle === 'norteno' ? 'Norteño' : 'Sureño' }}</span>
+              </div>
+            }
             <div class="review-item">
               <span class="review-label">Nombre de la Propuesta</span>
               <span class="review-value">{{ data().proposalName || 'No ingresado' }}</span>
@@ -185,6 +199,42 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
               <div class="review-item full-width">
                 <span class="review-label">Danzas o Cuadros</span>
                 <span class="review-value">{{ data().danceList }}</span>
+              </div>
+            }
+            @if (getFilledDanceThemesCount() > 0) {
+              <div class="review-item full-width">
+                <span class="review-label">Danzas</span>
+                <span class="review-value">{{ getFilledDanceThemesCount() }} danza(s): {{ getFilledDanceThemesList() }}</span>
+              </div>
+            }
+            @if (data().workTitle) {
+              <div class="review-item">
+                <span class="review-label">Obra</span>
+                <span class="review-value">{{ data().workTitle }}</span>
+              </div>
+            }
+            @if (data().danceMp3FileName) {
+              <div class="review-item">
+                <span class="review-label">Música (MP3)</span>
+                <span class="review-value">{{ data().danceMp3FileName }}</span>
+              </div>
+            }
+            @if (data().assistantsCount > 0) {
+              <div class="review-item">
+                <span class="review-label">Asistentes</span>
+                <span class="review-value">{{ data().assistantsCount }}</span>
+              </div>
+            }
+            @if (data().bandMembers.length > 0) {
+              <div class="review-item full-width">
+                <span class="review-label">Banda de Música</span>
+                <span class="review-value">{{ data().bandMembers.length }} músico(s): {{ getBandMembersList() }}</span>
+              </div>
+            }
+            @if (data().members.length > 0) {
+              <div class="review-item">
+                <span class="review-label">Integrantes</span>
+                <span class="review-value">{{ data().members.length }}</span>
               </div>
             }
           }
@@ -476,6 +526,24 @@ export class InscripcionStep7Component {
 
   getFilledThemesCount(): number {
     return this.data().themes.filter(t => t.title || t.rhythm || t.author).length;
+  }
+
+  getFilledDanceThemesCount(): number {
+    return (this.data().danceThemes || []).filter(t => t.title).length;
+  }
+
+  getFilledDanceThemesList(): string {
+    return (this.data().danceThemes || [])
+      .filter(t => t.title)
+      .map((t, i) => `R${i + 1}: ${t.title}${t.song ? ' (' + t.song + ')' : ''}`)
+      .join(', ');
+  }
+
+  getBandMembersList(): string {
+    return (this.data().bandMembers || [])
+      .filter(m => m.fullName)
+      .map(m => `${m.fullName}${m.instrument ? ' - ' + m.instrument : ''}`)
+      .join(', ');
   }
 
   hasRiderData(): boolean {
