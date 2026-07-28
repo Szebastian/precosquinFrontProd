@@ -475,3 +475,8 @@
   color: #fbbf24;
   border-color: rgba(245, 158, 11, 0.3);
 }
+
+/* Charts Section */
+.charts-section {
+  width: 100%;
+}

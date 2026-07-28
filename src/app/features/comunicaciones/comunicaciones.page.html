@@ -1,0 +1,619 @@
+<div class="com-page">
+  <!-- Header -->
+  <header class="com-header">
+    <div class="com-header-left">
+      <div class="com-header-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="com-title">Enviar Correo</h1>
+        <p class="com-subtitle">Elegí quiénes reciben, escribí el mensaje y enviá</p>
+      </div>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="com-loading">
+      <div class="loading-spinner-lg"></div>
+      <p>Cargando inscripciones...</p>
+    </div>
+  } @else {
+    <!-- Progress Bar -->
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" [style.width]="(currentStep() / 3 * 100) + '%'"></div>
+    </div>
+
+    <div class="com-steps">
+
+      <!-- ========== PASO 1: ¿A QUIÉN LE MANDO? ========== -->
+      <section class="com-step" [class.step-active]="currentStep() === 1" [class.step-done]="currentStep() > 1">
+        <div class="step-header" (click)="currentStep.set(1)">
+          <div class="step-number">
+            @if (currentStep() > 1) {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 11 3 3L22 4"/></svg>
+            } @else { 1 }
+          </div>
+          <div class="step-title-wrap">
+            <span class="step-title">¿A quién le mando el correo?</span>
+            <span class="step-subtitle">{{ recipientCount() }} destinatario(s)</span>
+          </div>
+          @if (currentStep() > 1) {
+            <button class="step-edit" (click)="currentStep.set(1); $event.stopPropagation()">Cambiar</button>
+          }
+        </div>
+
+        @if (currentStep() === 1) {
+          <div class="step-body">
+            <!-- Quick Source Selector -->
+            <div class="source-selector">
+              <p class="source-hint">Elegí de dónde sacás los destinatarios:</p>
+              <div class="source-options">
+                <button class="source-option" [class.active]="sourceTab() === 'inscripciones'" (click)="sourceTab.set('inscripciones')">
+                  <div class="source-option-icon blue">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1"/></svg>
+                  </div>
+                  <div class="source-option-text">
+                    <span class="source-option-name">Inscriptos del festival</span>
+                    <span class="source-option-desc">{{ allInscriptions().length }} personas inscriptas</span>
+                  </div>
+                </button>
+
+                <button class="source-option" [class.active]="sourceTab() === 'manual'" (click)="sourceTab.set('manual')">
+                  <div class="source-option-icon green">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </div>
+                  <div class="source-option-text">
+                    <span class="source-option-name">Escribir emails a mano</span>
+                    <span class="source-option-desc">Pegá o escribí los correos</span>
+                  </div>
+                </button>
+
+                <button class="source-option" [class.active]="sourceTab() === 'csv'" (click)="sourceTab.set('csv')">
+                  <div class="source-option-icon purple">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>
+                  </div>
+                  <div class="source-option-text">
+                    <span class="source-option-name">Subir archivo CSV</span>
+                    <span class="source-option-desc">Desde Excel o Google Sheets</span>
+                  </div>
+                </button>
+
+                <button class="source-option" [class.active]="sourceTab() === 'guardadas'" (click)="sourceTab.set('guardadas')">
+                  <div class="source-option-icon amber">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+                  </div>
+                  <div class="source-option-text">
+                    <span class="source-option-name">Grupos guardados</span>
+                    <span class="source-option-desc">Listas que ya creaste</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB: Inscripciones -->
+            @if (sourceTab() === 'inscripciones') {
+              <div class="tab-content">
+                <div class="com-search">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                  <input type="text" placeholder="Buscar por nombre o email..." [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" />
+                  @if (searchQuery()) {
+                    <button class="search-clear" (click)="searchQuery.set('')">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  }
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                  <button class="qstat" [class.active]="statusFilter() === ''" (click)="statusFilter.set('')">
+                    <span class="qstat-num">{{ allInscriptions().length }}</span>
+                    <span class="qstat-label">Todos</span>
+                  </button>
+                  <button class="qstat" [class.active]="statusFilter() === 'PENDIENTE'" (click)="statusFilter.set('PENDIENTE')">
+                    <span class="qstat-dot dot-pending"></span>
+                    <span class="qstat-num">{{ getCountByStatus('PENDIENTE') }}</span>
+                    <span class="qstat-label">Pendientes</span>
+                  </button>
+                  <button class="qstat" [class.active]="statusFilter() === 'APROBADA'" (click)="statusFilter.set('APROBADA')">
+                    <span class="qstat-dot dot-approved"></span>
+                    <span class="qstat-num">{{ getCountByStatus('APROBADA') }}</span>
+                    <span class="qstat-label">Aprobadas</span>
+                  </button>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="filter-row">
+                  <span class="filter-label">Categoría</span>
+                  <div class="filter-chips">
+                    <button class="chip" [class.active]="categoryFilter() === ''" (click)="categoryFilter.set('')">Todas</button>
+                    <button class="chip" [class.active]="categoryFilter() === 'Musica'" (click)="categoryFilter.set('Musica')">Música</button>
+                    <button class="chip" [class.active]="categoryFilter() === 'Danza'" (click)="categoryFilter.set('Danza')">Danza</button>
+                  </div>
+                </div>
+
+                <!-- Recipient List -->
+                <div class="recipient-preview">
+                  <div class="recipient-preview-header">
+                    <label class="checkbox-wrap">
+                      <input type="checkbox" [checked]="allFilteredSelected()" (change)="toggleSelectAll()" />
+                      <span class="checkmark"></span>
+                    </label>
+                    <span class="recipient-preview-title">Seleccionar todos</span>
+                    <span class="recipient-preview-count">{{ filteredInscriptions().length }}</span>
+                    @if (selectedCount() > 0) {
+                      <span class="selected-badge">{{ selectedCount() }} seleccionados</span>
+                      <button class="btn-clear-selection" (click)="clearSelection()">Limpiar</button>
+                    }
+                  </div>
+                  <div class="recipient-list">
+                    @if (filteredInscriptions().length === 0) {
+                      <div class="empty-recipients">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/></svg>
+                        <p>No se encontraron destinatarios</p>
+                      </div>
+                    } @else {
+                      @for (ins of filteredInscriptions().slice(0, 10); track ins.id) {
+                        <div class="recipient-row" [class.selected]="selectedIds().has(ins.id)" (click)="toggleSelect(ins.id)">
+                          <label class="checkbox-wrap" (click)="$event.stopPropagation()">
+                            <input type="checkbox" [checked]="selectedIds().has(ins.id)" (change)="toggleSelect(ins.id)" />
+                            <span class="checkmark"></span>
+                          </label>
+                          <div class="recipient-avatar" [class.cat-musica]="ins.category === 'Musica'" [class.cat-danza]="ins.category === 'Danza'">
+                            {{ getInitials(ins.full_name) }}
+                          </div>
+                          <div class="recipient-info">
+                            <span class="recipient-name">{{ ins.full_name }}{{ ins.stage_name ? ' (' + ins.stage_name + ')' : '' }}</span>
+                            <span class="recipient-email">{{ ins.email }}</span>
+                          </div>
+                          <span class="recipient-status" [attr.data-status]="ins.status">{{ formatStatus(ins.status) }}</span>
+                        </div>
+                      }
+                      @if (filteredInscriptions().length > 10) {
+                        <div class="recipient-more">+{{ filteredInscriptions().length - 10 }} más destinatarios...</div>
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- TAB: Carga Manual -->
+            @if (sourceTab() === 'manual') {
+              <div class="tab-content">
+                <div class="manual-guide">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <div>
+                    <strong>¿Cómo funciona?</strong>
+                    <p>Escribí o pegá los correos electrónicos. Podés separarlos con Enter, coma o punto y coma.</p>
+                  </div>
+                </div>
+                <div class="com-field">
+                  <textarea class="com-textarea" [ngModel]="manualEmails()" (ngModelChange)="onManualEmailsChange($event)"
+                    placeholder="correo1@email.com&#10;correo2@email.com&#10;correo3@email.com, Nombre Apellido"
+                    rows="10"></textarea>
+                  <span class="com-field-hint">{{ manualRecipients().length }} email(s) detectado(s)</span>
+                </div>
+                @if (manualRecipients().length > 0) {
+                  <div class="manual-preview">
+                    <span class="manual-preview-label">Vista previa:</span>
+                    @for (r of manualRecipients().slice(0, 5); track r.email) {
+                      <div class="manual-preview-row">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        {{ r.email }}{{ r.name ? ' — ' + r.name : '' }}
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- TAB: Subir CSV -->
+            @if (sourceTab() === 'csv') {
+              <div class="tab-content">
+                <div class="manual-guide">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <div>
+                    <strong>¿Cómo obtener el archivo?</strong>
+                    <p>En Excel o Google Sheets, exportá la hoja como CSV. La primera columna debe tener los emails.</p>
+                  </div>
+                </div>
+                <input #csvInput type="file" accept=".csv,.txt" (change)="onCsvFileSelected($event)" hidden />
+                <div class="csv-dropzone" (click)="triggerCsvUpload()" (dragover)="$event.preventDefault()" (drop)="$event.preventDefault(); triggerCsvUpload()">
+                  @if (parsingCsv()) {
+                    <div class="loading-spinner-lg"></div>
+                    <p>Procesando archivo...</p>
+                  } @else {
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>
+                    <p class="csv-dropzone-title">Arrastrá un archivo CSV acá</p>
+                    <p class="csv-dropzone-hint">o hacé click para seleccionar</p>
+                  }
+                </div>
+                @if (csvFileName()) {
+                  <div class="csv-file-info">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                    {{ csvFileName() }} — cargado correctamente
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- TAB: Listas Guardadas -->
+            @if (sourceTab() === 'guardadas') {
+              <div class="tab-content">
+                @if (allRecipients().length > 0 || editingGroup()) {
+                  <div class="save-list-bar" [class.editing]="editingGroup()">
+                    @if (editingGroup()) {
+                      <div class="editing-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Editando: {{ editingGroup()!.name }}
+                      </div>
+                    }
+                    <input type="text" class="com-input" [ngModel]="newListName()" (ngModelChange)="newListName.set($event)"
+                      placeholder="Nombre del grupo (ej: Difusión, Sponsors)..." />
+                    <button class="com-btn-primary btn-save" [disabled]="savingList()" (click)="saveCurrentList()">
+                      @if (savingList()) {
+                        <span class="spinner-sm"></span>
+                      } @else if (editingGroup()) {
+                        Actualizar
+                      } @else {
+                        Guardar Grupo
+                      }
+                    </button>
+                    @if (editingGroup()) {
+                      <button class="com-btn-secondary" (click)="cancelEditGroup()">Cancelar</button>
+                    }
+                  </div>
+                }
+
+                @if (loadingLists()) {
+                  <div class="empty-recipients"><div class="loading-spinner-lg"></div></div>
+                } @else if (savedLists().length === 0) {
+                  <div class="empty-recipients">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <p>No hay grupos guardados</p>
+                    <p class="empty-hint">Cargá destinatarios y guardá grupos como "Difusión" o "Sponsors"</p>
+                  </div>
+                } @else {
+                  <div class="saved-lists">
+                    @for (list of savedLists(); track list.id) {
+                      <div class="saved-list-row">
+                        <div class="saved-list-info" (click)="loadSavedList(list)">
+                          <span class="saved-list-name">{{ list.name }}</span>
+                          <span class="saved-list-meta">{{ (list.emails || []).length }} email(s) · {{ formatDateTime(list.created_at) }}</span>
+                        </div>
+                        <div class="saved-list-actions">
+                          <button class="btn-icon" (click)="editGroup(list)" title="Editar grupo">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                          </button>
+                          <button class="btn-icon" (click)="loadSavedList(list)" title="Cargar grupo">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                          </button>
+                          <button class="btn-icon btn-icon-danger" (click)="deleteSavedList(list.id, list.name)" title="Eliminar">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Recipient Summary -->
+            @if (recipientCount() > 0) {
+              <div class="recipient-summary-bar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                <span><strong>{{ recipientCount() }}</strong> destinatario(s) seleccionado(s)</span>
+              </div>
+            }
+
+            <button class="com-btn-primary step-next" [disabled]="recipientCount() === 0" (click)="currentStep.set(2)">
+              Continuar — Escribir el correo
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          </div>
+        }
+      </section>
+
+      <!-- ========== PASO 2: ESCRIBIR EL CORREO ========== -->
+      <section class="com-step" [class.step-active]="currentStep() === 2" [class.step-disabled]="currentStep() < 2" [class.step-done]="currentStep() > 2">
+        <div class="step-header" (click)="currentStep() >= 2 && currentStep.set(2)">
+          <div class="step-number">
+            @if (currentStep() > 2) {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 11 3 3L22 4"/></svg>
+            } @else { 2 }
+          </div>
+          <div class="step-title-wrap">
+            <span class="step-title">Escribir el correo</span>
+            <span class="step-subtitle">{{ subject() ? subject().substring(0, 40) + (subject().length > 40 ? '...' : '') : 'Asunto y mensaje' }}</span>
+          </div>
+          @if (currentStep() > 2) {
+            <button class="step-edit" (click)="currentStep.set(2); $event.stopPropagation()">Editar</button>
+          }
+        </div>
+
+        @if (currentStep() === 2) {
+          <div class="step-body">
+            <!-- Template Selector (simplified) -->
+            <div class="tpl-quick-select">
+              <span class="tpl-quick-label">Empezar con una plantilla:</span>
+              <div class="tpl-quick-chips">
+                @for (tpl of templates; track tpl.id) {
+                  <button class="tpl-chip" [class.active]="selectedTemplate() === tpl.id" (click)="selectTemplate(tpl.id)">
+                    {{ tpl.label }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Saved Templates -->
+            @if (savedTemplates().length > 0) {
+              <div class="saved-templates-section">
+                <div class="saved-templates-header">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>
+                  <span>Mis plantillas guardadas</span>
+                </div>
+                <div class="saved-templates-list">
+                  @for (tpl of savedTemplates(); track tpl.id) {
+                    <div class="saved-template-row" [class.active]="editingTemplateId() === tpl.id">
+                      <div class="saved-template-info" (click)="loadTemplateToEditor(tpl)">
+                        <span class="saved-template-name">{{ tpl.name }}</span>
+                        <span class="saved-template-meta">{{ tpl.subject }}</span>
+                      </div>
+                      <div class="saved-template-actions">
+                        <button class="btn-icon" (click)="loadTemplateToEditor(tpl)" title="Cargar">Cargar</button>
+                        <button class="btn-icon btn-icon-danger" (click)="deleteSavedTemplate(tpl.id, tpl.name)" title="Eliminar">X</button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Subject -->
+            <div class="com-field">
+              <label class="com-label">Asunto del correo *</label>
+              <input type="text" class="com-input" [ngModel]="subject()" (ngModelChange)="subject.set($event)"
+                placeholder="Escribí el asunto que verán los destinatarios..." />
+              <span class="com-field-hint" [class.over]="subject().length > 80">{{ subject().length }}/100</span>
+            </div>
+
+            <!-- Variables -->
+            <div class="com-variables">
+              <div class="com-variables-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span>Personalización automática</span>
+              </div>
+              <p class="com-variables-desc">Hacé click en una variable para insertarla. Se reemplaza con los datos de cada persona.</p>
+              <div class="com-variables-chips">
+                @for (v of variables; track v.key) {
+                  <button class="var-chip" (click)="insertVariable(v.key)" [title]="v.desc">
+                    <span class="var-key">{{ v.key }}</span>
+                    <span class="var-desc">{{ v.desc }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Body -->
+            <div class="com-field">
+              <label class="com-label">Mensaje del correo *</label>
+              <textarea class="com-textarea com-textarea-lg" [ngModel]="body()" (ngModelChange)="body.set($event)"
+                placeholder="Escribí el contenido del email acá..." rows="14"></textarea>
+              <span class="com-field-hint" [class.over]="body().length > 9000">{{ body().length }}/10000</span>
+            </div>
+
+            <!-- Save Template -->
+            @if (subject().trim() && body().trim()) {
+              <div class="save-template-bar">
+                <input type="text" class="com-input" [ngModel]="newTemplateName()" (ngModelChange)="newTemplateName.set($event)"
+                  [placeholder]="editingTemplateId() ? 'Nombre para actualizar...' : 'Guardar como plantilla para reutilizar...'" />
+                <button class="com-btn-primary btn-save" [disabled]="savingTemplate() || !newTemplateName().trim()" (click)="saveCurrentAsTemplate()">
+                  @if (savingTemplate()) {
+                    <span class="spinner-sm"></span>
+                  } @else {
+                    {{ editingTemplateId() ? 'Actualizar' : 'Guardar Plantilla' }}
+                  }
+                </button>
+              </div>
+            }
+
+            <div class="step-actions">
+              <button class="com-btn-secondary" (click)="currentStep.set(1)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+                Atrás
+              </button>
+              <button class="com-btn-primary" [disabled]="!subject().trim() || !body().trim()" (click)="currentStep.set(3)">
+                Ver cómo queda el correo
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- ========== PASO 3: PREVISUALIZAR Y ENVIAR ========== -->
+      <section class="com-step" [class.step-active]="currentStep() === 3" [class.step-disabled]="currentStep() < 3">
+        <div class="step-header" (click)="currentStep() >= 3 && currentStep.set(3)">
+          <div class="step-number">3</div>
+          <div class="step-title-wrap">
+            <span class="step-title">Revisar y enviar</span>
+            <span class="step-subtitle">{{ recipientCount() }} destinatario(s)</span>
+          </div>
+        </div>
+
+        @if (currentStep() === 3) {
+          <div class="step-body">
+            <!-- Logo Section -->
+            <div class="logo-section">
+              <div class="logo-section-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                <span>Logo de la firma (opcional)</span>
+              </div>
+              @if (emailLogoUrl()) {
+                <div class="logo-preview">
+                  <img [src]="emailLogoUrl()" alt="Logo" class="logo-img" />
+                  <button class="btn-icon btn-icon-danger" (click)="removeLogo()" title="Quitar logo">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+              } @else {
+                <label class="logo-upload-label" [class.uploading]="uploadingLogo()">
+                  @if (uploadingLogo()) {
+                    <span class="spinner-sm"></span>
+                    <span>Subiendo...</span>
+                  } @else {
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Subir logo de la empresa (JPG, PNG · máx 2MB)</span>
+                  }
+                  <input type="file" accept="image/*" (change)="onLogoSelected($event)" hidden />
+                </label>
+              }
+            </div>
+
+            <!-- Preview Card -->
+            <div class="preview-card">
+              <div class="preview-card-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <div class="preview-meta">
+                  <span class="preview-to">Para: {{ recipientCount() }} destinatario(s)</span>
+                  <span class="preview-from">Desde: Precosquin</span>
+                </div>
+              </div>
+              <div class="preview-card-subject">{{ getPreviewSubject() || '(sin asunto)' }}</div>
+              <div class="preview-card-body">{{ getPreviewBody() || '(sin contenido)' }}</div>
+              <div class="preview-card-footer">
+                <div class="preview-footer-left">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  Vista previa con datos de: {{ allRecipients()[0]?.name || allRecipients()[0]?.email || 'Sin destinatarios' }}
+                </div>
+                @if (emailLogoUrl()) {
+                  <img [src]="emailLogoUrl()" alt="Logo" class="preview-logo-thumb" />
+                }
+              </div>
+            </div>
+
+            <!-- Schedule Options -->
+            <div class="schedule-section">
+              <span class="schedule-title">¿Cuándo enviar?</span>
+              <div class="schedule-options">
+                <label class="schedule-option" [class.active]="scheduleMode() === 'now'">
+                  <input type="radio" name="schedule" value="now" [checked]="scheduleMode() === 'now'" (change)="scheduleMode.set('now')" />
+                  <div class="schedule-option-content">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
+                    <div>
+                      <span class="schedule-option-title">Enviar ahora</span>
+                      <span class="schedule-option-desc">Se envía inmediatamente</span>
+                    </div>
+                  </div>
+                </label>
+                <label class="schedule-option" [class.active]="scheduleMode() === 'scheduled'">
+                  <input type="radio" name="schedule" value="scheduled" [checked]="scheduleMode() === 'scheduled'" (change)="scheduleMode.set('scheduled')" />
+                  <div class="schedule-option-content">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <div>
+                      <span class="schedule-option-title">Programar para después</span>
+                      <span class="schedule-option-desc">Elegí fecha y hora</span>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              @if (scheduleMode() === 'scheduled') {
+                <div class="schedule-picker">
+                  <div class="com-field">
+                    <label class="com-label">Fecha</label>
+                    <input type="date" class="com-input" [ngModel]="scheduledDate()" (ngModelChange)="scheduledDate.set($event)" />
+                  </div>
+                  <div class="com-field">
+                    <label class="com-label">Hora</label>
+                    <input type="time" class="com-input" [ngModel]="scheduledTime()" (ngModelChange)="scheduledTime.set($event)" />
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Send Summary -->
+            <div class="send-summary-card">
+              <div class="send-summary-row">
+                <div class="send-summary-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                  <div>
+                    <span class="send-summary-num">{{ recipientCount() }}</span>
+                    <span class="send-summary-label">Destinatarios</span>
+                  </div>
+                </div>
+                <div class="send-summary-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                  <div>
+                    <span class="send-summary-num">{{ getTemplateName() }}</span>
+                    <span class="send-summary-label">Tipo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button class="com-btn-secondary" (click)="currentStep.set(2)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+                Atrás
+              </button>
+              <button class="com-btn-send" [disabled]="!canSend()" (click)="requestSend()">
+                @if (sending()) {
+                  <span class="spinner"></span> Enviando...
+                } @else if (scheduleMode() === 'scheduled') {
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Programar envío
+                } @else {
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  Enviar a {{ recipientCount() }} persona(s)
+                }
+              </button>
+            </div>
+
+            <!-- Send Result -->
+            @if (sendResult()) {
+              <div class="send-result" [class.has-failures]="sendResult()!.failed > 0">
+                <div class="send-result-icon">
+                  @if (sendResult()!.failed === 0) {
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                  } @else {
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 15h8"/></svg>
+                  }
+                </div>
+                <div class="send-result-text">
+                  <strong>{{ sendResult()!.sent }}</strong> enviado(s) exitosamente
+                  @if (sendResult()!.failed > 0) { , <strong>{{ sendResult()!.failed }}</strong> fallido(s) }
+                </div>
+              </div>
+            }
+
+            <!-- Email Queue -->
+            @if (emailJobs().length > 0) {
+              <div class="jobs-section">
+                <div class="jobs-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                  <span class="jobs-title">Envíos recientes</span>
+                </div>
+                <div class="jobs-list">
+                  @for (job of emailJobs(); track job.id) {
+                    <div class="job-row">
+                      <div class="job-info">
+                        <span class="job-subject">{{ job.subject }}</span>
+                        <span class="job-meta">{{ (job.recipients || []).length }} destinatario(s) · {{ job.scheduled_at ? formatDateTime(job.scheduled_at) : 'Inmediato' }}</span>
+                      </div>
+                      <span class="job-status" [attr.data-status]="job.status">{{ getJobStatusLabel(job.status) }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </div>
+  }
+</div>

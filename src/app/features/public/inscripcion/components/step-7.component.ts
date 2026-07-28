@@ -46,7 +46,7 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
         <div class="review-grid">
           <div class="review-item">
             <span class="review-label">Nombre</span>
-            <span class="review-value">{{ data().fullName || '-' }}</span>
+             <span class="review-value">{{ data().firstName || '-' }} {{ data().lastName || '-' }}</span>
           </div>
           <div class="review-item">
             <span class="review-label">DNI</span>

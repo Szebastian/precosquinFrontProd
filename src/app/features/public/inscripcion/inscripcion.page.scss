@@ -9,8 +9,13 @@
 .form-layout {
   display: flex;
   min-height: 100vh;
+  width: 100vw;
+  max-width: 100%;
   background: #0f1219;
   color: #e2e8f0;
+}
+.form-layout.form-layout--typeform {
+  display: block;
 }
 
 /* --- Sidebar --- */
@@ -2448,5 +2453,7 @@ select.form-input {
   background: rgba(255, 255, 255, 0.1);
   color: #e2e8f0;
 }
+
+
 
 

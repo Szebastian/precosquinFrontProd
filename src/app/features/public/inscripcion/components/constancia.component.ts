@@ -37,7 +37,7 @@ import { InscripcionResult, InscripcionData, formatDate } from '../inscripcion.p
 
           <div class="constancia-field">
             <span class="constancia-label">Nombre Completo</span>
-            <span class="constancia-value constancia-name">{{ data().fullName }}</span>
+            <span class="constancia-value constancia-name">{{ data().firstName }} {{ data().lastName }}</span>
           </div>
 
           <div class="constancia-grid-3">

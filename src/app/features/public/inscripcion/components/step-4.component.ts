@@ -65,6 +65,13 @@ import { subcategoriesByCategory } from '../inscripcion.page';
           }
         </div>
 
+        <!-- Regla: Sin pistas ni bases pregrabadas -->
+        @if (data().subcategory !== 'cancion_inedita') {
+          <div class="alert-info">
+            <strong>Reglamento:</strong> No se permiten pistas ni bases pregrabadas. Presentación en vivo. Sin cambio de instrumento.
+          </div>
+        }
+
         <div class="form-group">
           <label class="form-label" for="biography">Contanos sobre vos o tu grupo</label>
           <textarea id="biography" name="biography" class="form-textarea" rows="4" maxlength="500"
@@ -77,6 +84,13 @@ import { subcategoriesByCategory } from '../inscripcion.page';
       @if (data().category === 'danza') {
         <p class="step-desc" style="margin-top: 0;">Contanos sobre tu presentación de danza</p>
 
+        <!-- Regla: Sin pistas pregrabadas (Malambo) -->
+        @if (needsDanceStyle()) {
+          <div class="alert-info">
+            <strong>Reglamento:</strong> Los malambos presentan en vivo con 4 músicos acompañantes (guitarra, violín, bombo y contrabajo). Sin pistas pregrabadas.
+          </div>
+        }
+
         <div class="form-group">
           <label class="form-label" for="proposalName">¿Cómo se llama tu propuesta?</label>
           <input type="text" id="proposalName" name="proposalName" class="form-input"
@@ -84,8 +98,8 @@ import { subcategoriesByCategory } from '../inscripcion.page';
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="choreographerName">¿Quién es el coreógrafo?</label>
-          <input type="text" id="choreographerName" name="choreographerName" class="form-input"
+          <label class="form-label" for="choreographerName">¿Quién es el coreógrafo? *</label>
+          <input type="text" id="choreographerName" name="choreographerName" class="form-input" required
             [(ngModel)]="data().choreographerName" placeholder="Nombre del coreógrafo" />
         </div>
 
@@ -373,6 +387,10 @@ export class InscripcionStep4Component {
 
   needsDanceThemes(): boolean {
     return ['pareja_tradicional', 'pareja_estilizada'].includes(this.data().subcategory);
+  }
+
+  needsDanceStyle(): boolean {
+    return ['malambo_masculino', 'malambo_femenino'].includes(this.data().subcategory);
   }
 
   needsDanceMp3(): boolean {

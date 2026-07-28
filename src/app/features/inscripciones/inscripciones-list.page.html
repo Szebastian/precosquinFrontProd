@@ -384,7 +384,23 @@
                             <span class="rider-chip">DI Boxes: {{ inscription.rider_tecnico.sonido.diBoxes }}</span>
                           }
                           @if (inscription.rider_tecnico.stagePlotInstruments?.length) {
-                            <span class="rider-chip">Stage Plot: {{ inscription.rider_tecnico.stagePlotInstruments.length }} instrumentos</span>
+                            <div class="stage-plot-mini">
+                              <div class="stage-plot-mini-label">Stage Plot</div>
+                              <div class="stage-plot-svg-mini">
+                                <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:100%;">
+                                  <rect x="0" y="0" width="200" height="120" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                                  <rect x="0" y="0" width="200" height="18" fill="#1e3a8a" rx="4"/>
+                                  <rect x="0" y="16" width="200" height="2" fill="#1e3a8a"/>
+                                  <text x="100" y="12" text-anchor="middle" fill="white" font-size="6" font-weight="700" font-family="sans-serif">FONDO</text>
+                                  <rect x="0" y="100" width="200" height="20" fill="#e0e7ff"/>
+                                  <text x="100" y="113" text-anchor="middle" fill="#1e3a8a" font-size="6" font-weight="700" font-family="sans-serif">PUBLICO</text>
+                                  @for (inst of inscription.rider_tecnico.stagePlotInstruments; track $index) {
+                                    <circle [attr.cx]="inst.x" [attr.cy]="30 + inst.y" r="10" fill="#64748b"/>
+                                    <text [attr.x]="inst.x" [attr.y]="31 + inst.y" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="5" font-weight="700" font-family="sans-serif">{{ inst.type === 'drums' ? 'BAT' : inst.type === 'guitar' ? 'GTR' : inst.type === 'bass' ? 'BAJ' : inst.type === 'keyboard' ? 'TEC' : inst.type === 'microphone' ? 'MIC' : inst.type === 'amp' ? 'AMP' : '•' }}</text>
+                                  }
+                                </svg>
+                              </div>
+                            </div>
                           }
                           @if (inscription.rider_tecnico.monitorCount) {
                             <span class="rider-chip">Monitores: {{ inscription.rider_tecnico.monitorCount }}</span>
@@ -393,6 +409,38 @@
                             <span class="rider-chip rider-chip-note">{{ inscription.rider_tecnico.otros }}</span>
                           }
                         </div>
+                      </div>
+                    }
+
+                    <!-- Reglas Solista Instrumental -->
+                    @if (inscription.subcategory === 'solista_instrumental') {
+                      <div class="detail-section">
+                        <h4 class="section-title">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                          Reglas Art. 31 - Solista Instrumental
+                        </h4>
+                        <div class="rules-list">
+                          @if (inscription.acceptPurelyInstrumental) { <span class="rule-check">&#10003;</span> La presentación debe ser puramente instrumental }
+                          @if (inscription.acceptOneInstrument) { <span class="rule-check">&#10003;</span> Un (1) único instrumento para el solista }
+                          @if (inscription.acceptNoPrerecorded) { <span class="rule-check">&#10003;</span> No se permiten pistas ni bases pregrabadas }
+                          @if (inscription.acceptNoInstrumentChange) { <span class="rule-check">&#10003;</span> No se permite cambio de instrumento }
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Presentation -->
+                    @if (inscription.presentation) {
+                      <div class="detail-section">
+                        <h4 class="section-title">Presentación Musical</h4>
+                        <p class="section-text">{{ inscription.presentation }}</p>
+                      </div>
+                    }
+
+                    <!-- Songs List -->
+                    @if (inscription.songsList) {
+                      <div class="detail-section">
+                        <h4 class="section-title">Temas a Interpretar</h4>
+                        <pre class="section-text songs-list">{{ inscription.songsList }}</pre>
                       </div>
                     }
 

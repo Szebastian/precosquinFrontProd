@@ -1,9 +1,9 @@
-import { Component, signal, computed, inject, OnDestroy, OnInit, HostListener, output, ViewChild, ElementRef, afterNextRender, effect } from '@angular/core';
+import { Component, signal, computed, inject, OnDestroy, OnInit, HostListener, ViewChild, ElementRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { trigger, transition, style, animate, query, animateChild } from '@angular/animations';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { environment } from '../../../../environments/environment';
 import { InscripcionConstanciaComponent } from './components/constancia.component';
 import { InscripcionStep1Component } from './components/step-1.component';
@@ -16,6 +16,8 @@ import { InscripcionStep7Component } from './components/step-7.component';
 import { InscripcionStepAccessosComponent } from './components/step-accessos.component';
 import { CircularProgressComponent } from '../../../shared/components/circular-progress/circular-progress.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
+import { TypeformFlowComponent } from './components/typeform-flow.component';
+import { createEmptyInscripcionData } from './utils/inscripcion-defaults';
 
 export function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -41,7 +43,7 @@ export interface Member {
   role: string;
 }
 
-interface ThemeRow {
+export interface ThemeRow {
   title: string;
   rhythm: string;
   author: string;
@@ -101,7 +103,8 @@ export interface AccompanyingPerson {
 }
 
 export interface InscripcionData {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   dni: string;
   birthDate: string;
   age: number | null;
@@ -116,6 +119,8 @@ export interface InscripcionData {
   artisticName: string;
   themes: ThemeRow[];
   riderTecnico: RiderTecnico;
+  equipmentDesc: string;
+  stagePlotDesc: string;
   proposalName: string;
   choreographerName: string;
   style: string;
@@ -142,6 +147,14 @@ export interface InscripcionData {
   hasAccompaniment: boolean;
   accompanimentInstrument: string;
   accompanimentMusician: string;
+  // Solista Instrumental - Rules (Art. 31)
+  acceptPurelyInstrumental: boolean;
+  acceptOneInstrument: boolean;
+  acceptNoPrerecorded: boolean;
+  acceptNoInstrumentChange: boolean;
+  // Presentation
+  presentation: string;
+  songsList: string;
   // Danza
   danceStyle: string;
   danceThemes: DanceTheme[];
@@ -194,7 +207,7 @@ export const groupSubcategories = [
 @Component({
   selector: 'app-inscripcion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, InscripcionStepAccessosComponent, CircularProgressComponent],
+  imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, InscripcionStepAccessosComponent, CircularProgressComponent, TypeformFlowComponent],
   styleUrl: './inscripcion.page.scss',
   animations: [
     trigger('stepSlide', [
@@ -215,57 +228,70 @@ export const groupSubcategories = [
     ]),
   ],
   template: `
-    <div class="public-page form-layout">
-      @if (currentStep() < 8) {
-        <div class="form-sidebar">
-          <nav class="form-nav-vertical">
-            <a routerLink="/" class="nav-brand">
-              <img src="assets/img/logoballena.webp" alt="Precosquin" class="nav-logo" />
-              <span>Precosquin</span>
-            </a>
-          </nav>
+    <div class="public-page form-layout" [class.form-layout--typeform]="typeformMode()">
+      @if (typeformMode()) {
+        <!-- TYPEFORM MODE -->
+        <app-typeform-flow
+          [data]="data"
+          [isSubmitting]="submitting()"
+          [submitSuccess]="submitted() && !!inscriptionResult()"
+          [submitError]="error()"
+          [inscriptionId]="inscriptionResult()?.id || ''"
+          [inscriptionCreatedAt]="inscriptionResult()?.created_at || ''"
+          (submitted)="onTypeformSubmit()"
+          (exitTypeform)="typeformMode.set(false)" />
+      } @else {
+        <!-- CLASSIC MODE or SUBMITTED -->
+        @if (currentStep() < 8 && !submitted()) {
+          <div class="form-sidebar">
+            <nav class="form-nav-vertical">
+              <a routerLink="/" class="nav-brand">
+                <img src="assets/img/logoballena.webp" alt="Precosquin" class="nav-logo" />
+                <span>Precosquin</span>
+              </a>
+            </nav>
 
-          <div class="sidebar-progress-section">
-            <app-circular-progress
-              [progress]="getProgressPercentage()"
-              [currentStep]="currentStep()"
-              [totalSteps]="steps.length">
-            </app-circular-progress>
-            <div class="mobile-step-name">
-              <span class="step-label">{{ steps[currentStep() - 1].label }}</span>
-              <span class="step-sublabel">Paso {{ currentStep() }} de {{ steps.length }}</span>
+            <div class="sidebar-progress-section">
+              <app-circular-progress
+                [progress]="getProgressPercentage()"
+                [currentStep]="currentStep()"
+                [totalSteps]="steps.length">
+              </app-circular-progress>
+              <div class="mobile-step-name">
+                <span class="step-label">{{ steps[currentStep() - 1].label }}</span>
+                <span class="step-sublabel">Paso {{ currentStep() }} de {{ steps.length }}</span>
+              </div>
+              <ul class="sidebar-steps-list">
+                @for (step of steps; track step.number) {
+                  <li [class.active]="currentStep() === step.number"
+                      [class.completed]="currentStep() > step.number"
+                      [class.clickable]="currentStep() > step.number"
+                      [attr.tabindex]="currentStep() > step.number ? 0 : -1"
+                      [attr.role]="currentStep() > step.number ? 'button' : null"
+                      (click)="currentStep() > step.number ? goToStep(step.number) : null"
+                      (keydown.enter)="currentStep() > step.number ? goToStep(step.number) : null">
+                    <span class="step-marker">
+                      @if (currentStep() > step.number) {
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      }
+                    </span>
+                    <span class="step-label-sidebar">{{ step.label }}</span>
+                  </li>
+                }
+              </ul>
             </div>
-            <ul class="sidebar-steps-list">
-              @for (step of steps; track step.number) {
-                <li [class.active]="currentStep() === step.number"
-                    [class.completed]="currentStep() > step.number"
-                    [class.clickable]="currentStep() > step.number"
-                    [attr.tabindex]="currentStep() > step.number ? 0 : -1"
-                    [attr.role]="currentStep() > step.number ? 'button' : null"
-                    (click)="currentStep() > step.number ? goToStep(step.number) : null"
-                    (keydown.enter)="currentStep() > step.number ? goToStep(step.number) : null">
-                  <span class="step-marker">
-                    @if (currentStep() > step.number) {
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    }
-                  </span>
-                  <span class="step-label-sidebar">{{ step.label }}</span>
-                </li>
-              }
-            </ul>
-          </div>
 
-          <div class="sidebar-quote">
-            <p>"La música es el lenguaje universal del alma."</p>
-            <div class="quote-author">
-              <span> — Precosquin 2027</span>
+            <div class="sidebar-quote">
+              <p>"La música es el lenguaje universal del alma."</p>
+              <div class="quote-author">
+                <span> — Precosquin 2027</span>
+              </div>
             </div>
           </div>
-        </div>
-      }
+        }
 
         <div class="form-main-content" #formMainContent>
-          <div class="w-full max-w-4xl mx-auto px-4 py-8"> <!-- Added wrapper for width and centering -->
+          <div class="w-full max-w-4xl mx-auto px-4 py-8">
             <div class="form-card animate-scale-in">
               <div class="form-header">
                 <a routerLink="/" class="back-home-link">
@@ -277,75 +303,41 @@ export const groupSubcategories = [
                 <p class="required-legend">Los campos marcados con <span class="required-asterisk">*</span> son obligatorios</p>
               </div>
 
-            <form (submit)="onSubmit($event)" class="inscription-form">
-
-            <div [@stepSlide]="currentStep()" class="step-animated-wrapper" aria-live="polite" aria-atomic="true">
-            @if (currentStep() === 1) {
-              <app-inscripcion-step-1
-                [data]="data"
-                [lastDirection]="lastDirection()" />
-            }
-            @if (currentStep() === 2) {
-              <app-inscripcion-step-2
-                [data]="data"
-                [lastDirection]="lastDirection()"
-                (subcategoryChanged)="onSubcategoryChange()" />
-            }
-            @if (currentStep() === 3) {
-              <app-inscripcion-step-3
-                [data]="data"
-                [lastDirection]="lastDirection()"
-                (addMember)="addMember()"
-                (removeMember)="removeMember($event)" />
-            }
-            @if (currentStep() === 4) {
-              <app-inscripcion-step-4
-                [data]="data"
-                [lastDirection]="lastDirection()"
-                (fileSelected)="handleFileSelected($event)"
-                (addBandMember)="addBandMember()"
-                (removeBandMember)="removeBandMember($event)" />
-            }
-            @if (currentStep() === 5) {
-              <app-inscripcion-step-5
-                [data]="data"
-                [lastDirection]="lastDirection()"
-                (goToStep)="goToStep($event)"
-                (onBacklineChange)="toggleBackline($event)" />
-            }
-            @if (currentStep() === 6) {
-              <app-inscripcion-step-6
-                [data]="data"
-                [lastDirection]="lastDirection()"
-                (fileSelected)="handleFileSelected($event)"
-                (removeFile)="handleFileRemove($any($event))" />
-            }
-            @if (currentStep() === 7) {
-              <app-inscripcion-step-accessos
-                [data]="data"
-                [lastDirection]="lastDirection()"
-                (addPerson)="addAccompanyingPerson()"
-                (removePerson)="removeAccompanyingPerson($event)" />
-            }
-            @if (currentStep() === 8) {
-              <app-inscripcion-step-7
-                [data]="data"
-                [lastDirection]="lastDirection()"
-                (goToStep)="goToStep($event)"
-                (resetForm)="resetForm()" />
-            }
+              <form (submit)="onSubmit($event)" class="inscription-form">
+                <div [@stepSlide]="currentStep()" class="step-animated-wrapper" aria-live="polite" aria-atomic="true">
+                  @if (currentStep() === 1) {
+                    <app-inscripcion-step-1 [data]="data" [lastDirection]="lastDirection()" />
+                  }
+                  @if (currentStep() === 2) {
+                    <app-inscripcion-step-2 [data]="data" [lastDirection]="lastDirection()" (subcategoryChanged)="onSubcategoryChange()" />
+                  }
+                  @if (currentStep() === 3) {
+                    <app-inscripcion-step-3 [data]="data" [lastDirection]="lastDirection()" (addMember)="addMember()" (removeMember)="removeMember($event)" />
+                  }
+                  @if (currentStep() === 4) {
+                    <app-inscripcion-step-4 [data]="data" [lastDirection]="lastDirection()" (fileSelected)="handleFileSelected($event)" (addBandMember)="addBandMember()" (removeBandMember)="removeBandMember($event)" />
+                  }
+                  @if (currentStep() === 5) {
+                    <app-inscripcion-step-5 [data]="data" [lastDirection]="lastDirection()" (goToStep)="goToStep($event)" (onBacklineChange)="toggleBackline($event)" />
+                  }
+                  @if (currentStep() === 6) {
+                    <app-inscripcion-step-6 [data]="data" [lastDirection]="lastDirection()" (fileSelected)="handleFileSelected($event)" (removeFile)="handleFileRemove($any($event))" />
+                  }
+                  @if (currentStep() === 7) {
+                    <app-inscripcion-step-accessos [data]="data" [lastDirection]="lastDirection()" (addPerson)="addAccompanyingPerson()" (removePerson)="removeAccompanyingPerson($event)" />
+                  }
+                  @if (currentStep() === 8) {
+                    <app-inscripcion-step-7 [data]="data" [lastDirection]="lastDirection()" (goToStep)="goToStep($event)" (resetForm)="resetForm()" />
+                  }
+                </div>
+              </form>
             </div>
-            </form>
-        </div>
 
-        @if (currentStep() < 8 && !atBottom()) {
-          <button type="button" class="next-question-arrow" id="nextQuestionBtn"
-            (click)="scrollToNextQuestion()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
-          </button>
-        }
+            @if (currentStep() < 8 && !atBottom()) {
+              <button type="button" class="next-question-arrow" id="nextQuestionBtn" (click)="scrollToNextQuestion()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            }
 
             @if (!submitted()) {
               <div class="next-section" @fadeIn #nextSection>
@@ -372,7 +364,7 @@ export const groupSubcategories = [
                     <div class="confirm-group">
                       <span class="confirm-text">¿Confirmás el envío?</span>
                       <button type="button" class="btn-cancel" (click)="showConfirmSubmit.set(false)">Cancelar</button>
-                       <button type="submit" class="btn-confirm" (click)="onSubmit($event)" [disabled]="submitting()">
+                      <button type="submit" class="btn-confirm" (click)="onSubmit($event)" [disabled]="submitting()">
                         @if (submitting()) {
                           <span class="spinner"></span> {{ uploadProgress() || submittingText() }}
                         } @else {
@@ -383,10 +375,10 @@ export const groupSubcategories = [
                   }
                 }
                 @if (error()) {
-                   <span class="form-error" role="alert">{{ error() }}</span>
-                   @if (error() && errorStatus() !== 409) {
-                     <button type="button" class="retry-post-btn" (click)="onSubmit($event)">Reintentar</button>
-                   }
+                  <span class="form-error" role="alert">{{ error() }}</span>
+                  @if (error() && errorStatus() !== 409) {
+                    <button type="button" class="retry-post-btn" (click)="onSubmit($event)">Reintentar</button>
+                  }
                 }
               </div>
 
@@ -416,12 +408,13 @@ export const groupSubcategories = [
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     ¿Necesitás ayuda?
                   </a>
-                   <button type="button" class="save-link" (click)="saveDraftAndExit()">Guardar y continuar más tarde</button>
-                 </div>
-               </div>
-             }
-           </div>
-         </div>
+                  <button type="button" class="save-link" (click)="saveDraftAndExit()">Guardar y continuar más tarde</button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
     </div>
 
     @if (showConstanciaModal() && inscriptionResult()) {
@@ -504,6 +497,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   uploadProgress = signal('');
   validationErrors = signal<string[]>([]);
   showSavedIndicator = signal(false);
+  typeformMode = signal(true);
   private observer?: IntersectionObserver;
   private modalTrapCleanup?: () => void;
 
@@ -548,80 +542,13 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 
   private draftKey = 'precosquin_inscripcion_draft';
 
-  data: InscripcionData = {
-    fullName: '',
-    dni: '',
-    birthDate: '',
-    age: null,
-    address: '',
-    locality: '',
-    province: '',
-    phone: '',
-    email: '',
-    category: '',
-    subcategory: '',
-    members: [],
-    artisticName: '',
-      themes: [
-        { title: '', rhythm: '', author: '' },
-        { title: '', rhythm: '', author: '' },
-      ],
-      riderTecnico: {
-        sonido: {
-          microfonos: [],
-          diBoxes: null,
-          cables: [],
-          backline: [],
-        },
-        inputList: [],
-        monitorCount: 0,
-        monitorMixes: [],
-        stagePlotInstruments: [],
-        otros: '',
-      },
-    proposalName: '',
-    choreographerName: '',
-    style: '',
-    danceList: '',
-    biography: '',
-    dniFrontFile: null,
-    dniBackFile: null,
-    promoPhotoFile: null,
-    lyricsFile: null,
-    scoreFile: null,
-    dniFrontName: '',
-    dniBackName: '',
-    promoPhotoName: '',
-    lyricsFileName: '',
-    scoreFileName: '',
-    acceptRegulations: false,
-    acceptImageRights: false,
-    acceptDataTruth: false,
-    acceptNoPriorWin: false,
-    acceptNotJurorOrg: false,
-    // Solista Instrumental - Art. 31
-    instrumentType: '',
-    instrumentName: '',
-    hasAccompaniment: false,
-    accompanimentInstrument: '',
-    accompanimentMusician: '',
-    // Danza
-    danceStyle: '',
-    danceThemes: [{ title: '', song: '' }, { title: '', song: '' }, { title: '', song: '' }],
-    danceMp3File: null,
-    danceMp3FileName: '',
-    workTitle: '',
-    assistantsCount: 0,
-    bandMembers: [],
-    accompanyingPersons: [],
-  };
+  data: InscripcionData = createEmptyInscripcionData();
 
   private subcategoriesByCategory = subcategoriesByCategory;
   private groupSubcategories = groupSubcategories;
 
   micOptions = ['Dinámico (SM58)', 'Condensador de solista', 'Inalámbrico', 'Overhead', 'Para acordeón/guitarra', 'Para percusión'];
   backlineOptions = ['Guitarra eléctrica', 'Guitarra acústica', 'Bajo', 'Batería', 'Acordeón', 'Teclado', 'Percusión menor'];
-
 
   cablesInput = '';
 
@@ -737,30 +664,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 
   resetForm(): void {
     this.clearDraft();
-    this.data = {
-      fullName: '', dni: '', birthDate: '', age: null, address: '',
-      locality: '', province: '', phone: '', email: '',
-      category: '', subcategory: '', members: [],
-      artisticName: '', themes: [
-        { title: '', rhythm: '', author: '' },
-        { title: '', rhythm: '', author: '' },
-      ],
-        riderTecnico: {
-        sonido: { microfonos: [], diBoxes: null, cables: [], backline: [] },
-        inputList: [],
-        monitorCount: 0,
-        monitorMixes: [],
-        stagePlotInstruments: [],
-        otros: '',
-      },
-      proposalName: '', choreographerName: '', style: '', danceList: '', biography: '',
-      dniFrontFile: null, dniBackFile: null, promoPhotoFile: null, lyricsFile: null, scoreFile: null,
-      dniFrontName: '', dniBackName: '', promoPhotoName: '', lyricsFileName: '', scoreFileName: '',
-      acceptRegulations: false, acceptImageRights: false, acceptDataTruth: false, acceptNoPriorWin: false, acceptNotJurorOrg: false,
-      instrumentType: '', instrumentName: '', hasAccompaniment: false, accompanimentInstrument: '', accompanimentMusician: '',
-      danceStyle: '', danceThemes: [{ title: '', song: '' }, { title: '', song: '' }, { title: '', song: '' }], danceMp3File: null, danceMp3FileName: '', workTitle: '', assistantsCount: 0, bandMembers: [],
-      accompanyingPersons: [],
-    };
+    this.data = createEmptyInscripcionData();
     this.currentStep.set(1);
     this.submitted.set(false);
     this.submitting.set(false);
@@ -771,29 +675,18 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     this.filePreviews = {};
   }
 
-closeConstanciaModal(): void {
+  closeConstanciaModal(): void {
     this.showConstanciaModal.set(false);
     this.modalTrapCleanup?.();
   }
 
-  private validateDni(dni: string): boolean {
+  validateDni(dni: string): boolean {
     return /^\d{7,8}$/.test(dni);
   }
 
-  private validateEmail(email: string): boolean {
+  validateEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
-
-  toggleBackline(item: string): void {
-    const idx = this.data.riderTecnico.sonido.backline.indexOf(item);
-    if (idx >= 0) {
-      this.data.riderTecnico.sonido.backline.splice(idx, 1);
-    } else {
-      this.data.riderTecnico.sonido.backline.push(item);
-    }
-  }
-
-
 
   hasRiderData(): boolean {
     const r = this.data.riderTecnico;
@@ -840,6 +733,15 @@ closeConstanciaModal(): void {
     if (file.type.startsWith('image/')) {
       if (this.filePreviews[fieldName]) URL.revokeObjectURL(this.filePreviews[fieldName]);
       this.filePreviews[fieldName] = URL.createObjectURL(file);
+    }
+  }
+
+  toggleBackline(item: string): void {
+    const idx = this.data.riderTecnico.sonido.backline.indexOf(item);
+    if (idx >= 0) {
+      this.data.riderTecnico.sonido.backline.splice(idx, 1);
+    } else {
+      this.data.riderTecnico.sonido.backline.push(item);
     }
   }
 
@@ -896,12 +798,18 @@ closeConstanciaModal(): void {
   maxMembersForSubcategory(): number {
     if (this.data.subcategory === 'conjunto_baile') return 40;
     if (this.data.subcategory === 'conjunto_malambo') return 8;
+    if (this.data.subcategory === 'conjunto_vocal') return 8;
+    if (this.data.subcategory === 'conjunto_instrumental') return 10;
     if (['pareja_tradicional', 'pareja_estilizada'].includes(this.data.subcategory)) return 2;
     return 10;
   }
 
   needsBandMembers(): boolean {
     return this.data.subcategory === 'pareja_tradicional';
+  }
+
+  needsChoreographer(): boolean {
+    return this.data.category === 'danza';
   }
 
   addBandMember(): void {
@@ -1014,7 +922,7 @@ closeConstanciaModal(): void {
     switch (this.currentStep()) {
       case 1:
         return this.step1Component ? this.step1Component.isFormValid() : !!(
-          this.data.fullName &&
+          this.data.firstName && this.data.lastName &&
           this.validateDni(this.data.dni) &&
           this.data.birthDate &&
           this.data.age !== null && this.data.age >= 16 &&
@@ -1033,11 +941,15 @@ closeConstanciaModal(): void {
         if (!this.isGroupType()) return true;
         const minMembers = this.data.subcategory === 'conjunto_baile' ? 8
           : this.data.subcategory === 'conjunto_malambo' ? 4
+          : this.data.subcategory === 'conjunto_vocal' ? 3
           : ['pareja_tradicional', 'pareja_estilizada'].includes(this.data.subcategory) ? 2
           : 1;
         return this.data.members.length >= minMembers
           && this.data.members.every(m => m.fullName.trim() && m.dni.trim() && m.role);
       case 4:
+        if (this.needsChoreographer()) {
+          return !!this.data.choreographerName.trim();
+        }
         return true;
       case 5:
         return true;
@@ -1061,12 +973,13 @@ closeConstanciaModal(): void {
     switch (this.currentStep()) {
       case 1: {
         const missing: string[] = [];
-        if (!this.data.fullName || this.data.fullName.trim().length < 2) missing.push('Nombre y apellido');
+         if (!this.data.firstName || this.data.firstName.trim().length < 2) missing.push('Nombre');
+         if (!this.data.lastName || this.data.lastName.trim().length < 2) missing.push('Apellido');
         if (!this.data.dni || this.data.dni.length < 7) missing.push('DNI');
         if (!this.data.birthDate) missing.push('Fecha de nacimiento');
         if (this.data.age !== null && this.data.age < 16) missing.push('Debés tener al menos 16 años');
         if (!this.data.address || this.data.address.trim().length < 3) missing.push('Domicilio');
-        if (!this.data.locality || this.data.locality.trim().length < 2) missing.push('Localidad');
+        if (!this.data.locality) missing.push('Localidad');
         if (!this.data.province) missing.push('Provincia');
         if (!this.data.phone) missing.push('Teléfono');
         if (!this.data.email || !this.validateEmail(this.data.email)) missing.push('Email válido');
@@ -1083,6 +996,7 @@ closeConstanciaModal(): void {
         if (!this.isGroupType()) return '';
         const minMembers = this.data.subcategory === 'conjunto_baile' ? 8
           : this.data.subcategory === 'conjunto_malambo' ? 4
+          : this.data.subcategory === 'conjunto_vocal' ? 3
           : ['pareja_tradicional', 'pareja_estilizada'].includes(this.data.subcategory) ? 2
           : 1;
         const missing: string[] = [];
@@ -1092,6 +1006,11 @@ closeConstanciaModal(): void {
           if (!m.dni.trim()) missing.push(`DNI del integrante ${i + 1}`);
           if (!m.role) missing.push(`Rol del integrante ${i + 1}`);
         });
+        return missing.length ? `Faltan completar: ${missing.join(', ')}` : '';
+      }
+      case 4: {
+        const missing: string[] = [];
+        if (this.needsChoreographer() && !this.data.choreographerName.trim()) missing.push('Nombre del coreógrafo');
         return missing.length ? `Faltan completar: ${missing.join(', ')}` : '';
       }
       case 6: {
@@ -1197,7 +1116,7 @@ closeConstanciaModal(): void {
     bodyHtml += f('Fecha de Inscripción', createdDate);
     bodyHtml += '<hr class="divider">';
     bodyHtml += '<div class="section-title">Datos Personales</div>';
-    bodyHtml += f('Nombre Completo', d.fullName, 'constancia-name');
+    bodyHtml += f('Nombre Completo', `${d.firstName} ${d.lastName}`.trim(), 'constancia-name');
     bodyHtml += `<div class="grid-3">${f('DNI', d.dni)}${f('Nacimiento', d.birthDate)}${f('Edad', d.age !== null ? d.age + ' años' : '-')}</div>`;
     bodyHtml += `<div class="grid-3">${f('Domicilio', d.address)}${f('Localidad', d.locality)}${f('Provincia', d.province)}</div>`;
     bodyHtml += `<div class="grid-2">${f('Teléfono', d.phone)}${f('Email', d.email)}</div>`;
@@ -1358,7 +1277,7 @@ closeConstanciaModal(): void {
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Constancia - ${d.fullName}</title>
+<title>Constancia - ${d.firstName} ${d.lastName}</title>
 <style>
   @page { size: A4 portrait; margin: 15mm 12mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1426,45 +1345,75 @@ closeConstanciaModal(): void {
     setTimeout(() => { win.print(); }, 600);
   }
 
+  onTypeformSubmit(): void {
+    const validationError = this.validateRequiredFields();
+    if (validationError) {
+      this.error.set(validationError);
+      return;
+    }
+    this.submitPayload();
+  }
+
+  private validateRequiredFields(): string {
+    const d = this.data;
+    const missing: string[] = [];
+     if (!d.firstName?.trim()) missing.push('Nombre');
+     if (!d.lastName?.trim()) missing.push('Apellido');
+    if (!d.email?.trim()) missing.push('Email');
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email.trim())) missing.push('Email válido');
+    if (!d.phone?.trim()) missing.push('Teléfono');
+    if (!d.category) missing.push('Categoría');
+    if (!d.subcategory) missing.push('Subcategoría');
+    if (missing.length) {
+      return `Faltan completar campos requeridos: ${missing.join(', ')}`;
+    }
+    return '';
+  }
+
   async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
     if (!this.canProceed()) return;
+    this.submitPayload();
+  }
 
+  private submitPayload(): void {
     this.submitting.set(true);
     this.error.set('');
     this.errorStatus.set(0);
 
+    const str = (v: any) => (v && String(v).trim()) ? String(v).trim() : null;
     const payload: Record<string, any> = {
-      'full_name': this.data.fullName,
-      'stage_name': this.data.artisticName || null,
-      'email': this.data.email,
-      'phone': this.data.phone,
+      'full_name': str(this.data.firstName && this.data.lastName ? `${this.data.firstName} ${this.data.lastName}` : this.data.firstName || this.data.lastName || ''),
+      'stage_name': str(this.data.artisticName),
+      'email': str(this.data.email),
+      'phone': str(this.data.phone),
       'category': this.data.category,
       'subcategory': this.data.subcategory,
-      'dni': this.data.dni || null,
-      'birth_date': this.data.birthDate || null,
-      'age': this.data.age,
-      'address': this.data.address || null,
-      'locality': this.data.locality || null,
-      'province': this.data.province || null,
-      'bio': this.data.biography || null,
+      'dni': str(this.data.dni),
+      'birth_date': str(this.data.birthDate),
+      'age': this.data.age ?? null,
+      'address': str(this.data.address),
+      'locality': str(this.data.locality),
+      'province': str(this.data.province),
+      'bio': str(this.data.biography),
       'rider_tecnico': this.hasRiderData() ? this.data.riderTecnico : null,
-      'proposal_name': this.data.proposalName || null,
-      'choreographer_name': this.data.choreographerName || null,
-      'style': this.data.style || null,
-      'dance_list': this.data.danceList || null,
+      'proposal_name': str(this.data.proposalName),
+      'choreographer_name': str(this.data.choreographerName),
+      'style': str(this.data.style),
+      'dance_list': str(this.data.danceList),
       'themes': this.data.category === 'musica'
         ? this.data.themes.filter(t => t.title || t.rhythm || t.author)
         : null,
       'members': this.isGroupType() ? this.data.members : null,
       'accompanying_persons': this.data.accompanyingPersons.length > 0 ? this.data.accompanyingPersons : null,
       // Danza
-      'dance_style': this.data.danceStyle || null,
+      'dance_style': str(this.data.danceStyle),
       'dance_themes': this.needsDanceThemes() ? this.data.danceThemes.filter(t => t.title || t.song) : null,
-      'work_title': this.data.workTitle || null,
+      'work_title': str(this.data.workTitle),
       'assistants_count': this.data.assistantsCount || null,
       'band_members': this.needsBandMembers() && this.data.bandMembers.length > 0 ? this.data.bandMembers : null,
       // Declaraciones de elegibilidad
+      'accept_regulations': this.data.acceptRegulations,
       'accept_no_prior_win': this.data.acceptNoPriorWin,
       'accept_not_juror_org': this.data.acceptNotJurorOrg,
     };
@@ -1481,8 +1430,14 @@ closeConstanciaModal(): void {
         this.errorStatus.set(err.status || 0);
         if (err.status === 409) {
           this.error.set('Ya existe una inscripción con esos datos. Si creés que es un error, contactanos.');
+        } else if (err.status === 422 && Array.isArray(err.error?.detail)) {
+          const details = err.error.detail.map((d: any) => {
+            const field = d.loc && d.loc.length > 1 ? d.loc[1] : '';
+            return `${field ? `'${field}': ` : ''}${d.msg}`;
+          }).join(', ');
+          this.error.set(`Error de validación: ${details}`);
         } else {
-          this.error.set(err.error?.detail || 'Error al enviar la inscripción. Intentá de nuevo.');
+          this.error.set(typeof err.error?.detail === 'string' ? err.error.detail : 'Error al enviar la inscripción. Intentá de nuevo.');
         }
       },
     });

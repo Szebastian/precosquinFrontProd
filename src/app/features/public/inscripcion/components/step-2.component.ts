@@ -61,7 +61,7 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
 
       <!-- SOLISTA INSTRUMENTAL - Art. 31 -->
       @if (data().subcategory === 'solista_instrumental') {
-        <div class="instrument-section" @fadeIn>
+        <div class="instrument-section anim-fade-in">
           <div class="regulation-badge">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -186,9 +186,21 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
         </div>
       }
 
+      <!-- MÚSICA - Reglamento por subcategoría -->
+      @if (isMusica() && data().subcategory) {
+        <div class="musica-section anim-fade-in">
+          <div class="musica-info-banner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <span>{{ getMusicaInfo() }}</span>
+          </div>
+        </div>
+      }
+
       <!-- DANZA - Estilo del Malambo -->
       @if (isDanza() && data().subcategory) {
-        <div class="danza-section" @fadeIn>
+        <div class="danza-section anim-fade-in">
           <div class="danza-info-banner">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
@@ -228,6 +240,7 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
     @keyframes slideLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .anim-fade-in { animation: fadeIn 0.35s ease-out; }
 
     .step-desc { font-size: 0.95rem; color: #94a3b8; margin-bottom: 1.75rem; line-height: 1.5; }
 
@@ -323,6 +336,10 @@ import { subcategoriesByCategory, groupSubcategories } from '../inscripcion.page
     .danza-info-banner { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.875rem 1rem; background: rgba(76, 139, 230, 0.06); border: 1px solid rgba(76, 139, 230, 0.15); border-radius: 0.75rem; margin-bottom: 1.5rem; font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
     .danza-info-banner svg { color: #60a5fa; flex-shrink: 0; margin-top: 2px; }
 
+    .musica-section { animation: fadeIn 0.35s ease-out; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+    .musica-info-banner { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.875rem 1rem; background: rgba(76, 139, 230, 0.06); border: 1px solid rgba(76, 139, 230, 0.15); border-radius: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
+    .musica-info-banner svg { color: #60a5fa; flex-shrink: 0; margin-top: 2px; }
+
     .dance-style-selector { margin-top: 1rem; }
     .dance-style-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .dance-style-card { display: flex; align-items: center; gap: 0.875rem; padding: 1rem; border: 1.5px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem; background: rgba(255, 255, 255, 0.02); cursor: pointer; transition: all 0.25s ease; }
@@ -414,23 +431,48 @@ export class InscripcionStep2Component {
     return this.data().category === 'danza';
   }
 
+  isMusica(): boolean {
+    return this.data().category === 'musica';
+  }
+
   needsDanceStyle(): boolean {
     return ['malambo_masculino', 'malambo_femenino'].includes(this.data().subcategory);
+  }
+
+  getMusicaInfo(): string {
+    switch (this.data().subcategory) {
+      case 'solista_vocal':
+        return 'Solista vocal. Sin pistas ni bases pregrabadas. Presentación en vivo con un máximo de 5 minutos por tema.';
+      case 'duo_vocal':
+        return 'Dúo vocal. Sin pistas ni bases pregrabadas. Presentación en vivo con un máximo de 5 minutos por tema.';
+      case 'expresion_oral_folclorica':
+        return 'Expresión oral folclórica. Recitados, poesías, narraciones y décimas. Sin pistas pregrabadas.';
+      case 'conjunto_vocal':
+        return 'Conjunto vocal: mínimo 3 y máximo 8 integrantes. Sin pistas ni bases pregrabadas. Presentación en vivo.';
+      case 'solista_instrumental':
+        return 'Solista instrumental. Un (1) único instrumento. Sin pistas ni bases pregrabadas. Sin cambio de instrumento.';
+      case 'conjunto_instrumental':
+        return 'Conjunto instrumental: mínimo 2 y máximo 10 integrantes. Sin pistas ni bases pregrabadas. Presentación en vivo.';
+      case 'cancion_inedita':
+        return 'Canción inédita: tema inédito jamás registrado. Sin pistas ni bases pregrabadas. Presentación en vivo. Deben presentar la letra y la partitura.';
+      default:
+        return '';
+    }
   }
 
   getDanzaInfo(): string {
     switch (this.data().subcategory) {
       case 'malambo_masculino':
       case 'malambo_femenino':
-        return 'Malambo solista. Necesitás 4 músicos acompañantes y planta de sonido.';
+        return 'Malambo solista. Elegí estilo Norteño o Sureño. Necesitás 4 músicos acompañantes y planta de sonido. Sin pistas pregrabadas.';
       case 'conjunto_malambo':
-        return 'Conjunto de malambo: mínimo 4 y máximo 8 integrantes. Necesitás 4 músicos acompañantes y planta de sonido.';
+        return 'Conjunto de malambo: mínimo 4 y máximo 8 bailarines. Elegí Norteño o Sureño. Necesitás 4 músicos acompañantes y planta de sonido.';
       case 'pareja_tradicional':
-        return 'Pareja de baile tradicional: 2 bailarines. 3 danzas con música MP3. Necesitás 4 músicos acompañantes, planta de sonido y 2 asistentes.';
+        return 'Pareja de baile tradicional: exactamente 2 bailarines. 3 rondas con música MP3, coreógrafo, 4 músicos acompañantes, planta de sonido y 2 asistentes.';
       case 'pareja_estilizada':
-        return 'Pareja de baile estilizada: 2 bailarines. 3 danzas con música MP3. Necesitás 4 músicos acompañantes y planta de sonido.';
+        return 'Pareja de baile estilizada: exactamente 2 bailarines. 3 rondas con música MP3, coreógrafo, 4 músicos acompañantes y planta de sonido.';
       case 'conjunto_baile':
-        return 'Conjunto de baile folklórico: mínimo 8 integrantes (hasta 40). 1 obra con archivo MP3.';
+        return 'Conjunto de baile folklórico: mínimo 8 integrantes (hasta 40). 2 obras coreográficas con música MP3.';
       default:
         return '';
     }

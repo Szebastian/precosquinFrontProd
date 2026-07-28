@@ -166,38 +166,41 @@ import { Subject, debounceTime, distinctUntilChanged, takeUntil, timeout } from 
             @if (addressError()) {
               <span class="field-error" role="alert">{{ addressError() }}</span>
             }
-          </div>
-          <div class="form-field-group flex flex-col items-start w-full">
-            <label class="minimal-label" for="locality">¿En qué localidad? *</label>
-            <input type="text" id="locality" name="locality" required class="minimal-input"
-              placeholder="Tu ciudad o pueblo"
-              [class.input-error]="localityError()"
-              [class.input-valid]="data().locality.length >= 2 && !localityError()"
-              [(ngModel)]="data().locality" (ngModelChange)="validateLocality()" />
-            @if (localityError()) {
-              <span class="field-error" role="alert">{{ localityError() }}</span>
-            }
-          </div>
-        </div>
-      </div>
+</div>
+           <div class="form-field-group flex flex-col items-start w-full">
+             <label class="minimal-label" for="province">¿De qué provincia sos? *</label>
+             <select id="province" name="province" required class="minimal-input"
+               [class.input-error]="provinceError()"
+               [class.input-valid]="selectedProvince().length > 0 && !provinceError()"
+               [(ngModel)]="selectedProvince" (ngModelChange)="onProvinceChange()">
+               <option value="">Elegí tu provincia</option>
+               @for (prov of provincias; track prov) {
+                 <option [value]="prov">{{ prov }}</option>
+               }
+             </select>
+             @if (provinceError()) {
+               <span class="field-error" role="alert">{{ provinceError() }}</span>
+             }
+           </div>
+           <div class="form-field-group flex flex-col items-start w-full">
+             <label class="minimal-label" for="locality">¿En qué localidad? *</label>
+             <select id="locality" name="locality" required class="minimal-input"
+               [class.input-error]="localityError()"
+               [class.input-valid]="data().locality.length >= 2 && !localityError()"
+               [disabled]="!selectedProvince()"
+               [(ngModel)]="data().locality" (ngModelChange)="onLocalityChange($event)">
+               <option value="" disabled>{{ selectedProvince() ? 'Elegí tu localidad' : 'Primero elegí una provincia' }}</option>
+               @for (loc of localidadesFiltradas(); track loc) {
+                 <option [value]="loc">{{ loc }}</option>
+               }
+             </select>
+             @if (localityError()) {
+               <span class="field-error" role="alert">{{ localityError() }}</span>
+             }
+           </div>
+         </div>
 
-      <div class="question-group">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-          <div class="form-field-group flex flex-col items-start w-full">
-            <label class="minimal-label" for="province">¿De qué provincia sos? *</label>
-            <select id="province" name="province" required class="minimal-input"
-              [class.input-error]="provinceError()"
-              [class.input-valid]="data().province.length > 0 && !provinceError()"
-              [(ngModel)]="data().province" (ngModelChange)="validateProvince()">
-              <option value="">Elegí tu provincia</option>
-              @for (prov of provincias; track prov) {
-                <option [value]="prov">{{ prov }}</option>
-              }
-            </select>
-            @if (provinceError()) {
-              <span class="field-error" role="alert">{{ provinceError() }}</span>
-            }
-          </div>
+       <div class="question-group">
           <div class="form-field-group flex flex-col items-start w-full">
             <label class="minimal-label" for="phone">¿Cuál es tu teléfono? *</label>
             <input type="tel" id="phone" name="phone" required class="minimal-input"
@@ -595,6 +598,103 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
   ];
   years = Array.from({ length: 100 }, (_, i) => String(new Date().getFullYear() - i));
 
+  readonly localidadesPorProvincia: Record<string, string[]> = {
+    'Chubut': [
+      'Puerto Pirámides', 'Trelew', 'Rawson', 'Gaiman', 'Dolavon',
+      'Comodoro Rivadavia', 'Rada Tilly', 'Caleta Olivia', 'Cañadón Seco',
+      'Paso de Indios', 'Los Altares', 'Esquel', 'Trevelin', 'Lago Blanco',
+      'Río Pico', 'Gobernador Costa', 'Corcovado', 'Cholila', 'Epuyén',
+      'El Bolsón', 'Lago Puelo', 'El Hoyo', 'Gastre', 'Telsen', 'Languiñéo',
+    ],
+    'Río Negro': [
+      'Bariloche', 'Viedma', 'Cipolletti', 'General Roca', 'San Carlos de Bariloche',
+      'El Bolsón', 'Villa Regina', 'Choele Choel', 'Río Colorado',
+    ],
+    'Neuquén': [
+      'Neuquén', 'San Martín de los Andes', 'Villa La Angostura', 'Zapala',
+      'Añelo', 'Plottier', 'Cutral Co', 'Rincón de los Sauces',
+    ],
+    'La Pampa': [
+      'Santa Rosa', 'General Pico', 'Catriló', 'Winifreda', '25 de Mayo',
+      'Eduardo Castex', 'Quemú Quemú',
+    ],
+    'Buenos Aires': [
+      'La Plata', 'Mar del Plata', 'Bahía Blanca', 'Tandil', 'Olavarría',
+      'Dolores', 'Chascomús', 'Pinamar', 'Villa Gesell', 'Necochea',
+      'Junín', 'Pergamino', 'Azul', 'Lobos', 'Cañuelas', 'San Nicolás',
+      'Avellaneda', 'Lanús', 'Quilmes', 'Morón', 'La Matanza', 'Florencio Varela',
+      'Berazategui', 'Esteban Echeverría', 'Almirante Brown', 'Lomas de Zamora',
+    ],
+    'CABA': ['Ciudad Autónoma de Buenos Aires'],
+    'Córdoba': [
+      'Córdoba', 'Villa Carlos Paz', 'Río Cuarto', 'Villa María', 'Cosquín',
+      'Alta Gracia', 'Jesús María', 'Unquillo', 'Mina Clavero',
+    ],
+    'Santa Fe': [
+      'Rosario', 'Santa Fe', 'Rafaela', 'Venado Tuerto', 'Reconquista',
+      'Villa Gobernador Gálvez', 'Cañada de Gómez',
+    ],
+    'Entre Ríos': [
+      'Paraná', 'Concordia', 'Villa María Grande', 'Colón', 'Federación',
+      'Villaguay', 'Gualeguaychú',
+    ],
+    'Mendoza': [
+      'Mendoza', 'San Rafael', 'San Martín', 'Guaymallén', 'Las Heras',
+      'Luján de Cuyo', 'Tunuyán', 'San Carlos',
+    ],
+    'Salta': [
+      'Salta', 'San Miguel de Tucumán', 'Jujuy', 'Orán', 'Rivadavia',
+      'Tartagal', 'Metán', 'Cafayate', 'Purmamarca', 'Tilcara',
+    ],
+    'Tucumán': [
+      'San Miguel de Tucumán', 'Concepción', 'Bella Vista', 'Tafí Viejo',
+      'Monteros', 'Chicligasta',
+    ],
+    'Misiones': [
+      'Posadas', 'Puerto Iguazú', 'Eldorado', 'Oberá', 'San Pedro',
+      'Apóstoles', 'Leandro N. Alem',
+    ],
+    'Corrientes': [
+      'Corrientes', 'Resistencia', 'Goya', 'Mercedes', 'Curuzú Cuatiá',
+      'Paso de los Libres', 'Santo Tomé',
+    ],
+    'Chaco': [
+      'Resistencia', 'Buenos Aires', 'Saenz Peña', 'Villa Ángela',
+      'Charata', 'General San Martín',
+    ],
+    'Formosa': [
+      'Formosa', 'Clorinda', 'Pirané', 'El Colorado', 'Las Lomitas',
+    ],
+    'San Juan': [
+      'San Juan', 'Chimbas', 'Santa Lucía', 'Rivadavia', 'Zonda',
+      'Calingasta', 'Jáchal', 'Iglesia',
+    ],
+    'San Luis': [
+      'San Luis', 'Villa Mercedes', 'Quines', 'Merlo', 'Concarán',
+    ],
+    'La Rioja': [
+      'La Rioja', 'Chilecito', 'Famatina', 'Villa Unión', 'Anillaco',
+    ],
+    'Catamarca': [
+      'San Fernando del Valle de Catamarca', 'Belén', 'Tinogasta',
+      'Andalgalá', 'Santa María',
+    ],
+    'Santiago del Estero': [
+      'Santiago del Estero', 'La Banda', 'Frmosa', 'Añatuya', 'Quimilí',
+    ],
+    'Santa Cruz': [
+      'Río Gallegos', 'Caleta Olivia', 'El Calafate', 'Perito Moreno',
+      'Las Heras', '28 de Noviembre', 'Puerto Deseado',
+    ],
+    'Tierra del Fuego': [
+      'Ushuaia', 'Río Grande', 'Tolhuin',
+    ],
+    'Jujuy': [
+      'San Salvador de Jujuy', 'San Pedro', 'Ledesma', 'Santa Catalina',
+      'Tilcara', 'Purmamarca', 'Humahuaca',
+    ],
+  };
+
   firstNameError = signal('');
   lastNameError = signal('');
   dniError = signal('');
@@ -610,6 +710,7 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
   dniValid = signal(false);
   phoneValid = signal(false);
   validated = signal(false);
+  selectedProvince = signal('');
 
   // Required fields for progress indicator
   requiredFields = computed(() => [
@@ -618,8 +719,8 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
     { key: 'dni', label: 'DNI', valid: () => this.dniValid() && !this.dniError() },
     { key: 'birthDate', label: 'Fecha nac.', valid: () => this.birthDay() && this.birthMonth() && this.birthYear() && !this.birthDateError() && (this.data() as any).age !== null && (this.data() as any).age >= 16 && !this.ageError() },
     { key: 'address', label: 'Domicilio', valid: () => this.data().address.trim().length >= 3 && !this.addressError() },
-    { key: 'locality', label: 'Localidad', valid: () => this.data().locality.trim().length >= 2 && !this.localityError() },
-    { key: 'province', label: 'Provincia', valid: () => this.data().province.length > 0 && !this.provinceError() },
+    { key: 'locality', label: 'Localidad', valid: () => this.data().locality.length > 0 && !this.localityError() },
+    { key: 'province', label: 'Provincia', valid: () => this.selectedProvince().length > 0 && !this.provinceError() },
     { key: 'phone', label: 'Teléfono', valid: () => this.phoneValid() && !this.phoneError() },
     { key: 'email', label: 'Email', valid: () => this.emailValid() && !this.emailError() && !this.emailChecking() },
   ]);
@@ -628,6 +729,11 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
   totalFields = computed(() => this.requiredFields().length);
   progressPercent = computed(() => Math.round((this.completedCount() / this.totalFields()) * 100));
 
+  localidadesFiltradas = computed(() => {
+    const prov = this.selectedProvince();
+    return prov ? (this.localidadesPorProvincia[prov] || []) : [];
+  });
+
   ngOnInit(): void {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -635,9 +741,10 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
     const dd = String(today.getDate()).padStart(2, '0');
     this.maxDateAttr.set(`${yyyy}-${mm}-${dd}`);
 
-    const fullNameParts = this.data().fullName.split(' ');
-    this.firstName.set(fullNameParts[0] || '');
-    this.lastName.set(fullNameParts.slice(1).join(' ') || '');
+    this.selectedProvince.set(this.data().province || '');
+
+    this.firstName.set(this.data().firstName || '');
+    this.lastName.set(this.data().lastName || '');
 
     if (this.data().dni) {
       const raw = this.data().dni.replace(/\D/g, '');
@@ -694,7 +801,8 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
   }
 
   updateFullName(): void {
-    (this.data() as any).fullName = `${this.firstName()} ${this.lastName()}`.trim();
+    (this.data() as any).firstName = this.firstName().trim();
+    (this.data() as any).lastName = this.lastName().trim();
   }
 
   onBirthDateChange(): void {
@@ -771,13 +879,25 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
     this.addressError.set(v.length === 0 ? 'El domicilio es obligatorio' : v.length < 3 ? 'Mínimo 3 caracteres' : '');
   }
 
+  onLocalityChange(value: string): void {
+    this.data().locality = value;
+    this.validateLocality();
+  }
+
+  onProvinceChange(): void {
+    this.data().province = this.selectedProvince();
+    this.data().locality = '';
+    this.validateProvince();
+    this.validateLocality();
+  }
+
   validateLocality(): void {
     const v = this.data().locality.trim();
-    this.localityError.set(v.length === 0 ? 'La localidad es obligatoria' : v.length < 2 ? 'Mínimo 2 caracteres' : '');
+    this.localityError.set(v.length === 0 ? 'La localidad es obligatoria' : '');
   }
 
   validateProvince(): void {
-    this.provinceError.set(this.data().province.length === 0 ? 'Seleccioná una provincia' : '');
+    this.provinceError.set(this.selectedProvince().length === 0 ? 'Seleccioná una provincia' : '');
   }
 
   validatePhone(): void {
@@ -897,8 +1017,8 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
       && this.data().birthDate !== ''
       && age !== null && age >= 16
       && this.data().address.trim().length >= 3
-      && this.data().locality.trim().length >= 2
-      && this.data().province.length > 0
+      && this.data().locality.length > 0
+      && this.selectedProvince().length > 0
       && this.phoneValid()
       && email.length > 0
       && this.isValidEmailFormat(email)

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
+import { SubscriptionChartsComponent } from '../subscription-charts/subscription-charts.component';
 
 interface DashboardStats {
   total_inscripciones: number;
@@ -19,7 +20,7 @@ interface DashboardStats {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, SubscriptionChartsComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })

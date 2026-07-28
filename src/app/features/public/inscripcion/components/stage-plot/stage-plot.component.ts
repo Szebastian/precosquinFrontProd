@@ -26,7 +26,7 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
     'quena', 'siku', 'sicus', 'flauta-traversa', 'erke',
     'piano', 'acordeon', 'bandoneon',
     'bombo-leguero', 'caja-chayera', 'percusion-menor',
-    'microfono-alt', 'monitor-alt', 'amplificador-alt', 'energia-alt', 'musico-alt',
+    'microfono-alt', 'monitor-alt', 'amplificador-alt', 'energia-alt', 'musico-alt', 'bailarin-alt',
   ] as const;
 
   instrumentConfig: { [key: string]: { label: string; icon: string; group: string } } = {
@@ -52,6 +52,7 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
     'amplificador-alt': { label: 'Amplificador',        icon: 'assets/iconoForm/amplificador.webp',     group: 'Equipo' },
     'energia-alt':      { label: 'Energía',             icon: 'assets/iconoForm/energia.webp',          group: 'Equipo' },
     'musico-alt':       { label: 'Músico',              icon: 'assets/iconoForm/usuario.webp',          group: 'Equipo' },
+    'bailarin-alt':     { label: 'Bailarín',             icon: 'assets/iconoForm/usuario.webp',          group: 'Equipo' },
   };
 
   paletteGroups = ['Cuerdas', 'Vientos', 'Teclados', 'Percusión', 'Equipo'];
@@ -75,11 +76,12 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private centerDefaultMusician(): boolean {
     if (this.instruments.length > 0 || !this.stageAreaRef) return false;
+    const rect = this.stageAreaRef.nativeElement.getBoundingClientRect();
     const defaultMusician: Instrument = {
       id: `instrument-${this.nextInstrumentId++}`,
       type: 'musico-alt',
-      x: 50,
-      y: 50,
+      x: rect.width / 2,
+      y: rect.height / 2,
       label: 'Músico',
       channel: '',
       rotation: 0,

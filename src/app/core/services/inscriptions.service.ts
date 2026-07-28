@@ -27,6 +27,8 @@ export interface Inscription {
   category: string;
   subcategory: string;
   full_name: string;
+  first_name?: string;
+  last_name?: string;
   stage_name?: string;
   status: string;
   created_at: string;
@@ -37,6 +39,7 @@ export interface Inscription {
   address?: string;
   locality?: string;
   province?: string;
+  city?: string;
   bio?: string;
   technical_needs?: string;
   proposal_name?: string;
@@ -47,6 +50,27 @@ export interface Inscription {
   members?: Member[];
   accompanying_persons?: { fullName: string; dni: string }[];
   rider_tecnico?: any;
+  // Declarations
+  acceptRegulations?: boolean;
+  acceptNoPriorWin?: boolean;
+  acceptNotJurorOrg?: boolean;
+  // Nuevos campos para solista instrumental
+  instrumentType?: string;
+  instrumentName?: string;
+  hasAccompaniment?: boolean;
+  accompanimentInstrument?: string;
+  accompanimentMusician?: string;
+  acceptPurelyInstrumental?: boolean;
+  acceptOneInstrument?: boolean;
+  acceptNoPrerecorded?: boolean;
+  acceptNoInstrumentChange?: boolean;
+  // Presentación
+  presentation?: string;
+  artisticName?: string;
+  songsList?: string;
+  // Stage plot
+  x?: number;
+  y?: number;
 }
 
 export interface StatusUpdateResponse {
