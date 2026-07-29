@@ -22,6 +22,11 @@ export class InscripcionesListPageComponent implements OnInit {
   expandedId = signal<string | null>(null);
   updatingId = signal<string | null>(null);
 
+  rejectModalOpen = signal(false);
+  rejectTargetId = signal<string | null>(null);
+  rejectTargetName = signal('');
+  rejectReason = signal('');
+
   totalInscriptions = computed(() => this.allInscriptions().length);
   pendingCount = computed(() => this.allInscriptions().filter(i => i.status === 'PENDIENTE').length);
   reviewCount = computed(() => this.allInscriptions().filter(i => i.status === 'EN_REVISION').length);
@@ -107,6 +112,39 @@ export class InscripcionesListPageComponent implements OnInit {
       next: () => {
         this.allInscriptions.update(list =>
           list.map(i => i.id === id ? { ...i, status: newStatus } : i)
+        );
+        this.updatingId.set(null);
+      },
+      error: () => {
+        this.updatingId.set(null);
+      }
+    });
+  }
+
+  openRejectModal(id: string, name: string): void {
+    this.rejectTargetId.set(id);
+    this.rejectTargetName.set(name);
+    this.rejectReason.set('');
+    this.rejectModalOpen.set(true);
+  }
+
+  closeRejectModal(): void {
+    this.rejectModalOpen.set(false);
+    this.rejectTargetId.set(null);
+    this.rejectTargetName.set('');
+    this.rejectReason.set('');
+  }
+
+  confirmReject(): void {
+    const id = this.rejectTargetId();
+    if (!id) return;
+    const reason = this.rejectReason().trim() || undefined;
+    this.updatingId.set(id);
+    this.rejectModalOpen.set(false);
+    this.inscriptionsService.updateStatus(id, 'RECHAZADA', reason).subscribe({
+      next: () => {
+        this.allInscriptions.update(list =>
+          list.map(i => i.id === id ? { ...i, status: 'RECHAZADA' } : i)
         );
         this.updatingId.set(null);
       },

@@ -396,7 +396,7 @@
                                   <text x="100" y="113" text-anchor="middle" fill="#1e3a8a" font-size="6" font-weight="700" font-family="sans-serif">PUBLICO</text>
                                   @for (inst of inscription.rider_tecnico.stagePlotInstruments; track $index) {
                                     <circle [attr.cx]="inst.x" [attr.cy]="30 + inst.y" r="10" fill="#64748b"/>
-                                    <text [attr.x]="inst.x" [attr.y]="31 + inst.y" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="5" font-weight="700" font-family="sans-serif">{{ inst.type === 'drums' ? 'BAT' : inst.type === 'guitar' ? 'GTR' : inst.type === 'bass' ? 'BAJ' : inst.type === 'keyboard' ? 'TEC' : inst.type === 'microphone' ? 'MIC' : inst.type === 'amp' ? 'AMP' : '•' }}</text>
+                                    <text [attr.x]="inst.x" [attr.y]="31 + inst.y" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="5" font-weight="700" font-family="sans-serif">{{ inst.type === 'drums' ? 'BAT' : inst.type === 'guitar' ? 'GTR' : inst.type === 'bass' ? 'BAJ' : inst.type === 'keyboard' ? 'TEC' : inst.type === 'microphone' ? 'MIC' : inst.type === 'amp' ? 'AMP' : 'ï¿½' }}</text>
                                   }
                                 </svg>
                               </div>
@@ -420,8 +420,8 @@
                           Reglas Art. 31 - Solista Instrumental
                         </h4>
                         <div class="rules-list">
-                          @if (inscription.acceptPurelyInstrumental) { <span class="rule-check">&#10003;</span> La presentación debe ser puramente instrumental }
-                          @if (inscription.acceptOneInstrument) { <span class="rule-check">&#10003;</span> Un (1) único instrumento para el solista }
+                          @if (inscription.acceptPurelyInstrumental) { <span class="rule-check">&#10003;</span> La presentaciï¿½n debe ser puramente instrumental }
+                          @if (inscription.acceptOneInstrument) { <span class="rule-check">&#10003;</span> Un (1) ï¿½nico instrumento para el solista }
                           @if (inscription.acceptNoPrerecorded) { <span class="rule-check">&#10003;</span> No se permiten pistas ni bases pregrabadas }
                           @if (inscription.acceptNoInstrumentChange) { <span class="rule-check">&#10003;</span> No se permite cambio de instrumento }
                         </div>
@@ -431,7 +431,7 @@
                     <!-- Presentation -->
                     @if (inscription.presentation) {
                       <div class="detail-section">
-                        <h4 class="section-title">Presentación Musical</h4>
+                        <h4 class="section-title">Presentaciï¿½n Musical</h4>
                         <p class="section-text">{{ inscription.presentation }}</p>
                       </div>
                     }
@@ -471,7 +471,7 @@
                         </button>
                       }
                       @if (inscription.status !== 'RECHAZADA') {
-                        <button class="action-btn btn-reject" (click)="updateStatus(inscription.id, 'RECHAZADA')" [disabled]="updatingId() === inscription.id">
+                        <button class="action-btn btn-reject" (click)="openRejectModal(inscription.id, inscription.full_name)" [disabled]="updatingId() === inscription.id">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
                           Rechazar
                         </button>
@@ -493,3 +493,37 @@
     </div>
   </div>
 </div>
+
+<!-- Reject Reason Modal -->
+@if (rejectModalOpen()) {
+  <div class="modal-overlay" (click)="closeRejectModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+        </svg>
+        <h3 class="modal-title">Rechazar inscripciÃ³n</h3>
+      </div>
+      <p class="modal-subtitle">Â¿Rechazar la inscripciÃ³n de <strong>{{ rejectTargetName() }}</strong>?</p>
+      <div class="modal-field">
+        <label class="modal-label">Motivo del rechazo (opcional)</label>
+        <textarea
+          class="modal-textarea"
+          placeholder="EscribÃ­ el motivo del rechazo..."
+          [ngModel]="rejectReason()"
+          (ngModelChange)="rejectReason.set($event)"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn modal-btn-cancel" (click)="closeRejectModal()">Cancelar</button>
+        <button type="button" class="modal-btn modal-btn-confirm" (click)="confirmReject()" [disabled]="updatingId() === rejectTargetId()">
+          @if (updatingId() === rejectTargetId()) {
+            <span class="modal-spinner"></span>
+          }
+          Rechazar
+        </button>
+      </div>
+    </div>
+  </div>
+}
