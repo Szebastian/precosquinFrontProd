@@ -68,13 +68,15 @@ export interface TfQuestion {
             <h2 class="tf-success-title">¡Inscripción enviada!</h2>
             <p class="tf-success-sub">Tu inscripción fue registrada exitosamente.</p>
             <p class="tf-success-id">N° <strong>{{ inscriptionId() }}</strong></p>
-            <p class="tf-success-detail">Conservá la constancia como comprobante. Recibirás un email con los próximos pasos.</p>
+            <div class="tf-success-email-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+              <p>Te enviamos la constancia de inscripción a tu correo electrónico.</p>
+            </div>
+            <p class="tf-success-detail">Revisá tu casilla de entrada (y la carpeta de spam) para encontrar el comprobante con todos los datos de tu inscripción.</p>
             <div class="tf-success-actions">
-              <button type="button" class="tf-btn-primary tf-btn-primary--active" (click)="downloadConstancia()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Descargar constancia PDF
-              </button>
-              <a routerLink="/" class="tf-btn-ghost tf-success-home">Volver al inicio</a>
+              <a routerLink="/" class="tf-btn-primary tf-btn-primary--active tf-success-home">Volver al inicio</a>
             </div>
           </div>
         </div>
@@ -755,12 +757,31 @@ export interface TfQuestion {
       font-family: 'Courier New', monospace;
       letter-spacing: 0.02em;
     }
+    .tf-success-email-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 0 0 16px;
+      max-width: 400px;
+    }
+    .tf-success-email-info svg { flex-shrink: 0; }
+    .tf-success-email-info p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #1e40af;
+      font-weight: 500;
+      line-height: 1.5;
+    }
     .tf-success-detail {
-      font-size: 0.875rem;
-      color: #475569;
+      font-size: 0.8rem;
+      color: #94a3b8;
       margin: 0 0 36px;
       line-height: 1.7;
-      max-width: 360px;
+      max-width: 400px;
     }
     .tf-success-actions {
       display: flex;
