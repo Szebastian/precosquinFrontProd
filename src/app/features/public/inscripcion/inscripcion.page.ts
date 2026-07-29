@@ -1422,6 +1422,8 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       next: (result: InscripcionResult) => {
         this.inscriptionResult.set(result);
         this.clearDraft();
+        this.submitted.set(true);
+        this.submitting.set(false);
         this.uploadFiles(result.id);
       },
       error: (err: any) => {
@@ -1453,26 +1455,11 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     if (this.data.scoreFile) files.push({ file: this.data.scoreFile, type: 'score' });
     if (this.data.danceMp3File) files.push({ file: this.data.danceMp3File, type: 'dance_mp3' });
 
-    if (files.length === 0) {
-      this.submitting.set(false);
-      this.submitted.set(true);
-      this.showConstanciaModal.set(true);
-      return;
-    }
+    if (files.length === 0) return;
 
     let uploaded = 0;
     const total = files.length;
     const failed: string[] = [];
-    this.uploadProgress.set(`subiendo 0/${total}`);
-
-    const fileLabels: Record<string, string> = {
-      dni_front: 'DNI frontal',
-      dni_back: 'DNI dorso',
-      promo_photo: 'Foto promocional',
-      lyrics: 'Letra',
-      score: 'Partitura',
-      dance_mp3: 'Música danzas',
-    };
 
     for (const { file, type } of files) {
       const formData = new FormData();
@@ -1484,25 +1471,15 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: () => {
           uploaded++;
-          this.uploadProgress.set(`subiendo ${uploaded}/${total}`);
           if (uploaded === total) {
-            this.uploadProgress.set('');
-            this.submitting.set(false);
-            this.submitted.set(true);
             this.uploadFailedFiles.set(failed);
-            this.showConstanciaModal.set(true);
           }
         },
         error: () => {
-          failed.push(fileLabels[type] || type);
+          failed.push(type);
           uploaded++;
-          this.uploadProgress.set(`subiendo ${uploaded}/${total}`);
           if (uploaded === total) {
-            this.uploadProgress.set('');
-            this.submitting.set(false);
-            this.submitted.set(true);
             this.uploadFailedFiles.set(failed);
-            this.showConstanciaModal.set(true);
           }
         },
       });
@@ -1513,9 +1490,6 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     const result = this.inscriptionResult();
     if (!result) return;
     this.uploadFailedFiles.set([]);
-    this.showConstanciaModal.set(false);
-    this.submitting.set(true);
-    this.submittingText.set('Reintentando archivos...');
     this.uploadFiles(result.id);
   }
 }
