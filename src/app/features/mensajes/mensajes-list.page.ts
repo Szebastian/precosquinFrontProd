@@ -343,8 +343,10 @@ export class MensajesListPageComponent implements OnInit, AfterViewInit, OnDestr
 
   startPolling(): void {
     this.pollInterval = window.setInterval(() => {
-      this.loadMessages();
-    }, 30000);
+      if (document.visibilityState === 'visible') {
+        this.loadMessages();
+      }
+    }, 60000);
   }
 
   loadMessages(): void {
