@@ -33,7 +33,7 @@ export interface MessageListResponse {
 @Injectable({ providedIn: 'root' })
 export class MessagesService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/messages`;
+  private apiUrl = `${environment.apiUrl}/messages/`;
 
   sendMessage(msg: MessageCreate): Observable<Message> {
     return this.http.post<Message>(this.apiUrl, msg);
