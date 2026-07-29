@@ -90,6 +90,9 @@ import { MessagesService, Message } from '../../core/services/messages.service';
                           @if (!msg.is_read) {
                             <span class="unread-dot"></span>
                           }
+                          @if (msg.source === 'email') {
+                            <span class="source-badge email-badge">Email</span>
+                          }
                         </div>
                         <div class="message-subject">{{ msg.subject }}</div>
                         <div class="message-preview">{{ msg.message | slice:0:80 }}{{ msg.message.length > 80 ? '...' : '' }}</div>
@@ -124,10 +127,16 @@ import { MessagesService, Message } from '../../core/services/messages.service';
                           </div>
                         }
                       </div>
-                      <div class="detail-message">
-                        <div class="detail-message-label">Mensaje</div>
-                        <div class="detail-message-text">{{ msg.message }}</div>
-                      </div>
+                        <div class="detail-message">
+                          <div class="detail-message-label">Mensaje</div>
+                          <div class="detail-message-text">{{ msg.message }}</div>
+                        </div>
+                        @if (msg.source) {
+                          <div class="detail-row">
+                            <span class="detail-label">Origen</span>
+                            <span class="detail-value">{{ msg.source === 'email' ? 'Correo electrónico' : 'Formulario web' }}</span>
+                          </div>
+                        }
                       <div class="detail-actions">
                         <a class="action-btn btn-reply" [href]="'mailto:' + msg.email + '?subject=Re: ' + msg.subject">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
@@ -223,6 +232,8 @@ import { MessagesService, Message } from '../../core/services/messages.service';
     .btn-read:hover { background: #dcfce7; }
     .btn-delete { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
     .btn-delete:hover { background: #fee2e2; }
+    .source-badge { font-size: 0.65rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .email-badge { background: #dbeafe; color: #1e40af; }
   `]
 })
 export class MensajesListPageComponent implements OnInit {

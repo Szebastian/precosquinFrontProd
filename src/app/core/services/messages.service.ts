@@ -13,6 +13,7 @@ export interface Message {
   inscription_id?: string;
   is_read: boolean;
   created_at: string;
+  source?: string;
 }
 
 export interface MessageCreate {
