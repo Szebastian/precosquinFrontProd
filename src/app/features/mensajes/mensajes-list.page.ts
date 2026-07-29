@@ -459,5 +459,3 @@ export class MensajesListPageComponent implements OnInit, AfterViewInit, OnDestr
     }
   }
 }
-  `,
-})
