@@ -53,10 +53,10 @@ export class MessagesService {
   }
 
   markAsRead(id: string): Observable<{ message: string }> {
-    return this.http.patch<{ message: string }>(`${this.apiUrl}/${id}/read`, null);
+    return this.http.patch<{ message: string }>(`${this.apiUrl}${id}/read`, null);
   }
 
   deleteMessage(id: string): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
+    return this.http.delete<{ message: string }>(`${this.apiUrl}${id}`);
   }
 }
