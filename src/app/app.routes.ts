@@ -71,6 +71,11 @@ export const appRoutes: Routes = [
         path: 'noticias',
         loadChildren: () => import('./features/noticias/noticias.routes').then(m => m.NOTICIAS_ROUTES),
         data: { roles: ['organizador', 'admin', 'staff'] }
+      },
+      {
+        path: 'mensajes',
+        loadComponent: () => import('./features/mensajes/mensajes-list.page').then(m => m.MensajesListPageComponent),
+        data: { title: 'Mensajes', roles: ['organizador', 'admin', 'staff'] }
       }
     ]
   },

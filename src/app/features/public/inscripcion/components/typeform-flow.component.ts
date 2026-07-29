@@ -8,6 +8,7 @@ import {
   subcategoriesByCategory, groupSubcategories, Instrument
 } from '../inscripcion.page';
 import { StagePlotComponent } from './stage-plot/stage-plot.component';
+import { ContactFormComponent } from './contact-form.component';
 
 export interface TfQuestion {
   id: string;
@@ -24,7 +25,7 @@ export interface TfQuestion {
 @Component({
   selector: 'app-typeform-flow',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, StagePlotComponent],
+  imports: [CommonModule, FormsModule, RouterLink, StagePlotComponent, ContactFormComponent],
   template: `
     <!-- TOP BAR -->
     <div class="tf-topbar">
@@ -76,10 +77,20 @@ export interface TfQuestion {
             </div>
             <p class="tf-success-detail">Revisá tu casilla de entrada (y la carpeta de spam) para encontrar el comprobante con todos los datos de tu inscripción.</p>
             <div class="tf-success-actions">
+              <button type="button" class="tf-btn-contact" (click)="showContactForm.set(true)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+                Contactanos
+              </button>
               <a routerLink="/" class="tf-btn-primary tf-btn-primary--active tf-success-home">Volver al inicio</a>
             </div>
           </div>
         </div>
+
+        @if (showContactForm()) {
+          <app-contact-form [inscriptionId]="inscriptionId()" (close)="showContactForm.set(false)" />
+        }
       } @else if (currentQ(); as q) {
         <div class="tf-stage">
           <div class="tf-content">
@@ -790,6 +801,25 @@ export interface TfQuestion {
       align-items: center;
       width: 100%;
     }
+    .tf-btn-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      color: #475569;
+      transition: all 0.15s;
+    }
+    .tf-btn-contact:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #1e293b;
+    }
     .tf-success-home { text-decoration: none; }
 
     /* ===== SUBMIT ERROR ===== */
@@ -1013,6 +1043,7 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
   inscriptionCreatedAt = input<string>('');
   exitTypeform = output<void>();
   saveDraft = output<void>();
+  showContactForm = signal(false);
 
   @ViewChild('tfInput') tfInputRef!: ElementRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
 
