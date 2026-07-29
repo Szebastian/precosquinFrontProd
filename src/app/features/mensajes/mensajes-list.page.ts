@@ -309,6 +309,7 @@ export class MensajesListPageComponent implements OnInit, AfterViewInit, OnDestr
   messages = signal<Message[]>([]);
   loading = signal(true);
   refreshing = signal(false);
+  error = signal<string | null>(null);
   expandedId = signal<string | null>(null);
   filterUnread = signal(false);
   totalMessages = signal(0);
@@ -347,17 +348,22 @@ export class MensajesListPageComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   loadMessages(): void {
+    this.loading.set(true);
+    this.error.set(null);
     this.refreshing.set(true);
     this.messagesService.getMessages({ page_size: 50, unread_only: this.filterUnread() }).subscribe({
       next: (res) => {
         this.messages.set(res.data);
         this.totalMessages.set(res.total);
         this.unreadCount.set(res.unread);
+        this.loading.set(false);
         this.refreshing.set(false);
         this.checkForNewEmails();
       },
       error: () => {
+        this.loading.set(false);
         this.refreshing.set(false);
+        this.error.set("Error al cargar los mensajes.");
       },
     });
   }
