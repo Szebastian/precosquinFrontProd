@@ -46,7 +46,16 @@ export interface TfQuestion {
 
     <!-- QUESTION AREA -->
     <div class="tf-viewport">
-      @if (submitSuccess()) {
+      @if (isSubmitting()) {
+        <!-- SUBMITTING OVERLAY -->
+        <div class="tf-submitting-screen">
+          <div class="tf-submitting-card">
+            <span class="tf-submitting-spinner"></span>
+            <h2 class="tf-submitting-title">Enviando inscripción...</h2>
+            <p class="tf-submitting-sub">No cierres esta ventana</p>
+          </div>
+        </div>
+      } @else if (submitSuccess()) {
         <!-- SUCCESS SCREEN -->
         <div class="tf-success-screen">
           <div class="tf-success-card">
@@ -432,10 +441,17 @@ export interface TfQuestion {
           </div>
           <div class="tf-bottom-right">
             @if (isLastQuestion()) {
-              <button type="button" class="tf-btn-primary tf-btn-submit" (click)="onSubmit()" [disabled]="!allDeclarationsChecked()">
-                Enviar inscripción
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-              </button>
+              @if (isSubmitting()) {
+                <button type="button" class="tf-btn-primary tf-btn-submit tf-btn-submit--loading" disabled>
+                  <span class="tf-spinner"></span>
+                  Enviando inscripción...
+                </button>
+              } @else {
+                <button type="button" class="tf-btn-primary tf-btn-submit" (click)="onSubmit()" [disabled]="!allDeclarationsChecked()">
+                  Enviar inscripción
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </button>
+              }
             } @else {
               <button type="button" class="tf-btn-primary" [class.tf-btn-primary--active]="inputHasValue()" (click)="goNext()" [disabled]="!isValid()">
                 Continuar
@@ -666,6 +682,23 @@ export interface TfQuestion {
       width: 100%; border-radius: 14px; overflow: hidden;
       border: 1px solid rgba(255,255,255,0.08); background: #0d1117;
     }
+
+    /* ===== SUBMITTING OVERLAY ===== */
+    .tf-submitting-screen {
+      display: grid; place-items: center; width: 100%;
+      min-height: calc(100vh - 58px); padding: 24px;
+      animation: tfFadeIn 0.3s ease;
+    }
+    .tf-submitting-card {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .tf-submitting-spinner {
+      display: block; width: 48px; height: 48px; margin-bottom: 20px;
+      border: 3px solid rgba(255,255,255,0.1); border-top-color: #4ade80;
+      border-radius: 50%; animation: tf-spin 0.8s linear infinite;
+    }
+    .tf-submitting-title { font-size: 1.3rem; font-weight: 700; color: #e2e8f0; margin: 0 0 8px; }
+    .tf-submitting-sub { font-size: 0.85rem; color: #64748b; margin: 0; }
 
     /* ===== SUCCESS SCREEN ===== */
     /* Grid + place-items:center = centra en ambos ejes sin heredar
@@ -902,6 +935,12 @@ export interface TfQuestion {
       box-shadow: 0 4px 16px rgba(74, 222, 128, 0.25);
     }
     .tf-btn-submit:hover { background: linear-gradient(135deg, #3bc973, #1daa4e); box-shadow: 0 6px 20px rgba(74, 222, 128, 0.35); }
+    .tf-btn-submit--loading { opacity: 0.85; cursor: wait; pointer-events: none; }
+    .tf-spinner {
+      display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%; animation: tf-spin 0.7s linear infinite; margin-right: 6px;
+    }
+    @keyframes tf-spin { to { transform: rotate(360deg); } }
 
     /* ===== RESPONSIVE ===== */
     @media (min-width: 1200px) {
