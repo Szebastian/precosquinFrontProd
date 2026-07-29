@@ -182,10 +182,12 @@ interface Notification {
                         </div>
                       }
                       <div class="detail-actions">
-                        <a class="action-btn btn-reply" [href]="'mailto:' + msg.email + '?subject=Re: ' + msg.subject">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
-                          Responder
-                        </a>
+                        @if (!showReply(msg.id)) {
+                          <button class="action-btn btn-reply" (click)="openReply(msg)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+                            Responder
+                          </button>
+                        }
                         @if (!msg.is_read) {
                           <button class="action-btn btn-read" (click)="markAsRead(msg.id)">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
@@ -197,6 +199,16 @@ interface Notification {
                           Eliminar
                         </button>
                       </div>
+
+                      @if (showReply(msg.id)) {
+                        <div class="reply-form" (click)="$event.stopPropagation()">
+                          <textarea #replyText rows="3" placeholder="Escribí tu respuesta..." [value]="replyBody(msg.id)" (input)="setReplyBody(msg.id, $any($event.target).value)"></textarea>
+                          <div class="reply-actions">
+                            <button class="action-btn btn-reply" (click)="sendReply(msg, replyText.value)" [disabled]="!replyBody(msg.id).trim()">Enviar</button>
+                            <button class="action-btn btn-delete" (click)="closeReply(msg.id)">Cancelar</button>
+                          </div>
+                        </div>
+                      }
                     </div>
                   }
                 </div>
@@ -300,6 +312,11 @@ interface Notification {
     .btn-delete:hover { background: #fee2e2; }
     .source-badge { font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
     .email-badge { background: #f3e8ff; color: #7c3aed; border: 1px solid #e9d5ff; }
+    .reply-form { margin-top: 12px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; }
+    .reply-form textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; font-size: 0.85rem; font-family: Arial, Helvetica, sans-serif; resize: vertical; min-height: 60px; outline: none; transition: border-color 0.15s; }
+    .reply-form textarea:focus { border-color: #3b82f6; }
+    .reply-actions { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
+    .reply-actions .action-btn { padding: 7px 14px; font-size: 0.78rem; }
     `,
   ],
 })
@@ -317,6 +334,8 @@ export class MensajesListPageComponent implements OnInit, AfterViewInit, OnDestr
   emailNotifications = signal<Notification[]>([]);
   private pollInterval: number | null = null;
   private previousUnread = 0;
+  replyBodies = signal<Record<string, string>>({});
+  replyOpen = signal<Record<string, boolean>>({});
 
   lastUpdate = computed(() => {
     const now = new Date();
@@ -414,6 +433,37 @@ export class MensajesListPageComponent implements OnInit, AfterViewInit, OnDestr
         this.markAsRead(msg.id);
       }
     }
+  }
+
+  showReply(id: string): boolean {
+    return this.replyOpen()[id] || false;
+  }
+
+  openReply(msg: Message): void {
+    this.replyOpen.update(state => ({ ...state, [msg.id]: true }));
+  }
+
+  closeReply(id: string): void {
+    this.replyOpen.update(state => ({ ...state, [id]: false }));
+  }
+
+  replyBody(id: string): string {
+    return this.replyBodies()[id] || '';
+  }
+
+  setReplyBody(id: string, value: string): void {
+    this.replyBodies.update(state => ({ ...state, [id]: value }));
+  }
+
+  sendReply(msg: Message, body: string): void {
+    if (!body.trim()) return;
+    const subject = msg.subject.startsWith('Re:') ? msg.subject : `Re: ${msg.subject}`;
+    this.messagesService.replyMessage(msg.id, msg.email, subject, body).subscribe({
+      next: () => {
+        this.closeReply(msg.id);
+        this.setReplyBody(msg.id, '');
+      },
+    });
   }
 
   markAsRead(id: string): void {

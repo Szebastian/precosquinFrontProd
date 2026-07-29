@@ -57,6 +57,10 @@ export class MessagesService {
     return this.http.patch<{ message: string }>(`${this.apiUrl}${id}/read`, null);
   }
 
+  replyMessage(id: string, to: string, subject: string, body: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}${id}/reply`, { to, subject, body });
+  }
+
   deleteMessage(id: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}${id}`);
   }
