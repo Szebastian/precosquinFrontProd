@@ -585,14 +585,14 @@ interface NewsItem {
 
     .bg-blue {
       background-color: var(--brand-500);
-      background-image: url('/assets/img/simbolAzul.png');
+      background-image: url('/assets/img/simbolAzul.webp');
       background-size: cover;
       background-position: center;
     }
     .bg-gold {
       background-color: var(--brand-accent);
       color: var(--gray-900) !important;
-      background-image: url('/assets/img/simbolMostaza.png');
+      background-image: url('/assets/img/simbolMostaza.webp');
       background-size: cover;
       background-position: center;
     }
@@ -1582,7 +1582,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
   ];
 
   thumbImagePresets = [
-    { value: 'assets/img/cruzBaila.png', label: 'Cruz' },
+    { value: 'assets/img/cruzBaila.webp', label: 'Cruz' },
     { value: 'assets/img/logoballena.webp', label: 'Ballena' },
   ];
 
@@ -1648,7 +1648,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
       image: '',
       imagePosition: 'center center',
       thumbType: 'img',
-      thumbSrc: 'assets/img/cruzBaila.png',
+      thumbSrc: 'assets/img/cruzBaila.webp',
       thumbBg: 'bg-blue'
     };
   }

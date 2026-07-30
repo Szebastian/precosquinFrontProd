@@ -6,7 +6,7 @@ import { Component, input } from '@angular/core';
   template: `
     <div class="section-separator" [class.separator-diagonal]="variant() === 'diagonal'">
       <div class="separator-bg">
-        <img src="assets/img/separador.png" alt="" class="separator-img" />
+        <img src="assets/img/separador.webp" alt="" class="separator-img" />
         <div class="separator-overlay" [class.separator-overlay-dark]="variant() === 'diagonal'"></div>
       </div>
       <div class="separator-content" [class.separator-content-sm]="variant() === 'diagonal'">

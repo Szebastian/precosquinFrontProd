@@ -120,8 +120,8 @@ export interface NewsItem {
     .news-item-title { font-size: var(--text-base); font-family: var(--font-sans); font-weight: var(--weight-bold); color: var(--gray-800); line-height: 1.4; margin: 0; }
     .news-item-thumb { width: 120px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; }
     .news-item-thumb img { width: 100%; height: 100%; object-fit: contain; padding: var(--space-2); }
-    .bg-blue { background-color: var(--brand-500); background-image: url('/assets/img/simbolAzul.png'); background-size: cover; background-position: center; }
-    .bg-gold { background-color: var(--brand-accent); color: var(--gray-900) !important; background-image: url('/assets/img/simbolMostaza.png'); background-size: cover; background-position: center; }
+    .bg-blue { background-color: var(--brand-500); background-image: url('/assets/img/simbolAzul.webp'); background-size: cover; background-position: center; }
+    .bg-gold { background-color: var(--brand-accent); color: var(--gray-900) !important; background-image: url('/assets/img/simbolMostaza.webp'); background-size: cover; background-position: center; }
     .bg-gray { background-color: var(--gray-400); color: var(--gray-900) !important; }
     .news-item-active { border-left: 4px solid var(--brand-600) !important; background-color: var(--brand-50) !important; box-shadow: var(--shadow-md); }
     .news-item-active .news-item-title { color: var(--brand-700); }

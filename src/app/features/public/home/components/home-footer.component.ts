@@ -11,9 +11,9 @@ import { RouterLink } from '@angular/router';
         <div class="sponsors-inner">
           <span class="sponsors-label">COLABORAN</span>
           <div class="sponsors-grid">
-            <img src="assets/img/LPiramides.png" alt="Puerto Pirámides" class="sponsor-logo" />
-            <img src="assets/img/LRayentray.png" alt="Hotel Rayentray" class="sponsor-logo" />
-            <img src="assets/img/LHydro.png" alt="Hydro" class="sponsor-logo" />
+            <img src="assets/img/LPiramides.webp" alt="Puerto Pirámides" class="sponsor-logo" />
+            <img src="assets/img/LRayentray.webp" alt="Hotel Rayentray" class="sponsor-logo" />
+            <img src="assets/img/LHydro.webp" alt="Hydro" class="sponsor-logo" />
           </div>
         </div>
       </div>
