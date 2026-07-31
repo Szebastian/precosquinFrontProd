@@ -1,4 +1,4 @@
-import { Component, input, signal, computed, inject, NgZone, OnDestroy, ChangeDetectionStrategy, effect } from '@angular/core';
+import { Component, input, signal, computed, inject, NgZone, OnInit, OnDestroy, ChangeDetectionStrategy, effect } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
@@ -213,7 +213,7 @@ function resolveUrlStatic(path: string): string {
     }
   `]
 })
-export class NewsCarouselComponent implements OnDestroy {
+export class NewsCarouselComponent implements OnInit, OnDestroy {
   private sanitizer = inject(DomSanitizer);
   private ngZone = inject(NgZone);
 
@@ -227,13 +227,16 @@ export class NewsCarouselComponent implements OnDestroy {
   private _resolvedThumbs = signal<Map<number, string>>(new Map());
   resolvedThumbs = this._resolvedThumbs.asReadonly();
 
-  private _featuredBg = signal('');
-  featuredBg = this._featuredBg.asReadonly();
-
   activeNews = computed<NewsItem | undefined>(() => {
     const items = this.newsItems();
     const index = this.activeIndex();
     return items.length > 0 && index >= 0 && index < items.length ? items[index] : undefined;
+  });
+
+  featuredBg = computed(() => {
+    const news = this.activeNews();
+    if (!news?.image) return '';
+    return `url(${resolveUrlStatic(news.image)})`;
   });
 
   constructor() {
@@ -246,34 +249,21 @@ export class NewsCarouselComponent implements OnDestroy {
         }
       }
       this._resolvedThumbs.set(thumbMap);
-
-      if (items.length > 0) {
-        const img = resolveUrlStatic(items[0].image);
-        this._featuredBg.set(img ? `url(${img})` : '');
-      }
-
-      this.activeIndex();
-      this._updateFeaturedBg();
     });
   }
 
-  ngOnDestroy(): void { this.stopCarousel(); this.autoPlayInterval = null; }
+  ngOnInit(): void { this.startCarousel(); }
+  ngOnDestroy(): void { this.stopCarousel(); }
 
   sanitizeHtml(html: string): SafeHtml { return this.sanitizer.bypassSecurityTrustHtml(html); }
 
-  private _updateFeaturedBg(): void {
-    const news = this.activeNews();
-    if (news) {
-      const img = resolveUrlStatic(news.image);
-      this._featuredBg.set(img ? `url(${img})` : '');
-    }
-  }
-
-  startCarousel(): void {
+  private startCarousel(): void {
     this.stopCarousel();
     this.ngZone.runOutsideAngular(() => {
       this.autoPlayInterval = setInterval(() => {
-        if (!this.isPaused) this.nextSlide();
+        if (!this.isPaused) {
+          this.ngZone.run(() => this.nextSlide());
+        }
       }, 5000);
     });
   }
@@ -297,14 +287,11 @@ export class NewsCarouselComponent implements OnDestroy {
 
   selectNews(index: number): void {
     if (index === this.activeIndex()) return;
-    this.ngZone.run(() => {
-      this.isTransitioning.set(true);
-      setTimeout(() => {
-        this.activeIndex.set(index);
-        this._updateFeaturedBg();
-        this.isTransitioning.set(false);
-      }, 200);
-      this.startCarousel();
-    });
+    this.isTransitioning.set(true);
+    this.startCarousel();
+    setTimeout(() => {
+      this.activeIndex.set(index);
+      this.isTransitioning.set(false);
+    }, 200);
   }
 }
