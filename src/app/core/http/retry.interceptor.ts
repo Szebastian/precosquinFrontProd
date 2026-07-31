@@ -8,10 +8,10 @@ export const retryInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (maxRetries === 0) {
     return next(req).pipe(
-      timeout(60000),
+      timeout(90000),
       catchError((error) => {
         if (error.name === 'TimeoutError') {
-          return throwError(() => ({ status: 0, error: { message: 'El servidor tardó demasiado en responder' } }));
+          return throwError(() => ({ status: 0, error: { message: 'El servidor tardó demasiado en responder. Verificá si la operación se completó.' } }));
         }
         return throwError(() => error);
       })

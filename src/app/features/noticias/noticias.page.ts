@@ -5,7 +5,6 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IMAGE_PATHS } from '../../shared/constants/image-paths';
-import { timeout, catchError, throwError } from 'rxjs';
 
 interface NewsItem {
   id?: number;
@@ -1687,15 +1686,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
 
     const payload = this.editingId() ? { ...this.form, id: this.editingId() } : this.form;
 
-    this.http.post<NewsItem>(`${environment.apiUrl}/news`, payload).pipe(
-      timeout(60000),
-      catchError((err) => {
-        if (err.name === 'TimeoutError') {
-          return throwError(() => ({ status: 0, error: { detail: 'El servidor tardó demasiado. Verificá si la noticia se guardó y recargue la página.' } }));
-        }
-        return throwError(() => err);
-      })
-    ).subscribe({
+    this.http.post<NewsItem>(`${environment.apiUrl}/news`, payload).subscribe({
       next: () => {
         this.saving.set(false);
         this.closeModal();
@@ -1704,7 +1695,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.saving.set(false);
-        this.errorMsg.set(err.error?.detail || 'Error al guardar la noticia');
+        this.errorMsg.set(err.error?.detail || err.error?.message || 'Error al guardar la noticia');
       }
     });
   }
