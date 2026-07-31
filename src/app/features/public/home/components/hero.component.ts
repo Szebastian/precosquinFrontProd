@@ -9,7 +9,6 @@ import {
   OnDestroy,
   ChangeDetectionStrategy,
   effect,
-  ElementRef,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
@@ -42,7 +41,7 @@ interface NormalizedNewsItem {
   imageUrl: string;
   imagePosition: string;
   thumbType: 'img' | 'icon';
-  thumbUrl: string;
+  badgeUrl: string;
   thumbBg: string;
   safeThumbHtml: SafeHtml | null;
 }
@@ -56,7 +55,6 @@ interface NormalizedNewsItem {
 })
 export class HeroCarouselComponent implements OnInit, OnDestroy {
   private readonly ngZone = inject(NgZone);
-  private readonly hostEl = inject(ElementRef<HTMLElement>);
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly newsItems = input.required<NewsItem[]>();
@@ -73,6 +71,11 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
     return list[i] ?? undefined;
   });
 
+  readonly featuredBg = computed(() => {
+    const news = this.activeNews();
+    return news?.imageUrl ? `url(${news.imageUrl})` : '';
+  });
+
   private autoPlayTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
@@ -85,40 +88,13 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
         imageUrl: resolveUrl(item.image),
         imagePosition: item.imagePosition || 'center center',
         thumbType: item.thumbType,
-        thumbUrl: item.thumbType === 'img' ? resolveUrl(item.thumbSrc) : '',
+        badgeUrl: item.thumbType === 'img' ? resolveUrl(item.thumbSrc) : '',
         thumbBg: item.thumbBg,
         safeThumbHtml: item.thumbType === 'icon'
           ? this.sanitizer.bypassSecurityTrustHtml(item.thumbSrc)
           : null,
       }));
       this._items.set(normalized);
-    });
-
-    effect(() => {
-      const news = this.activeNews();
-      const el = (this.hostEl.nativeElement as HTMLElement).querySelector<HTMLElement>('.featured-news');
-      if (!el) return;
-      const url = news?.imageUrl ? `url(${news.imageUrl})` : '';
-      if (el.style.backgroundImage !== url) {
-        el.style.backgroundImage = url;
-      }
-      const pos = news?.imagePosition || 'center center';
-      if (el.style.backgroundPosition !== pos) {
-        el.style.backgroundPosition = pos;
-      }
-    });
-
-    effect(() => {
-      const list = this.items();
-      const container = this.hostEl.nativeElement as HTMLElement;
-      const imgs = container.querySelectorAll<HTMLImageElement>('.news-badge img[data-hero-thumb]');
-      imgs.forEach((img: HTMLImageElement, i: number) => {
-        if (i < list.length && list[i].thumbType === 'img' && list[i].thumbUrl) {
-          if (img.getAttribute('src') !== list[i].thumbUrl) {
-            img.setAttribute('src', list[i].thumbUrl);
-          }
-        }
-      });
     });
   }
 
