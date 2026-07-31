@@ -54,6 +54,8 @@ import { BackToTopComponent } from '../../../shared/components/back-to-top/back-
 
       @defer (on idle) {
         <app-home-cta-banner />
+      } @loading (minimum 500ms) {
+        <div style="height: 120px;"></div>
       }
       @defer (on idle) {
         <app-home-separator variant="diagonal">
@@ -74,6 +76,8 @@ import { BackToTopComponent } from '../../../shared/components/back-to-top/back-
             </div>
           </div>
         </app-home-separator>
+      } @loading (minimum 500ms) {
+        <div style="height: 300px;"></div>
       }
       @defer (on idle) {
         <app-home-scoreboard />
@@ -82,6 +86,8 @@ import { BackToTopComponent } from '../../../shared/components/back-to-top/back-
       }
       @defer (on idle) {
         <app-home-declaracion-hero />
+      } @loading (minimum 500ms) {
+        <div style="height: 200px;"></div>
       }
       @defer (on idle) {
         <app-home-footer />
