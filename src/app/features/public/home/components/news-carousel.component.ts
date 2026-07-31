@@ -81,7 +81,7 @@ export interface NewsItem {
               </div>
               <div class="news-item-thumb" [ngClass]="item.thumbBg">
                 @if (item.thumbType === 'img') {
-                  <img [src]="item.thumbSrc" [alt]="item.title" width="120" height="120" loading="lazy" decoding="async" />
+                  <img [src]="item.thumbSrc" [alt]="item.title" width="80" height="80" loading="lazy" decoding="async" />
                 } @else {
                   <span [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
                 }
@@ -128,21 +128,35 @@ export interface NewsItem {
       background-color: var(--brand-accent); color: var(--gray-900); padding: 0.2rem 0.6rem; border-radius: var(--radius-sm); display: inline-block; margin-bottom: var(--space-3);
     }
     .featured-title { font-size: var(--text-3xl); color: white; line-height: 1.2; margin: 0; }
-    .secondary-news { display: flex; flex-direction: column; gap: var(--space-4); }
+    .secondary-news { display: flex; flex-direction: column; gap: var(--space-3); }
     .news-item {
-      display: flex; background: white; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm);
-      height: calc(33.333% - 0.7rem); min-height: 120px; cursor: pointer; transition: all var(--transition-base);
-      border: 1px solid var(--gray-200); text-decoration: none; color: inherit;
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+      background: white; border-radius: 12px; overflow: hidden;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      padding: var(--space-3);
+      min-height: 88px; cursor: pointer;
+      text-decoration: none; color: inherit;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .news-item:hover { box-shadow: var(--shadow-md); transform: translateX(-4px); border-left: 4px solid var(--brand-500); }
-    .news-item-content { flex: 1; padding: var(--space-4); display: flex; align-items: center; }
-    .news-item-title { font-size: var(--text-base); font-family: var(--font-sans); font-weight: var(--weight-bold); color: var(--gray-800); line-height: 1.4; margin: 0; }
-    .news-item-thumb { width: 120px; height: 120px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden; }
-    .news-item-thumb img { width: 100%; height: 100%; object-fit: contain; padding: var(--space-2); }
+    .news-item:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .news-item:focus-visible { outline: 3px solid var(--brand-400); outline-offset: 2px; }
+    .news-item-content { flex: 1; min-width: 0; }
+    .news-item-title {
+      font-size: var(--text-sm); font-family: var(--font-sans); font-weight: var(--weight-semibold);
+      color: var(--gray-800); line-height: 1.4; margin: 0;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .news-item-thumb {
+      width: 80px; height: 80px; flex-shrink: 0;
+      border-radius: var(--radius-md); overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      color: white; background-color: var(--gray-300);
+    }
+    .news-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .bg-blue { background-color: var(--brand-500); background-image: url('/assets/img/simbolAzul.webp'); background-size: cover; background-position: center; }
     .bg-gold { background-color: var(--brand-accent); color: var(--gray-900) !important; background-image: url('/assets/img/simbolMostaza.webp'); background-size: cover; background-position: center; }
     .bg-gray { background-color: var(--gray-400); color: var(--gray-900) !important; }
-    .news-item-active { border-left: 4px solid var(--brand-600) !important; background-color: var(--brand-50) !important; box-shadow: var(--shadow-md); }
+    .news-item-active { background-color: var(--brand-50) !important; border: 1px solid var(--brand-300); box-shadow: var(--shadow-md); }
     .news-item-active .news-item-title { color: var(--brand-700); }
     .featured-fade { transition: opacity 0.2s ease; }
     .featured-fade.fade-in { opacity: 1; }
