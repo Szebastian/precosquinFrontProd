@@ -1,6 +1,5 @@
 import { Component, input, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgClass } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 export interface NewsItem {
@@ -17,7 +16,7 @@ export interface NewsItem {
 @Component({
   selector: 'app-news-carousel',
   standalone: true,
-  imports: [RouterLink, NgClass],
+  imports: [RouterLink],
   template: `
     <div class="news-grid" (mouseenter)="isPaused = true" (mouseleave)="isPaused = false">
       @if (newsItems().length === 0) {
@@ -79,9 +78,9 @@ export interface NewsItem {
               <div class="news-item-content">
                 <h3 class="news-item-title">{{ item.title }}</h3>
               </div>
-              <div class="news-item-thumb" [ngClass]="item.thumbBg">
+              <div class="news-item-thumb">
                 @if (item.thumbType === 'img') {
-                  <img [src]="item.thumbSrc" [alt]="item.title" width="72" height="72" loading="lazy" decoding="async" />
+                  <img [src]="item.thumbSrc" [alt]="item.title" width="90" height="90" loading="lazy" decoding="async" />
                 } @else {
                   <span [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
                 }
@@ -133,35 +132,32 @@ export interface NewsItem {
       display: flex; flex-direction: column; justify-content: space-between; height: 100%;
     }
     .news-item {
-      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-      flex: 1;
-      background: #ffffff; border-radius: 12px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--gray-200);
-      padding: 1rem;
+      display: flex; align-items: stretch; justify-content: space-between;
+      flex: 1; min-height: 0;
+      background-color: #ffffff; border-radius: 12px; overflow: hidden;
       cursor: pointer;
       text-decoration: none; color: inherit;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .news-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
-    .news-item:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
-    .news-item-content { flex: 1; min-width: 0; }
+    .news-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); transform: translateY(-2px); }
+    .news-item:focus-visible { outline: 3px solid #3b82f6; outline-offset: 2px; }
+    .news-item-content {
+      flex: 1; padding: 1.25rem 1rem;
+      display: flex; align-items: center; justify-content: flex-start; text-align: left;
+    }
     .news-item-title {
-      font-size: var(--text-sm); font-family: var(--font-sans); font-weight: var(--weight-semibold);
-      color: var(--gray-800); line-height: 1.4; margin: 0;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+      font-size: 0.9rem; font-weight: 600; line-height: 1.35; color: #1e293b; margin: 0;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
     .news-item-thumb {
-      width: 72px; height: 72px; min-width: 72px; flex-shrink: 0;
-      border-radius: 8px; overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-      color: white; background-color: var(--gray-300);
+      width: 90px; flex-shrink: 0;
+      background-color: #3b82f6;
+      display: flex; align-items: center; justify-content: center; padding: 0.5rem;
     }
-    .news-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .bg-blue { background-color: var(--brand-500); background-image: url('/assets/img/simbolAzul.webp'); background-size: cover; background-position: center; }
-    .bg-gold { background-color: var(--brand-accent); color: var(--gray-900) !important; background-image: url('/assets/img/simbolMostaza.webp'); background-size: cover; background-position: center; }
-    .bg-gray { background-color: var(--gray-400); color: var(--gray-900) !important; }
-    .news-item-active { background-color: #f0f7ff; border: 2px solid #2563eb; box-shadow: 0 2px 8px rgba(37,99,235,0.12); }
-    .news-item-active .news-item-title { color: #1e3a8a; }
+    .news-item-thumb img { width: 100%; height: 100%; object-fit: contain; }
+
+    .news-item-active { background-color: #f0f7ff; border: 2px solid #3b82f6; }
+    .news-item-active .news-item-title { color: #1d4ed8; font-weight: 700; }
     .featured-fade { transition: opacity 0.2s ease; }
     .featured-fade.fade-in { opacity: 1; }
     .featured-fade:not(.fade-in) { opacity: 0; }
