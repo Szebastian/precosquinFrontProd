@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+
+const API_BASE = environment.apiUrl.replace(/\/v1\/?$/, '');
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IMAGE_PATHS } from '../../shared/constants/image-paths';
 
@@ -69,7 +71,7 @@ interface NewsItem {
         } @else {
           @for (item of newsList(); track item.id) {
             <div class="news-card" [class.news-card-deleting]="deletingId() === item.id">
-              <div class="news-card-img-wrapper" [style.background-image]="'url(' + item.image + ')'" [style.background-position]="item.imagePosition || 'center center'">
+              <div class="news-card-img-wrapper" [style.background-image]="'url(' + resolveUrl(item.image) + ')'" [style.background-position]="item.imagePosition || 'center center'">
                 <div class="news-card-overlay"></div>
                 <span class="news-card-badge">{{ item.category }}</span>
                 <div class="news-card-actions-top">
@@ -83,7 +85,7 @@ interface NewsItem {
                 <div class="news-card-footer">
                   <div class="news-thumb-preview" [ngClass]="item.thumbBg">
                     @if (item.thumbType === 'img') {
-                      <img [src]="item.thumbSrc" alt="thumbnail" />
+                      <img [src]="resolveUrl(item.thumbSrc)" alt="thumbnail" />
                     } @else {
                       <span [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
                     }
@@ -1595,6 +1597,13 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
 
   sanitizeHtml(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
+  resolveUrl(path: string): string {
+    if (!path) return path;
+    if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('assets/')) return path;
+    if (path.startsWith('/v1/')) return API_BASE + path;
+    return path;
   }
 
   focalPositions = [

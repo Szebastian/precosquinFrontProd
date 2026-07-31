@@ -3,6 +3,8 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
+const API_BASE = environment.apiUrl.replace(/\/v1\/?$/, '');
+
 interface NewsItem {
   id: number;
   category: string;
@@ -76,7 +78,7 @@ interface NewsItem {
           <article class="detail-article">
 
             <!-- HERO IMAGE -->
-            <div class="detail-hero" [style.background-image]="'url(' + (item()?.image || '') + ')'" [style.background-position]="item()?.imagePosition || 'center center'">
+            <div class="detail-hero" [style.background-image]="'url(' + resolveUrl(item()?.image || '') + ')'" [style.background-position]="item()?.imagePosition || 'center center'">
               <div class="detail-hero-overlay"></div>
               <div class="detail-hero-content">
                 <a routerLink="/noticias" class="back-link">
@@ -116,7 +118,7 @@ interface NewsItem {
                   
                   @if (item()?.image) {
                     <div class="full-article-image" style="margin-top: 32px; text-align: center;">
-                      <img [src]="item()?.image" alt="Imagen completa de la noticia" loading="lazy" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid var(--gray-200);" />
+                      <img [src]="resolveUrl(item()?.image || '')" alt="Imagen completa de la noticia" loading="lazy" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid var(--gray-200);" />
                     </div>
                   }
                 </div>
@@ -626,6 +628,13 @@ export class NoticiaDetailPageComponent implements OnInit {
   loading = signal(true);
 
   parsedDescription = signal<{ type: string; text?: string; items?: string[] }[]>([]);
+
+  resolveUrl(path: string): string {
+    if (!path) return path;
+    if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('assets/')) return path;
+    if (path.startsWith('/v1/')) return API_BASE + path;
+    return path;
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));

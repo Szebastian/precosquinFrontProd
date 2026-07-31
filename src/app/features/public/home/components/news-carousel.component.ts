@@ -1,6 +1,9 @@
 import { Component, input, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { environment } from '../../../../../environments/environment';
+
+const API_BASE = environment.apiUrl.replace(/\/v1\/?$/, '');
 
 export interface NewsItem {
   id: number;
@@ -39,7 +42,7 @@ export interface NewsItem {
         <a
           routerLink="/noticias"
           class="featured-news"
-          [style.background-image]="'url(' + activeNews()?.image + ')'"
+          [style.background-image]="'url(' + resolveUrl(activeNews()?.image || '') + ')'"
           [style.background-position]="activeNews()?.imagePosition || 'center center'"
         >
           <div class="featured-overlay"></div>
@@ -80,7 +83,7 @@ export interface NewsItem {
               </div>
               <div class="news-badge">
                 @if (item.thumbType === 'img') {
-                  <img [src]="item.thumbSrc" [alt]="item.title" width="90" height="90" loading="lazy" decoding="async" />
+                  <img [src]="resolveUrl(item.thumbSrc)" [alt]="item.title" width="90" height="90" loading="lazy" decoding="async" />
                 } @else {
                   <span class="news-badge-icon" [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
                 }
@@ -222,6 +225,13 @@ export class NewsCarouselComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void { this.stopCarousel(); }
 
   sanitizeHtml(html: string): SafeHtml { return this.sanitizer.bypassSecurityTrustHtml(html); }
+
+  resolveUrl(path: string): string {
+    if (!path) return path;
+    if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('assets/')) return path;
+    if (path.startsWith('/v1/')) return API_BASE + path;
+    return path;
+  }
 
   startCarousel(): void {
     this.stopCarousel();

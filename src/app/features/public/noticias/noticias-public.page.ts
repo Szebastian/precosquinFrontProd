@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 
+const API_BASE = environment.apiUrl.replace(/\/v1\/?$/, '');
+
 interface NewsItem {
   id: number;
   category: string;
@@ -109,7 +111,7 @@ interface NewsItem {
               @for (item of newsList(); track item.id; let i = $index) {
                 @if (i > 0) {
                   <article class="article-card">
-                    <div class="article-card-img" [style.background-image]="'url(' + item.image + ')'" [style.background-position]="item.imagePosition || 'center center'">
+                    <div class="article-card-img" [style.background-image]="'url(' + resolveUrl(item.image) + ')'" [style.background-position]="item.imagePosition || 'center center'">
                       <div class="article-card-overlay"></div>
                       <span class="article-card-badge">{{ item.category }}</span>
                     </div>
@@ -573,6 +575,13 @@ export class NoticiasPublicPageComponent implements OnInit {
   private http = inject(HttpClient);
   newsList = signal<NewsItem[]>([]);
   loading = signal(true);
+
+  resolveUrl(path: string): string {
+    if (!path) return path;
+    if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('assets/')) return path;
+    if (path.startsWith('/v1/')) return API_BASE + path;
+    return path;
+  }
 
   ngOnInit(): void {
     this.http.get<NewsItem[]>(`${environment.apiUrl}/news/`).subscribe({
