@@ -2,7 +2,7 @@ import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@ang
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { HomeHeaderComponent } from './components/home-header.component';
-import { NewsCarouselComponent, NewsItem } from './components/news-carousel.component';
+import { HeroCarouselComponent, NewsItem } from './components/hero.component';
 import { HomeComponentSeparatorComponent } from './components/home-separator.component';
 import { HomeCtaBannerComponent } from './components/home-cta-banner.component';
 import { HomeDeclaracionHeroComponent } from './components/home-declaracion-hero.component';
@@ -16,7 +16,7 @@ import { BackToTopComponent } from '../../../shared/components/back-to-top/back-
   standalone: true,
   imports: [
     HomeHeaderComponent,
-    NewsCarouselComponent,
+    HeroCarouselComponent,
     HomeComponentSeparatorComponent,
     HomeCtaBannerComponent,
     HomeDeclaracionHeroComponent,
