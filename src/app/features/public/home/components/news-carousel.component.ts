@@ -30,8 +30,8 @@ export interface NewsItem {
         <aside class="secondary-news">
           @for (i of [1, 2, 3]; track i) {
             <div class="news-item skeleton-card">
-              <div class="news-item-content"><div class="skeleton-text-line"></div></div>
-              <div class="news-item-thumb skeleton-thumb"></div>
+              <div class="news-body"><div class="skeleton-text-line"></div></div>
+              <div class="news-badge skeleton-thumb"></div>
             </div>
           }
         </aside>
@@ -75,14 +75,14 @@ export interface NewsItem {
               role="button"
               [attr.aria-label]="'Seleccionar: ' + item.title"
             >
-              <div class="news-item-content">
-                <h3 class="news-item-title">{{ item.title }}</h3>
+              <div class="news-body">
+                <h3 class="news-title">{{ item.title }}</h3>
               </div>
-              <div class="news-item-thumb">
+              <div class="news-badge">
                 @if (item.thumbType === 'img') {
                   <img [src]="item.thumbSrc" [alt]="item.title" width="90" height="90" loading="lazy" decoding="async" />
                 } @else {
-                  <span [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
+                  <span class="news-badge-icon" [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
                 }
               </div>
             </a>
@@ -141,23 +141,26 @@ export interface NewsItem {
     }
     .news-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); transform: translateY(-2px); }
     .news-item:focus-visible { outline: 3px solid #3b82f6; outline-offset: 2px; }
-    .news-item-content {
-      flex: 1; padding: 1.25rem 1rem;
+    .news-body {
+      flex: 1; min-width: 0; padding: 1.25rem 1rem;
       display: flex; align-items: center; justify-content: flex-start; text-align: left;
+      overflow: hidden;
     }
-    .news-item-title {
+    .news-title {
       font-size: 0.9rem; font-weight: 600; line-height: 1.35; color: #1e293b; margin: 0;
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
-    .news-item-thumb {
-      width: 90px; flex-shrink: 0;
+    .news-badge {
+      width: 90px; height: 90px; min-width: 90px; flex-shrink: 0;
       background-color: #3b82f6;
       display: flex; align-items: center; justify-content: center; padding: 0.5rem;
+      overflow: hidden;
     }
-    .news-item-thumb img { width: 100%; height: 100%; object-fit: contain; }
-
+    .news-badge img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .news-badge-icon { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden; }
+    .news-badge-icon :deep(svg) { width: 100%; height: 100%; }
     .news-item-active { background-color: #f0f7ff; border: 2px solid #3b82f6; }
-    .news-item-active .news-item-title { color: #1d4ed8; font-weight: 700; }
+    .news-item-active .news-title { color: #1d4ed8; font-weight: 700; }
     .featured-fade { transition: opacity 0.2s ease; }
     .featured-fade.fade-in { opacity: 1; }
     .featured-fade:not(.fade-in) { opacity: 0; }
