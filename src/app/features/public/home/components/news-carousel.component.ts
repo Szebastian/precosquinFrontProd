@@ -20,58 +20,76 @@ export interface NewsItem {
   imports: [RouterLink, NgClass],
   template: `
     <div class="news-grid" (mouseenter)="isPaused = true" (mouseleave)="isPaused = false">
-      <a
-        routerLink="/noticias"
-        class="featured-news"
-         [style.background-image]="'url(' + activeNews()?.image + ')'"
-        [style.background-position]="activeNews()?.imagePosition || 'center center'"
-      >
-        <div class="featured-overlay"></div>
-        <div class="featured-content featured-fade" [class.fade-in]="!isTransitioning()">
-          <span class="news-category">{{ activeNews()?.category }}</span>
-          <h1 class="featured-title">{{ activeNews()?.title }}</h1>
+      @if (newsItems().length === 0) {
+        <div class="featured-news featured-skeleton">
+          <div class="skeleton-pulse"></div>
+          <div class="skeleton-text-group">
+            <div class="skeleton-badge"></div>
+            <div class="skeleton-title"></div>
+          </div>
         </div>
-        <div class="carousel-dots">
-          @for (item of newsItems(); track item.id) {
-            <button
-              class="dot"
-              [class.dot-active]="activeIndex() === $index"
-              (click)="selectNews($index); $event.preventDefault(); $event.stopPropagation()"
-              [attr.aria-label]="'Ver noticia ' + ($index + 1)"
-            ></button>
+        <aside class="secondary-news">
+          @for (i of [1, 2, 3]; track i) {
+            <div class="news-item skeleton-card">
+              <div class="news-item-content"><div class="skeleton-text-line"></div></div>
+              <div class="news-item-thumb skeleton-thumb"></div>
+            </div>
           }
-        </div>
-        <button class="carousel-arrow carousel-prev" (click)="prevSlide(); $event.preventDefault(); $event.stopPropagation()" aria-label="Anterior">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <button class="carousel-arrow carousel-next" (click)="nextSlide(); $event.preventDefault(); $event.stopPropagation()" aria-label="Siguiente">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-      </a>
+        </aside>
+      } @else {
+        <a
+          routerLink="/noticias"
+          class="featured-news"
+          [style.background-image]="'url(' + activeNews()?.image + ')'"
+          [style.background-position]="activeNews()?.imagePosition || 'center center'"
+        >
+          <div class="featured-overlay"></div>
+          <div class="featured-content featured-fade" [class.fade-in]="!isTransitioning()">
+            <span class="news-category">{{ activeNews()?.category }}</span>
+            <h2 class="featured-title">{{ activeNews()?.title }}</h2>
+          </div>
+          <div class="carousel-dots">
+            @for (item of newsItems(); track item.id) {
+              <button
+                class="dot"
+                [class.dot-active]="activeIndex() === $index"
+                (click)="selectNews($index); $event.preventDefault(); $event.stopPropagation()"
+                [attr.aria-label]="'Ver noticia ' + ($index + 1)"
+              ></button>
+            }
+          </div>
+          <button class="carousel-arrow carousel-prev" (click)="prevSlide(); $event.preventDefault(); $event.stopPropagation()" aria-label="Anterior">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button class="carousel-arrow carousel-next" (click)="nextSlide(); $event.preventDefault(); $event.stopPropagation()" aria-label="Siguiente">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </a>
 
-      <aside class="secondary-news">
-        @for (item of newsItems(); track item.id; let i = $index) {
-          <a
-            routerLink="/noticias"
-            class="news-item"
-            [class.news-item-active]="activeIndex() === i"
-            (click)="selectNews(i); $event.preventDefault(); $event.stopPropagation()"
-            role="button"
-            [attr.aria-label]="'Seleccionar: ' + item.title"
-          >
-            <div class="news-item-content">
-              <h3 class="news-item-title">{{ item.title }}</h3>
-            </div>
-            <div class="news-item-thumb" [ngClass]="item.thumbBg">
-              @if (item.thumbType === 'img') {
-                <img [src]="item.thumbSrc" [alt]="item.title" loading="lazy" />
-              } @else {
-                <span [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
-              }
-            </div>
-          </a>
-        }
-      </aside>
+        <aside class="secondary-news">
+          @for (item of newsItems(); track item.id; let i = $index) {
+            <a
+              routerLink="/noticias"
+              class="news-item"
+              [class.news-item-active]="activeIndex() === i"
+              (click)="selectNews(i); $event.preventDefault(); $event.stopPropagation()"
+              role="button"
+              [attr.aria-label]="'Seleccionar: ' + item.title"
+            >
+              <div class="news-item-content">
+                <h3 class="news-item-title">{{ item.title }}</h3>
+              </div>
+              <div class="news-item-thumb" [ngClass]="item.thumbBg">
+                @if (item.thumbType === 'img') {
+                  <img [src]="item.thumbSrc" [alt]="item.title" width="120" height="120" loading="lazy" decoding="async" />
+                } @else {
+                  <span [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
+                }
+              </div>
+            </a>
+          }
+        </aside>
+      }
     </div>
   `,
   styles: [`
@@ -85,6 +103,7 @@ export interface NewsItem {
       position: relative;
       border-radius: var(--radius-xl);
       overflow: hidden;
+      background-color: var(--gray-200, #e2e8f0);
       background-size: cover;
       background-position: 50% 20%;
       background-repeat: no-repeat;
@@ -118,7 +137,7 @@ export interface NewsItem {
     .news-item:hover { box-shadow: var(--shadow-md); transform: translateX(-4px); border-left: 4px solid var(--brand-500); }
     .news-item-content { flex: 1; padding: var(--space-4); display: flex; align-items: center; }
     .news-item-title { font-size: var(--text-base); font-family: var(--font-sans); font-weight: var(--weight-bold); color: var(--gray-800); line-height: 1.4; margin: 0; }
-    .news-item-thumb { width: 120px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; }
+    .news-item-thumb { width: 120px; height: 120px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden; }
     .news-item-thumb img { width: 100%; height: 100%; object-fit: contain; padding: var(--space-2); }
     .bg-blue { background-color: var(--brand-500); background-image: url('/assets/img/simbolAzul.webp'); background-size: cover; background-position: center; }
     .bg-gold { background-color: var(--brand-accent); color: var(--gray-900) !important; background-image: url('/assets/img/simbolMostaza.webp'); background-size: cover; background-position: center; }
@@ -144,6 +163,22 @@ export interface NewsItem {
     .carousel-arrow:hover { background: rgba(255,255,255,0.4); transform: translateY(-50%) scale(1.1); }
     .carousel-prev { left: var(--space-4); }
     .carousel-next { right: var(--space-4); }
+
+    .featured-skeleton { align-items: stretch; }
+    .skeleton-pulse {
+      position: absolute; inset: 0;
+      background: linear-gradient(110deg, var(--gray-200) 30%, var(--gray-100) 50%, var(--gray-200) 70%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .skeleton-text-group { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 8px; }
+    .skeleton-badge { width: 120px; height: 20px; border-radius: 4px; background: rgba(255,255,255,0.15); }
+    .skeleton-title { width: 80%; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.15); }
+    .skeleton-card { pointer-events: none; }
+    .skeleton-text-line { width: 70%; height: 14px; border-radius: 4px; background: var(--gray-200); }
+    .skeleton-thumb { background: var(--gray-200); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
     @media (max-width: 1024px) {
       .news-grid { grid-template-columns: 1fr; }
       .carousel-arrow { width: 34px; height: 34px; opacity: 1; background: rgba(255,255,255,0.3); }

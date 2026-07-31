@@ -11,16 +11,16 @@ import { RouterLink } from '@angular/router';
         <div class="sponsors-inner">
           <span class="sponsors-label">COLABORAN</span>
           <div class="sponsors-grid">
-            <img src="assets/img/LPiramides.webp" alt="Puerto Pirámides" class="sponsor-logo" />
-            <img src="assets/img/LRayentray.webp" alt="Hotel Rayentray" class="sponsor-logo" />
-            <img src="assets/img/LHydro.webp" alt="Hydro" class="sponsor-logo" />
+            <img src="assets/img/LPiramides.webp" alt="Puerto Pirámides" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <img src="assets/img/LRayentray.webp" alt="Hotel Rayentray" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <img src="assets/img/LHydro.webp" alt="Hydro" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>
 
       <div class="footer-main">
         <div class="footer-brand">
-          <img src="assets/img/logoballena.webp" alt="Precosquin" class="footer-logo" />
+          <img src="assets/img/logoballena.webp" alt="Precosquin" class="footer-logo" width="60" height="60" loading="lazy" decoding="async" />
           <div class="brand-text">
             <h4>Festival Folclórico</h4>
             <p>Puerto Pirámides, Chubut</p>

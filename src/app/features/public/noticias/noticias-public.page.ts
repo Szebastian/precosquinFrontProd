@@ -39,7 +39,7 @@ interface NewsItem {
         </div>
         <div class="header-inner">
           <div class="header-left">
-            <img src="assets/img/logoballena.webp" alt="Logo" class="header-logo" loading="lazy" />
+            <img src="assets/img/logoballena.webp" alt="Logo" class="header-logo" width="44" height="44" loading="lazy" />
             <div class="header-divider"></div>
             <div class="header-brand-text">
               <span class="header-brand-subtitle">PRE-COSQUÍN</span>
@@ -134,7 +134,7 @@ interface NewsItem {
       <footer class="portal-footer">
         <div class="footer-main">
           <div class="footer-brand">
-            <img src="assets/img/logoballena.webp" alt="Precosquin" class="footer-logo" loading="lazy" />
+            <img src="assets/img/logoballena.webp" alt="Precosquin" class="footer-logo" width="48" height="48" loading="lazy" />
             <div class="brand-text">
               <h4>Festival Folclórico</h4>
               <p>Puerto Pirámides, Chubut</p>

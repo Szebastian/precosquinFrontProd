@@ -24,7 +24,7 @@ import { RouterLink } from '@angular/router';
       </div>
       <div class="header-inner">
         <div class="header-left">
-          <img src="assets/img/logoballena.webp" alt="Logo" class="header-logo" />
+          <img src="assets/img/logoballena.webp" alt="Logo Precosquín" class="header-logo" width="40" height="40" fetchpriority="high" />
           <div class="header-divider"></div>
           <div class="header-brand-text">
             <span class="header-brand-subtitle">PRE-COSQUÍN</span>
@@ -51,9 +51,9 @@ import { RouterLink } from '@angular/router';
     </header>
   `,
   styles: [`
-    .portal-header { background-color: var(--brand-200); border-bottom: 2px solid var(--brand-500); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); transition: all 0.3s ease; }
+    .portal-header { background-color: var(--brand-200); border-bottom: 2px solid var(--brand-500); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); transition: background-color 0.3s ease, box-shadow 0.3s ease; }
     .portal-header.header-scrolled .header-inner { height: 56px; }
-    .portal-header.header-scrolled .header-logo { height: 32px; }
+    .portal-header.header-scrolled .header-logo { height: 32px; width: 32px; }
     .header-topbar { background-color: rgba(0, 0, 0, 0.05); border-bottom: 1px solid rgba(0, 0, 0, 0.08); height: 32px; display: flex; align-items: center; transition: all 0.3s ease; overflow: hidden; }
     .topbar-hidden { height: 0; opacity: 0; border-bottom: none; }
     .header-topbar-inner { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 var(--space-4); }
