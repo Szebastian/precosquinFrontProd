@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
+import { Component, signal, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment';
@@ -21,6 +21,7 @@ interface NewsItem {
   selector: 'app-noticias-public',
   standalone: true,
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="portal">
       <header class="portal-header">
@@ -87,7 +88,7 @@ interface NewsItem {
             <!-- Featured article (first item) -->
             @if (newsList().length > 0) {
               <article class="featured-article">
-                <div class="featured-img" [style.background-image]="'url(' + newsList()[0].image + ')'" [style.background-position]="newsList()[0].imagePosition || 'center center'">
+                <div class="featured-img" [style.background-image]="'url(' + resolveUrl(newsList()[0].image) + ')'" [style.background-position]="newsList()[0].imagePosition || 'center center'">
                   <div class="featured-img-overlay"></div>
                 </div>
                 <div class="featured-body">

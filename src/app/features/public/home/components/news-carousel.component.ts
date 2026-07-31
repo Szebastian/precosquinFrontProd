@@ -1,4 +1,4 @@
-import { Component, input, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, input, signal, computed, inject, NgZone, OnDestroy, ChangeDetectionStrategy, effect } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
@@ -16,10 +16,18 @@ export interface NewsItem {
   thumbBg: string;
 }
 
+function resolveUrlStatic(path: string): string {
+  if (!path) return path;
+  if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('assets/')) return path;
+  if (path.startsWith('/v1/')) return API_BASE + path;
+  return path;
+}
+
 @Component({
   selector: 'app-news-carousel',
   standalone: true,
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="news-grid" (mouseenter)="isPaused = true" (mouseleave)="isPaused = false">
       @if (newsItems().length === 0) {
@@ -42,7 +50,7 @@ export interface NewsItem {
         <a
           routerLink="/noticias"
           class="featured-news"
-          [style.background-image]="'url(' + resolveUrl(activeNews()?.image || '') + ')'"
+          [style.background-image]="featuredBg()"
           [style.background-position]="activeNews()?.imagePosition || 'center center'"
         >
           <div class="featured-overlay"></div>
@@ -83,7 +91,7 @@ export interface NewsItem {
               </div>
               <div class="news-badge">
                 @if (item.thumbType === 'img') {
-                  <img [src]="resolveUrl(item.thumbSrc)" [alt]="item.title" width="90" height="90" loading="lazy" decoding="async" />
+                  <img [src]="resolvedThumbs().get(item.id) || item.thumbSrc" [alt]="item.title" width="90" height="90" loading="lazy" decoding="async" />
                 } @else {
                   <span class="news-badge-icon" [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
                 }
@@ -205,8 +213,9 @@ export interface NewsItem {
     }
   `]
 })
-export class NewsCarouselComponent implements OnInit, OnDestroy {
+export class NewsCarouselComponent implements OnDestroy {
   private sanitizer = inject(DomSanitizer);
+  private ngZone = inject(NgZone);
 
   newsItems = input.required<NewsItem[]>();
   activeIndex = signal(0);
@@ -215,30 +224,66 @@ export class NewsCarouselComponent implements OnInit, OnDestroy {
 
   private autoPlayInterval: ReturnType<typeof setInterval> | null = null;
 
+  private _resolvedThumbs = signal<Map<number, string>>(new Map());
+  resolvedThumbs = this._resolvedThumbs.asReadonly();
+
+  private _featuredBg = signal('');
+  featuredBg = this._featuredBg.asReadonly();
+
   activeNews = computed<NewsItem | undefined>(() => {
     const items = this.newsItems();
     const index = this.activeIndex();
     return items.length > 0 && index >= 0 && index < items.length ? items[index] : undefined;
   });
 
-  ngOnInit(): void { this.startCarousel(); }
-  ngOnDestroy(): void { this.stopCarousel(); }
+  constructor() {
+    effect(() => {
+      const items = this.newsItems();
+      const thumbMap = new Map<number, string>();
+      for (const item of items) {
+        if (item.thumbType === 'img') {
+          thumbMap.set(item.id, resolveUrlStatic(item.thumbSrc));
+        }
+      }
+      this._resolvedThumbs.set(thumbMap);
+
+      if (items.length > 0) {
+        const img = resolveUrlStatic(items[0].image);
+        this._featuredBg.set(img ? `url(${img})` : '');
+      }
+
+      this.activeIndex();
+      this._updateFeaturedBg();
+    });
+  }
+
+  ngOnDestroy(): void { this.stopCarousel(); this.autoPlayInterval = null; }
 
   sanitizeHtml(html: string): SafeHtml { return this.sanitizer.bypassSecurityTrustHtml(html); }
 
-  resolveUrl(path: string): string {
-    if (!path) return path;
-    if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('assets/')) return path;
-    if (path.startsWith('/v1/')) return API_BASE + path;
-    return path;
+  private _updateFeaturedBg(): void {
+    const news = this.activeNews();
+    if (news) {
+      const img = resolveUrlStatic(news.image);
+      this._featuredBg.set(img ? `url(${img})` : '');
+    }
   }
 
   startCarousel(): void {
     this.stopCarousel();
-    this.autoPlayInterval = setInterval(() => { if (!this.isPaused) this.nextSlide(); }, 5000);
+    this.ngZone.runOutsideAngular(() => {
+      this.autoPlayInterval = setInterval(() => {
+        if (!this.isPaused) this.nextSlide();
+      }, 5000);
+    });
   }
 
-  stopCarousel(): void { if (this.autoPlayInterval) clearInterval(this.autoPlayInterval); }
+  private stopCarousel(): void {
+    if (this.autoPlayInterval) {
+      clearInterval(this.autoPlayInterval);
+      this.autoPlayInterval = null;
+    }
+  }
 
   nextSlide(): void {
     const nextIndex = (this.activeIndex() + 1) % this.newsItems().length;
@@ -252,11 +297,14 @@ export class NewsCarouselComponent implements OnInit, OnDestroy {
 
   selectNews(index: number): void {
     if (index === this.activeIndex()) return;
-    this.startCarousel();
-    this.isTransitioning.set(true);
-    setTimeout(() => {
-      this.activeIndex.set(index);
-      this.isTransitioning.set(false);
-    }, 200);
+    this.ngZone.run(() => {
+      this.isTransitioning.set(true);
+      setTimeout(() => {
+        this.activeIndex.set(index);
+        this._updateFeaturedBg();
+        this.isTransitioning.set(false);
+      }, 200);
+      this.startCarousel();
+    });
   }
 }

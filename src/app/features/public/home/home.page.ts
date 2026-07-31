@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { HomeHeaderComponent } from './components/home-header.component';
@@ -25,6 +25,7 @@ import { BackToTopComponent } from '../../../shared/components/back-to-top/back-
     YoutubeLiveWidgetComponent,
     BackToTopComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="portal">
       <app-home-header />
