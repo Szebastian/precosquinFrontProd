@@ -86,8 +86,17 @@ import { RouterLink } from '@angular/router';
 })
 export class HomeHeaderComponent {
   scrollY = signal(0);
+  private ticking = false;
 
   @HostListener('window:scroll')
-  onScroll() { this.scrollY.set(window.scrollY); }
+  onScroll() {
+    if (!this.ticking) {
+      requestAnimationFrame(() => {
+        this.scrollY.set(window.scrollY);
+        this.ticking = false;
+      });
+      this.ticking = true;
+    }
+  }
 }
 
