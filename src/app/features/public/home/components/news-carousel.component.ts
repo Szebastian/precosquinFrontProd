@@ -128,7 +128,7 @@ export interface NewsItem {
       background-color: var(--brand-accent); color: var(--gray-900); padding: 0.2rem 0.6rem; border-radius: var(--radius-sm); display: inline-block; margin-bottom: var(--space-3);
     }
     .featured-title { font-size: var(--text-3xl); color: white; line-height: 1.2; margin: 0; }
-    .secondary-news { display: flex; flex-direction: column; gap: var(--space-3); }
+    .secondary-news { display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
     .news-item {
       display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
       background: white; border-radius: 12px; overflow: hidden;
