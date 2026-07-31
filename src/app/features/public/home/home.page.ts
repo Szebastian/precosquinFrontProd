@@ -1,30 +1,21 @@
-import { Component, signal, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { IMAGE_PATHS } from '../../../shared/constants/image-paths';
-import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
 import { HomeHeaderComponent } from './components/home-header.component';
 import { NewsCarouselComponent, NewsItem } from './components/news-carousel.component';
 import { HomeComponentSeparatorComponent } from './components/home-separator.component';
 import { HomeCtaBannerComponent } from './components/home-cta-banner.component';
-import { HomeScoreboardComponent } from './components/home-scoreboard.component';
 import { HomeDeclaracionHeroComponent } from './components/home-declaracion-hero.component';
-import { HomeFooterComponent } from './components/home-footer.component';
-import { YoutubeLiveWidgetComponent } from './components/youtube-live-widget.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
-    BackToTopComponent,
     HomeHeaderComponent,
     NewsCarouselComponent,
     HomeComponentSeparatorComponent,
     HomeCtaBannerComponent,
-    HomeScoreboardComponent,
     HomeDeclaracionHeroComponent,
-    HomeFooterComponent,
-    YoutubeLiveWidgetComponent,
   ],
   template: `
     <div class="portal">
@@ -73,11 +64,25 @@ import { YoutubeLiveWidgetComponent } from './components/youtube-live-widget.com
         </div>
       </app-home-separator>
 
-      <app-home-scoreboard />
+      @defer (on idle) {
+        <app-home-scoreboard />
+      } @loading (minimum 500ms) {
+        <div style="height: 100px;"></div>
+      }
       <app-home-declaracion-hero />
-      <app-home-footer />
-      <app-youtube-live-widget />
-      <app-back-to-top />
+      @defer (on idle) {
+        <app-home-footer />
+      } @loading (minimum 500ms) {
+        <div style="height: 200px;"></div>
+      }
+      @defer (on idle) {
+        <app-youtube-live-widget />
+      } @loading (minimum 1s) {
+        <div style="height: 80px;"></div>
+      }
+      @defer (on idle) {
+        <app-back-to-top />
+      }
     </div>
   `,
   styles: [`
@@ -86,14 +91,13 @@ import { YoutubeLiveWidgetComponent } from './components/youtube-live-widget.com
   `]
 })
 export class HomePageComponent implements OnInit {
-  private cdr = inject(ChangeDetectorRef);
   private http = inject(HttpClient);
 
   newsItems = signal<NewsItem[]>([]);
 
   ngOnInit(): void {
     this.http.get<NewsItem[]>(`${environment.apiUrl}/news`).subscribe({
-      next: (data) => { if (data && data.length > 0) { this.newsItems.set(data); this.cdr.detectChanges(); } },
+      next: (data) => { if (data && data.length > 0) { this.newsItems.set(data); } },
       error: (err) => console.error('Error fetching news', err),
     });
   }

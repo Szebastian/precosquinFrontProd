@@ -1,5 +1,4 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
@@ -19,7 +18,7 @@ interface NewsItem {
 @Component({
   selector: 'app-noticia-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   template: `
     <div class="portal">
       <header class="portal-header">
@@ -40,7 +39,7 @@ interface NewsItem {
         </div>
         <div class="header-inner">
           <div class="header-left">
-            <img src="assets/img/logoballena.webp" alt="Logo" class="header-logo" />
+            <img src="assets/img/logoballena.webp" alt="Logo" class="header-logo" loading="lazy" />
             <div class="header-divider"></div>
             <div class="header-brand-text">
               <span class="header-brand-subtitle">PRE-COSQUÍN</span>
@@ -117,7 +116,7 @@ interface NewsItem {
                   
                   @if (item()?.image) {
                     <div class="full-article-image" style="margin-top: 32px; text-align: center;">
-                      <img [src]="item()?.image" alt="Imagen completa de la noticia" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid var(--gray-200);" />
+                      <img [src]="item()?.image" alt="Imagen completa de la noticia" loading="lazy" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid var(--gray-200);" />
                     </div>
                   }
                 </div>
@@ -138,7 +137,7 @@ interface NewsItem {
       <footer class="portal-footer">
         <div class="footer-main">
           <div class="footer-brand">
-            <img src="assets/img/logoballena.webp" alt="Precosquin" class="footer-logo" />
+            <img src="assets/img/logoballena.webp" alt="Precosquin" class="footer-logo" loading="lazy" />
             <div class="brand-text">
               <h4>Festival Folclórico</h4>
               <p>Puerto Pirámides, Chubut</p>
@@ -634,12 +633,11 @@ export class NoticiaDetailPageComponent implements OnInit {
       this.loading.set(false);
       return;
     }
-    this.http.get<NewsItem[]>(`${environment.apiUrl}/news`).subscribe({
-      next: (data) => {
-        const found = data.find(n => n.id === id) || null;
-        this.item.set(found);
-        if (found?.description) {
-          this.parsedDescription.set(this.parseText(found.description));
+    this.http.get<NewsItem>(`${environment.apiUrl}/news/${id}`).subscribe({
+      next: (item) => {
+        this.item.set(item);
+        if (item?.description) {
+          this.parsedDescription.set(this.parseText(item.description));
         }
         this.loading.set(false);
       },

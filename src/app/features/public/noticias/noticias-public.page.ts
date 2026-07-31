@@ -1,7 +1,6 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 
 interface NewsItem {
@@ -19,7 +18,7 @@ interface NewsItem {
 @Component({
   selector: 'app-noticias-public',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   template: `
     <div class="portal">
       <header class="portal-header">
@@ -40,7 +39,7 @@ interface NewsItem {
         </div>
         <div class="header-inner">
           <div class="header-left">
-            <img src="assets/img/logoballena.webp" alt="Logo" class="header-logo" />
+            <img src="assets/img/logoballena.webp" alt="Logo" class="header-logo" loading="lazy" />
             <div class="header-divider"></div>
             <div class="header-brand-text">
               <span class="header-brand-subtitle">PRE-COSQUÍN</span>
@@ -135,7 +134,7 @@ interface NewsItem {
       <footer class="portal-footer">
         <div class="footer-main">
           <div class="footer-brand">
-            <img src="assets/img/logoballena.webp" alt="Precosquin" class="footer-logo" />
+            <img src="assets/img/logoballena.webp" alt="Precosquin" class="footer-logo" loading="lazy" />
             <div class="brand-text">
               <h4>Festival Folclórico</h4>
               <p>Puerto Pirámides, Chubut</p>

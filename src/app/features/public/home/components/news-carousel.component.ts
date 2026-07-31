@@ -1,6 +1,6 @@
-import { Component, input, output, signal, computed, inject, OnInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, input, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgStyle, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 export interface NewsItem {
@@ -17,13 +17,13 @@ export interface NewsItem {
 @Component({
   selector: 'app-news-carousel',
   standalone: true,
-  imports: [RouterLink, NgStyle, NgClass],
+  imports: [RouterLink, NgClass],
   template: `
     <div class="news-grid" (mouseenter)="isPaused = true" (mouseleave)="isPaused = false">
       <a
         routerLink="/noticias"
         class="featured-news"
-        [ngStyle]="{ 'background-image': 'url(' + activeNews()?.image + ')' }"
+         [style.background-image]="'url(' + activeNews()?.image + ')'"
         [style.background-position]="activeNews()?.imagePosition || 'center center'"
       >
         <div class="featured-overlay"></div>
@@ -64,7 +64,7 @@ export interface NewsItem {
             </div>
             <div class="news-item-thumb" [ngClass]="item.thumbBg">
               @if (item.thumbType === 'img') {
-                <img [src]="item.thumbSrc" [alt]="item.title" />
+                <img [src]="item.thumbSrc" [alt]="item.title" loading="lazy" />
               } @else {
                 <span [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
               }
@@ -151,7 +151,6 @@ export interface NewsItem {
   `]
 })
 export class NewsCarouselComponent implements OnInit, OnDestroy {
-  private cdr = inject(ChangeDetectorRef);
   private sanitizer = inject(DomSanitizer);
 
   newsItems = input.required<NewsItem[]>();
@@ -193,11 +192,9 @@ export class NewsCarouselComponent implements OnInit, OnDestroy {
     if (index === this.activeIndex()) return;
     this.startCarousel();
     this.isTransitioning.set(true);
-    this.cdr.detectChanges();
     setTimeout(() => {
       this.activeIndex.set(index);
       this.isTransitioning.set(false);
-      this.cdr.detectChanges();
     }, 200);
   }
 }

@@ -16,7 +16,6 @@ import { InscripcionStep7Component } from './components/step-7.component';
 import { InscripcionStepAccessosComponent } from './components/step-accessos.component';
 import { CircularProgressComponent } from '../../../shared/components/circular-progress/circular-progress.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
-import { TypeformFlowComponent } from './components/typeform-flow.component';
 import { createEmptyInscripcionData } from './utils/inscripcion-defaults';
 
 export function formatDate(dateStr: string): string {
@@ -207,7 +206,7 @@ export const groupSubcategories = [
 @Component({
   selector: 'app-inscripcion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, InscripcionStepAccessosComponent, CircularProgressComponent, TypeformFlowComponent],
+  imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, InscripcionStepAccessosComponent, CircularProgressComponent],
   styleUrl: './inscripcion.page.scss',
   animations: [
     trigger('stepSlide', [
@@ -229,24 +228,28 @@ export const groupSubcategories = [
   ],
   template: `
     <div class="public-page form-layout" [class.form-layout--typeform]="typeformMode()">
-      @if (typeformMode()) {
+       @if (typeformMode()) {
         <!-- TYPEFORM MODE -->
-        <app-typeform-flow
-          [data]="data"
-          [isSubmitting]="submitting()"
-          [submitSuccess]="submitted() && !!inscriptionResult()"
-          [submitError]="error()"
-          [inscriptionId]="inscriptionResult()?.id || ''"
-          [inscriptionCreatedAt]="inscriptionResult()?.created_at || ''"
-          (submitted)="onTypeformSubmit()"
-          (exitTypeform)="typeformMode.set(false)" />
+        @defer (on idle) {
+          <app-typeform-flow
+            [data]="data"
+            [isSubmitting]="submitting()"
+            [submitSuccess]="submitted() && !!inscriptionResult()"
+            [submitError]="error()"
+            [inscriptionId]="inscriptionResult()?.id || ''"
+            [inscriptionCreatedAt]="inscriptionResult()?.created_at || ''"
+            (submitted)="onTypeformSubmit()"
+            (exitTypeform)="typeformMode.set(false)" />
+        } @loading (minimum 500ms) {
+          <div style="padding: 40px; text-align: center; color: #64748b;">Cargando formulario...</div>
+        }
       } @else {
         <!-- CLASSIC MODE or SUBMITTED -->
         @if (currentStep() < 8 && !submitted()) {
           <div class="form-sidebar">
             <nav class="form-nav-vertical">
               <a routerLink="/" class="nav-brand">
-                <img src="assets/img/logoballena.webp" alt="Precosquin" class="nav-logo" />
+                <img src="assets/img/logoballena.webp" alt="Precosquin" class="nav-logo" loading="lazy" />
                 <span>Precosquin</span>
               </a>
             </nav>
@@ -1326,7 +1329,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 <div class="card">
   <div class="top-bar"></div>
   <div class="header">
-    <img src="assets/img/logoballena.webp" alt="Precosquín">
+    <img src="assets/img/logoballena.webp" alt="Precosquín" loading="lazy">
     <div class="event-name">Festival Precosquín 2027</div>
     <div class="badge">✓ Inscripción Registrada</div>
   </div>
