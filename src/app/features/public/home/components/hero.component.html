@@ -19,8 +19,6 @@
     <a
       routerLink="/noticias"
       class="featured-news"
-      [style.background-image]="featuredBg()"
-      [style.background-position]="activeNews()!.imagePosition"
     >
       <div class="featured-overlay"></div>
       <div class="featured-content featured-fade" [class.fade-in]="!isTransitioning()">
@@ -73,7 +71,7 @@
           <div class="news-badge">
             @if (item.thumbType === 'img') {
               <img
-                [src]="item.thumbUrl"
+                data-hero-thumb
                 [alt]="item.title"
                 width="84"
                 height="84"

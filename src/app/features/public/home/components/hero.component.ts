@@ -9,7 +9,7 @@ import {
   OnDestroy,
   ChangeDetectionStrategy,
   effect,
-  ChangeDetectorRef,
+  ElementRef,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
@@ -56,11 +56,10 @@ interface NormalizedNewsItem {
 })
 export class HeroCarouselComponent implements OnInit, OnDestroy {
   private readonly ngZone = inject(NgZone);
-  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly hostEl = inject(ElementRef<HTMLElement>);
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly newsItems = input.required<NewsItem[]>();
-
   readonly activeIndex = signal(0);
   readonly isTransitioning = signal(false);
   isPaused = false;
@@ -72,11 +71,6 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
     const list = this.items();
     const i = this.activeIndex();
     return list[i] ?? undefined;
-  });
-
-  readonly featuredBg = computed(() => {
-    const news = this.activeNews();
-    return news?.imageUrl ? `url(${news.imageUrl})` : '';
   });
 
   private autoPlayTimer: ReturnType<typeof setInterval> | null = null;
@@ -99,15 +93,37 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
       }));
       this._items.set(normalized);
     });
+
+    effect(() => {
+      const news = this.activeNews();
+      const el = (this.hostEl.nativeElement as HTMLElement).querySelector<HTMLElement>('.featured-news');
+      if (!el) return;
+      const url = news?.imageUrl ? `url(${news.imageUrl})` : '';
+      if (el.style.backgroundImage !== url) {
+        el.style.backgroundImage = url;
+      }
+      const pos = news?.imagePosition || 'center center';
+      if (el.style.backgroundPosition !== pos) {
+        el.style.backgroundPosition = pos;
+      }
+    });
+
+    effect(() => {
+      const list = this.items();
+      const container = this.hostEl.nativeElement as HTMLElement;
+      const imgs = container.querySelectorAll<HTMLImageElement>('.news-badge img[data-hero-thumb]');
+      imgs.forEach((img: HTMLImageElement, i: number) => {
+        if (i < list.length && list[i].thumbType === 'img' && list[i].thumbUrl) {
+          if (img.getAttribute('src') !== list[i].thumbUrl) {
+            img.setAttribute('src', list[i].thumbUrl);
+          }
+        }
+      });
+    });
   }
 
-  ngOnInit(): void {
-    this.startAutoplay();
-  }
-
-  ngOnDestroy(): void {
-    this.clearAutoplay();
-  }
+  ngOnInit(): void { this.startAutoplay(); }
+  ngOnDestroy(): void { this.clearAutoplay(); }
 
   selectNews(index: number): void {
     if (index === this.activeIndex()) return;
@@ -116,7 +132,6 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.activeIndex.set(index);
       this.isTransitioning.set(false);
-      this.cdr.markForCheck();
     }, 200);
   }
 
@@ -137,10 +152,7 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
     this.ngZone.runOutsideAngular(() => {
       this.autoPlayTimer = setInterval(() => {
         if (!this.isPaused) {
-          this.ngZone.run(() => {
-            this.nextSlide();
-            this.cdr.markForCheck();
-          });
+          this.ngZone.run(() => this.nextSlide());
         }
       }, 5000);
     });
