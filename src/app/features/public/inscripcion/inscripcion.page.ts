@@ -16,6 +16,7 @@ import { InscripcionStep7Component } from './components/step-7.component';
 import { InscripcionStepAccessosComponent } from './components/step-accessos.component';
 import { CircularProgressComponent } from '../../../shared/components/circular-progress/circular-progress.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
+import { TypeformFlowComponent } from './components/typeform-flow.component';
 import { createEmptyInscripcionData } from './utils/inscripcion-defaults';
 
 export function formatDate(dateStr: string): string {
@@ -206,7 +207,10 @@ export const groupSubcategories = [
 @Component({
   selector: 'app-inscripcion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, InscripcionStepAccessosComponent, CircularProgressComponent],
+imports: [CommonModule, FormsModule, RouterLink, 
+InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, 
+InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, 
+InscripcionStepAccessosComponent, CircularProgressComponent, TypeformFlowComponent],
   styleUrl: './inscripcion.page.scss',
   animations: [
     trigger('stepSlide', [

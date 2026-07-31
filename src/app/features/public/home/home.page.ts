@@ -6,6 +6,10 @@ import { NewsCarouselComponent, NewsItem } from './components/news-carousel.comp
 import { HomeComponentSeparatorComponent } from './components/home-separator.component';
 import { HomeCtaBannerComponent } from './components/home-cta-banner.component';
 import { HomeDeclaracionHeroComponent } from './components/home-declaracion-hero.component';
+import { HomeScoreboardComponent } from './components/home-scoreboard.component';
+import { HomeFooterComponent } from './components/home-footer.component';
+import { YoutubeLiveWidgetComponent } from './components/youtube-live-widget.component';
+import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +20,10 @@ import { HomeDeclaracionHeroComponent } from './components/home-declaracion-hero
     HomeComponentSeparatorComponent,
     HomeCtaBannerComponent,
     HomeDeclaracionHeroComponent,
+    HomeScoreboardComponent,
+    HomeFooterComponent,
+    YoutubeLiveWidgetComponent,
+    BackToTopComponent,
   ],
   template: `
     <div class="portal">
