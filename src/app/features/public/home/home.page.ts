@@ -1,8 +1,8 @@
 import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { HomeHeaderComponent } from './components/home-header.component';
 import { HeroCarouselComponent, NewsItem } from './components/hero.component';
+import { HomeHeaderComponent } from './components/home-header.component';
 import { HomeComponentSeparatorComponent } from './components/home-separator.component';
 import { HomeCtaBannerComponent } from './components/home-cta-banner.component';
 import { HomeDeclaracionHeroComponent } from './components/home-declaracion-hero.component';
@@ -52,33 +52,37 @@ import { BackToTopComponent } from '../../../shared/components/back-to-top/back-
         </div>
       </app-home-separator>
 
-      <app-home-cta-banner />
-
-      <app-home-separator variant="diagonal">
-        <div class="separator-stats">
-          <div class="sep-stat">
-            <span class="sep-stat-value">2</span>
-            <span class="sep-stat-label">Categorías</span>
+      @defer (on idle) {
+        <app-home-cta-banner />
+      }
+      @defer (on idle) {
+        <app-home-separator variant="diagonal">
+          <div class="separator-stats">
+            <div class="sep-stat">
+              <span class="sep-stat-value">2</span>
+              <span class="sep-stat-label">Categorías</span>
+            </div>
+            <div class="sep-stat-divider"></div>
+            <div class="sep-stat">
+              <span class="sep-stat-value">12</span>
+              <span class="sep-stat-label">Subcategorías</span>
+            </div>
+            <div class="sep-stat-divider"></div>
+            <div class="sep-stat">
+              <span class="sep-stat-value">5-6</span>
+              <span class="sep-stat-label">Septiembre</span>
+            </div>
           </div>
-          <div class="sep-stat-divider"></div>
-          <div class="sep-stat">
-            <span class="sep-stat-value">12</span>
-            <span class="sep-stat-label">Subcategorías</span>
-          </div>
-          <div class="sep-stat-divider"></div>
-          <div class="sep-stat">
-            <span class="sep-stat-value">5-6</span>
-            <span class="sep-stat-label">Septiembre</span>
-          </div>
-        </div>
-      </app-home-separator>
-
+        </app-home-separator>
+      }
       @defer (on idle) {
         <app-home-scoreboard />
       } @loading (minimum 500ms) {
         <div style="height: 100px;"></div>
       }
-      <app-home-declaracion-hero />
+      @defer (on idle) {
+        <app-home-declaracion-hero />
+      }
       @defer (on idle) {
         <app-home-footer />
       } @loading (minimum 500ms) {
