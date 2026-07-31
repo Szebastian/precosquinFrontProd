@@ -1,6 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
-import { provideRouter, withComponentInputBinding, withPreloading, PreloadAllModules } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideZonelessChangeDetection } from '@angular/core';
 
@@ -17,7 +17,7 @@ bootstrapApplication(AppComponent, {
       withFetch(),
       withInterceptors([authInterceptor, retryInterceptor, errorInterceptor])
     ),
-    provideRouter(appRoutes, withComponentInputBinding(), withPreloading(PreloadAllModules)),
+    provideRouter(appRoutes, withComponentInputBinding()),
     provideAnimations(),
   ],
 }).catch((err) => console.error(err));
