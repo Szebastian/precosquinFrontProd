@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IMAGE_PATHS } from '../../shared/constants/image-paths';
+import { timeout, catchError, throwError } from 'rxjs';
 
 interface NewsItem {
   id?: number;
@@ -1686,7 +1687,15 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
 
     const payload = this.editingId() ? { ...this.form, id: this.editingId() } : this.form;
 
-    this.http.post<NewsItem>(`${environment.apiUrl}/news`, payload).subscribe({
+    this.http.post<NewsItem>(`${environment.apiUrl}/news`, payload).pipe(
+      timeout(60000),
+      catchError((err) => {
+        if (err.name === 'TimeoutError') {
+          return throwError(() => ({ status: 0, error: { detail: 'El servidor tardó demasiado. Verificá si la noticia se guardó y recargue la página.' } }));
+        }
+        return throwError(() => err);
+      })
+    ).subscribe({
       next: () => {
         this.saving.set(false);
         this.closeModal();
@@ -1727,6 +1736,11 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        this.errorMsg.set('La imagen no puede superar 5MB');
+        input.value = '';
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         this.form.image = reader.result as string;
@@ -1739,6 +1753,10 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
     event.preventDefault();
     const file = event.dataTransfer?.files[0];
     if (file && file.type.startsWith('image/')) {
+      if (file.size > 5 * 1024 * 1024) {
+        this.errorMsg.set('La imagen no puede superar 5MB');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         this.form.image = reader.result as string;
