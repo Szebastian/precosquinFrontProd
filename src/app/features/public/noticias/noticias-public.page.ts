@@ -575,7 +575,7 @@ export class NoticiasPublicPageComponent implements OnInit {
   loading = signal(true);
 
   ngOnInit(): void {
-    this.http.get<NewsItem[]>(`${environment.apiUrl}/news`).subscribe({
+    this.http.get<NewsItem[]>(`${environment.apiUrl}/news/`).subscribe({
       next: (data) => {
         this.newsList.set(data);
         this.loading.set(false);

@@ -1655,7 +1655,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
 
   loadNews() {
     this.loading.set(true);
-    this.http.get<NewsItem[]>(`${environment.apiUrl}/news`).subscribe({
+    this.http.get<NewsItem[]>(`${environment.apiUrl}/news/`).subscribe({
       next: (data) => {
         this.newsList.set(data);
         this.loading.set(false);
@@ -1686,7 +1686,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
 
     const payload = this.editingId() ? { ...this.form, id: this.editingId() } : this.form;
 
-    this.http.post<NewsItem>(`${environment.apiUrl}/news`, payload).subscribe({
+    this.http.post<NewsItem>(`${environment.apiUrl}/news/`, payload).subscribe({
       next: () => {
         this.saving.set(false);
         this.closeModal();

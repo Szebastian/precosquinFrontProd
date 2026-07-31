@@ -104,7 +104,7 @@ export class HomePageComponent implements OnInit {
   newsItems = signal<NewsItem[]>([]);
 
   ngOnInit(): void {
-    this.http.get<NewsItem[]>(`${environment.apiUrl}/news`).subscribe({
+    this.http.get<NewsItem[]>(`${environment.apiUrl}/news/`).subscribe({
       next: (data) => { if (data && data.length > 0) { this.newsItems.set(data); } },
       error: (err) => console.error('Error fetching news', err),
     });
