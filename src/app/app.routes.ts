@@ -128,6 +128,30 @@ export const appRoutes: Routes = [
     canActivate: [publicGuard]
   },
   {
+    path: 'm',
+    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-home.page').then(m => m.MobileHomeRedesignComponent),
+    canActivate: [publicGuard],
+    data: { title: 'Pre Cosquín 2027' }
+  },
+  {
+    path: 'm/noticias',
+    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-noticias.page').then(m => m.MobileNoticiasPageComponent),
+    canActivate: [publicGuard],
+    data: { title: 'Noticias' }
+  },
+  {
+    path: 'm/agenda',
+    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-agenda.page').then(m => m.MobileAgendaPageComponent),
+    canActivate: [publicGuard],
+    data: { title: 'Agenda' }
+  },
+  {
+    path: 'm/mas',
+    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-mas.page').then(m => m.MobileMasPageComponent),
+    canActivate: [publicGuard],
+    data: { title: 'Más' }
+  },
+  {
     path: '**',
     loadComponent: () => import('./features/public/not-found/not-found.component').then(m => m.NotFoundComponent),
     data: { title: 'Página no encontrada' }

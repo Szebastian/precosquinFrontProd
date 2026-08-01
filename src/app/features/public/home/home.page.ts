@@ -1,11 +1,4 @@
-import {
-  Component,
-  signal,
-  inject,
-  OnInit,
-  OnDestroy,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { HeroCarouselComponent, NewsItem } from './components/hero.component';
@@ -18,7 +11,6 @@ import { HomeFooterComponent } from './components/home-footer.component';
 import { YoutubeLiveWidgetComponent } from './components/youtube-live-widget.component';
 import { InstagramFeedComponent } from './components/instagram-feed.component';
 import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
-import { MobileHomeShellComponent } from './mobile-home-redesign/mobile-home-shell.component';
 
 @Component({
   selector: 'app-home',
@@ -34,134 +26,110 @@ import { MobileHomeShellComponent } from './mobile-home-redesign/mobile-home-she
     YoutubeLiveWidgetComponent,
     InstagramFeedComponent,
     BackToTopComponent,
-    MobileHomeShellComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <!-- Mobile Redesign (< 768px) -->
-    @if (isMobile()) {
-      <app-mobile-home-shell />
-    }
+    <div class="portal">
+      <app-home-header />
 
-    <!-- Desktop Design (>= 768px) -->
-    @if (!isMobile()) {
-      <div class="portal">
-        <app-home-header />
+      <main class="portal-main">
+        <app-news-carousel [newsItems]="newsItems()" />
+      </main>
 
-        <main class="portal-main">
-          <app-news-carousel [newsItems]="newsItems()" />
-        </main>
+      <app-home-separator variant="wave">
+        <span class="separator-label">MÚSICA Y DANZA</span>
+        <h2 class="separator-title">Categorías del Festival</h2>
+        <div class="separator-cats">
+          <span class="sep-cat">Solista Vocal</span>
+          <span class="sep-cat-dot"></span>
+          <span class="sep-cat">Solista Instrumental</span>
+          <span class="sep-cat-dot"></span>
+          <span class="sep-cat">Dúo</span>
+          <span class="sep-cat-dot"></span>
+          <span class="sep-cat">Trío</span>
+          <span class="sep-cat-dot"></span>
+          <span class="sep-cat">Conjunto</span>
+          <span class="sep-cat-dot"></span>
+          <span class="sep-cat">Coro</span>
+        </div>
+       </app-home-separator>
 
-        <app-home-separator variant="wave">
-          <span class="separator-label">MÚSICA Y DANZA</span>
-          <h2 class="separator-title">Categorías del Festival</h2>
-          <div class="separator-cats">
-            <span class="sep-cat">Solista Vocal</span>
-            <span class="sep-cat-dot"></span>
-            <span class="sep-cat">Solista Instrumental</span>
-            <span class="sep-cat-dot"></span>
-            <span class="sep-cat">Dúo</span>
-            <span class="sep-cat-dot"></span>
-            <span class="sep-cat">Trío</span>
-            <span class="sep-cat-dot"></span>
-            <span class="sep-cat">Conjunto</span>
-            <span class="sep-cat-dot"></span>
-            <span class="sep-cat">Coro</span>
-          </div>
-         </app-home-separator>
+       @defer (on idle) {
+         <app-instagram-feed />
+       } @loading (minimum 1s) {
+         <div style="height: 120px; padding: 60px 20px; background-color: #F4F1EA; text-align: center;">
+           <div class="loading-spinner"></div>
+         </div>
+       }
 
-         @defer (on idle) {
-           <app-instagram-feed />
-         } @loading (minimum 1s) {
-           <div style="height: 120px; padding: 60px 20px; background-color: #F4F1EA; text-align: center;">
-             <div class="loading-spinner"></div>
-           </div>
-         }
-
-         @defer (on idle) {
-           <app-home-cta-banner />
-        } @loading (minimum 500ms) {
-          <div style="height: 120px;"></div>
-        }
-        @defer (on idle) {
-          <app-home-separator variant="diagonal">
-            <div class="separator-stats">
-              <div class="sep-stat">
-                <span class="sep-stat-value">2</span>
-                <span class="sep-stat-label">Categorías</span>
-              </div>
-              <div class="sep-stat-divider"></div>
-              <div class="sep-stat">
-                <span class="sep-stat-value">12</span>
-                <span class="sep-stat-label">Subcategorías</span>
-              </div>
-              <div class="sep-stat-divider"></div>
-              <div class="sep-stat">
-                <span class="sep-stat-value">5-6</span>
-                <span class="sep-stat-label">Septiembre</span>
-              </div>
+       @defer (on idle) {
+         <app-home-cta-banner />
+      } @loading (minimum 500ms) {
+        <div style="height: 120px;"></div>
+      }
+      @defer (on idle) {
+        <app-home-separator variant="diagonal">
+          <div class="separator-stats">
+            <div class="sep-stat">
+              <span class="sep-stat-value">2</span>
+              <span class="sep-stat-label">Categorías</span>
             </div>
-          </app-home-separator>
-        } @loading (minimum 500ms) {
-          <div style="height: 300px;"></div>
-        }
-        @defer (on idle) {
-          <app-home-scoreboard />
-        } @loading (minimum 500ms) {
-          <div style="height: 100px;"></div>
-        }
-        @defer (on idle) {
-          <app-home-declaracion-hero />
-        } @loading (minimum 500ms) {
-          <div style="height: 200px;"></div>
-        }
-        @defer (on idle) {
-          <app-home-footer />
-        } @loading (minimum 500ms) {
-          <div style="height: 200px;"></div>
-        }
-        @defer (on idle) {
-          <app-youtube-live-widget />
-        } @loading (minimum 1s) {
-          <div style="height: 80px;"></div>
-        }
-        @defer (on idle) {
-          <app-back-to-top />
-        }
-      </div>
-    }
+            <div class="sep-stat-divider"></div>
+            <div class="sep-stat">
+              <span class="sep-stat-value">12</span>
+              <span class="sep-stat-label">Subcategorías</span>
+            </div>
+            <div class="sep-stat-divider"></div>
+            <div class="sep-stat">
+              <span class="sep-stat-value">5-6</span>
+              <span class="sep-stat-label">Septiembre</span>
+            </div>
+          </div>
+        </app-home-separator>
+      } @loading (minimum 500ms) {
+        <div style="height: 300px;"></div>
+      }
+      @defer (on idle) {
+        <app-home-scoreboard />
+      } @loading (minimum 500ms) {
+        <div style="height: 100px;"></div>
+      }
+      @defer (on idle) {
+        <app-home-declaracion-hero />
+      } @loading (minimum 500ms) {
+        <div style="height: 200px;"></div>
+      }
+      @defer (on idle) {
+        <app-home-footer />
+      } @loading (minimum 500ms) {
+        <div style="height: 200px;"></div>
+      }
+      @defer (on idle) {
+        <app-youtube-live-widget />
+      } @loading (minimum 1s) {
+        <div style="height: 80px;"></div>
+      }
+      @defer (on idle) {
+        <app-back-to-top />
+      }
+    </div>
   `,
   styles: [`
     .portal { min-height: 100vh; background-color: var(--gray-50); font-family: var(--font-sans); display: flex; flex-direction: column; }
     .portal-main { flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; padding: var(--space-6) var(--space-4); }
     .loading-spinner { width: 24px; height: 24px; border: 3px solid var(--gray-200); border-top-color: var(--brand-500); border-radius: 50%; animation: spin 0.6s linear infinite; margin: 0 auto; }
     @keyframes spin { to { transform: rotate(360deg); } }
-  `],
+  `]
 })
-export class HomePageComponent implements OnInit, OnDestroy {
+export class HomePageComponent implements OnInit {
   private http = inject(HttpClient);
-  private mediaQuery = window.matchMedia('(max-width: 767px)');
-  private resizeHandler = (): void => {
-    this.isMobile.set(this.mediaQuery.matches);
-  };
 
-  isMobile = signal(this.mediaQuery.matches);
   newsItems = signal<NewsItem[]>([]);
 
   ngOnInit(): void {
-    this.mediaQuery.addEventListener('change', this.resizeHandler);
-
     this.http.get<NewsItem[]>(`${environment.apiUrl}/news/`).subscribe({
-      next: (data) => {
-        if (data && data.length > 0) {
-          this.newsItems.set(data);
-        }
-      },
+      next: (data) => { if (data && data.length > 0) { this.newsItems.set(data); } },
       error: (err) => console.error('Error fetching news', err),
     });
-  }
-
-  ngOnDestroy(): void {
-    this.mediaQuery.removeEventListener('change', this.resizeHandler);
   }
 }
