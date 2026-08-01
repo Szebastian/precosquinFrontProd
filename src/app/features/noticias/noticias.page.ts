@@ -1320,18 +1320,26 @@ interface NewsItem {
       :host-context(.dark) .form-section-title { color: #ffffff; border-bottom-color: #334155; }
       :host-context(.dark) .form-section-desc { color: #94a3b8; }
 
-     :host-context(.dark) .form-input,
-     :host-context(.dark) .form-select,
-     :host-context(.dark) .form-textarea {
-       background: #0f172a;
-       border-color: #334155;
-       color: #ffffff;
-     }
+      :host-context(.dark) .form-input,
+      :host-context(.dark) .form-select,
+      :host-context(.dark) .form-textarea {
+        background: #0f172a;
+        border-color: #334155;
+        color: #ffffff !important;
+        caret-color: #3b82f6;
+      }
 
-    :host-context(.dark) .form-input::placeholder,
-    :host-context(.dark) .form-textarea::placeholder {
-      color: #64748b;
-    }
+      :host-context(.dark) .form-input::placeholder,
+      :host-context(.dark) .form-textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+      }
+
+      :host-context(.dark) .form-input:-webkit-autofill,
+      :host-context(.dark) .form-textarea:-webkit-autofill {
+        -webkit-text-fill-color: #ffffff !important;
+        background-color: #0f172a !important;
+        -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+      }
 
     :host-context(.dark) .form-input:focus,
     :host-context(.dark) .form-select:focus {
