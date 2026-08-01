@@ -40,7 +40,6 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
-      background-color: #F4F1EA;
     }
 
     .elfsight-wrapper {
@@ -54,18 +53,10 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       min-height: 0;
     }
 
-    .elfsight-skeleton {
+     .elfsight-skeleton {
       width: 100%;
       height: 16px;
-      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
-      background-size: 200% 100%;
       border-radius: 8px;
-      animation: shimmer 1.5s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
     }
 
     .elfsight-error {
