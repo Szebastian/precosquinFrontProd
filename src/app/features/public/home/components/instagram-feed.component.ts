@@ -37,9 +37,9 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
   styles: [`
     .instagram-section {
       width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px 20px 60px;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 20px 5% 60px;
     }
 
     .elfsight-wrapper {
@@ -69,11 +69,11 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       text-align: center;
     }
 
-      @media (max-width: 1024px) {
-       .instagram-section {
-         padding: 20px 16px 40px;
-       }
-     }
+       @media (max-width: 1024px) {
+        .instagram-section {
+          padding: 20px 3% 60px;
+        }
+      }
 
     .elfsight-wrapper,
     div[class*="elfsight-app"],
