@@ -10,6 +10,7 @@ import { HomeScoreboardComponent } from './components/home-scoreboard.component'
 import { HomeFooterComponent } from './components/home-footer.component';
 import { YoutubeLiveWidgetComponent } from './components/youtube-live-widget.component';
 import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
+import { HomeJuradoSectionComponent } from './components/home-jurado-section.component';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +25,7 @@ import { BackToTopComponent } from '../../../shared/components/back-to-top/back-
     HomeFooterComponent,
     YoutubeLiveWidgetComponent,
     BackToTopComponent,
+    HomeJuradoSectionComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -83,6 +85,11 @@ import { BackToTopComponent } from '../../../shared/components/back-to-top/back-
         <app-home-scoreboard />
       } @loading (minimum 500ms) {
         <div style="height: 100px;"></div>
+      }
+      @defer (on idle) {
+        <app-home-jurado-section />
+      } @loading (minimum 300ms) {
+        <div style="height: 300px;"></div>
       }
       @defer (on idle) {
         <app-home-declaracion-hero />
