@@ -10,12 +10,12 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import { ScriptLoaderService } from '../../../core/services/script-loader.service';
+import { ScriptLoaderService } from '../../../../core/services/script-loader.service';
 
 @Component({
   selector: 'app-instagram-feed',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPut,
+   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="instagram-section">
       <div class="instagram-header">
