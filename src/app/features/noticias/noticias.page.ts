@@ -1305,20 +1305,20 @@ interface NewsItem {
     }
 
     :host-context(.dark) .modal-header { border-bottom-color: #334155; }
-    :host-context(.dark) .modal-header h2 { color: #f1f5f9; }
-    :host-context(.dark) .modal-header-desc { color: #94a3b8; }
+     :host-context(.dark) .modal-header h2 { color: #ffffff; }
+     :host-context(.dark) .modal-header-desc { color: #cbd5e1; }
     :host-context(.dark) .btn-close { color: #94a3b8; }
     :host-context(.dark) .btn-close:hover { background: #334155; color: #e2e8f0; }
     :host-context(.dark) .modal-footer { border-top-color: #334155; }
     :host-context(.dark) .footer-hint { color: #64748b; }
     :host-context(.dark) .footer-hint.hint-ok { color: #4ade80; }
 
-     /* Forms dark */
-    :host-context(.dark) .form-label { color: #e2e8f0; }
-    :host-context(.dark) .form-label-desc { color: #cbd5e1; }
-    :host-context(.dark) .form-section { background: #0f172a; border-color: #334155; }
-    :host-context(.dark) .form-section-title { color: #e2e8f0; border-bottom-color: #334155; }
-    :host-context(.dark) .form-section-desc { color: #64748b; }
+      /* Form text white */
+      :host-context(.dark) .form-label { color: #ffffff; }
+      :host-context(.dark) .form-label-desc { color: #cbd5e1; }
+      :host-context(.dark) .form-section { background: #0f172a; border-color: #334155; }
+      :host-context(.dark) .form-section-title { color: #ffffff; border-bottom-color: #334155; }
+      :host-context(.dark) .form-section-desc { color: #94a3b8; }
 
      :host-context(.dark) .form-input,
      :host-context(.dark) .form-select,
@@ -1339,22 +1339,22 @@ interface NewsItem {
       box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
     }
 
-    :host-context(.dark) .form-hint { color: #64748b; }
-    :host-context(.dark) .code-textarea { background-color: #0f172a; }
-    :host-context(.dark) .upload-hint { color: #64748b; }
-    :host-context(.dark) .url-input-group svg { color: #64748b; }
-    :host-context(.dark) .quick-tags-label { color: #64748b; }
+      :host-context(.dark) .form-hint { color: #94a3b8; }
+      :host-context(.dark) .code-textarea { background-color: #0f172a; color: #ffffff; }
+      :host-context(.dark) .upload-hint { color: #94a3b8; }
+      :host-context(.dark) .url-input-group svg { color: #94a3b8; }
+      :host-context(.dark) .quick-tags-label { color: #94a3b8; }
 
     /* Buttons dark */
-    :host-context(.dark) .btn-secondary { background: #334155; color: #e2e8f0; }
-    :host-context(.dark) .btn-secondary:hover { background: #475569; }
-    :host-context(.dark) .btn-icon { color: #94a3b8; }
-    :host-context(.dark) .btn-icon:hover { background: #334155; color: #e2e8f0; }
+     :host-context(.dark) .btn-secondary { background: #334155; color: #ffffff; }
+     :host-context(.dark) .btn-secondary:hover { background: #475569; }
+     :host-context(.dark) .btn-icon { color: #94a3b8; }
+     :host-context(.dark) .btn-icon:hover { background: #334155; color: #ffffff; }
     :host-context(.dark) .btn-icon.btn-danger:hover { background: rgba(239,68,68,0.15); color: #f87171; }
 
     /* Tags dark */
-    :host-context(.dark) .tag-btn { background: #334155; color: #94a3b8; border-color: #475569; }
-    :host-context(.dark) .tag-btn:hover { background: rgba(99,102,241,0.15); color: var(--brand-400); border-color: rgba(99,102,241,0.3); }
+     :host-context(.dark) .tag-btn { background: #334155; color: #94a3b8; border-color: #475569; }
+     :host-context(.dark) .tag-btn:hover { background: rgba(99,102,241,0.15); color: #ffffff; border-color: rgba(99,102,241,0.3); }
     :host-context(.dark) .tag-active { background: rgba(99,102,241,0.2) !important; color: var(--brand-400) !important; border-color: rgba(99,102,241,0.4) !important; }
 
     /* Image upload dark */
@@ -1394,7 +1394,7 @@ interface NewsItem {
     :host-context(.dark) .modal-preview-side { background-color: #0f172a; border-color: #334155; }
     :host-context(.dark) .preview-tag { color: #64748b; }
     :host-context(.dark) .secondary-news-item-preview { background: #1e293b; border-color: #334155; }
-    :host-context(.dark) .secondary-news-item-preview .news-item-title { color: #e2e8f0; }
+     :host-context(.dark) .secondary-news-item-preview .news-item-title { color: #ffffff; }
 
     /* Alert dark */
     :host-context(.dark) .alert-error { background: rgba(239,68,68,0.12); color: #f87171; }
