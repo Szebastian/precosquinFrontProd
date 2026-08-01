@@ -969,6 +969,7 @@ select:autofill, textarea:autofill {
    1B. DARK MODE OVERRIDES
    ============================================ */
 .dark {
+    color-scheme: dark;
     --gray-50: #12141a; /* Very dark background for dark mode */
     --gray-100: #1c1e26;
     --gray-200: #272a35;
