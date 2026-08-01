@@ -178,6 +178,11 @@ div[class*="eapps-instagram-feed"] {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
+div[class*="eapps-widget-toolbar-panel-share-button"],
+div[class*="eapps-widget-toolbar-panel-views"] {
+  display: none !important;
+}
   `],
 })
 export class InstagramFeedComponent implements AfterViewInit {
@@ -235,6 +240,9 @@ export class InstagramFeedComponent implements AfterViewInit {
 
       const toolbarPanels = container.querySelectorAll('.eapps-widget-toolbar-panel');
       toolbarPanels.forEach((panel) => panel.remove());
+
+      const shareButtons = container.querySelectorAll('.eapps-widget-toolbar-panel-share-button');
+      shareButtons.forEach((btn) => btn.remove());
 
       const poweredBy = container.querySelectorAll('[class*="powered-by"], [class*="powerd-by"]');
       poweredBy.forEach((el) => el.remove());
