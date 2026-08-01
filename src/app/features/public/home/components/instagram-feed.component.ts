@@ -167,55 +167,27 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       border: none !important;
     }
 
-    a[href*="elfsight.com"],
-    [data-remove-url],
-    [title*="Remove Elfsight"],
-    [title*="branding"] {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      height: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      pointer-events: none !important;
-    }
+     .elfsight-section {
+  display: none !important;
+}
 
-    .eapps-instagram-feed-items,
-    .eapps-instagram-feed-items-container,
-    div[class*="instagram-feed-items"] {
-      display: flex !important;
-      flex-direction: row !important;
-      flex-wrap: nowrap !important;
-      overflow-x: auto !important;
-      overflow-y: hidden !important;
-      height: auto !important;
-      max-height: 250px !important;
-    }
+.elfsight-wrapper {
+  overflow: hidden !important;
+}
 
-    .eapps-instagram-feed-items > *,
-    div[class*="instagram-feed-items"] > * {
-      flex: 0 0 auto !important;
-      height: 200px !important;
-      width: 200px !important;
-      margin: 0 8px !important;
-    }
+div[class*="eapps-instagram-feed"] {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+  max-width: 800px !important;
+  margin: 0 auto !important;
+}
 
-    .eapps-instagram-feed-item,
-    .eapps-instagram-feed-item-container {
-      height: 200px !important;
-      width: 200px !important;
-      margin: 0 8px 0 0 !important;
-      flex: 0 0 auto !important;
-    }
-
-    @media (max-width: 1024px) {
-      .eapps-instagram-feed-items > *,
-      .eapps-instagram-feed-item,
-      .eapps-instagram-feed-item-container {
-        height: 150px !important;
-        width: 150px !important;
-      }
-    }
+@media (max-width: 640px) {
+  div[class*="eapps-instagram-feed"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
   `],
 })
 export class InstagramFeedComponent implements AfterViewInit {
@@ -276,6 +248,18 @@ export class InstagramFeedComponent implements AfterViewInit {
 
       const poweredBy = container.querySelectorAll('[class*="powered-by"], [class*="powerd-by"]');
       poweredBy.forEach((el) => el.remove());
+
+      const feedContainer = container.querySelector('div[class*="eapps-instagram-feed"]');
+      if (feedContainer) {
+        const items = feedContainer.querySelectorAll('a, div > a, .eapps-instagram-post, .eapps-post');
+        const itemsArray = Array.from(items);
+        for (let i = 4; i < itemsArray.length; i++) {
+          const parent = itemsArray[i].parentElement;
+          if (parent) {
+            parent.style.display = 'none !important';
+          }
+        }
+      }
     }, 2000);
   }
 }
