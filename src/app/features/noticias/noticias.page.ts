@@ -699,19 +699,19 @@ interface NewsItem {
       letter-spacing: 0.05em;
     }
 
-    .form-input,
-    .form-select {
-      width: 100%;
-      padding: 10px var(--space-3);
-      font-size: var(--text-sm);
-      color: var(--gray-900);
-      background: #fff;
-      border: 1.5px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      outline: none;
-      transition: all var(--transition-fast);
-      box-sizing: border-box;
-    }
+     .form-input,
+     .form-select {
+       width: 100%;
+       padding: 10px var(--space-3);
+       font-size: var(--text-sm);
+       color: #000000;
+       background: #fff;
+       border: 1.5px solid var(--gray-200);
+       border-radius: var(--radius-lg);
+       outline: none;
+       transition: all var(--transition-fast);
+       box-sizing: border-box;
+     }
 
     .form-input:focus,
     .form-select:focus {
