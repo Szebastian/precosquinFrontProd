@@ -18,11 +18,6 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
    changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="instagram-section">
-      <div class="instagram-header">
-        <h3 class="instagram-title">Síguenos en Instagram</h3>
-        <p class="instagram-desc">Vive la magia del Pre-Cosquín desde los dedos de tu celular</p>
-      </div>
-
       <div #elfsightContainer class="elfsight-wrapper">
         @if (!scriptLoaded() && !scriptError()) {
           <div class="elfsight-placeholder">
@@ -44,26 +39,8 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       width: 100%;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 60px 20px;
+      padding: 0 20px;
       background-color: #F4F1EA;
-    }
-
-    .instagram-header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
-    .instagram-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--gray-900);
-      margin: 0 0 8px;
-    }
-
-    .instagram-desc {
-      font-size: 0.9rem;
-      color: var(--gray-600);
-      margin: 0;
     }
 
     .elfsight-wrapper {
@@ -256,6 +233,12 @@ export class InstagramFeedComponent implements AfterViewInit {
 
       const removeButtons = container.querySelectorAll('[data-remove-url]');
       removeButtons.forEach((btn) => btn.remove());
-    }, 1000);
+
+      const toolbarPanels = container.querySelectorAll('.eapps-widget-toolbar-panel');
+      toolbarPanels.forEach((panel) => panel.remove());
+
+      const poweredBy = container.querySelectorAll('[class*="powered-by"], [class*="powerd-by"]');
+      poweredBy.forEach((el) => el.remove());
+    }, 2000);
   }
 }
