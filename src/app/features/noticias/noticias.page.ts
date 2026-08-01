@@ -1280,21 +1280,21 @@ interface NewsItem {
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ========== DARK MODE ========== */
-    :host-context(.dark) .page-title { color: #f1f5f9; }
-    :host-context(.dark) .page-subtitle { color: #94a3b8; }
+     /* ========== DARK MODE ========== */
+     :host-context(.dark) .page-title { color: #ffffff; }
+     :host-context(.dark) .page-subtitle { color: #cbd5e1; }
 
     :host-context(.dark) .news-card {
       background: #1e293b;
       border-color: #334155;
     }
 
-    :host-context(.dark) .news-card-title { color: #e2e8f0; }
+     :host-context(.dark) .news-card-title { color: #ffffff; }
     :host-context(.dark) .news-card-footer { border-top-color: #334155; }
 
-    :host-context(.dark) .empty-icon { color: #475569; }
-    :host-context(.dark) .empty-title { color: #e2e8f0; }
-    :host-context(.dark) .empty-desc { color: #94a3b8; }
+     :host-context(.dark) .empty-icon { color: #64748b; }
+     :host-context(.dark) .empty-title { color: #ffffff; }
+     :host-context(.dark) .empty-desc { color: #94a3b8; }
     :host-context(.dark) .loading-state { color: #94a3b8; }
     :host-context(.dark) .spinner-lg { border-color: #334155; border-top-color: var(--brand-400); }
 
@@ -1313,20 +1313,20 @@ interface NewsItem {
     :host-context(.dark) .footer-hint { color: #64748b; }
     :host-context(.dark) .footer-hint.hint-ok { color: #4ade80; }
 
-    /* Forms dark */
-    :host-context(.dark) .form-label { color: #cbd5e1; }
-    :host-context(.dark) .form-label-desc { color: #64748b; }
+     /* Forms dark */
+    :host-context(.dark) .form-label { color: #e2e8f0; }
+    :host-context(.dark) .form-label-desc { color: #cbd5e1; }
     :host-context(.dark) .form-section { background: #0f172a; border-color: #334155; }
     :host-context(.dark) .form-section-title { color: #e2e8f0; border-bottom-color: #334155; }
     :host-context(.dark) .form-section-desc { color: #64748b; }
 
-    :host-context(.dark) .form-input,
-    :host-context(.dark) .form-select,
-    :host-context(.dark) .form-textarea {
-      background: #0f172a;
-      border-color: #334155;
-      color: #f1f5f9;
-    }
+     :host-context(.dark) .form-input,
+     :host-context(.dark) .form-select,
+     :host-context(.dark) .form-textarea {
+       background: #0f172a;
+       border-color: #334155;
+       color: #ffffff;
+     }
 
     :host-context(.dark) .form-input::placeholder,
     :host-context(.dark) .form-textarea::placeholder {
