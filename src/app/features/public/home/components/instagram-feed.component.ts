@@ -101,13 +101,93 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       text-align: center;
     }
 
-    @media (max-width: 1024px) {
+     @media (max-width: 1024px) {
       .instagram-section {
         padding: 40px 16px;
       }
       .instagram-title {
         font-size: 1.25rem;
       }
+    }
+
+    .elfsight-wrapper,
+    div[class*="elfsight-app"],
+    div[class*="eapps-instagram-feed"],
+    div[id*="elfsight"] {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+
+    .instagram-header {
+      margin-bottom: 24px !important;
+    }
+
+    div[class*="elfsight"],
+    div[id*="elfsight"],
+    iframe[id*="elfsight"] {
+      display: block !important;
+    }
+
+    .elfsight-modal,
+    .eapps-modal,
+    .eapps-popup,
+    .eapps-tooltip,
+    [class*="popup"],
+    [class*="tooltip"],
+    [class*="modal"] {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .elfsight-watermark,
+    .eapps-watermark,
+    [class*="powered-by"],
+    [class*="powerd-by"],
+    .eapps-power-link,
+    .elfsight-branding,
+    .eapps-credit,
+    .eapps-attribution {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    iframe[id*="elfsight"] {
+      margin-top: 0 !important;
+    }
+
+    [class*="eapps-instagram-followers"],
+    [class*="eapps-instagram-button"] {
+      display: none !important;
+    }
+
+    .elfsight-app-container,
+    .eapps-instagram-feed-container {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
+
+    .elfsight-promotion,
+    [class*="promotion"],
+    [class*="upgrade"] {
+      display: none !important;
+    }
+
+    .elfsight-header {
+      display: none !important;
+    }
+
+    .elfsight-footer,
+    .eapps-footer {
+      display: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
     }
   `],
 })
