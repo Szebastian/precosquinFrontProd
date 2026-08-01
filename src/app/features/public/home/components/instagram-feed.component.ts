@@ -74,7 +74,7 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 500px;
+      min-height: 0;
     }
 
     .elfsight-skeleton {
