@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pre Cosquín Puerto Pirámides 2027 — Mobile App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0E0F12;
+      --surface: #181A1F;
+      --surface-elevated: #1E2026;
+      --surface-hover: #252830;
+      --border: #2A2D35;
+      --text: #FFFFFF;
+      --text-secondary: #B0B5C0;
+      --text-muted: #6B7280;
+      --gold: #C9A84C;
+      --gold-dim: rgba(201,168,76,0.12);
+      --gold-glow: rgba(201,168,76,0.25);
+      --red: #FF3B30;
+      --red-dim: rgba(255,59,48,0.12);
+      --green: #34C759;
+      --green-dim: rgba(52,199,89,0.12);
+      --blue: #3B82F6;
+      --blue-dim: rgba(59,130,246,0.12);
+      --brand: #2563EB;
+      --radius-sm: 12px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --nav-h: 68px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:16px;-webkit-text-size-adjust:100%}
+    body{font-family:var(--font);background:#000;color:var(--text);-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh;display:flex;justify-content:center;align-items:center}
+
+    .phone{width:393px;height:852px;background:var(--bg);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 2px #333,0 25px 80px rgba(0,0,0,.6)}
+    .phone-screen{width:100%;height:100%;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h) + 20px)}
+    .phone-screen::-webkit-scrollbar{display:none}
+    .phone-screen{-ms-overflow-style:none;scrollbar-width:none}
+
+    /* STATUS BAR */
+    .status-bar{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:12px 28px 8px;background:var(--bg)}
+    .status-bar .time{font-size:15px;font-weight:600}
+    .status-bar .icons{display:flex;gap:6px;align-items:center}
+    .status-bar .icons svg{width:18px;height:12px}
+
+    /* HEADER */
+    .header{display:flex;justify-content:space-between;align-items:center;padding:4px 20px 14px;background:var(--bg);position:sticky;top:38px;z-index:99}
+    .header-left{display:flex;align-items:center;gap:10px}
+    .header-logo{width:38px;height:38px;border-radius:10px;overflow:hidden;flex-shrink:0}
+    .header-logo img{width:100%;height:100%;object-fit:cover}
+    .header-brand{display:flex;flex-direction:column}
+    .header-brand-sub{font-size:8px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;line-height:1}
+    .header-brand-main{font-size:13px;font-weight:800;line-height:1.2;margin-top:1px}
+    .header-right{display:flex;gap:6px;align-items:center}
+    .header-icon{width:38px;height:38px;border-radius:var(--radius-full);background:var(--surface);display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;transition:all .2s;position:relative}
+    .header-icon:active{transform:scale(.92);background:var(--surface-hover)}
+    .header-icon svg{width:18px;height:18px;stroke:var(--text-secondary);fill:none;stroke-width:1.8}
+    .notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid var(--bg)}
+    .header-avatar{width:38px;height:38px;border-radius:var(--radius-full);background:linear-gradient(135deg,var(--gold),#E8D48B);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--bg);cursor:pointer}
+    .header-avatar:active{transform:scale(.92)}
+
+    .section{padding:0 20px}
+    .section+.section{margin-top:var(--space-lg)}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .section-title{font-size:17px;font-weight:700;letter-spacing:-.2px}
+    .section-link{font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;text-decoration:none}
+    .section-link:active{opacity:.7}
+    .spacer{height:20px}
+
+    /* HERO NEWS */
+    .hero-news{border-radius:var(--radius-lg);overflow:hidden;position:relative;height:280px;cursor:pointer}
+    .hero-news-bg{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+    .hero-news-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.3) 50%,transparent 100%)}
+    .hero-news-content{position:absolute;bottom:0;left:0;right:0;padding:20px}
+    .hero-news-badge{display:inline-block;padding:4px 10px;border-radius:var(--radius-full);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;background:var(--gold);color:var(--bg);margin-bottom:10px}
+    .hero-news-title{font-size:20px;font-weight:800;line-height:1.25;letter-spacing:-.3px}
+    .hero-news-meta{font-size:11px;color:rgba(255,255,255,.6);margin-top:6px}
+    .hero-dots{position:absolute;bottom:16px;right:20px;display:flex;gap:6px}
+    .hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .2s}
+    .hero-dot.active{background:#fff;transform:scale(1.3)}
+    .hero-nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:all .2s}
+    .hero-nav:active{transform:translateY(-50%) scale(.9)}
+    .hero-nav svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2}
+    .hero-nav.prev{left:12px}
+    .hero-nav.next{right:12px}
+    .hero-sidebar{display:flex;gap:8px;margin-top:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+    .hero-sidebar::-webkit-scrollbar{display:none}
+    .hero-sidebar-card{min-width:140px;background:var(--surface);border-radius:var(--radius-sm);padding:10px;border:1px solid var(--border);cursor:pointer;flex-shrink:0;transition:all .2s}
+    .hero-sidebar-card:active{transform:scale(.97);background:var(--surface-hover)}
+    .hero-sidebar-card.active{border-color:var(--blue);background:var(--blue-dim)}
+    .hero-sidebar-cat{font-size:8px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .hero-sidebar-title{font-size:11px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+    /* CATEGORIES */
+    .cat-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+    .cat-pill{padding:8px 16px;border-radius:var(--radius-full);font-size:12px;font-weight:600;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;transition:all .2s}
+    .cat-pill:active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+
+    /* COUNTDOWN */
+    .countdown{display:flex;gap:8px;margin:16px 0}
+    .cd-item{flex:1;background:var(--surface);border-radius:var(--radius-md);padding:12px 6px;text-align:center;border:1px solid var(--border)}
+    .cd-val{font-size:28px;font-weight:800;color:var(--gold);line-height:1;letter-spacing:-1px}
+    .cd-lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;font-weight:500}
+
+    /* BUTTONS */
+    .btn-primary{width:100%;padding:15px 24px;background:var(--gold);color:var(--bg);border:none;border-radius:var(--radius-md);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px}
+    .btn-primary:active{transform:scale(.97);opacity:.9}
+    .btn-primary svg{width:18px;height:18px;stroke:var(--bg);fill:none;stroke-width:2.5}
+    .btn-secondary{width:100%;padding:13px 24px;background:transparent;color:var(--text-secondary);border:1px solid var(--border);border-radius:var(--radius-md);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px;min-height:46px}
+    .btn-secondary:active{background:var(--surface-hover);transform:scale(.97)}
+
+    /* STATUS BADGE */
+    .status-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+    .status-badge.open{background:var(--green-dim);color:var(--green)}
+    .status-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+    /* CTA BANNER */
+    .cta-banner{background:var(--brand);border-radius:var(--radius-lg);padding:24px 20px;position:relative;overflow:hidden}
+    .cta-banner::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08)}
+    .cta-badge{display:inline-block;padding:4px 10px;border-radius:var(--radius-full);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);margin-bottom:12px}
+    .cta-title{font-size:22px;font-weight:800;line-height:1.2;margin-bottom:6px}
+    .cta-desc{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;margin-bottom:16px}
+    .cta-urgency{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--gold);margin-bottom:16px}
+    .cta-urgency svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:2}
+    .btn-gold{width:100%;padding:14px;background:var(--gold);color:var(--bg);border:none;border-radius:var(--radius-md);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-gold:active{transform:scale(.97);opacity:.9}
+    .btn-gold svg{width:16px;height:16px;stroke:var(--bg);fill:none;stroke-width:2.5}
+
+    /* STATS */
+    .stats-row{display:flex;align-items:center;justify-content:center;gap:0;background:var(--surface);border-radius:var(--radius-lg);padding:20px 12px;border:1px solid var(--border)}
+    .stat-item{flex:1;text-align:center}
+    .stat-val{font-size:28px;font-weight:900;color:var(--gold);line-height:1}
+    .stat-lbl{font-size:9px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
+    .stat-div{width:1px;height:32px;background:var(--border);flex-shrink:0}
+
+    /* SCOREBOARD */
+    .scoreboard{display:flex;align-items:center;gap:0;background:var(--surface);border-radius:var(--radius-lg);padding:16px 12px;border:1px solid var(--border);overflow-x:auto}
+    .scoreboard::-webkit-scrollbar{display:none}
+    .sb-item{flex:1;min-width:0;text-align:center;padding:0 6px}
+    .sb-label{font-size:8px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px}
+    .sb-value{font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sb-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+    .sb-link{font-size:9px;font-weight:700;color:var(--gold);white-space:nowrap;cursor:pointer}
+
+    /* DECLARATION */
+    .decl-card{background:linear-gradient(135deg,#0f172a,#1e3a8a,#1d4ed8);border-radius:var(--radius-lg);padding:24px 20px;position:relative;overflow:hidden}
+    .decl-card::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.06)}
+    .decl-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--radius-full);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);margin-bottom:14px}
+    .decl-badge svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+    .decl-title{font-size:20px;font-weight:800;line-height:1.25;margin-bottom:8px}
+    .decl-desc{font-size:12px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:16px}
+    .decl-cards{display:flex;gap:8px;margin-bottom:16px}
+    .decl-stat{flex:1;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);border-radius:var(--radius-sm);padding:12px 8px;text-align:center;border:1px solid rgba(255,255,255,.1)}
+    .decl-stat-val{font-size:16px;font-weight:800;line-height:1}
+    .decl-stat-lbl{font-size:8px;font-weight:600;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+    .btn-white{width:100%;padding:12px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:var(--radius-md);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+    .btn-white:active{background:rgba(255,255,255,.2);transform:scale(.97)}
+    .btn-white svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2}
+
+    /* LIVE */
+    .live-card{background:var(--surface);border-radius:var(--radius-lg);padding:18px;border:1px solid rgba(255,59,48,.25);position:relative;overflow:hidden}
+    .live-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red)}
+    .live-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--red-dim);border-radius:var(--radius-full);font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px}
+    .live-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:livePulse 1.5s ease-in-out infinite}
+    @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+    .live-title{font-size:16px;font-weight:800;margin-bottom:3px}
+    .live-viewers{font-size:12px;color:var(--text-secondary);margin-bottom:14px}
+    .btn-live{width:100%;padding:13px;background:var(--red);color:#fff;border:none;border-radius:var(--radius-md);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-live:active{transform:scale(.97);opacity:.9}
+    .btn-live svg{width:16px;height:16px;fill:#fff}
+
+    /* NEWS */
+    .news-list{display:flex;flex-direction:column;gap:8px}
+    .news-card{background:var(--surface);border-radius:var(--radius-md);padding:14px;border:1px solid var(--border);display:flex;gap:12px;cursor:pointer;transition:all .2s}
+    .news-card:active{transform:scale(.98);background:var(--surface-hover)}
+    .news-thumb{width:68px;height:68px;border-radius:var(--radius-sm);background:var(--surface-elevated);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .news-thumb img{width:100%;height:100%;object-fit:cover}
+    .news-thumb svg{width:24px;height:24px;stroke:var(--text-muted);fill:none;stroke-width:1.5}
+    .news-content{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+    .news-cat{font-size:9px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}
+    .news-title{font-size:13px;font-weight:700;line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .news-date{font-size:10px;color:var(--text-muted)}
+
+    /* BOTTOM NAV */
+    .bottom-nav{position:absolute;bottom:0;left:0;right:0;height:var(--nav-h);background:rgba(14,15,18,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:flex-start;padding-top:10px;z-index:200}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:all .2s;padding:4px 10px;border:none;background:none;-webkit-tap-highlight-color:transparent;font-family:var(--font)}
+    .nav-item:active{transform:scale(.9)}
+    .nav-item svg{width:22px;height:22px;stroke:var(--text-muted);fill:none;stroke-width:1.8;transition:all .2s}
+    .nav-item span{font-size:10px;font-weight:600;color:var(--text-muted);transition:color .2s}
+    .nav-item.active svg{stroke:var(--gold)}
+    .nav-item.active span{color:var(--gold)}
+
+    /* ANIMATIONS */
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    .anim{animation:fadeInUp .4s ease-out forwards;opacity:0}
+    .d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}.d5{animation-delay:.25s}.d6{animation-delay:.3s}.d7{animation-delay:.35s}.d8{animation-delay:.4s}
+
+    @media(max-width:420px){.phone{width:100vw;height:100vh;border-radius:0;box-shadow:none}}
+  </style>
+</head>
+<body>
+
+<div class="phone">
+<div class="phone-screen" id="screen">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="icons">
+      <svg viewBox="0 0 18 12"><rect x="0" y="4" width="3" height="8" rx=".5" fill="#fff"/><rect x="4" y="3" width="3" height="9" rx=".5" fill="#fff"/><rect x="8" y="1" width="3" height="11" rx=".5" fill="#fff"/><rect x="12" y="0" width="3" height="12" rx=".5" fill="#fff"/></svg>
+      <svg viewBox="0 0 16 12"><path d="M8 2.4C5.6 2.4 3.4 3.3 1.8 4.8L0 3C2 1.1 4.9 0 8 0s6 1.1 8 3l-1.8 1.8C12.6 3.3 10.4 2.4 8 2.4z" fill="#fff"/><path d="M8 6.4C6.5 6.4 5.1 7 4 8l-1.8-1.8C3.6 4.7 5.7 3.6 8 3.6s4.4 1.1 5.8 2.6L12 8c-1.1-1-2.5-1.6-4-1.6z" fill="#fff"/><circle cx="8" cy="11" r="1.5" fill="#fff"/></svg>
+      <svg viewBox="0 0 28 12"><rect x="0" y=".5" width="23" height="11" rx="2.5" stroke="#fff" stroke-width="1" fill="none"/><rect x="24" y="3.5" width="2.5" height="5" rx="1" fill="#fff" opacity=".4"/><rect x="1.5" y="2" width="18" height="8" rx="1.5" fill="#34C759"/></svg>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header anim d1">
+    <div class="header-left">
+      <div class="header-logo">
+        <img src="../src/assets/img/logoballena.webp" alt="Logo Precosquín" onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:var(--bg)&quot;>PC</div>'">
+      </div>
+      <div class="header-brand">
+        <span class="header-brand-sub">Pre-Cosquín</span>
+        <span class="header-brand-main">Puerto Pirámides</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </div>
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="header-avatar">JP</div>
+    </div>
+  </header>
+
+  <!-- HERO NEWS CAROUSEL -->
+  <div class="section anim d2">
+    <div class="hero-news" id="heroNews">
+      <img class="hero-news-bg" src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=400&fit=crop" alt="Noticia destacada">
+      <div class="hero-news-overlay"></div>
+      <button class="hero-nav prev" onclick="prevNews()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="hero-nav next" onclick="nextNews()"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="hero-news-content">
+        <span class="hero-news-badge" id="heroBadge">Noticias</span>
+        <h2 class="hero-news-title" id="heroTitle">Se abrieron las inscripciones para el Pre Cosquín 2027</h2>
+        <div class="hero-news-meta" id="heroMeta">Hace 2 horas</div>
+      </div>
+      <div class="hero-dots" id="heroDots"></div>
+    </div>
+    <div class="hero-sidebar" id="heroSidebar"></div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- CATEGORIES -->
+  <div class="section anim d3">
+    <div class="section-header">
+      <h2 class="section-title">Categorías del Festival</h2>
+    </div>
+    <div class="cat-pills">
+      <span class="cat-pill">Solista Vocal</span>
+      <span class="cat-pill">Solista Instrumental</span>
+      <span class="cat-pill">Dúo</span>
+      <span class="cat-pill">Trío</span>
+      <span class="cat-pill">Conjunto</span>
+      <span class="cat-pill">Coro</span>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- STATUS + COUNTDOWN -->
+  <div class="section anim d4">
+    <div class="section-header">
+      <h2 class="section-title">Inscripciones</h2>
+    </div>
+    <div style="background:var(--surface);border-radius:var(--radius-lg);padding:20px;border:1px solid var(--border);position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),#E8D48B,var(--gold))"></div>
+      <div class="status-badge open">
+        <span class="dot"></span>
+        Inscripciones abiertas
+      </div>
+      <h3 style="font-size:22px;font-weight:800;line-height:1.2;margin:10px 0 4px">Inscribí tu propuesta artística</h3>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:14px">Formá parte del festival folclórico más importante de la Patagonia.</p>
+      <div class="countdown">
+        <div class="cd-item"><div class="cd-val" id="cd-d">30</div><div class="cd-lbl">Días</div></div>
+        <div class="cd-item"><div class="cd-val" id="cd-h">14</div><div class="cd-lbl">Horas</div></div>
+        <div class="cd-item"><div class="cd-val" id="cd-m">27</div><div class="cd-lbl">Min</div></div>
+        <div class="cd-item"><div class="cd-val" id="cd-s">05</div><div class="cd-lbl">Seg</div></div>
+      </div>
+      <button class="btn-primary" onclick="alert('Redirigiendo al formulario de inscripción...')">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Inscribirme ahora
+      </button>
+      <button class="btn-secondary" onclick="alert('Abriendo bases del certamen...')">Ver bases y reglamento</button>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- CTA BANNER -->
+  <div class="section anim d4">
+    <div class="cta-banner">
+      <span class="cta-badge">Inscripciones 2027</span>
+      <h2 class="cta-title">¿Listo para participar?</h2>
+      <p class="cta-desc">Inscribí tu propuesta artística y formá parte del festival folclórico más importante de la Patagonia.</p>
+      <div class="cta-urgency">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Inscripciones abiertas hasta el 31 de agosto
+      </div>
+      <button class="btn-gold" onclick="alert('Redirigiendo al formulario...')">
+        Inscribirme ahora
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- STATS -->
+  <div class="section anim d5">
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-val">2</div>
+        <div class="stat-lbl">Categorías</div>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat-item">
+        <div class="stat-val">12</div>
+        <div class="stat-lbl">Subcategorías</div>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat-item">
+        <div class="stat-val">5-6</div>
+        <div class="stat-lbl">Septiembre</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- SCOREBOARD -->
+  <div class="section anim d5">
+    <div class="scoreboard">
+      <div class="sb-item">
+        <div class="sb-label">Ubicación</div>
+        <div class="sb-value">Puerto Pirámides</div>
+      </div>
+      <div class="sb-div"></div>
+      <div class="sb-item">
+        <div class="sb-label">Provincia</div>
+        <div class="sb-value">Chubut, Patagonia</div>
+      </div>
+      <div class="sb-div"></div>
+      <div class="sb-item">
+        <div class="sb-label">Edición</div>
+        <div class="sb-value">Pre-Cosquín 2027</div>
+      </div>
+      <div class="sb-div"></div>
+      <div class="sb-item">
+        <span class="sb-link" onclick="alert('Ir a inscripciones')">Ver más</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="section anim d6">
+    <div class="section-header">
+      <h2 class="section-title">Accesos rápidos</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <a style="background:var(--surface);border-radius:var(--radius-md);padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;transition:all .2s" href="/inscripcion">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);text-align:center">Inscripciones</span>
+      </a>
+      <a style="background:var(--surface);border-radius:var(--radius-md);padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;transition:all .2s" href="/documentacion">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--blue-dim);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);text-align:center">Bases</span>
+      </a>
+      <a style="background:var(--surface);border-radius:var(--radius-md);padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;transition:all .2s" href="/noticias">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--green-dim);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg></div>
+        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);text-align:center">Noticias</span>
+      </a>
+      <a style="background:var(--surface);border-radius:var(--radius-md);padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;transition:all .2s" href="#">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);text-align:center">Jurados</span>
+      </a>
+      <a style="background:var(--surface);border-radius:var(--radius-md);padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;transition:all .2s" href="#">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--blue-dim);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);text-align:center">Cronograma</span>
+      </a>
+      <a style="background:var(--surface);border-radius:var(--radius-md);padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;transition:all .2s" href="/patrocinio">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--green-dim);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);text-align:center">Patrocinio</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- DECLARATION -->
+  <div class="section anim d7">
+    <div class="decl-card">
+      <div class="decl-badge">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documento Institucional
+      </div>
+      <h2 class="decl-title">Declarado de Interés Cultural, Turístico y Comunitario</h2>
+      <p class="decl-desc">El Concejo Deliberante de Puerto Pirámides respalda oficialmente el Pre-Cosquín 2027 como sede del certamen que impulsa nuevos valores del folclore patagónico.</p>
+      <div class="decl-cards">
+        <div class="decl-stat">
+          <div class="decl-stat-val">N° 35/26</div>
+          <div class="decl-stat-lbl">Declaración</div>
+        </div>
+        <div class="decl-stat">
+          <div class="decl-stat-val">5-6 Sept</div>
+          <div class="decl-stat-lbl">Fechas</div>
+        </div>
+        <div class="decl-stat">
+          <div class="decl-stat-val">2024+</div>
+          <div class="decl-stat-lbl">Sede Desde</div>
+        </div>
+      </div>
+      <button class="btn-white" onclick="alert('Abriendo declaración completa...')">
+        Ver declaración completa
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- LIVE -->
+  <div class="section anim d7">
+    <div class="live-card">
+      <div class="live-badge"><span class="dot"></span> En vivo ahora</div>
+      <div class="live-title">Precosquín en Vivo</div>
+      <div class="live-viewers">1.2k personas viendo</div>
+      <button class="btn-live" onclick="alert('Abriendo transmisión...')">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Ver transmisión
+      </button>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- NEWS -->
+  <div class="section anim d8">
+    <div class="section-header">
+      <h2 class="section-title">Últimas noticias</h2>
+      <a class="section-link" href="/noticias">Ver todas</a>
+    </div>
+    <div class="news-list">
+      <div class="news-card">
+        <div class="news-thumb"><img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=140&h=140&fit=crop" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><svg viewBox="0 0 24 24" style="display:none"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div class="news-content">
+          <div class="news-cat">Inscripciones</div>
+          <div class="news-title">Se abrieron las inscripciones para el Pre Cosquín 2027</div>
+          <div class="news-date">Hace 2 horas</div>
+        </div>
+      </div>
+      <div class="news-card">
+        <div class="news-thumb"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=140&h=140&fit=crop" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><svg viewBox="0 0 24 24" style="display:none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <div class="news-content">
+          <div class="news-cat">Jurados</div>
+          <div class="news-title">Conocé a los jurados que evaluarán a los participantes</div>
+          <div class="news-date">Ayer</div>
+        </div>
+      </div>
+      <div class="news-card">
+        <div class="news-thumb"><img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=140&h=140&fit=crop" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><svg viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></div>
+        <div class="news-content">
+          <div class="news-cat">Festival</div>
+          <div class="news-title">Confirmado: el festival será el 15 y 16 de septiembre</div>
+          <div class="news-date">Hace 3 días</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="spacer"></div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Inicio</span>
+  </button>
+  <button class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+    <span>Noticias</span>
+  </button>
+  <button class="nav-item">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span>Agenda</span>
+  </button>
+  <button class="nav-item">
+    <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    <span>Videos</span>
+  </button>
+  <button class="nav-item">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+    <span>Más</span>
+  </button>
+</nav>
+
+</div>
+
+<script>
+// NEWS DATA
+const news = [
+  { cat:'Noticias', title:'Se abrieron las inscripciones para el Pre Cosquín 2027', date:'Hace 2 horas', img:'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=400&fit=crop' },
+  { cat:'Jurados', title:'Conocé a los jurados que evaluarán a los participantes', date:'Ayer', img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=400&fit=crop' },
+  { cat:'Festival', title:'Confirmado: el festival será el 15 y 16 de septiembre', date:'Hace 3 días', img:'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop' },
+  { cat:'Evento', title:'La preselección regional será en el Centro Cultural de Chubut', date:'Hace 5 días', img:'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=400&fit=crop' }
+];
+let currentNews = 0;
+
+function renderNews() {
+  const n = news[currentNews];
+  document.getElementById('heroNews').querySelector('.hero-news-bg').src = n.img;
+  document.getElementById('heroBadge').textContent = n.cat;
+  document.getElementById('heroTitle').textContent = n.title;
+  document.getElementById('heroMeta').textContent = n.date;
+  // dots
+  const dotsEl = document.getElementById('heroDots');
+  dotsEl.innerHTML = news.map((_,i) => `<div class="hero-dot ${i===currentNews?'active':''}"></div>`).join('');
+  // sidebar
+  const sb = document.getElementById('heroSidebar');
+  sb.innerHTML = news.map((item,i) => `
+    <div class="hero-sidebar-card ${i===currentNews?'active':''}" onclick="currentNews=${i};renderNews()">
+      <div class="hero-sidebar-cat">${item.cat}</div>
+      <div class="hero-sidebar-title">${item.title}</div>
+    </div>
+  `).join('');
+}
+function nextNews() { currentNews = (currentNews + 1) % news.length; renderNews(); }
+function prevNews() { currentNews = (currentNews - 1 + news.length) % news.length; renderNews(); }
+renderNews();
+setInterval(nextNews, 5000);
+
+// COUNTDOWN
+function updateCD() {
+  const dl = new Date('2027-08-31T23:59:59');
+  const d = dl - new Date();
+  if (d <= 0) return;
+  document.getElementById('cd-d').textContent = Math.floor(d / 864e5);
+  document.getElementById('cd-h').textContent = Math.floor((d % 864e5) / 36e5);
+  document.getElementById('cd-m').textContent = Math.floor((d % 36e5) / 6e4);
+  document.getElementById('cd-s').textContent = Math.floor((d % 6e4) / 1e3);
+}
+updateCD(); setInterval(updateCD, 1000);
+
+// BOTTOM NAV
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ENTRANCE ANIMATIONS
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }});
+}, { threshold: 0.1 });
+document.querySelectorAll('.anim').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>

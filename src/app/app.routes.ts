@@ -4,7 +4,7 @@ import { authGuard, publicGuard } from './core/auth/auth.guard';
 export const appRoutes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-home.page').then(m => m.MobileHomeRedesignComponent),
+    loadComponent: () => import('./features/public/home/home.page').then(m => m.HomePageComponent),
     canActivate: [publicGuard]
   },
   {
@@ -126,30 +126,6 @@ export const appRoutes: Routes = [
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES),
     canActivate: [publicGuard]
-  },
-  {
-    path: 'm',
-    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-home.page').then(m => m.MobileHomeRedesignComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Pre Cosquín 2027' }
-  },
-  {
-    path: 'm/noticias',
-    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-noticias.page').then(m => m.MobileNoticiasPageComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Noticias' }
-  },
-  {
-    path: 'm/agenda',
-    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-agenda.page').then(m => m.MobileAgendaPageComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Agenda' }
-  },
-  {
-    path: 'm/mas',
-    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-mas.page').then(m => m.MobileMasPageComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Más' }
   },
   {
     path: '**',
