@@ -1323,10 +1323,18 @@ interface NewsItem {
       :host-context(.dark) .form-input,
       :host-context(.dark) .form-select,
       :host-context(.dark) .form-textarea {
-        background: #0f172a;
-        border-color: #334155;
+        background: #0f172a !important;
+        border-color: #334155 !important;
         color: #ffffff !important;
-        caret-color: #3b82f6;
+        caret-color: #3b82f6 !important;
+      }
+
+      :host-context(.dark) input,
+      :host-context(.dark) select,
+      :host-context(.dark) textarea {
+        background-color: transparent !important;
+        color: #ffffff !important;
+        border-color: #ffffff14 !important;
       }
 
       :host-context(.dark) .form-input::placeholder,
