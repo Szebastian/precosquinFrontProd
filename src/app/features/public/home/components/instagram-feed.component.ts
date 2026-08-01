@@ -179,6 +179,43 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       padding: 0 !important;
       pointer-events: none !important;
     }
+
+    .eapps-instagram-feed-items,
+    .eapps-instagram-feed-items-container,
+    div[class*="instagram-feed-items"] {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      height: auto !important;
+      max-height: 250px !important;
+    }
+
+    .eapps-instagram-feed-items > *,
+    div[class*="instagram-feed-items"] > * {
+      flex: 0 0 auto !important;
+      height: 200px !important;
+      width: 200px !important;
+      margin: 0 8px !important;
+    }
+
+    .eapps-instagram-feed-item,
+    .eapps-instagram-feed-item-container {
+      height: 200px !important;
+      width: 200px !important;
+      margin: 0 8px 0 0 !important;
+      flex: 0 0 auto !important;
+    }
+
+    @media (max-width: 1024px) {
+      .eapps-instagram-feed-items > *,
+      .eapps-instagram-feed-item,
+      .eapps-instagram-feed-item-container {
+        height: 150px !important;
+        width: 150px !important;
+      }
+    }
   `],
 })
 export class InstagramFeedComponent implements AfterViewInit {
