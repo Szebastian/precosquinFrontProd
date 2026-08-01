@@ -39,7 +39,7 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       width: 100%;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 20px 20px 60px;
     }
 
     .elfsight-wrapper {
@@ -69,21 +69,20 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       text-align: center;
     }
 
-     @media (max-width: 1024px) {
-      .instagram-section {
-        padding: 40px 16px;
-      }
-      .instagram-title {
-        font-size: 1.25rem;
-      }
-    }
+      @media (max-width: 1024px) {
+       .instagram-section {
+         padding: 20px 16px 40px;
+       }
+     }
 
     .elfsight-wrapper,
     div[class*="elfsight-app"],
     div[class*="eapps-instagram-feed"],
     div[id*="elfsight"] {
       margin-top: 0 !important;
+      margin-bottom: 40px !important;
       padding-top: 0 !important;
+      padding-bottom: 20px !important;
     }
 
     .instagram-header {
