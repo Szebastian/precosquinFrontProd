@@ -9,8 +9,8 @@ import { HomeDeclaracionHeroComponent } from './components/home-declaracion-hero
 import { HomeScoreboardComponent } from './components/home-scoreboard.component';
 import { HomeFooterComponent } from './components/home-footer.component';
 import { YoutubeLiveWidgetComponent } from './components/youtube-live-widget.component';
+import { InstagramFeedComponent } from './components/instagram-feed.component';
 import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
-import { HomeJuradoSectionComponent } from './components/home-jurado-section.component';
 
 @Component({
   selector: 'app-home',
@@ -24,8 +24,8 @@ import { HomeJuradoSectionComponent } from './components/home-jurado-section.com
     HomeScoreboardComponent,
     HomeFooterComponent,
     YoutubeLiveWidgetComponent,
+    InstagramFeedComponent,
     BackToTopComponent,
-    HomeJuradoSectionComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -52,10 +52,18 @@ import { HomeJuradoSectionComponent } from './components/home-jurado-section.com
           <span class="sep-cat-dot"></span>
           <span class="sep-cat">Coro</span>
         </div>
-      </app-home-separator>
+       </app-home-separator>
 
-      @defer (on idle) {
-        <app-home-cta-banner />
+       @defer (on idle) {
+         <app-instagram-feed />
+       } @loading (minimum 1s) {
+         <div style="height: 120px; padding: 60px 20px; background-color: #F4F1EA; text-align: center;">
+           <div class="loading-spinner"></div>
+         </div>
+       }
+
+       @defer (on idle) {
+         <app-home-cta-banner />
       } @loading (minimum 500ms) {
         <div style="height: 120px;"></div>
       }
@@ -87,11 +95,6 @@ import { HomeJuradoSectionComponent } from './components/home-jurado-section.com
         <div style="height: 100px;"></div>
       }
       @defer (on idle) {
-        <app-home-jurado-section />
-      } @loading (minimum 300ms) {
-        <div style="height: 300px;"></div>
-      }
-      @defer (on idle) {
         <app-home-declaracion-hero />
       } @loading (minimum 500ms) {
         <div style="height: 200px;"></div>
@@ -114,6 +117,8 @@ import { HomeJuradoSectionComponent } from './components/home-jurado-section.com
   styles: [`
     .portal { min-height: 100vh; background-color: var(--gray-50); font-family: var(--font-sans); display: flex; flex-direction: column; }
     .portal-main { flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; padding: var(--space-6) var(--space-4); }
+    .loading-spinner { width: 24px; height: 24px; border: 3px solid var(--gray-200); border-top-color: var(--brand-500); border-radius: 50%; animation: spin 0.6s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   `]
 })
 export class HomePageComponent implements OnInit {
