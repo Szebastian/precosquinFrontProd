@@ -4,7 +4,7 @@ import { authGuard, publicGuard } from './core/auth/auth.guard';
 export const appRoutes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./features/public/home/home.page').then(m => m.HomePageComponent),
+    loadComponent: () => import('./features/public/home/mobile-home-redesign/mobile-home.page').then(m => m.MobileHomeRedesignComponent),
     canActivate: [publicGuard]
   },
   {
