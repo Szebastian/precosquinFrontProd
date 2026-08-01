@@ -182,12 +182,25 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       display: none !important;
     }
 
-    .elfsight-footer,
+     .elfsight-footer,
     .eapps-footer {
       display: none !important;
       padding: 0 !important;
       margin: 0 !important;
       border: none !important;
+    }
+
+    a[href*="elfsight.com"],
+    [data-remove-url],
+    [title*="Remove Elfsight"],
+    [title*="branding"] {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      pointer-events: none !important;
     }
   `],
 })
@@ -231,5 +244,18 @@ export class InstagramFeedComponent implements AfterViewInit {
     widget.setAttribute('data-elfsight-app-lazy', '');
 
     container.appendChild(widget);
+
+    setTimeout(() => {
+      const allLinks = container.querySelectorAll('a');
+      allLinks.forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        if (href.includes('elfsight.com')) {
+          link.remove();
+        }
+      });
+
+      const removeButtons = container.querySelectorAll('[data-remove-url]');
+      removeButtons.forEach((btn) => btn.remove());
+    }, 1000);
   }
 }
