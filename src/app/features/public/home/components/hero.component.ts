@@ -9,6 +9,8 @@ import {
   OnDestroy,
   ChangeDetectionStrategy,
   effect,
+  ElementRef,
+  viewChild,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
@@ -60,20 +62,18 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
   readonly newsItems = input.required<NewsItem[]>();
   readonly activeIndex = signal(0);
   readonly isTransitioning = signal(false);
+  readonly slideDirection = signal<'next' | 'prev'>('next');
   isPaused = false;
 
   private readonly _items = signal<NormalizedNewsItem[]>([]);
   readonly items = this._items.asReadonly();
 
+  readonly secondaryNewsRef = viewChild<ElementRef>('secondaryNews');
+
   readonly activeNews = computed(() => {
     const list = this.items();
     const i = this.activeIndex();
     return list[i] ?? undefined;
-  });
-
-  readonly featuredBg = computed(() => {
-    const news = this.activeNews();
-    return news?.imageUrl ? `url(${news.imageUrl})` : '';
   });
 
   private autoPlayTimer: ReturnType<typeof setInterval> | null = null;
@@ -103,24 +103,40 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
 
   selectNews(index: number): void {
     if (index === this.activeIndex()) return;
+    const direction = index > this.activeIndex() ? 'next' : 'prev';
+    this.slideDirection.set(direction);
     this.isTransitioning.set(true);
     this.restartAutoplay();
     setTimeout(() => {
       this.activeIndex.set(index);
       this.isTransitioning.set(false);
-    }, 200);
+      this.scrollToActiveItem(index);
+    }, 250);
   }
 
   nextSlide(): void {
     const total = this.newsItems().length;
     if (total === 0) return;
+    this.slideDirection.set('next');
     this.selectNews((this.activeIndex() + 1) % total);
   }
 
   prevSlide(): void {
     const total = this.newsItems().length;
     if (total === 0) return;
+    this.slideDirection.set('prev');
     this.selectNews((this.activeIndex() - 1 + total) % total);
+  }
+
+  private scrollToActiveItem(index: number): void {
+    const container = this.secondaryNewsRef()?.nativeElement;
+    if (!container) return;
+    const isMobile = window.matchMedia('(max-width: 1023px)').matches;
+    if (!isMobile) return;
+    const activeItem = container.children[index] as HTMLElement | undefined;
+    if (activeItem) {
+      activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
   }
 
   private startAutoplay(): void {

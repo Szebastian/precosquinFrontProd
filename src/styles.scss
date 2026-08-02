@@ -38,24 +38,28 @@
   /* Colors - Semantic */
   --success-50: #f0fdf4;
   --success-100: #dcfce7;
+  --success-200: #bbf7d0;
   --success-500: #22c55e;
   --success-600: #16a34a;
   --success-700: #15803d;
 
   --warning-50: #fffbeb;
   --warning-100: #fef3c7;
+  --warning-200: #fde68a;
   --warning-500: #f59e0b;
   --warning-600: #d97706;
   --warning-700: #b45309;
 
   --danger-50: #fef2f2;
   --danger-100: #fee2e2;
+  --danger-200: #fecaca;
   --danger-500: #ef4444;
   --danger-600: #dc2626;
   --danger-700: #b91c1c;
 
   --info-50: #eff6ff;
   --info-100: #dbeafe;
+  --info-200: #bfdbfe;
   --info-500: #3b82f6;
   --info-600: #2563eb;
   --info-700: #1d4ed8;
@@ -115,6 +119,10 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+
+  /* Surfaces (dark panels) */
+  --surface-dark: #14161c;
 
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -399,7 +407,7 @@ input::placeholder, textarea::placeholder {
 }
 
 input:focus, select:focus, textarea:focus {
-  border-color: #4c8be6;
+  border-color: var(--brand-500);
   outline: none;
 }
 
@@ -422,7 +430,7 @@ select option {
 }
 
 .minimal-input:focus, .name-input:focus {
-  border-bottom-color: #4c8be6;
+  border-bottom-color: var(--brand-500);
   outline: none;
 }
 
@@ -460,14 +468,14 @@ select option {
 }
 
 .form-input:focus, .form-textarea:focus, select.form-input:focus {
-  border-color: #4c8be6;
+  border-color: var(--brand-500);
   outline: none;
   box-shadow: 0 0 0 3px rgba(76, 139, 230, 0.15);
 }
 
 .form-label {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--gray-500);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
@@ -482,7 +490,7 @@ select option {
 }
 
 .date-select:focus {
-  border-bottom-color: #4c8be6;
+  border-bottom-color: var(--brand-500);
   outline: none;
 }
 
@@ -493,7 +501,7 @@ select option {
 
 input[type="checkbox"], input[type="radio"] {
   background-color: transparent;
-  accent-color: #4c8be6;
+  accent-color: var(--brand-500);
 }
 
 input[type="file"] {
@@ -1121,7 +1129,7 @@ select:autofill, textarea:autofill {
 .dark input:focus,
 .dark select:focus,
 .dark textarea:focus {
-  border-color: #4c8be6 !important;
+  border-color: var(--brand-500) !important;
   outline: none !important;
   box-shadow: 0 0 0 2px rgba(76, 139, 230, 0.15) !important;
 }
@@ -1405,7 +1413,7 @@ code {
 .form-select:focus,
 .form-textarea:focus {
   border-color: var(--brand-500);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 0 0 3px rgba(76, 139, 230, 0.15);
   outline: none;
 }
 

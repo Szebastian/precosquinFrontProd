@@ -43,7 +43,7 @@ import { RouterLink } from '@angular/router';
     </section>
   `,
   styles: [`
-    .declaracion-hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%); padding: 24px 24px; position: relative; overflow: hidden; width: 100%; border-radius: var(--radius); box-shadow: var(--shadow-card); }
+    .declaracion-hero { background: linear-gradient(135deg, var(--gray-950) 0%, #1e3a8a 50%, #1d4ed8 100%); padding: 24px 24px; position: relative; overflow: hidden; width: 100%; border-radius: var(--radius); box-shadow: var(--shadow-card); }
     .declaracion-hero::before { content: ''; position: absolute; top: -50%; right: -10%; width: 400px; height: 400px; border-radius: 50%; background: rgba(255,255,255,0.03); }
     .declaracion-hero-inner { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 48px; }
     .declaracion-hero-content { flex: 1; max-width: 650px; }

@@ -7,11 +7,17 @@
         <div class="skeleton-title"></div>
       </div>
     </div>
-    <aside class="secondary-news">
+    <aside class="secondary-news" aria-label="Cargando noticias">
+      <div class="news-panel-header">
+        <span class="news-panel-label"></span>
+      </div>
       @for (i of [1, 2, 3]; track i) {
         <div class="news-item skeleton-card">
-          <div class="news-body"><div class="skeleton-text-line"></div></div>
-          <div class="news-badge skeleton-thumb"></div>
+          <div class="news-item-content">
+            <div class="news-meta"><div class="skeleton-meta-line"></div></div>
+            <div class="news-body"><div class="skeleton-text-line"></div></div>
+          </div>
+          <div class="news-preview skeleton-thumb"></div>
         </div>
       }
     </aside>
@@ -19,45 +25,65 @@
     <a
       routerLink="/noticias"
       class="featured-news"
-      [style.background-image]="featuredBg()"
-      [style.background-position]="activeNews()!.imagePosition"
+      role="region"
+      [attr.aria-label]="'Noticia destacada: ' + activeNews()!.title"
     >
+      <img
+        class="featured-img featured-slide"
+        [class.slide-out-left]="isTransitioning() && slideDirection() === 'next'"
+        [class.slide-out-right]="isTransitioning() && slideDirection() === 'prev'"
+        [class.slide-in]="!isTransitioning()"
+        [src]="activeNews()!.imageUrl"
+        [alt]="activeNews()!.title"
+        [style.object-position]="activeNews()!.imagePosition"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
       <div class="featured-overlay"></div>
-      <div class="featured-content featured-fade" [class.fade-in]="!isTransitioning()">
+      <div class="featured-content featured-slide"
+           [class.slide-out-left]="isTransitioning() && slideDirection() === 'next'"
+           [class.slide-out-right]="isTransitioning() && slideDirection() === 'prev'"
+           [class.slide-in]="!isTransitioning()">
         <span class="news-category">{{ activeNews()!.category }}</span>
         <h2 class="featured-title">{{ activeNews()!.title }}</h2>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" role="tablist" aria-label="Slides del carrusel">
         @for (item of items(); track item.id) {
           <button
             class="dot"
+            role="tab"
             [class.dot-active]="activeIndex() === $index"
+            [attr.aria-selected]="activeIndex() === $index"
+            [attr.aria-label]="'Slide ' + ($index + 1) + ' de ' + items().length"
             (click)="selectNews($index); $event.preventDefault(); $event.stopPropagation()"
-            [attr.aria-label]="'Ver noticia ' + ($index + 1)"
           ></button>
         }
       </div>
       <button
         class="carousel-arrow carousel-prev"
         (click)="prevSlide(); $event.preventDefault(); $event.stopPropagation()"
-        aria-label="Anterior"
+        aria-label="Slide anterior"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="m15 18-6-6 6-6" />
         </svg>
       </button>
       <button
         class="carousel-arrow carousel-next"
         (click)="nextSlide(); $event.preventDefault(); $event.stopPropagation()"
-        aria-label="Siguiente"
+        aria-label="Siguiente slide"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="m9 18 6-6-6-6" />
         </svg>
       </button>
     </a>
 
-    <aside class="secondary-news">
+    <aside class="secondary-news" aria-label="Últimas noticias" #secondaryNews>
+      <div class="news-panel-header">
+        <span class="news-panel-label">Últimas Novedades</span>
+      </div>
       @for (item of items(); track item.id; let i = $index) {
         <a
           routerLink="/noticias"
@@ -65,23 +91,29 @@
           [class.news-item-active]="activeIndex() === i"
           (click)="selectNews(i); $event.preventDefault(); $event.stopPropagation()"
           role="button"
-          [attr.aria-label]="'Seleccionar: ' + item.title"
+          [attr.aria-label]="item.category + ': ' + item.title"
         >
-          <div class="news-body">
-            <h3 class="news-title">{{ item.title }}</h3>
+          <div class="news-item-content">
+            <div class="news-meta">
+              <span class="news-item-category">{{ item.category }}</span>
+            </div>
+            <div class="news-body">
+              <h3 class="news-title">{{ item.title }}</h3>
+            </div>
           </div>
-          <div class="news-badge">
-            @if (item.thumbType === 'img') {
+          @if (item.thumbType === 'img' && item.badgeUrl) {
+            <div class="news-preview">
               <img
                 [src]="item.badgeUrl"
                 [alt]="item.title"
                 loading="lazy"
                 decoding="async"
               />
-            } @else {
-              <span class="news-badge-icon" [innerHTML]="item.safeThumbHtml"></span>
-            }
-          </div>
+            </div>
+          }
+          @if (activeIndex() === i) {
+            <div class="news-active-indicator" aria-hidden="true"></div>
+          }
         </a>
       }
     </aside>

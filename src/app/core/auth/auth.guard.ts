@@ -25,7 +25,10 @@ export const publicGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  if (auth.isAuthenticated() && state.url !== '/') {
+  const publicRoutes = ['/', '/cronograma', '/noticias', '/documentacion', '/patrocinio', '/institucional/declaracion'];
+  const isPublicRoute = publicRoutes.some(route => state.url === route || state.url.startsWith(route + '/'));
+
+  if (auth.isAuthenticated() && !isPublicRoute) {
     router.navigate(['/panel/dashboard']);
     return false;
   }
