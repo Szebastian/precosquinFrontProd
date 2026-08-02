@@ -43,15 +43,16 @@ import { RouterLink } from '@angular/router';
     </section>
   `,
   styles: [`
-    .declaracion-hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%); padding: var(--space-12) var(--space-4); position: relative; overflow: hidden; }
+    .declaracion-hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%); padding: 24px 24px; position: relative; overflow: hidden; width: 100%; border-radius: var(--radius); box-shadow: var(--shadow-card); }
     .declaracion-hero::before { content: ''; position: absolute; top: -50%; right: -10%; width: 400px; height: 400px; border-radius: 50%; background: rgba(255,255,255,0.03); }
-    .declaracion-hero-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: var(--space-10); }
+    .declaracion-hero-inner { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 48px; }
     .declaracion-hero-content { flex: 1; max-width: 650px; }
     .declaracion-hero-badge { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.15em; color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.1); padding: 5px 14px; border-radius: var(--radius-full); margin-bottom: var(--space-4); border: 1px solid rgba(255,255,255,0.12); }
     .declaracion-hero-title { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: var(--weight-extrabold); color: #fff; margin: 0 0 var(--space-4); line-height: 1.15; }
     .declaracion-hero-desc { font-size: var(--text-base); color: rgba(255,255,255,0.8); margin: 0 0 var(--space-6); line-height: 1.6; max-width: 550px; }
     .declaracion-hero-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--brand-accent); color: var(--gray-900); padding: 12px 24px; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: var(--weight-extrabold); text-decoration: none; letter-spacing: 0.05em; transition: all var(--transition-fast); white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     .declaracion-hero-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .declaracion-hero-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
     .declaracion-hero-highlight { display: flex; flex-direction: column; gap: var(--space-3); flex-shrink: 0; }
     .highlight-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); backdrop-filter: blur(4px); text-align: center; min-width: 140px; }
     .highlight-value { display: block; font-family: var(--font-display); font-size: var(--text-xl); font-weight: var(--weight-extrabold); color: #fff; line-height: 1; margin-bottom: 4px; }
@@ -61,9 +62,29 @@ import { RouterLink } from '@angular/router';
       .declaracion-hero-desc { margin-left: auto; margin-right: auto; }
       .declaracion-hero-highlight { flex-direction: row; }
     }
+    @media (min-width: 1280px) {
+      .declaracion-hero-title { font-size: var(--text-3xl); }
+      .declaracion-hero { padding: 24px 32px; }
+    }
+    @media (min-width: 1600px) {
+      .declaracion-hero-title { font-size: 2.5rem; }
+      .declaracion-hero-highlight { gap: var(--space-4); }
+      .highlight-card { padding: 20px 24px; min-width: 160px; }
+    }
+    @media (min-width: 1920px) {
+      .declaracion-hero-title { font-size: 2.75rem; }
+    }
     @media (max-width: 480px) {
       .declaracion-hero-highlight { flex-direction: column; width: 100%; }
       .highlight-card { min-width: auto; width: 100%; }
+    }
+    @media (max-width: 640px) {
+      .declaracion-hero { padding: var(--space-3) var(--space-4); }
+      .declaracion-hero-title { font-size: var(--text-2xl); }
+      .declaracion-hero-desc { font-size: var(--text-sm); }
+      .declaracion-hero-btn { width: 100%; justify-content: center; padding: 12px 20px; font-size: 0.7rem; }
+      .highlight-card { padding: var(--space-3) var(--space-4); }
+      .highlight-value { font-size: var(--text-lg); }
     }
   `]
 })

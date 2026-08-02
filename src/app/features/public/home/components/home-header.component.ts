@@ -1,4 +1,4 @@
-import { Component, signal, HostListener } from '@angular/core';
+import { Component, signal, HostListener, HostBinding } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -46,8 +46,39 @@ import { RouterLink } from '@angular/router';
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
             Acceder
           </a>
+          <button class="hamburger-btn" (click)="toggleMenu()" [attr.aria-label]="menuOpen() ? 'Cerrar menú' : 'Abrir menú'" [attr.aria-expanded]="menuOpen()">
+            @if (!menuOpen()) {
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            } @else {
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            }
+          </button>
         </div>
       </div>
+
+      @if (menuOpen()) {
+        <div class="mobile-overlay" (click)="toggleMenu()"></div>
+        <div class="mobile-drawer">
+          <nav class="mobile-nav">
+            <a href="#" class="mobile-nav-link active" (click)="toggleMenu()">Inicio</a>
+            <a routerLink="/noticias" class="mobile-nav-link" (click)="toggleMenu()">Noticias</a>
+            <a routerLink="/inscripcion" class="mobile-nav-link" (click)="toggleMenu()">Inscripciones</a>
+            <a href="#" class="mobile-nav-link" (click)="toggleMenu()">Cronograma</a>
+            <a routerLink="/patrocinio" class="mobile-nav-link" (click)="toggleMenu()">Patrocinio</a>
+            <a routerLink="/documentacion" class="mobile-nav-link" (click)="toggleMenu()">Documentación</a>
+          </nav>
+          <div class="mobile-drawer-footer">
+            <a routerLink="/auth/login" class="login-btn mobile-login" (click)="toggleMenu()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              Acceder
+            </a>
+            <div class="mobile-social">
+              <a href="https://www.instagram.com/precosquinpuertopiramides" target="_blank" class="topbar-social-icon">IG</a>
+              <a href="https://www.youtube.com/@PreCosquinPuertoPirámides" target="_blank" class="topbar-social-icon">YT</a>
+            </div>
+          </div>
+        </div>
+      }
     </header>
   `,
   styles: [`
@@ -56,13 +87,13 @@ import { RouterLink } from '@angular/router';
     .portal-header.header-scrolled .header-logo { height: 32px; width: 32px; }
     .header-topbar { background-color: rgba(0, 0, 0, 0.05); border-bottom: 1px solid rgba(0, 0, 0, 0.08); height: 32px; display: flex; align-items: center; transition: all 0.3s ease; overflow: hidden; }
     .topbar-hidden { height: 0; opacity: 0; border-bottom: none; }
-    .header-topbar-inner { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 var(--space-4); }
+    .header-topbar-inner { width: 100%; max-width: min(92%, 1200px); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; }
     .header-topbar-left { display: flex; align-items: center; }
     .topbar-info { font-size: 10px; font-weight: var(--weight-bold); color: var(--brand-900); letter-spacing: 0.08em; }
-    .header-topbar-right { display: flex; align-items: center; gap: var(--space-2); }
+    .header-topbar-right { display: flex; align-items: center; gap: 8px; }
     .topbar-social-icon { display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: var(--radius-sm); background-color: var(--brand-900); color: white; transition: all var(--transition-fast); }
     .topbar-social-icon:hover { background-color: var(--brand-700); transform: scale(1.1); }
-    .header-inner { max-width: 1200px; margin: 0 auto; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-4); }
+    .header-inner { width: 100%; max-width: min(92%, 1200px); margin: 0 auto; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
     .header-left { display: flex; align-items: center; gap: var(--space-3); height: 100%; }
     .header-logo { height: 40px; width: auto; object-fit: contain; }
     .header-divider { width: 1px; height: 30px; background-color: var(--brand-500); opacity: 0.3; }
@@ -72,21 +103,71 @@ import { RouterLink } from '@angular/router';
     .header-nav { display: flex; align-items: center; gap: var(--space-6); height: 100%; }
     .nav-link { font-size: var(--text-sm); font-weight: var(--weight-bold); color: var(--brand-900); text-transform: uppercase; text-decoration: none; height: 100%; display: flex; align-items: center; padding: 0 var(--space-1); border-bottom: 3px solid transparent; transition: all var(--transition-fast); }
     .nav-link:hover, .nav-link.active { color: var(--brand-900); border-bottom-color: var(--brand-900); }
-    .header-right { display: flex; align-items: center; }
+    .nav-link:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; border-radius: 2px; }
+    .header-right { display: flex; align-items: center; gap: var(--space-2); }
     .login-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; font-size: var(--text-sm); font-weight: var(--weight-bold); text-transform: uppercase; text-decoration: none; color: #fff; background: var(--brand-700); border-radius: var(--radius-full); transition: all var(--transition-fast); letter-spacing: 0.03em; }
     .login-btn:hover { background: var(--brand-900); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    @media (max-width: 1024px) { .header-nav { display: none; } }
+    .login-btn:focus-visible { outline: 3px solid var(--brand-500); outline-offset: 2px; }
+    .hamburger-btn { display: none; align-items: center; justify-content: center; width: 44px; height: 44px; border: none; background: transparent; color: var(--brand-900); cursor: pointer; border-radius: var(--radius-sm); transition: background var(--transition-fast); }
+    .hamburger-btn:hover { background: rgba(0,0,0,0.06); }
+    .hamburger-btn:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
+    @media (min-width: 1280px) {
+      .header-nav { gap: var(--space-8); }
+      .nav-link { padding: 0 var(--space-3); font-size: var(--text-sm); }
+      .header-topbar-inner, .header-inner { max-width: min(90%, 1400px); }
+    }
+    @media (min-width: 1600px) {
+      .header-topbar-inner, .header-inner { max-width: min(88%, 1600px); }
+    }
+    @media (min-width: 1920px) {
+      .header-topbar-inner, .header-inner { max-width: min(86%, 1800px); }
+    }
+    @media (min-width: 2560px) {
+      .header-topbar-inner, .header-inner { max-width: min(82%, 2100px); }
+    }
+    .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; animation: fadeIn 0.2s ease; }
+    .mobile-drawer { display: none; position: fixed; top: 0; right: 0; width: 280px; max-width: 85vw; height: 100vh; background: var(--brand-200); z-index: 201; box-shadow: -4px 0 20px rgba(0,0,0,0.15); animation: slideIn 0.25s ease; display: flex; flex-direction: column; }
+    .mobile-nav { flex: 1; padding: 80px var(--space-6) var(--space-6); display: flex; flex-direction: column; gap: var(--space-1); }
+    .mobile-nav-link { display: flex; align-items: center; min-height: 48px; padding: 0 var(--space-4); font-size: var(--text-base); font-weight: var(--weight-bold); color: var(--brand-900); text-decoration: none; border-radius: var(--radius-sm); transition: background var(--transition-fast); }
+    .mobile-nav-link:hover, .mobile-nav-link.active { background: rgba(0,0,0,0.06); }
+    .mobile-nav-link:focus-visible { outline: 2px solid var(--brand-500); outline-offset: -2px; }
+    .mobile-nav-link.active { border-left: 3px solid var(--brand-900); }
+    .mobile-drawer-footer { padding: var(--space-4) var(--space-6); border-top: 1px solid rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: var(--space-4); }
+    .mobile-login { width: 100%; justify-content: center; }
+    .mobile-social { display: flex; gap: var(--space-3); justify-content: center; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    @media (max-width: 1024px) {
+      .header-nav { display: none; }
+      .login-btn { display: none; }
+      .hamburger-btn { display: flex; }
+    }
+    @media (max-width: 1024px) {
+      .portal-header { box-shadow: none; }
+      .header-topbar { display: none; }
+      .header-inner { height: 56px; padding: 0 12px; }
+      .header-logo { height: 36px; width: auto; }
+      .header-divider { display: none; }
+      .header-brand-text { gap: 0; }
+      .header-brand-subtitle { display: none; }
+      .header-brand-title { font-size: 0.85rem; }
+      .hamburger-btn { display: none; }
+    }
     @media (max-width: 480px) {
-      .portal-header.header-scrolled .header-inner { height: 48px; }
-      .portal-header.header-scrolled .header-logo { height: 28px; }
-      .portal-header.header-scrolled .header-divider { display: none; }
-      .portal-header.header-scrolled .header-brand-subtitle { display: none; }
+      .header-inner { height: 52px; padding: 0 10px; }
+      .header-logo { height: 32px; }
+      .header-brand-title { font-size: 0.8rem; }
     }
   `]
 })
 export class HomeHeaderComponent {
   scrollY = signal(0);
+  menuOpen = signal(false);
   private ticking = false;
+
+  toggleMenu() {
+    this.menuOpen.set(!this.menuOpen());
+  }
 
   @HostListener('window:scroll')
   onScroll() {

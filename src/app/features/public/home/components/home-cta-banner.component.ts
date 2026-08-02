@@ -25,8 +25,8 @@ import { RouterLink } from '@angular/router';
     </section>
   `,
   styles: [`
-    .cta-banner { background: var(--brand-600); padding: var(--space-12) var(--space-4); }
-    .cta-inner { max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
+    .cta-banner { background: var(--brand-600); padding: 48px 24px; width: 100%; border-radius: var(--radius); box-shadow: var(--shadow-card); }
+    .cta-inner { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
     .cta-content { flex: 1; }
     .cta-badge { display: inline-block; font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.15em; color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.12); padding: 5px 14px; border-radius: var(--radius-full); margin-bottom: var(--space-4); }
     .cta-title { font-family: var(--font-display); font-size: 2.25rem; font-weight: var(--weight-extrabold); color: #fff; margin: 0 0 var(--space-3); line-height: 1.15; }
@@ -38,9 +38,30 @@ import { RouterLink } from '@angular/router';
       text-decoration: none; letter-spacing: 0.05em; transition: all var(--transition-fast); white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .cta-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+    @media (min-width: 1280px) {
+      .cta-title { font-size: 2.25rem; }
+      .cta-desc { font-size: var(--text-base); max-width: 500px; }
+    }
+    @media (min-width: 1600px) {
+      .cta-inner { max-width: 1280px; }
+      .cta-title { font-size: 2.5rem; }
+    }
+    @media (min-width: 1920px) {
+      .cta-inner { max-width: 1400px; }
+      .cta-title { font-size: 2.75rem; }
+    }
+    @media (min-width: 2560px) {
+      .cta-inner { max-width: 1520px; }
+    }
     @media (max-width: 1024px) {
       .cta-inner { flex-direction: column; text-align: center; }
       .cta-desc { margin: 0 auto; }
+    }
+    @media (max-width: 640px) {
+      .cta-banner { padding: var(--space-8) var(--space-4); }
+      .cta-title { font-size: 1.5rem; }
+      .cta-btn { width: 100%; justify-content: center; padding: 14px 24px; }
     }
   `]
 })

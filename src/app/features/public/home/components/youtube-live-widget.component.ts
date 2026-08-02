@@ -85,9 +85,22 @@ import { Component, signal } from '@angular/core';
     .yt-channel-link { font-size: 12px; color: #ff0000; text-decoration: none; font-weight: 600; padding: 6px 14px; border: 1px solid #ff0000; border-radius: 20px; transition: all 0.2s; }
     .yt-channel-link:hover { background: #ff0000; color: #fff; }
     @media (max-width: 1024px) {
-      .yt-fab { bottom: 16px; right: 16px; padding: 8px 14px 8px 10px; }
+      .yt-widget { bottom: 76px; right: 16px; }
+      .yt-fab { padding: 8px 14px 8px 10px; }
       .yt-fab-icon { width: 34px; height: 34px; }
       .yt-fab-label { font-size: 11px; }
+      .yt-player { width: calc(100vw - 48px); max-width: 400px; bottom: 76px; }
+    }
+    @media (max-width: 480px) {
+      .yt-widget { bottom: 72px; right: 12px; }
+      .yt-fab { padding: 8px 12px 8px 8px; gap: 8px; }
+      .yt-fab-icon { width: 32px; height: 32px; }
+      .yt-fab-icon svg { width: 18px; height: 18px; }
+      .yt-fab-label { font-size: 10px; }
+      .yt-player { width: calc(100vw - 24px); border-radius: 12px; bottom: 72px; right: 12px; }
+      .yt-player-header { padding: 8px 10px; }
+      .yt-player-title { font-size: 12px; }
+      .yt-action-btn { width: 32px; height: 32px; }
     }
   `]
 })

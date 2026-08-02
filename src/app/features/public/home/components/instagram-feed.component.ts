@@ -39,7 +39,7 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
       width: 100%;
       box-sizing: border-box;
       margin: 0;
-      padding: 20px 5% 60px;
+      padding: 0;
     }
 
     .elfsight-wrapper {
@@ -71,7 +71,7 @@ import { ScriptLoaderService } from '../../../../core/services/script-loader.ser
 
        @media (max-width: 1024px) {
         .instagram-section {
-          padding: 20px 3% 60px;
+          padding: 0;
         }
       }
 
@@ -169,8 +169,8 @@ div[class*="eapps-instagram-feed"] {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
   gap: 4px !important;
-  max-width: 800px !important;
-  margin: 0 auto !important;
+  max-width: 100% !important;
+  margin: 0 !important;
 }
 
 @media (max-width: 640px) {

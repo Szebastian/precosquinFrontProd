@@ -4,8 +4,55 @@ import { authGuard, publicGuard } from './core/auth/auth.guard';
 export const appRoutes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./features/public/home/home.page').then(m => m.HomePageComponent),
-    canActivate: [publicGuard]
+    loadComponent: () => import('./layouts/public-layout/public-layout.component').then(m => m.PublicLayoutComponent),
+    canActivate: [publicGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/public/home/home.page').then(m => m.HomePageComponent),
+      },
+      {
+        path: 'noticias',
+        loadComponent: () => import('./features/public/noticias/noticias-public.page').then(m => m.NoticiasPublicPageComponent),
+        data: { title: 'Noticias' }
+      },
+      {
+        path: 'noticias/:id',
+        loadComponent: () => import('./features/public/noticias/noticia-detail.page').then(m => m.NoticiaDetailPageComponent),
+        data: { title: 'Noticia' }
+      },
+      {
+        path: 'inscripcion',
+        loadComponent: () => import('./features/public/inscripcion/inscripcion.page').then(m => m.InscripcionPageComponent),
+        canDeactivate: [() => import('./features/public/inscripcion/inscripcion-deactivate.guard').then(m => m.inscripcionDeactivateGuard)],
+        data: { title: 'Inscripción de Artista' }
+      },
+      {
+        path: 'documentacion',
+        loadComponent: () => import('./features/public/documentacion/documentacion.page').then(m => m.DocumentacionPageComponent),
+        data: { title: 'Documentación' }
+      },
+      {
+        path: 'institucional/declaracion',
+        loadComponent: () => import('./features/public/institucional/declaracion.page').then(m => m.DeclaracionPageComponent),
+        data: { title: 'Declaración N° 35/26 C.D.P.P' }
+      },
+      {
+        path: 'patrocinio',
+        loadComponent: () => import('./features/public/patrocinio/patrocinio.page').then(m => m.PatrocinioPageComponent),
+        data: { title: 'Patrocinio' }
+      },
+      {
+        path: 'cronograma',
+        loadComponent: () => import('./features/cronograma/cronograma-public.page').then(m => m.CronogramaPublicPageComponent),
+        data: { title: 'Cronograma' }
+      },
+      {
+        path: 'firmar/:token',
+        loadComponent: () => import('./features/public/firma-contrato/firma-contrato.page').then(m => m.FirmaContratoPageComponent),
+        data: { title: 'Firma de Contrato' }
+      },
+    ]
   },
   {
     path: 'panel',
@@ -78,49 +125,6 @@ export const appRoutes: Routes = [
         data: { title: 'Mensajes', roles: ['organizador', 'admin', 'staff'] }
       }
     ]
-  },
-  {
-    path: 'inscripcion',
-    loadComponent: () => import('./features/public/inscripcion/inscripcion.page').then(m => m.InscripcionPageComponent),
-    canActivate: [publicGuard],
-    canDeactivate: [() => import('./features/public/inscripcion/inscripcion-deactivate.guard').then(m => m.inscripcionDeactivateGuard)],
-    data: { title: 'Inscripción de Artista' }
-  },
-  {
-    path: 'noticias',
-    loadComponent: () => import('./features/public/noticias/noticias-public.page').then(m => m.NoticiasPublicPageComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Noticias' }
-  },
-  {
-    path: 'noticias/:id',
-    loadComponent: () => import('./features/public/noticias/noticia-detail.page').then(m => m.NoticiaDetailPageComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Noticia' }
-  },
-  {
-    path: 'documentacion',
-    loadComponent: () => import('./features/public/documentacion/documentacion.page').then(m => m.DocumentacionPageComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Documentación' }
-  },
-  {
-    path: 'institucional/declaracion',
-    loadComponent: () => import('./features/public/institucional/declaracion.page').then(m => m.DeclaracionPageComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Declaración N° 35/26 C.D.P.P' }
-  },
-  {
-    path: 'patrocinio',
-    loadComponent: () => import('./features/public/patrocinio/patrocinio.page').then(m => m.PatrocinioPageComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Patrocinio' }
-  },
-  {
-    path: 'firmar/:token',
-    loadComponent: () => import('./features/public/firma-contrato/firma-contrato.page').then(m => m.FirmaContratoPageComponent),
-    canActivate: [publicGuard],
-    data: { title: 'Firma de Contrato' }
   },
   {
     path: 'auth',

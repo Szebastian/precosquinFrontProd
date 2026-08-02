@@ -44,9 +44,14 @@ import { Component, HostListener, signal } from '@angular/core';
       to { opacity: 1; transform: translateY(0); }
     }
 
+    @media (max-width: 1024px) {
+      .back-to-top {
+        bottom: 80px;
+      }
+    }
     @media (max-width: 480px) {
       .back-to-top {
-        bottom: 16px;
+        bottom: 76px;
         left: 16px;
         width: 40px;
         height: 40px;
