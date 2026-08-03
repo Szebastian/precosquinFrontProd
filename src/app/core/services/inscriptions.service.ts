@@ -115,4 +115,12 @@ export class InscriptionsService {
     if (reason) params = params.set('reason', reason);
     return this.http.patch<StatusUpdateResponse>(`${this.apiUrl}/${id}/status`, null, { params });
   }
+
+  deleteInscription(id: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
+  }
+
+  bulkDelete(ids: string[]): Observable<{ message: string; deleted: number; not_found: string[] }> {
+    return this.http.post<{ message: string; deleted: number; not_found: string[] }>(`${this.apiUrl}/bulk-delete`, { ids });
+  }
 }

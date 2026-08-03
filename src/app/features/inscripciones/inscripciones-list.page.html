@@ -138,6 +138,24 @@
       <span class="results-count">{{ filteredInscriptions().length }} resultado{{ filteredInscriptions().length !== 1 ? 's' : '' }}</span>
     </div>
 
+    @if (selectedCount() > 0) {
+      <div class="bulk-actions-bar">
+        <span class="bulk-count">{{ selectedCount() }} seleccionado{{ selectedCount() !== 1 ? 's' : '' }}</span>
+        <button class="bulk-delete-btn" (click)="bulkDelete()" [disabled]="deletingBulk()">
+          @if (deletingBulk()) {
+            <span class="bulk-spinner"></span>
+          } @else {
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          }
+          Eliminar {{ selectedCount() }}
+        </button>
+        <button class="bulk-clear-btn" (click)="clearSelection()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+          Deseleccionar
+        </button>
+      </div>
+    }
+
     <!-- Content -->
     <div class="card-body">
       @if (loading()) {
@@ -161,6 +179,13 @@
         </div>
       } @else {
         <div class="inscriptions-list">
+          <div class="list-header">
+            <label class="checkbox-wrap">
+              <input type="checkbox" [checked]="allVisibleSelected()" (change)="toggleSelectAll()" />
+              <span class="checkbox-custom"></span>
+            </label>
+            <span class="list-header-text">Seleccionar todos</span>
+          </div>
           @for (inscription of filteredInscriptions(); track inscription.id; let idx = $index) {
             <div
               class="inscription-row"
@@ -169,10 +194,15 @@
               [class.status-review]="inscription.status === 'EN_REVISION'"
               [class.status-approved]="inscription.status === 'APROBADA'"
               [class.status-rejected]="inscription.status === 'RECHAZADA'"
+              [class.selected]="selectedIds().has(inscription.id)"
             >
               <!-- Row summary (clickable) -->
               <div class="row-summary" (click)="toggleDetail(inscription.id)" (keydown.enter)="toggleDetail(inscription.id)" tabindex="0" role="button" [attr.aria-expanded]="expandedId() === inscription.id">
                 <div class="row-left">
+                  <label class="checkbox-wrap" (click)="$event.stopPropagation()">
+                    <input type="checkbox" [checked]="selectedIds().has(inscription.id)" (change)="toggleSelect(inscription.id)" />
+                    <span class="checkbox-custom"></span>
+                  </label>
                   <span class="row-index">{{ idx + 1 }}</span>
                   <div class="artist-avatar" [class.cat-musica]="inscription.category === 'Música'" [class.cat-danza]="inscription.category === 'Danza'">
                     {{ getInitials(inscription.full_name) }}
@@ -482,6 +512,10 @@
                           Revisar
                         </button>
                       }
+                      <button class="action-btn btn-delete" (click)="deleteInscription(inscription.id, inscription.full_name)" [disabled]="updatingId() === inscription.id">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        Eliminar
+                      </button>
                     </div>
                   </div>
                 </div>

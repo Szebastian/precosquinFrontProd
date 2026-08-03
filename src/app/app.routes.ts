@@ -85,6 +85,11 @@ export const appRoutes: Routes = [
         data: { roles: ['organizador', 'admin', 'staff'] }
       },
       {
+        path: 'acreditaciones',
+        loadChildren: () => import('./features/acreditaciones/acreditaciones.routes').then(m => m.ACREDITACIONES_ROUTES),
+        data: { title: 'Acreditaciones', roles: ['organizador', 'admin', 'staff'] }
+      },
+      {
         path: 'jurado',
         loadChildren: () => import('./features/jurado/jurado.routes').then(m => m.JURADO_ROUTES),
         data: { roles: ['admin'] }

@@ -27,6 +27,9 @@ export class InscripcionesListPageComponent implements OnInit {
   rejectTargetName = signal('');
   rejectReason = signal('');
 
+  selectedIds = signal<Set<string>>(new Set());
+  deletingBulk = signal(false);
+
   totalInscriptions = computed(() => this.allInscriptions().length);
   pendingCount = computed(() => this.allInscriptions().filter(i => i.status === 'PENDIENTE').length);
   reviewCount = computed(() => this.allInscriptions().filter(i => i.status === 'EN_REVISION').length);
@@ -40,6 +43,13 @@ export class InscripcionesListPageComponent implements OnInit {
     if (this.subcategoryFilter()) count++;
     if (this.searchQuery()) count++;
     return count;
+  });
+
+  selectedCount = computed(() => this.selectedIds().size);
+  allVisibleSelected = computed(() => {
+    const ids = this.filteredInscriptions().map(i => i.id);
+    const sel = this.selectedIds();
+    return ids.length > 0 && ids.every(id => sel.has(id));
   });
 
   availableSubcategories = computed(() => {
@@ -104,6 +114,52 @@ export class InscripcionesListPageComponent implements OnInit {
     this.categoryFilter.set('');
     this.subcategoryFilter.set('');
     this.searchQuery.set('');
+    this.selectedIds.set(new Set());
+  }
+
+  toggleSelect(id: string): void {
+    this.selectedIds.update(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  toggleSelectAll(): void {
+    const ids = this.filteredInscriptions().map(i => i.id);
+    if (this.allVisibleSelected()) {
+      this.selectedIds.set(new Set());
+    } else {
+      this.selectedIds.set(new Set(ids));
+    }
+  }
+
+  clearSelection(): void {
+    this.selectedIds.set(new Set());
+  }
+
+  bulkDelete(): void {
+    const ids = Array.from(this.selectedIds());
+    if (ids.length === 0) return;
+    if (!confirm(`¿Eliminar ${ids.length} inscripción(es)? Esta acción no se puede deshacer.`)) return;
+    this.deletingBulk.set(true);
+    this.inscriptionsService.bulkDelete(ids).subscribe({
+      next: (res) => {
+        this.allInscriptions.update(list => list.filter(i => !ids.includes(i.id)));
+        this.selectedIds.set(new Set());
+        this.deletingBulk.set(false);
+        if (res.not_found.length > 0) {
+          alert(`${res.not_found.length} inscripción(es) no fueron encontradas`);
+        }
+      },
+      error: () => {
+        this.deletingBulk.set(false);
+      }
+    });
   }
 
   updateStatus(id: string, newStatus: string): void {
@@ -147,6 +203,21 @@ export class InscripcionesListPageComponent implements OnInit {
           list.map(i => i.id === id ? { ...i, status: 'RECHAZADA' } : i)
         );
         this.updatingId.set(null);
+      },
+      error: () => {
+        this.updatingId.set(null);
+      }
+    });
+  }
+
+  deleteInscription(id: string, name: string): void {
+    if (!confirm(`¿Eliminar la inscripción de "${name}"? Esta acción no se puede deshacer.`)) return;
+    this.updatingId.set(id);
+    this.inscriptionsService.deleteInscription(id).subscribe({
+      next: () => {
+        this.allInscriptions.update(list => list.filter(i => i.id !== id));
+        this.updatingId.set(null);
+        this.expandedId.set(null);
       },
       error: () => {
         this.updatingId.set(null);

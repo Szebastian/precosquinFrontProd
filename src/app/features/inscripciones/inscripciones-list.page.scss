@@ -666,6 +666,132 @@
   background: rgba(139, 92, 246, 0.2);
   border-color: rgba(139, 92, 246, 0.35);
 }
+.btn-delete {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.btn-delete:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* ========== Checkbox ========== */
+.checkbox-wrap {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.checkbox-wrap input { display: none; }
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--gray-300);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  background: var(--gray-100);
+}
+.checkbox-wrap input:checked + .checkbox-custom {
+  background: var(--brand-400, #60a5fa);
+  border-color: var(--brand-400, #60a5fa);
+}
+.checkbox-wrap input:checked + .checkbox-custom::after {
+  content: '';
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translateY(-1px);
+}
+
+/* ========== List Header ========== */
+.list-header {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 1.25rem;
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--gray-200);
+}
+.list-header-text {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--gray-500);
+}
+
+/* ========== Bulk Actions Bar ========== */
+.bulk-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  background: rgba(239, 68, 68, 0.06);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.15);
+  animation: slideDown 0.15s ease;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.bulk-count {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #f87171;
+}
+.bulk-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4375rem 0.875rem;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.bulk-delete-btn:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.bulk-delete-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.bulk-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4375rem 0.75rem;
+  background: none;
+  color: var(--gray-500);
+  border: 1px solid var(--gray-300);
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.bulk-clear-btn:hover {
+  background: var(--gray-200);
+  color: var(--gray-700);
+}
+.bulk-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(239, 68, 68, 0.3);
+  border-top-color: #f87171;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+.inscription-row.selected {
+  background: rgba(96, 165, 250, 0.06);
+}
 
 /* ========== Responsive ========== */
 @media (max-width: 900px) {
@@ -683,6 +809,7 @@
   .detail-grid { grid-template-columns: 1fr; }
   .detail-footer { flex-direction: column; align-items: flex-start; }
   .admin-actions { width: 100%; }
+  .bulk-actions-bar { flex-wrap: wrap; }
 }
 
 @media (max-width: 600px) {
@@ -835,3 +962,15 @@
   animation: spin 0.6s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ========== Dark Mode ========== */
+:host-context(.dark) .modal-card { background: #1a1d2e; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+:host-context(.dark) .modal-title { color: #f1f5f9; }
+:host-context(.dark) .modal-subtitle { color: #94a3b8; }
+:host-context(.dark) .modal-label { color: #c6c9d2; }
+:host-context(.dark) .modal-textarea { background: #161927; border-color: #2a2d3e; color: #f1f5f9; }
+:host-context(.dark) .modal-textarea::placeholder { color: #64748b; }
+:host-context(.dark) .modal-btn-cancel { background: #272a35; color: #c6c9d2; border-color: #3b3f4e; }
+:host-context(.dark) .modal-btn-cancel:hover { background: #3b3f4e; }
+:host-context(.dark) input, :host-context(.dark) textarea, :host-context(.dark) select { color: #f1f5f9 !important; }
+:host-context(.dark) input::placeholder, :host-context(.dark) textarea::placeholder { color: #64748b !important; }

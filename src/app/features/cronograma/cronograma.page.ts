@@ -118,6 +118,7 @@ interface AgendaEvent {
           </div>
         } @else {
           <div class="data-table">
+            <div class="table-scroll">
             <div class="table-header">
               <span class="col-order">#</span>
               <span class="col-time">Hora</span>
@@ -160,6 +161,7 @@ interface AgendaEvent {
                 </span>
               </div>
             }
+            </div>
           </div>
         }
       }
@@ -180,6 +182,7 @@ interface AgendaEvent {
           </div>
         } @else {
           <div class="data-table">
+            <div class="table-scroll">
             <div class="table-header">
               <span class="col-time">Hora</span>
               <span class="col-name">Título</span>
@@ -217,6 +220,7 @@ interface AgendaEvent {
                 </span>
               </div>
             }
+            </div>
           </div>
         }
       }
@@ -507,7 +511,11 @@ interface AgendaEvent {
       padding: var(--space-4);
     }
 
-    .page-container { max-width: var(--content-max-width); }
+    .page-container {
+      max-width: 100%;
+      width: 100%;
+      margin: 0 auto;
+    }
 
     .page-header {
       display: flex; align-items: flex-start; justify-content: space-between;
@@ -601,6 +609,7 @@ interface AgendaEvent {
       background: #fff; border: 1px solid #e0ddd9; border-radius: 14px;
       overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .table-header, .table-row {
       display: grid; gap: var(--space-3); align-items: center;
       padding: 14px 18px; font-size: var(--text-sm);
@@ -782,9 +791,15 @@ interface AgendaEvent {
     .btn-agenda:hover:not(:disabled) { background: #15803d; }
 
     /* Responsive */
+    @media (max-width: 1024px) {
+      .table-row { grid-template-columns: 40px 68px 1fr 1fr 90px 80px 80px 70px; }
+      .table-header { grid-template-columns: 40px 68px 1fr 1fr 90px 80px 80px 70px; }
+    }
+
     @media (max-width: 768px) {
       :host { margin: calc(var(--space-3) * -1); padding: var(--space-3); }
       .page-header { flex-direction: column; }
+      .page-title { font-size: var(--text-xl); }
       .form-row { flex-direction: column; gap: 0; }
       .table-header { display: none; }
       .table-row {
@@ -796,8 +811,40 @@ interface AgendaEvent {
       .col-name { grid-column: 1; }
       .col-category { grid-column: 1; }
       .col-time { grid-column: 2; grid-row: 1; }
-      .modal { max-width: 100%; margin: var(--space-4); }
+      .modal { max-width: 100%; margin: var(--space-3); max-height: 95vh; }
+      .modal-header { padding: 16px 16px 0; }
+      .modal-body { padding: 14px 16px; }
+      .modal-footer { padding: 12px 16px; flex-direction: column; }
+      .modal-footer .btn { width: 100%; justify-content: center; }
       .radio-cards { flex-direction: column; }
+      .tabs-bar { flex-direction: column; gap: 4px; }
+      .tab-btn { padding: 12px 16px; }
+      .search-bar { padding: 0 12px; }
+      .tab-description { padding: 10px 12px; font-size: 13px; }
+    }
+
+    @media (max-width: 480px) {
+      :host { padding: var(--space-2); }
+      .page-header { gap: var(--space-2); }
+      .page-title { font-size: var(--text-lg); }
+      .page-subtitle { font-size: 12px; }
+      .tabs-bar { border-radius: 10px; }
+      .tab-btn { font-size: 13px; padding: 10px 12px; gap: 4px; }
+      .tab-description { font-size: 12px; padding: 8px 10px; }
+      .data-table { border-radius: 10px; }
+      .table-row { padding: 12px; border-radius: 10px; }
+      .col-name strong { font-size: 13px; }
+      .col-time { font-size: 12px; padding: 3px 6px; }
+      .modal { margin: var(--space-2); border-radius: 14px; }
+      .modal-header h2 { font-size: var(--text-base); }
+      .form-section { margin-bottom: var(--space-3); padding-bottom: var(--space-3); }
+      .form-label { font-size: 13px; }
+      .form-input { padding: 9px 11px; font-size: 13px; }
+      .btn { padding: 8px 14px; font-size: 13px; }
+      .badge { font-size: 10px; padding: 2px 8px; }
+      .empty-state { padding: var(--space-8) var(--space-4); }
+      .empty-title { font-size: var(--text-base); }
+      .empty-desc { font-size: 13px; }
     }
 
     /* ══════════════════════════════════════════ */

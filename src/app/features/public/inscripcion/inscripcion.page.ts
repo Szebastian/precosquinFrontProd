@@ -34,6 +34,7 @@ export interface InscripcionResult {
   subcategory: string;
   status: string;
   created_at: string;
+  qr_code_base64?: string;
 }
 
 export interface Member {
@@ -1121,6 +1122,12 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     let bodyHtml = '';
     bodyHtml += f('N° de Inscripción', result.id, 'constancia-id');
     bodyHtml += f('Fecha de Inscripción', createdDate);
+
+    if (result.qr_code_base64) {
+      const qrUrl = `${environment.apiUrl}/inscriptions/${result.id}/qr-image`;
+      bodyHtml += `<div style="text-align:center;margin:16px 0"><div style="font-size:9px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">C&#243;digo QR para Acreditaci&#243;n</div><img src="${qrUrl}" alt="QR Acreditaci&#243;n" width="150" height="150" style="border-radius:8px;border:2px solid #e2e8f0" /><div style="font-size:9px;color:#64748b;margin-top:6px">Present&#225; este c&#243;digo QR en la acreditaci&#243;n del festival</div></div>`;
+    }
+
     bodyHtml += '<hr class="divider">';
     bodyHtml += '<div class="section-title">Datos Personales</div>';
     bodyHtml += f('Nombre Completo', `${d.firstName} ${d.lastName}`.trim(), 'constancia-name');
