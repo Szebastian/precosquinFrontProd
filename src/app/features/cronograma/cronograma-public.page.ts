@@ -1,14 +1,24 @@
 import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { PresentationOrderTabComponent } from './components/presentation-order-tab.component';
 import { AgendaGeneralTabComponent } from './components/agenda-general-tab.component';
 
 @Component({
   selector: 'app-cronograma-public',
   standalone: true,
-  imports: [PresentationOrderTabComponent, AgendaGeneralTabComponent],
+  imports: [RouterLink, PresentationOrderTabComponent, AgendaGeneralTabComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="cronograma-page">
+      <nav class="cronograma-nav">
+        <a routerLink="/" class="nav-home">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Inicio
+        </a>
+        <span class="nav-divider">/</span>
+        <span class="nav-current">Cronograma</span>
+      </nav>
+
       <header class="cronograma-header">
         <span class="cronograma-badge">EVENTO 2027</span>
         <h1 class="cronograma-title">Cronograma</h1>
@@ -60,7 +70,45 @@ import { AgendaGeneralTabComponent } from './components/agenda-general-tab.compo
       width: 100%;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 48px 24px;
+      padding: 24px 24px 48px;
+    }
+
+    .cronograma-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: var(--space-6);
+      font-size: var(--text-sm);
+    }
+
+    .nav-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--brand-600);
+      text-decoration: none;
+      font-weight: var(--weight-semibold);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      transition: background 0.15s ease;
+    }
+
+    .nav-home:hover {
+      background: rgba(76, 139, 230, 0.08);
+    }
+
+    .nav-home:focus-visible {
+      outline: 2px solid var(--brand-500);
+      outline-offset: 2px;
+    }
+
+    .nav-divider {
+      color: var(--gray-400);
+    }
+
+    .nav-current {
+      color: var(--gray-600);
+      font-weight: var(--weight-medium);
     }
 
     .cronograma-header {
