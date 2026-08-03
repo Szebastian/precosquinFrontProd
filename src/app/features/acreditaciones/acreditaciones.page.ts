@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed, HostListener, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, HostListener, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AcreditacionesService } from './services/acreditaciones.service';
@@ -229,17 +229,36 @@ import {
               </button>
             </div>
             <div class="qr-body">
-              <div class="qr-placeholder">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                  <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-                </svg>
-                <p>Cámara no disponible</p>
-                <p class="qr-hint">Ingresá el código QR manualmente:</p>
-                <input type="text" class="form-input" placeholder="Código QR..."
-                  [ngModel]="manualQRCode()" (ngModelChange)="manualQRCode.set($event)"
-                  (keydown.enter)="searchByQR()" />
-                <button class="btn btn-primary btn-large" (click)="searchByQR()" style="margin-top:12px">Buscar por QR</button>
+              @if (cameraAvailable()) {
+                <div class="qr-video-container">
+                  <video #qrVideo class="qr-video" autoplay playsinline></video>
+                  <div class="qr-overlay">
+                    <div class="qr-crosshair">
+                      <div class="qr-corner qr-corner-tl"></div>
+                      <div class="qr-corner qr-corner-tr"></div>
+                      <div class="qr-corner qr-corner-bl"></div>
+                      <div class="qr-corner qr-corner-br"></div>
+                    </div>
+                    <p class="qr-scan-hint">Alineá el código QR dentro del recuadro</p>
+                  </div>
+                </div>
+              } @else {
+                <div class="qr-placeholder">
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                  </svg>
+                  <p>{{ cameraError() || 'Cámara no disponible' }}</p>
+                </div>
+              }
+              <div class="qr-manual-section">
+                <p class="qr-hint">O ingresá el código manualmente:</p>
+                <div class="qr-manual-input">
+                  <input type="text" class="form-input" placeholder="Código QR..."
+                    [ngModel]="manualQRCode()" (ngModelChange)="manualQRCode.set($event)"
+                    (keydown.enter)="searchByQR()" />
+                  <button class="btn btn-primary" (click)="searchByQR()">Buscar</button>
+                </div>
               </div>
             </div>
           </div>
@@ -502,10 +521,39 @@ import {
     .modal-qr { background: #fff; border-radius: 18px; max-width: 440px; width: 100%; overflow: hidden; animation: scaleIn 0.2s ease; box-shadow: 0 24px 80px rgba(0,0,0,0.2); }
     .qr-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid #f0ede9; }
     .qr-header h3 { font-size: 16px; font-weight: 600; color: #1a1a1a; }
-    .qr-body { padding: 32px 24px; }
-    .qr-placeholder { text-align: center; color: #9a9590; }
+    .qr-body { padding: 0; }
+    .qr-video-container {
+      position: relative; width: 100%; aspect-ratio: 4/3; background: #000;
+      border-radius: 14px 14px 0 0; overflow: hidden;
+    }
+    .qr-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .qr-overlay {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .qr-crosshair {
+      width: 200px; height: 200px; position: relative;
+    }
+    .qr-corner {
+      position: absolute; width: 30px; height: 30px; border-color: #4c8be6; border-style: solid;
+    }
+    .qr-corner-tl { top: 0; left: 0; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+    .qr-corner-tr { top: 0; right: 0; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+    .qr-corner-bl { bottom: 0; left: 0; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+    .qr-corner-br { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+    .qr-scan-hint {
+      margin-top: 20px; color: #fff; font-size: 13px; font-weight: 500;
+      background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 8px;
+      backdrop-filter: blur(4px);
+    }
+    .qr-manual-section { padding: 20px 24px; }
+    .qr-hint { font-size: 12px; color: #9a9590; text-align: center; margin-bottom: 10px; }
+    .qr-manual-input { display: flex; gap: 8px; }
+    .qr-manual-input .form-input { flex: 1; }
+    .qr-placeholder {
+      text-align: center; color: #9a9590; padding: 32px 24px 16px;
+    }
     .qr-placeholder p { margin: 12px 0 4px; font-size: 14px; }
-    .qr-hint { font-size: 12px; color: #9a9590; }
     .form-input { width: 100%; padding: 10px 13px; border: 1.5px solid #e0ddd9; border-radius: 10px; font-size: 14px; color: #1a1a1a; background: #faf9f7; outline: none; box-sizing: border-box; }
     .form-input:focus { border-color: #4c8be6; background: #fff; }
     .form-input::placeholder { color: #a09a94; }
@@ -644,6 +692,8 @@ import {
     :host-context(.dark) .modal-confirm, :host-context(.dark) .modal-qr { background: #161927; box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
     :host-context(.dark) .confirm-title, :host-context(.dark) .qr-header h3 { color: #f1f5f9; }
     :host-context(.dark) .confirm-message { color: #94a3b8; }
+    :host-context(.dark) .qr-manual-section { background: #161927; }
+    :host-context(.dark) .qr-hint { color: #64748b; }
     :host-context(.dark) .btn-secondary { background: #2a2d3e; color: #e2e8f0; }
     :host-context(.dark) .btn-secondary:hover { background: #334155; }
     :host-context(.dark) .btn-close { background: #2a2d3e; color: #94a3b8; }
@@ -676,9 +726,14 @@ import {
     :host-context(.dark) input::placeholder, :host-context(.dark) textarea::placeholder { color: #64748b !important; }
   `]
 })
-export class AcreditacionesPageComponent implements OnInit, AfterViewInit {
+export class AcreditacionesPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private acreditacionesService = inject(AcreditacionesService);
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('qrVideo') qrVideo!: ElementRef<HTMLVideoElement>;
+
+  private cameraStream: MediaStream | null = null;
+  private barcodeDetector: BarcodeDetector | null = null;
+  private scanInterval: ReturnType<typeof setInterval> | null = null;
 
   loading = signal(true);
   saving = signal(false);
@@ -689,6 +744,8 @@ export class AcreditacionesPageComponent implements OnInit, AfterViewInit {
   showSuccess = signal(false);
   showQRScanner = signal(false);
   manualQRCode = signal('');
+  cameraAvailable = signal(false);
+  cameraError = signal('');
   pendingParticipant = signal<AccreditationParticipant | null>(null);
   lastAccredited = signal<AccreditationParticipant | null>(null);
   adminSearch = signal('');
@@ -819,8 +876,92 @@ export class AcreditacionesPageComponent implements OnInit, AfterViewInit {
     setTimeout(() => this.searchInput?.nativeElement?.focus(), 100);
   }
 
-  openQRScanner() { this.showQRScanner.set(true); this.manualQRCode.set(''); }
-  closeQRScanner() { this.showQRScanner.set(false); }
+  async openQRScanner() {
+    this.showQRScanner.set(true);
+    this.manualQRCode.set('');
+    this.cameraAvailable.set(false);
+    this.cameraError.set('');
+
+    try {
+      this.cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      this.cameraAvailable.set(true);
+      await new Promise(r => setTimeout(r, 100));
+      const videoEl = this.qrVideo?.nativeElement;
+      if (videoEl && this.cameraStream) {
+        videoEl.srcObject = this.cameraStream;
+        await videoEl.play();
+        this.startQRDetection();
+      }
+    } catch (err: any) {
+      console.warn('Camera access denied or unavailable:', err);
+      this.cameraAvailable.set(false);
+      if (err?.name === 'NotAllowedError') {
+        this.cameraError.set('Permiso de cámara denegado. Permití el acceso y volvé a intentar.');
+      } else if (err?.name === 'NotFoundError') {
+        this.cameraError.set('No se encontró cámara en este dispositivo.');
+      } else {
+        this.cameraError.set('No se pudo acceder a la cámara.');
+      }
+    }
+  }
+
+  closeQRScanner() {
+    this.stopQRDetection();
+    this.stopCamera();
+    this.showQRScanner.set(false);
+  }
+
+  private startQRDetection() {
+    if (typeof BarcodeDetector !== 'undefined') {
+      this.barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+      this.scanInterval = setInterval(() => this.detectQRCode(), 500);
+    } else {
+      console.warn('BarcodeDetector API not supported in this browser');
+    }
+  }
+
+  private stopQRDetection() {
+    if (this.scanInterval) {
+      clearInterval(this.scanInterval);
+      this.scanInterval = null;
+    }
+    this.barcodeDetector = null;
+  }
+
+  private async detectQRCode() {
+    if (!this.barcodeDetector || !this.qrVideo?.nativeElement) return;
+    const video = this.qrVideo.nativeElement;
+    if (video.readyState < 2) return;
+    try {
+      const barcodes = await this.barcodeDetector.detect(video);
+      if (barcodes.length > 0) {
+        const code = barcodes[0].rawValue;
+        if (code && code !== this.manualQRCode()) {
+          this.manualQRCode.set(code);
+          this.closeQRScanner();
+          this.searchByQR();
+        }
+      }
+    } catch (e) {
+      // Ignore detection errors
+    }
+  }
+
+  private stopCamera() {
+    if (this.cameraStream) {
+      this.cameraStream.getTracks().forEach(t => t.stop());
+      this.cameraStream = null;
+    }
+    const videoEl = this.qrVideo?.nativeElement;
+    if (videoEl) videoEl.srcObject = null;
+  }
+
+  ngOnDestroy() {
+    this.stopQRDetection();
+    this.stopCamera();
+  }
   showParticipantQR(item: AccreditationParticipant) { alert(`QR Code: ${item.registrationNumber}`); }
 
   private updateStats() {
