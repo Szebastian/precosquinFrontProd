@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { AdminBottomNavComponent } from './bottom-nav/bottom-nav.component';
 import { ThemeService } from '../../core/services/theme.service';
 import { BackToTopComponent } from '../../shared/components/back-to-top/back-to-top.component';
 import { ToastContainerComponent } from '../../shared/components/toast/toast-container.component';
@@ -10,11 +11,11 @@ import { ToastContainerComponent } from '../../shared/components/toast/toast-con
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, SidebarComponent, CommonModule, BackToTopComponent, ToastContainerComponent],
+  imports: [RouterOutlet, HeaderComponent, SidebarComponent, AdminBottomNavComponent, CommonModule, BackToTopComponent, ToastContainerComponent],
   template: `
     <div class="app-layout" [class.dark]="themeService.isDark()">
       <app-header (toggleSidebar)="toggleSidebar()" [isSidebarOpen]="isSidebarOpen" />
-      <div class="app-body" [class.sidebar-open]="isSidebarOpen && windowWidth < 1024" (click)="closeSidebarOnOverlayClick($event)">
+      <div class="app-body">
         <app-sidebar [class.sidebar-hidden]="!isSidebarOpen" />
         <main id="main-content" class="app-content" [class.sidebar-open]="isSidebarOpen" tabindex="-1">
           <div class="content-wrapper">
@@ -22,6 +23,7 @@ import { ToastContainerComponent } from '../../shared/components/toast/toast-con
           </div>
         </main>
       </div>
+      <app-admin-bottom-nav />
       <app-back-to-top />
       <app-toast-container />
     </div>
@@ -102,60 +104,21 @@ import { ToastContainerComponent } from '../../shared/components/toast/toast-con
     }
 
     /* Mobile styles */
-    @media (max-width: 1023px) { /* Below lg breakpoint */
+    @media (max-width: 1023px) {
       .app-body {
-        flex-direction: column; /* Stack header, sidebar, content */
+        flex-direction: column;
       }
 
       app-sidebar {
-        position: fixed;
-        top: var(--header-height);
-        left: 0;
-        height: calc(100vh - var(--header-height));
-        z-index: var(--z-fixed);
-        background: var(--gray-50);
-        box-shadow: var(--shadow-lg);
-        margin-left: calc(-1 * var(--sidebar-width)); /* Hidden by default */
-      }
-
-      .app-layout.dark app-sidebar {
-        background: var(--gray-950);
-      }
-
-      app-sidebar.sidebar-hidden {
-        margin-left: calc(-1 * var(--sidebar-width));
-      }
-
-      app-sidebar:not(.sidebar-hidden) {
-        margin-left: 0; /* Slide in */
+        display: none;
       }
 
       .app-content {
-        padding: var(--space-4) var(--space-2); /* Adjust padding for mobile */
+        padding: 0;
       }
 
       .content-wrapper {
-        padding: var(--space-2);
-      }
-
-      /* Overlay when sidebar is open */
-      .app-body::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: var(--z-modal-backdrop);
-        pointer-events: none; /* Allow clicks to pass through by default */
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      .app-body.sidebar-open::after {
-        opacity: 1;
-        pointer-events: auto; /* Enable clicks to close sidebar */
+        padding: 12px 12px 88px;
       }
     }
 
@@ -187,13 +150,5 @@ export class MainLayoutComponent {
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
-  }
-
-  closeSidebarOnOverlayClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    // Only close if click is on the app-body itself and not on a child element within the sidebar
-    if (target.classList.contains('app-body') && this.isSidebarOpen && this.windowWidth < 1024) {
-      this.isSidebarOpen = false;
-    }
   }
 }

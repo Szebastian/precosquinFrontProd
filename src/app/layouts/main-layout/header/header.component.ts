@@ -176,12 +176,6 @@ import { ToastService } from '@shared/components/toast/toast.service';
       display: none;
     }
 
-    @media (max-width: 1023px) {
-      .mobile-menu-btn {
-        display: flex;
-      }
-    }
-
     .header-brand {
       display: flex;
       align-items: center;
