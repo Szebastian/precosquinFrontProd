@@ -1,6 +1,7 @@
-import { Component, inject, OnInit, signal, computed, HostListener, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, HostListener, ViewChild, ElementRef, AfterViewInit, OnDestroy, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Html5Qrcode } from 'html5-qrcode';
 import { AcreditacionesService } from './services/acreditaciones.service';
 import {
   AccreditationParticipant,
@@ -230,8 +231,7 @@ import {
             </div>
             <div class="qr-body">
               @if (cameraAvailable()) {
-                <div class="qr-video-container">
-                  <video #qrVideo class="qr-video" autoplay playsinline></video>
+                <div id="qr-video-container" class="qr-video-container">
                   <div class="qr-overlay">
                     <div class="qr-crosshair">
                       <div class="qr-corner qr-corner-tl"></div>
@@ -248,7 +248,7 @@ import {
                     <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
                     <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
                   </svg>
-                  <p>{{ cameraError() || 'Cámara no disponible' }}</p>
+                  <p>{{ cameraError() || 'Iniciando cámara...' }}</p>
                 </div>
               }
               <div class="qr-manual-section">
@@ -526,7 +526,13 @@ import {
       position: relative; width: 100%; aspect-ratio: 4/3; background: #000;
       border-radius: 14px 14px 0 0; overflow: hidden;
     }
-    .qr-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .qr-video-container video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+      display: block;
+    }
     .qr-overlay {
       position: absolute; inset: 0; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -731,9 +737,8 @@ export class AcreditacionesPageComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('qrVideo') qrVideo!: ElementRef<HTMLVideoElement>;
 
+  private html5QrCode: Html5Qrcode | null = null;
   private cameraStream: MediaStream | null = null;
-  private barcodeDetector: BarcodeDetector | null = null;
-  private scanInterval: ReturnType<typeof setInterval> | null = null;
 
   loading = signal(true);
   saving = signal(false);
@@ -879,87 +884,72 @@ export class AcreditacionesPageComponent implements OnInit, AfterViewInit, OnDes
   async openQRScanner() {
     this.showQRScanner.set(true);
     this.manualQRCode.set('');
-    this.cameraAvailable.set(false);
     this.cameraError.set('');
+    this.cameraAvailable.set(true);
 
-    try {
-      this.cameraStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
-      });
-      this.cameraAvailable.set(true);
-      await new Promise(r => setTimeout(r, 100));
-      const videoEl = this.qrVideo?.nativeElement;
-      if (videoEl && this.cameraStream) {
-        videoEl.srcObject = this.cameraStream;
-        await videoEl.play();
-        this.startQRDetection();
-      }
-    } catch (err: any) {
-      console.warn('Camera access denied or unavailable:', err);
-      this.cameraAvailable.set(false);
-      if (err?.name === 'NotAllowedError') {
-        this.cameraError.set('Permiso de cámara denegado. Permití el acceso y volvé a intentar.');
-      } else if (err?.name === 'NotFoundError') {
-        this.cameraError.set('No se encontró cámara en este dispositivo.');
-      } else {
-        this.cameraError.set('No se pudo acceder a la cámara.');
-      }
+    afterNextRender(() => {
+      setTimeout(async () => {
+        try {
+          const container = document.getElementById('qr-video-container');
+          if (!container) {
+            this.cameraError.set('No se pudo inicializar el escáner.');
+            return;
+          }
+          // Show the container now so Html5Qrcode can render into it
+          this.cameraAvailable.set(true);
+          this.html5QrCode = new Html5Qrcode('qr-video-container');
+          await this.html5QrCode.start(
+            { facingMode: 'environment' },
+            {
+              fps: 10,
+              qrbox: { width: 250, height: 250 },
+              aspectRatio: 1,
+            },
+            (decoded: string) => {
+              if (decoded && decoded !== this.manualQRCode()) {
+                this.manualQRCode.set(decoded);
+                this.closeQRScanner();
+                this.searchByQR();
+              }
+            },
+            (error: any) => {
+              // Ignore minor scan errors
+            }
+          );
+        } catch (err: any) {
+          console.warn('Camera access failed:', err);
+          this.cameraAvailable.set(false);
+          if (err?.name === 'NotAllowedError' || err?.message?.includes('permission')) {
+            this.cameraError.set('Permiso de cámara denegado. Permití el acceso y volvé a intentar.');
+          } else if (err?.name === 'NotFoundError' || err?.message?.includes('no camera')) {
+            this.cameraError.set('No se encontró cámara en este dispositivo.');
+          } else if (err?.name === 'NotReadableError' || err?.message?.includes('already')) {
+            this.cameraError.set('La cámara está en uso. Cerrá otras aplicaciones que la usan.');
+          } else {
+            this.cameraError.set('No se pudo acceder a la cámara: ' + (err?.message || 'Error desconocido'));
+          }
+        }
+      }, 100);
+    });
+  }
+
+  private stopCamera() {
+    if (this.html5QrCode) {
+      try {
+        this.html5QrCode.clear();
+      } catch (e) {}
+      this.html5QrCode = null;
     }
   }
 
   closeQRScanner() {
-    this.stopQRDetection();
     this.stopCamera();
     this.showQRScanner.set(false);
-  }
-
-  private startQRDetection() {
-    if (typeof BarcodeDetector !== 'undefined') {
-      this.barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
-      this.scanInterval = setInterval(() => this.detectQRCode(), 500);
-    } else {
-      console.warn('BarcodeDetector API not supported in this browser');
-    }
-  }
-
-  private stopQRDetection() {
-    if (this.scanInterval) {
-      clearInterval(this.scanInterval);
-      this.scanInterval = null;
-    }
-    this.barcodeDetector = null;
-  }
-
-  private async detectQRCode() {
-    if (!this.barcodeDetector || !this.qrVideo?.nativeElement) return;
-    const video = this.qrVideo.nativeElement;
-    if (video.readyState < 2) return;
-    try {
-      const barcodes = await this.barcodeDetector.detect(video);
-      if (barcodes.length > 0) {
-        const code = barcodes[0].rawValue;
-        if (code && code !== this.manualQRCode()) {
-          this.manualQRCode.set(code);
-          this.closeQRScanner();
-          this.searchByQR();
-        }
-      }
-    } catch (e) {
-      // Ignore detection errors
-    }
-  }
-
-  private stopCamera() {
-    if (this.cameraStream) {
-      this.cameraStream.getTracks().forEach(t => t.stop());
-      this.cameraStream = null;
-    }
-    const videoEl = this.qrVideo?.nativeElement;
-    if (videoEl) videoEl.srcObject = null;
+    this.cameraAvailable.set(false);
+    this.cameraError.set('');
   }
 
   ngOnDestroy() {
-    this.stopQRDetection();
     this.stopCamera();
   }
   showParticipantQR(item: AccreditationParticipant) { alert(`QR Code: ${item.registrationNumber}`); }
