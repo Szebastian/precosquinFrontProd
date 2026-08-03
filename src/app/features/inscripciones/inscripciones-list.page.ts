@@ -219,8 +219,9 @@ export class InscripcionesListPageComponent implements OnInit {
         this.updatingId.set(null);
         this.expandedId.set(null);
       },
-      error: () => {
+      error: (err) => {
         this.updatingId.set(null);
+        alert('Error al eliminar: ' + (err?.error?.detail || err?.message || 'Error desconocido'));
       }
     });
   }
