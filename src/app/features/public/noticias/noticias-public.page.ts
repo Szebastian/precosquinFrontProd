@@ -88,7 +88,7 @@ interface NewsItem {
             <!-- Featured article (first item) -->
             @if (newsList().length > 0) {
               <article class="featured-article">
-                <div class="featured-img" [style.background-image]="'url(' + resolveUrl(newsList()[0].image) + ')'" [style.background-position]="newsList()[0].imagePosition || 'center center'">
+                <div class="featured-img" [style.background-image]="'url(' + newsImgUrl(newsList()[0].image, 900) + ')'" [style.background-position]="newsList()[0].imagePosition || 'center center'">
                   <div class="featured-img-overlay"></div>
                 </div>
                 <div class="featured-body">
@@ -112,7 +112,7 @@ interface NewsItem {
               @for (item of newsList(); track item.id; let i = $index) {
                 @if (i > 0) {
                   <article class="article-card">
-                    <div class="article-card-img" [style.background-image]="'url(' + resolveUrl(item.image) + ')'" [style.background-position]="item.imagePosition || 'center center'">
+                    <div class="article-card-img" [style.background-image]="'url(' + newsImgUrl(item.image, 400) + ')'" [style.background-position]="item.imagePosition || 'center center'">
                       <div class="article-card-overlay"></div>
                       <span class="article-card-badge">{{ item.category }}</span>
                     </div>
@@ -603,6 +603,12 @@ export class NoticiasPublicPageComponent implements OnInit {
     if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('assets/')) return path;
     if (path.startsWith('/v1/')) return API_BASE + path;
     return path;
+  }
+
+  newsImgUrl(path: string, w: number = 600): string {
+    const base = this.resolveUrl(path);
+    if (base.includes('/v1/news/images/')) return base + '?w=' + w;
+    return base;
   }
 
   ngOnInit(): void {

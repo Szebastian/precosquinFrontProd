@@ -1,7 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { InscripcionResult, InscripcionData, formatDate } from '../inscripcion.page';
-import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-inscripcion-constancia',
@@ -33,20 +32,6 @@ import { environment } from '@env/environment';
             <span class="constancia-label">N° de Inscripción</span>
             <span class="constancia-value constancia-id">{{ result()!.id }}</span>
           </div>
-
-          @if (result()!.qr_code_base64) {
-            <div class="constancia-qr-section">
-              <div class="constancia-qr-label">Código QR para Acreditación</div>
-              <img [src]="getQrUrl()" alt="QR Acreditación" class="constancia-qr-img" />
-              <div class="constancia-qr-hint">Presentá este código QR en la acreditación del festival</div>
-              <a [href]="getQrUrl()" [download]="'qr-precosquin-' + result()!.id.substring(0, 8) + '.png'" class="constancia-qr-download" (click)="$event.stopPropagation()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                Descargar QR
-              </a>
-            </div>
-          }
 
           <div class="constancia-section-title">Datos Personales</div>
 
@@ -141,14 +126,14 @@ import { environment } from '@env/environment';
           <div class="constancia-status-block">
             <div class="constancia-status-dot"></div>
             <span class="constancia-label">Estado: </span>
-            <span class="constancia-value constancia-status">Pendiente de revisión</span>
+            <span class="constancia-value constancia-status">Inscripción recibida — Pendiente de revisión</span>
           </div>
 
           <div class="constancia-note">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
             </svg>
-            <span>Conservá esta constancia como comprobante. Tu inscripción será revisada por el jurado. Recibirás un email con los próximos pasos.</span>
+            <span>Tu inscripción será revisada por la organización. Recibirás un email cuando sea aprobada, con tu código QR de acreditación. El código QR o tu DNI deberán presentarse durante la acreditación del festival.</span>
           </div>
         </div>
 
@@ -297,54 +282,6 @@ import { environment } from '@env/environment';
     .constancia-category { font-weight: 700; color: #2563eb; }
     .constancia-status { font-weight: 700; color: #d97706; }
 
-    .constancia-qr-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 1.25rem 1rem;
-      margin: 0.15rem 0;
-    }
-    .constancia-qr-label {
-      font-size: 0.6rem;
-      font-weight: 700;
-      color: #2563eb;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.75rem;
-    }
-    .constancia-qr-img {
-      width: 160px;
-      height: 160px;
-      border-radius: 8px;
-      border: 2px solid #e2e8f0;
-    }
-    .constancia-qr-hint {
-      font-size: 0.6rem;
-      color: #64748b;
-      margin-top: 0.625rem;
-      text-align: center;
-      line-height: 1.4;
-    }
-    .constancia-qr-download {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      margin-top: 0.75rem;
-      padding: 0.4rem 0.875rem;
-      background: #2563eb;
-      color: white;
-      border-radius: 6px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background 0.15s;
-    }
-    .constancia-qr-download:hover {
-      background: #1d4ed8;
-    }
     .constancia-bio { font-size: 0.75rem; line-height: 1.4; color: #475569; max-height: 3.2em; overflow: hidden; }
 
     .constancia-status-block {
@@ -415,9 +352,5 @@ export class InscripcionConstanciaComponent {
 
   formatDate(dateStr: string): string {
     return formatDate(dateStr);
-  }
-
-  getQrUrl(): string {
-    return `${environment.apiUrl}/inscriptions/${this.result()!.id}/qr-image`;
   }
 }

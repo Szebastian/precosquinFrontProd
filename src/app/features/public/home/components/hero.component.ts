@@ -24,6 +24,12 @@ function resolveUrl(path: string): string {
   return path;
 }
 
+function heroImageUrl(path: string): string {
+  const base = resolveUrl(path);
+  if (base.includes('/v1/news/images/')) return base + '?w=800';
+  return base;
+}
+
 export interface NewsItem {
   id: number;
   category: string;
@@ -85,7 +91,7 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
         id: item.id,
         category: item.category,
         title: item.title,
-        imageUrl: resolveUrl(item.image),
+        imageUrl: heroImageUrl(item.image),
         imagePosition: item.imagePosition || 'center center',
         thumbType: item.thumbType,
         badgeUrl: item.thumbType === 'img' ? resolveUrl(item.thumbSrc) : '',

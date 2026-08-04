@@ -16,6 +16,7 @@ export function createEmptyInscripcionData(): InscripcionData {
     subcategory: '',
     members: [],
     artisticName: '',
+    stageName: '',
     themes: [
       { title: '', rhythm: '', author: '' },
       { title: '', rhythm: '', author: '' },
@@ -61,6 +62,7 @@ export function createEmptyInscripcionData(): InscripcionData {
     acceptNoInstrumentChange: false,
     presentation: '',
     songsList: '',
+    technicalNeeds: '',
     instrumentType: '',
     instrumentName: '',
     hasAccompaniment: false,

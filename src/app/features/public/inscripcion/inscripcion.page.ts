@@ -14,6 +14,7 @@ import { InscripcionStep5Component } from './components/step-5.component';
 import { InscripcionStep6Component } from './components/step-6.component';
 import { InscripcionStep7Component } from './components/step-7.component';
 import { InscripcionStepAccessosComponent } from './components/step-accessos.component';
+import { OtpVerifyComponent } from './components/otp-verify.component';
 import { CircularProgressComponent } from '../../../shared/components/circular-progress/circular-progress.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { TypeformFlowComponent } from './components/typeform-flow.component';
@@ -118,6 +119,7 @@ export interface InscripcionData {
   subcategory: string;
   members: Member[];
   artisticName: string;
+  stageName: string;
   themes: ThemeRow[];
   riderTecnico: RiderTecnico;
   equipmentDesc: string;
@@ -156,6 +158,7 @@ export interface InscripcionData {
   // Presentation
   presentation: string;
   songsList: string;
+  technicalNeeds: string;
   // Danza
   danceStyle: string;
   danceThemes: DanceTheme[];
@@ -211,7 +214,7 @@ export const groupSubcategories = [
 imports: [CommonModule, FormsModule, RouterLink, 
 InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, 
 InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, 
-InscripcionStepAccessosComponent, CircularProgressComponent, TypeformFlowComponent],
+InscripcionStepAccessosComponent, OtpVerifyComponent, CircularProgressComponent, TypeformFlowComponent],
   styleUrl: './inscripcion.page.scss',
   animations: [
     trigger('stepSlide', [
@@ -233,7 +236,471 @@ InscripcionStepAccessosComponent, CircularProgressComponent, TypeformFlowCompone
   ],
   template: `
     <div class="public-page form-layout" [class.form-layout--typeform]="typeformMode()">
-       @if (typeformMode()) {
+       @if (!otpVerified()) {
+        <!-- STEP 0: CHOICE + EMAIL CHECK + OTP -->
+        <div class="form-main-content">
+          <div class="w-full max-w-4xl mx-auto px-4 py-8">
+            <div class="form-card animate-scale-in">
+              <div class="form-header">
+                <a routerLink="/" class="back-home-link">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  Inicio
+                </a>
+                <span class="question-counter">INSCRIPCIÓN</span>
+                <h1>Festival Precosquín 2027</h1>
+              </div>
+
+              @if (emailAlreadyRegistered()) {
+                @if (!otpVerified()) {
+                  <!-- EMAIL FOUND → OTP VERIFICATION (auto-send code) -->
+                  <app-otp-verify
+                    [email]="data.email"
+                    [autoSend]="true"
+                    (verified)="otpVerified.set(true)" />
+                }
+              } @else if (!otpCodeSent()) {
+<!-- STEP 0a: CHOOSE + ENTER EMAIL -->
+                  <div class="tf-welcome">
+                    <div class="tf-welcome-content">
+                      @if (!registrationChoice()) {
+                        <!-- TWO CHOICES -->
+                        <span class="tf-welcome-badge" style="background:rgba(37,99,235,0.12);color:#60a5fa;border-color:rgba(37,99,235,0.2)">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                        </span>
+                        <h1 class="tf-welcome-title">¿Qué querés hacer?</h1>
+                        <p class="tf-welcome-sub">Elegí una opción para continuar</p>
+                        <div class="tf-welcome-options" style="margin-top:28px">
+                          <button type="button" class="tf-welcome-opt" (click)="startRegistration()">
+                            <span class="tf-welcome-opt-num" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);color:#2563eb">1</span>
+                            <div class="tf-welcome-opt-body">
+                              <span class="tf-welcome-opt-title">Quiero inscribirme</span>
+                              <span class="tf-welcome-opt-desc">Nueva inscripción</span>
+                            </div>
+                            <svg class="tf-welcome-opt-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                          </button>
+                          <button type="button" class="tf-welcome-opt" (click)="registrationChoice.set('existing')">
+                            <span class="tf-welcome-opt-num" style="background:linear-gradient(135deg,#faf5ff,#e9d5ff);color:#9333ea">2</span>
+                            <div class="tf-welcome-opt-body">
+                              <span class="tf-welcome-opt-title">Ya estoy registrado</span>
+                              <span class="tf-welcome-opt-desc">Consultar mi inscripción</span>
+                            </div>
+                            <svg class="tf-welcome-opt-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                          </button>
+                        </div>
+                      } @else if (registrationChoice() === 'existing') {
+                        <!-- CHECK STATUS -->
+                        <span class="tf-welcome-badge" style="background:rgba(37,99,235,0.12);color:#60a5fa;border-color:rgba(37,99,235,0.2)">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </span>
+                        <h1 class="tf-welcome-title">Consultá tu inscripción</h1>
+                        <p class="tf-welcome-sub">Ingresá el email con el que te inscribiste</p>
+                        @if (otpError()) {
+                          <div class="tf-welcome-options" style="margin-top:24px">
+                            <div class="tf-welcome-opt" style="border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.04)">
+                              <span class="tf-welcome-opt-num tf-welcome-opt-num--danger">!</span>
+                              <div class="tf-welcome-opt-body">
+                                <span class="tf-welcome-opt-title" style="color:#f87171">{{ otpError() }}</span>
+                              </div>
+                            </div>
+                            <div class="tf-welcome-options" style="flex-direction:row;gap:12px;margin-top:16px">
+                              <button type="button" class="tf-welcome-opt" style="flex:1" (click)="registrationChoice.set(null)">
+                                <span class="tf-welcome-opt-num" style="background:rgba(100,116,139,0.12);color:#64748b"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg></span>
+                                <div class="tf-welcome-opt-body"><span class="tf-welcome-opt-title">Volver</span></div>
+                              </button>
+                              <button type="button" class="tf-welcome-opt tf-welcome-opt--primary" style="flex:1" (click)="registrationChoice.set(null); startRegistration()">
+                                <span class="tf-welcome-opt-num" style="background:rgba(37,99,235,0.12);color:#2563eb">1</span>
+                                <div class="tf-welcome-opt-body"><span class="tf-welcome-opt-title">Quiero inscribirme</span></div>
+                              </button>
+                            </div>
+                          </div>
+                        } @else {
+                          <div class="tf-welcome-options" style="margin-top:24px">
+                            <label class="modify-field" style="width:100%">
+                              <input type="email" class="otp-field" placeholder="tu@email.com" [value]="data.email" (input)="data.email = $any($event.target).value" (keydown.enter)="checkEmailStatus()" style="font-size:1rem;letter-spacing:normal;font-family:inherit" />
+                            </label>
+                            <button type="button" class="tf-welcome-opt tf-welcome-opt--primary" style="width:100%;margin-top:12px" (click)="checkEmailStatus()" [disabled]="!data.email || checkingEmail()">
+                              <span class="tf-welcome-opt-num" style="background:rgba(37,99,235,0.12);color:#2563eb">1</span>
+                              <div class="tf-welcome-opt-body">
+                                @if (checkingEmail()) { <span class="spinner"></span> Buscando... } @else { <span class="tf-welcome-opt-title">Consultar</span> }
+                              </div>
+                            </button>
+                            <button type="button" class="tf-welcome-reset" (click)="registrationChoice.set(null)" style="margin-top:12px">← Volver</button>
+                          </div>
+                        }
+                      }
+                    </div>
+                  </div>
+              } @else {
+                <!-- STEP 0b: ENTER OTP CODE -->
+                <app-otp-verify
+                  [email]="data.email"
+                  (verified)="otpVerified.set(true)" />
+              }
+            </div>
+          </div>
+        </div>
+      } @else if (emailAlreadyRegistered()) {
+        <!-- OTP VERIFIED + EMAIL REGISTERED → WELCOME SCREEN (TYPEFORM STYLE) -->
+        @if (!welcomeAction()) {
+          <div class="tf-welcome">
+            <div class="tf-welcome-content">
+              <span class="tf-welcome-badge">✓</span>
+              <h1 class="tf-welcome-title">Hola {{ getFirstName() }}</h1>
+              <p class="tf-welcome-sub">Encontramos tu inscripción.</p>
+
+              <div class="tf-welcome-status">
+                <div class="tf-welcome-status-dot" [attr.data-status]="registeredData()?.status"></div>
+                <span>{{ getStatusLabel(registeredData()?.status || '') }}</span>
+              </div>
+
+              <p class="tf-welcome-question">¿Qué querés hacer?</p>
+
+              <div class="tf-welcome-options">
+                <button type="button" class="tf-welcome-opt" (click)="welcomeAction.set('modify')">
+                  <span class="tf-welcome-opt-num">1</span>
+                  <div class="tf-welcome-opt-body">
+                    <span class="tf-welcome-opt-title">Modificar inscripción</span>
+                    <span class="tf-welcome-opt-desc">Editá los datos de tu inscripción</span>
+                  </div>
+                  <svg class="tf-welcome-opt-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <button type="button" class="tf-welcome-opt" (click)="welcomeAction.set('download')">
+                  <span class="tf-welcome-opt-num">2</span>
+                  <div class="tf-welcome-opt-body">
+                    <span class="tf-welcome-opt-title">Descargar comprobante</span>
+                    <span class="tf-welcome-opt-desc">Obtené el PDF de tu inscripción</span>
+                  </div>
+                  <svg class="tf-welcome-opt-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <button type="button" class="tf-welcome-opt tf-welcome-opt--danger" (click)="welcomeAction.set('cancel')">
+                  <span class="tf-welcome-opt-num tf-welcome-opt-num--danger">3</span>
+                  <div class="tf-welcome-opt-body">
+                    <span class="tf-welcome-opt-title">Cancelar inscripción</span>
+                    <span class="tf-welcome-opt-desc">Eliminá tu inscripción de forma permanente</span>
+                  </div>
+                  <svg class="tf-welcome-opt-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+
+              <button type="button" class="tf-welcome-reset" (click)="resetEmailCheck()">
+                ← Consultar otro email
+              </button>
+            </div>
+          </div>
+        } @else if (welcomeAction() === 'modify') {
+          @if (!isModifying()) {
+            <div class="tf-welcome">
+              <div class="tf-welcome-content">
+                @if (loadingModify()) {
+                  <div class="otp-sending" style="color:#94a3b8"><span class="spinner spinner--lg"></span><span>Cargando tu inscripción...</span></div>
+                } @else if (modifyError()) {
+                  <div class="otp-error" style="max-width:360px;margin:0 auto 16px">{{ modifyError() }}</div>
+                  <button type="button" class="tf-welcome-reset" (click)="welcomeAction.set(null)">← Volver</button>
+                } @else {
+                  <span class="tf-welcome-badge" style="background:rgba(76,139,230,0.12);color:#4c8be6;border-color:rgba(76,139,230,0.2)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </span>
+                  <h1 class="tf-welcome-title">Modificar inscripción</h1>
+                  <p class="tf-welcome-sub">Hacé click en la sección que querés editar.</p>
+                  <p class="tf-welcome-sub" style="font-size:0.8rem;color:#475569;margin-top:4px">Los archivos (DNI, foto, etc.) no se pueden modificar desde acá.</p>
+                  <div class="tf-welcome-options" style="margin-top:28px">
+                    <button type="button" class="tf-welcome-opt" (click)="startModify()">
+                      <span class="tf-welcome-opt-num">→</span>
+                      <div class="tf-welcome-opt-body">
+                        <span class="tf-welcome-opt-title">Cargar y editar mi inscripción</span>
+                        <span class="tf-welcome-opt-desc">Ver resumen con datos actuales</span>
+                      </div>
+                      <svg class="tf-welcome-opt-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                  </div>
+                  <button type="button" class="tf-welcome-reset" (click)="welcomeAction.set(null)">← Volver</button>
+                }
+              </div>
+            </div>
+          } @else if (!modifySection()) {
+            <!-- SUMMARY VIEW -->
+            <div class="modify-summary">
+              <div class="modify-header">
+                <button type="button" class="back-home-link" (click)="cancelModify(); welcomeAction.set(null)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg> Volver
+                </button>
+                <span class="question-counter">TU INSCRIPCIÓN</span>
+                <h1>Datos de tu inscripción</h1>
+                <p class="modify-hint">Hacé click en una sección para editarla</p>
+              </div>
+
+              <button type="button" class="modify-section" (click)="modifySection.set('personal')">
+                <div class="modify-section-header">
+                  <div class="modify-section-icon" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);color:#2563eb">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <span class="modify-section-title">Datos Personales</span>
+                  <svg class="modify-section-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="modify-section-preview">
+                  {{ modifyRawData()?.full_name }} · DNI {{ modifyRawData()?.dni || '-' }} · {{ modifyRawData()?.email }}
+                </div>
+              </button>
+
+              <button type="button" class="modify-section" (click)="modifySection.set('category')">
+                <div class="modify-section-header">
+                  <div class="modify-section-icon" style="background:linear-gradient(135deg,#faf5ff,#e9d5ff);color:#9333ea">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                  </div>
+                  <span class="modify-section-title">Categoría y Subcategoría</span>
+                  <svg class="modify-section-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="modify-section-preview">
+                  {{ modifyRawData()?.category === 'musica' ? 'Música' : 'Danza' }} › {{ getSubcategoryLabel(modifyRawData()?.subcategory || '') }}
+                </div>
+              </button>
+
+              <button type="button" class="modify-section" (click)="modifySection.set('artistic')">
+                <div class="modify-section-header">
+                  <div class="modify-section-icon" style="background:linear-gradient(135deg,#fff7ed,#fed7aa);color:#ea580c">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </div>
+                  <span class="modify-section-title">Información Artística</span>
+                  <svg class="modify-section-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="modify-section-preview">
+                  {{ modifyRawData()?.artistic_name || modifyRawData()?.proposal_name || modifyRawData()?.stage_name || 'Sin nombre artístico' }}
+                </div>
+              </button>
+
+              @if (modifyRawData()?.themes?.length || modifyRawData()?.dance_themes?.length) {
+                <button type="button" class="modify-section" (click)="modifySection.set('themes')">
+                  <div class="modify-section-header">
+                    <div class="modify-section-icon" style="background:linear-gradient(135deg,#fefce8,#fef08a);color:#ca8a04">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    </div>
+                    <span class="modify-section-title">{{ modifyRawData()?.category === 'danza' ? 'Temas y Coreografía' : 'Temas Musicales' }}</span>
+                    <svg class="modify-section-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </div>
+                  <div class="modify-section-preview">
+                    @for (t of (modifyRawData()?.themes || modifyRawData()?.dance_themes || []); track $index) {
+                      {{ t.title || t.song }}{{ $last ? '' : ', ' }}
+                    }
+                  </div>
+                </button>
+              }
+
+              @if (modifyRawData()?.members?.length) {
+                <button type="button" class="modify-section" (click)="modifySection.set('members')">
+                  <div class="modify-section-header">
+                    <div class="modify-section-icon" style="background:linear-gradient(135deg,#f0fdf4,#bbf7d0);color:#16a34a">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <span class="modify-section-title">Integrantes</span>
+                    <svg class="modify-section-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </div>
+                  <div class="modify-section-preview">{{ modifyRawData()?.members?.length }} integrante(s)</div>
+                </button>
+              }
+
+              <button type="button" class="modify-section" (click)="modifySection.set('technical')">
+                <div class="modify-section-header">
+                  <div class="modify-section-icon" style="background:linear-gradient(135deg,#f8fafc,#e2e8f0);color:#475569">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/></svg>
+                  </div>
+                  <span class="modify-section-title">Equipo Técnico</span>
+                  <svg class="modify-section-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="modify-section-preview">{{ modifyRawData()?.technical_needs || 'Sin requerimientos' }}</div>
+              </button>
+
+              <button type="button" class="modify-section" (click)="modifySection.set('contact')">
+                <div class="modify-section-header">
+                  <div class="modify-section-icon" style="background:linear-gradient(135deg,#ecfdf5,#a7f3d0);color:#059669">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </div>
+                  <span class="modify-section-title">Contacto</span>
+                  <svg class="modify-section-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="modify-section-preview">{{ modifyRawData()?.phone || '-' }} · {{ modifyRawData()?.email }}</div>
+              </button>
+
+              @if (error()) { <div class="otp-error" style="margin:12px auto;max-width:480px">{{ error() }}</div> }
+            </div>
+          } @else {
+            <!-- EDIT SECTION FORM -->
+            <div class="modify-edit">
+              <div class="modify-header">
+                <button type="button" class="back-home-link" (click)="modifySection.set(null)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg> Volver al resumen
+                </button>
+                <span class="question-counter">EDITANDO</span>
+                <h1>
+                  @switch (modifySection()) {
+                    @case ('personal') { Datos Personales }
+                    @case ('category') { Categoría }
+                    @case ('artistic') { Información Artística }
+                    @case ('themes') { Temas }
+                    @case ('members') { Integrantes }
+                    @case ('technical') { Equipo Técnico }
+                    @case ('contact') { Contacto }
+                  }
+                </h1>
+              </div>
+
+              <div class="modify-edit-fields">
+                @if (modifySection() === 'personal') {
+                  <label class="modify-field"><span class="modify-label">Nombre</span><input type="text" [value]="data.firstName" (input)="data.firstName = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  <label class="modify-field"><span class="modify-label">Apellido</span><input type="text" [value]="data.lastName" (input)="data.lastName = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  <label class="modify-field"><span class="modify-label">DNI</span><input type="text" [value]="data.dni" (input)="data.dni = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  <label class="modify-field"><span class="modify-label">Fecha de nacimiento</span><input type="date" [value]="data.birthDate" (input)="data.birthDate = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  <label class="modify-field"><span class="modify-label">Dirección</span><input type="text" [value]="data.address" (input)="data.address = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  <label class="modify-field"><span class="modify-label">Localidad</span><input type="text" [value]="data.locality" (input)="data.locality = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  <label class="modify-field"><span class="modify-label">Provincia</span><input type="text" [value]="data.province" (input)="data.province = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                } @else if (modifySection() === 'category') {
+                  <label class="modify-field"><span class="modify-label">Subcategoría</span>
+                    <select [value]="data.subcategory" (change)="data.subcategory = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal">
+                      <option value="">Seleccionar...</option>
+                      @for (sub of (data.category === 'musica' ? subcategoriesByCategory['musica'] : subcategoriesByCategory['danza']); track sub.id) {
+                        <option [value]="sub.id">{{ sub.name }}</option>
+                      }
+                    </select>
+                  </label>
+                } @else if (modifySection() === 'artistic') {
+                  <label class="modify-field"><span class="modify-label">Nombre artístico</span><input type="text" [value]="data.artisticName" (input)="data.artisticName = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  <label class="modify-field"><span class="modify-label">Nombre de propuesta</span><input type="text" [value]="data.proposalName" (input)="data.proposalName = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  <label class="modify-field"><span class="modify-label">Biografía</span><textarea [value]="data.biography" (input)="data.biography = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal;min-height:80px;resize:vertical" rows="4"></textarea></label>
+                } @else if (modifySection() === 'themes') {
+                  @if (data.category === 'musica') {
+                    @for (theme of data.themes; track $index; let i = $index) {
+                      <div class="modify-theme-card">
+                        <span class="modify-label">Tema {{ i + 1 }}</span>
+                        <input type="text" [value]="theme.title" (input)="theme.title = $any($event.target).value" placeholder="Título" class="otp-field" style="text-align:left;letter-spacing:normal" />
+                        <input type="text" [value]="theme.rhythm" (input)="theme.rhythm = $any($event.target).value" placeholder="Ritmo" class="otp-field" style="text-align:left;letter-spacing:normal;margin-top:8px" />
+                        <input type="text" [value]="theme.author" (input)="theme.author = $any($event.target).value" placeholder="Autor" class="otp-field" style="text-align:left;letter-spacing:normal;margin-top:8px" />
+                      </div>
+                    }
+                  } @else {
+                    @for (dt of data.danceThemes; track $index; let i = $index) {
+                      <div class="modify-theme-card">
+                        <span class="modify-label">Ronda {{ i + 1 }}</span>
+                        <input type="text" [value]="dt.title" (input)="dt.title = $any($event.target).value" placeholder="Título" class="otp-field" style="text-align:left;letter-spacing:normal" />
+                        <input type="text" [value]="dt.song" (input)="dt.song = $any($event.target).value" placeholder="Canción" class="otp-field" style="text-align:left;letter-spacing:normal;margin-top:8px" />
+                      </div>
+                    }
+                  }
+                } @else if (modifySection() === 'members') {
+                  @for (member of data.members; track $index; let i = $index) {
+                    <div class="modify-theme-card">
+                      <span class="modify-label">Integrante {{ i + 1 }}</span>
+                      <input type="text" [value]="member.fullName" (input)="member.fullName = $any($event.target).value" placeholder="Nombre completo" class="otp-field" style="text-align:left;letter-spacing:normal" />
+                      <input type="text" [value]="member.role" (input)="member.role = $any($event.target).value" placeholder="Rol" class="otp-field" style="text-align:left;letter-spacing:normal;margin-top:8px" />
+                    </div>
+                  }
+                  <button type="button" class="otp-resend-btn" style="color:#2563eb;margin-top:8px" (click)="addMember()">+ Agregar integrante</button>
+                } @else if (modifySection() === 'technical') {
+                  <label class="modify-field"><span class="modify-label">Necesidades técnicas</span><textarea [value]="data.technicalNeeds" (input)="data.technicalNeeds = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal;min-height:80px;resize:vertical" rows="4" placeholder="Ej: Microfonos, monitores, backline..."></textarea></label>
+                  @if (data.category === 'musica' && data.subcategory === 'solista_instrumental') {
+                    <label class="modify-field"><span class="modify-label">Tipo de instrumento</span>
+                      <select [value]="data.instrumentType" (change)="data.instrumentType = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal">
+                        <option value="">Seleccionar...</option>
+                        <option value="melodico">Melódico</option>
+                        <option value="armonico">Armónico</option>
+                      </select>
+                    </label>
+                    <label class="modify-field"><span class="modify-label">Nombre del instrumento</span><input type="text" [value]="data.instrumentName" (input)="data.instrumentName = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  }
+                } @else if (modifySection() === 'contact') {
+                  <label class="modify-field"><span class="modify-label">Teléfono</span><input type="tel" [value]="data.phone" (input)="data.phone = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
+                  <label class="modify-field"><span class="modify-label">Email</span><input type="email" [value]="data.email" disabled class="otp-field" style="text-align:left;letter-spacing:normal;opacity:0.6" /></label>
+                  <p class="modify-note">El email no se puede modificar desde acá.</p>
+                }
+              </div>
+
+              <div class="modify-edit-footer">
+                <button type="button" class="otp-resend-btn" (click)="modifySection.set(null)">Cancelar</button>
+                <button type="button" class="otp-verify-btn" (click)="saveSection()" [disabled]="savingSection()">
+                  @if (savingSection()) { <span class="spinner"></span> Guardando... } @else { Guardar cambios }
+                </button>
+              </div>
+              @if (error()) { <div class="otp-error" style="margin:12px auto;max-width:480px">{{ error() }}</div> }
+            </div>
+          }
+        } @else if (welcomeAction() === 'download') {
+          <div class="tf-welcome">
+            <div class="tf-welcome-content">
+              <span class="tf-welcome-badge" style="background:rgba(34,197,94,0.12);color:#4ade80;border-color:rgba(34,197,94,0.2)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </span>
+              <h1 class="tf-welcome-title">Tu comprobante</h1>
+              <p class="tf-welcome-sub">Descargá tu constancia o recibila por email.</p>
+              <div class="tf-welcome-options" style="margin-top:28px">
+                <button type="button" class="tf-welcome-opt" (click)="openConstancia()">
+                  <span class="tf-welcome-opt-num">1</span>
+                  <div class="tf-welcome-opt-body">
+                    <span class="tf-welcome-opt-title">Descargar / Imprimir PDF</span>
+                    <span class="tf-welcome-opt-desc">Se abre en una nueva pestaña</span>
+                  </div>
+                  <svg class="tf-welcome-opt-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button type="button" class="tf-welcome-opt" (click)="resendConstanciaEmail()">
+                  <span class="tf-welcome-opt-num">2</span>
+                  <div class="tf-welcome-opt-body">
+                    <span class="tf-welcome-opt-title">Enviar por correo</span>
+                    <span class="tf-welcome-opt-desc">Recibí el comprobante en tu email</span>
+                  </div>
+                  <svg class="tf-welcome-opt-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+              <button type="button" class="tf-welcome-reset" (click)="welcomeAction.set(null)">← Volver</button>
+            </div>
+          </div>
+        } @else if (welcomeAction() === 'cancel') {
+          @if (!cancelConfirm()) {
+            <div class="tf-welcome">
+              <div class="tf-welcome-content">
+                <span class="tf-welcome-badge" style="background:rgba(239,68,68,0.12);color:#f87171;border-color:rgba(239,68,68,0.2)">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </span>
+                <h1 class="tf-welcome-title" style="color:#f87171">¿Estás seguro?</h1>
+                <p class="tf-welcome-sub">Esta acción eliminará tu inscripción de forma permanente.</p>
+                <p class="tf-welcome-sub" style="font-size:0.85rem;color:#64748b;margin-top:4px">Podrás volver a inscribirte realizando un nuevo registro.</p>
+                <div class="tf-welcome-options" style="margin-top:28px">
+                  <button type="button" class="tf-welcome-opt tf-welcome-opt--danger" (click)="cancelConfirm.set(true)">
+                    <span class="tf-welcome-opt-num tf-welcome-opt-num--danger">✕</span>
+                    <div class="tf-welcome-opt-body">
+                      <span class="tf-welcome-opt-title">Eliminar inscripción</span>
+                      <span class="tf-welcome-opt-desc">No se puede deshacer</span>
+                    </div>
+                  </button>
+                </div>
+                <button type="button" class="tf-welcome-reset" (click)="welcomeAction.set(null)">← Cancelar</button>
+              </div>
+            </div>
+          } @else {
+            <div class="tf-welcome">
+              <div class="tf-welcome-content">
+                @if (!cancelling()) {
+                  <span class="tf-welcome-badge" style="background:rgba(239,68,68,0.12);color:#f87171;border-color:rgba(239,68,68,0.2)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  </span>
+                  <h1 class="tf-welcome-title" style="color:#f87171">Última confirmación</h1>
+                  <p class="tf-welcome-sub" style="max-width:360px">Se eliminará tu inscripción y recibirás un correo de confirmación.</p>
+                  <div class="tf-welcome-options" style="margin-top:28px">
+                    <button type="button" class="tf-welcome-opt tf-welcome-opt--danger" (click)="cancelInscription()">
+                      <span class="tf-welcome-opt-num tf-welcome-opt-num--danger">✕</span>
+                      <div class="tf-welcome-opt-body">
+                        <span class="tf-welcome-opt-title">Sí, eliminar mi inscripción</span>
+                        <span class="tf-welcome-opt-desc">No se puede deshacer</span>
+                      </div>
+                    </button>
+                  </div>
+                  <button type="button" class="tf-welcome-reset" (click)="cancelConfirm.set(false)">← No, volver</button>
+                } @else {
+                  <div class="otp-sending" style="color:#94a3b8"><span class="spinner spinner--lg"></span><span>Eliminando inscripción...</span></div>
+                }
+              </div>
+            </div>
+          }
+        }
+      } @else if (typeformMode()) {
         <!-- TYPEFORM MODE -->
         @defer (on idle) {
           <app-typeform-flow
@@ -506,6 +973,22 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   validationErrors = signal<string[]>([]);
   showSavedIndicator = signal(false);
   typeformMode = signal(true);
+  otpVerified = signal(false);
+  otpCodeSent = signal(false);
+  emailAlreadyRegistered = signal(false);
+  checkingEmail = signal(false);
+  otpError = signal('');
+  registrationChoice = signal<'new' | 'existing' | null>(null);
+  registeredData = signal<{inscription_id: string; status: string; full_name: string; category: string; subcategory: string; created_at: string} | null>(null);
+  welcomeAction = signal<'modify' | 'download' | 'cancel' | null>(null);
+  cancelConfirm = signal(false);
+  cancelling = signal(false);
+  isModifying = signal(false);
+  modifySection = signal<string | null>(null);
+  loadingModify = signal(false);
+  modifyError = signal('');
+  savingSection = signal(false);
+  modifyRawData = signal<any>(null);
   private observer?: IntersectionObserver;
   private modalTrapCleanup?: () => void;
 
@@ -552,7 +1035,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
 
   data: InscripcionData = createEmptyInscripcionData();
 
-  private subcategoriesByCategory = subcategoriesByCategory;
+  subcategoriesByCategory = subcategoriesByCategory;
   private groupSubcategories = groupSubcategories;
 
   micOptions = ['Dinámico (SM58)', 'Condensador de solista', 'Inalámbrico', 'Overhead', 'Para acordeón/guitarra', 'Para percusión'];
@@ -621,6 +1104,369 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     this.saveDraft();
     this.toast.success('Borrador guardado', 'Podés continuar después desde este mismo navegador.');
     this.router.navigate(['/']);
+  }
+
+  checkEmailAndSendOtp(): void {
+    if (!this.data.email) return;
+    this.checkingEmail.set(true);
+    this.otpError.set('');
+    this.http.get<{ exists: boolean }>(`${environment.apiUrl}/inscriptions/check-email?email=${encodeURIComponent(this.data.email)}`).subscribe({
+      next: (res) => {
+        this.checkingEmail.set(false);
+        if (res.exists) {
+          this.emailAlreadyRegistered.set(true);
+        } else {
+          this.otpCodeSent.set(true);
+          this.sendOtpCode();
+        }
+      },
+      error: () => {
+        this.checkingEmail.set(false);
+        this.otpCodeSent.set(true);
+        this.sendOtpCode();
+      }
+    });
+  }
+
+  sendOtpCode(): void {
+    this.otpError.set('');
+    this.http.post(`${environment.apiUrl}/inscriptions/send-otp`, { email: this.data.email }).subscribe({
+      next: () => {},
+      error: (err) => {
+        this.otpError.set(err.error?.detail || 'Error al enviar el código. Intentá de nuevo.');
+      }
+    });
+  }
+
+  resetEmailCheck(): void {
+    this.emailAlreadyRegistered.set(false);
+    this.otpCodeSent.set(false);
+    this.otpError.set('');
+    this.otpVerified.set(false);
+    this.registeredData.set(null);
+    this.welcomeAction.set(null);
+    this.cancelConfirm.set(false);
+    this.cancelling.set(false);
+    this.data.email = '';
+  }
+
+  startRegistration(): void {
+    this.otpVerified.set(true);
+  }
+
+  checkEmailStatus(): void {
+    if (!this.data.email) return;
+    this.checkingEmail.set(true);
+    this.otpError.set('');
+    this.http.get<any>(`${environment.apiUrl}/inscriptions/check-email?email=${encodeURIComponent(this.data.email)}`).subscribe({
+      next: (res) => {
+        this.checkingEmail.set(false);
+        if (res.exists) {
+          this.registeredData.set({
+            inscription_id: res.inscription_id,
+            status: res.status,
+            full_name: res.full_name,
+            category: res.category,
+            subcategory: res.subcategory,
+            created_at: res.created_at,
+          });
+          this.emailAlreadyRegistered.set(true);
+        } else {
+          this.otpError.set('No encontramos una inscripción asociada a ese correo.');
+        }
+      },
+      error: () => {
+        this.checkingEmail.set(false);
+        this.otpError.set('Error al consultar. Intentá de nuevo.');
+      }
+    });
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      'PENDIENTE': 'Recibida — Pendiente de revisión',
+      'EN_REVISION': 'En revisión administrativa',
+      'NECESITA_CORRECCION': 'Necesita correcciones',
+      'APROBADA': 'Aprobada — ¡Felicitaciones!',
+      'RECHAZADA': 'No aprobada',
+      'ACREDITADA': 'Acreditada',
+    };
+    return labels[status] || status;
+  }
+
+  getFirstName(): string {
+    const name = this.registeredData()?.full_name || '';
+    return name.split(' ')[0] || 'PARTICIPANTE';
+  }
+
+  openConstancia(): void {
+    const id = this.registeredData()?.inscription_id;
+    if (id) {
+      window.open(`${environment.apiUrl}/inscriptions/${id}/constancia-html`, '_blank');
+    }
+  }
+
+  resendConstanciaEmail(): void {
+    const id = this.registeredData()?.inscription_id;
+    if (!id) return;
+    this.http.post(`${environment.apiUrl}/inscriptions/${id}/resend-constancia`, { email: this.data.email }).subscribe({
+      next: () => {
+        this.toast.success('Constancia enviada a tu correo');
+      },
+      error: () => {
+        this.toast.error('Error al enviar. Intentá de nuevo.');
+      }
+    });
+  }
+
+  cancelInscription(): void {
+    const id = this.registeredData()?.inscription_id;
+    if (!id) return;
+    this.cancelling.set(true);
+    this.http.post(`${environment.apiUrl}/inscriptions/${id}/cancel`, { email: this.data.email }).subscribe({
+      next: () => {
+        this.cancelling.set(false);
+        this.toast.success('Inscripción cancelada correctamente');
+        this.resetEmailCheck();
+      },
+      error: () => {
+        this.cancelling.set(false);
+        this.toast.error('Error al cancelar. Intentá de nuevo.');
+      }
+    });
+  }
+
+  startModify(): void {
+    const id = this.registeredData()?.inscription_id;
+    if (!id) return;
+    this.loadingModify.set(true);
+    this.modifyError.set('');
+    this.http.get<any>(`${environment.apiUrl}/inscriptions/${id}/get-public?email=${encodeURIComponent(this.data.email)}`).subscribe({
+      next: (ins) => {
+        this.loadingModify.set(false);
+        this.modifyRawData.set(ins);
+        this.mapInscriptionToData(ins);
+        this.isModifying.set(true);
+        this.modifySection.set(null);
+      },
+      error: () => {
+        this.loadingModify.set(false);
+        this.modifyError.set('Error al cargar los datos. Intentá de nuevo.');
+      }
+    });
+  }
+
+  private mapInscriptionToData(ins: any): void {
+    this.data.firstName = ins.first_name || '';
+    this.data.lastName = ins.last_name || '';
+    this.data.dni = ins.dni || '';
+    this.data.birthDate = ins.birth_date || '';
+    this.data.age = ins.age || null;
+    this.data.address = ins.address || '';
+    this.data.locality = ins.locality || '';
+    this.data.province = ins.province || '';
+    this.data.phone = ins.phone || '';
+    this.data.email = ins.email || '';
+    this.data.category = ins.category || '';
+    this.data.subcategory = ins.subcategory || '';
+    this.data.stageName = ins.stage_name || '';
+    this.data.artisticName = ins.artistic_name || '';
+    this.data.proposalName = ins.proposal_name || '';
+    this.data.choreographerName = ins.choreographer_name || '';
+    this.data.style = ins.style || '';
+    this.data.danceList = ins.dance_list || '';
+    this.data.biography = ins.bio || '';
+    this.data.presentation = ins.presentation || '';
+    this.data.songsList = ins.songs_list || '';
+    this.data.technicalNeeds = ins.technical_needs || '';
+    this.data.instrumentType = ins.instrument_type || '';
+    this.data.instrumentName = ins.instrument_name || '';
+    this.data.hasAccompaniment = ins.has_accompaniment || false;
+    this.data.accompanimentInstrument = ins.accompaniment_instrument || '';
+    this.data.accompanimentMusician = ins.accompaniment_musician || '';
+    this.data.acceptNoPriorWin = ins.accept_no_prior_win || false;
+    this.data.acceptNotJurorOrg = ins.accept_not_juror_org || false;
+    this.data.acceptRegulations = ins.accept_regulations || false;
+    this.data.acceptPurelyInstrumental = ins.accept_purely_instrumental || false;
+    this.data.acceptOneInstrument = ins.accept_one_instrument || false;
+    this.data.acceptNoPrerecorded = ins.accept_no_prerecorded || false;
+    this.data.acceptNoInstrumentChange = ins.accept_no_instrument_change || false;
+    this.data.danceStyle = ins.dance_style || '';
+    this.data.workTitle = ins.work_title || '';
+    this.data.assistantsCount = ins.assistants_count || 0;
+    if (ins.members && Array.isArray(ins.members)) {
+      this.data.members = ins.members.map((m: any) => ({
+        fullName: m.fullName || m.full_name || '',
+        dni: m.dni || '',
+        age: m.age || null,
+        role: m.role || '',
+      }));
+    }
+    if (ins.themes && Array.isArray(ins.themes)) {
+      this.data.themes = ins.themes.map((t: any) => ({
+        title: t.title || '',
+        rhythm: t.rhythm || '',
+        author: t.author || '',
+      }));
+    }
+    if (ins.dance_themes && Array.isArray(ins.dance_themes)) {
+      this.data.danceThemes = ins.dance_themes.map((d: any) => ({
+        title: d.title || '',
+        song: d.song || '',
+      }));
+    }
+    if (ins.band_members && Array.isArray(ins.band_members)) {
+      this.data.bandMembers = ins.band_members.map((b: any) => ({
+        fullName: b.fullName || b.full_name || '',
+        instrument: b.instrument || '',
+      }));
+    }
+    if (ins.accompanying_persons && Array.isArray(ins.accompanying_persons)) {
+      this.data.accompanyingPersons = ins.accompanying_persons.map((a: any) => ({
+        fullName: a.fullName || a.full_name || '',
+        dni: a.dni || '',
+      }));
+    }
+    if (ins.rider_tecnico && typeof ins.rider_tecnico === 'object') {
+      this.data.riderTecnico = ins.rider_tecnico;
+    }
+    this.data.dniFrontName = ins.dni_front_url || '';
+    this.data.dniBackName = ins.dni_back_url || '';
+    this.data.promoPhotoName = ins.promo_photo_url || '';
+  }
+
+  saveModification(): void {
+    const id = this.registeredData()?.inscription_id;
+    if (!id) return;
+    this.submitting.set(true);
+    this.error.set('');
+
+    const payload: any = {
+      email: this.data.email,
+      first_name: this.data.firstName,
+      last_name: this.data.lastName,
+      full_name: `${this.data.firstName} ${this.data.lastName}`.trim(),
+      phone: this.data.phone,
+      dni: this.data.dni,
+      birth_date: this.data.birthDate,
+      age: this.data.age,
+      address: this.data.address,
+      locality: this.data.locality,
+      province: this.data.province,
+      stage_name: this.data.stageName || `${this.data.firstName} ${this.data.lastName}`.trim(),
+      category: this.data.category,
+      subcategory: this.data.subcategory,
+      artistic_name: this.data.artisticName,
+      proposal_name: this.data.proposalName,
+      choreographer_name: this.data.choreographerName,
+      style: this.data.style,
+      dance_list: this.data.danceList,
+      bio: this.data.biography,
+      presentation: this.data.presentation,
+      songs_list: this.data.songsList,
+      themes: this.data.themes,
+      members: this.data.members,
+      accompanying_persons: this.data.accompanyingPersons,
+      rider_tecnico: this.data.riderTecnico,
+      dance_style: this.data.danceStyle,
+      dance_themes: this.data.danceThemes,
+      work_title: this.data.workTitle,
+      assistants_count: this.data.assistantsCount,
+      band_members: this.data.bandMembers,
+      instrument_type: this.data.instrumentType,
+      instrument_name: this.data.instrumentName,
+      has_accompaniment: this.data.hasAccompaniment,
+      accompaniment_instrument: this.data.accompanimentInstrument,
+      accompaniment_musician: this.data.accompanimentMusician,
+      technical_needs: this.data.technicalNeeds,
+    };
+
+    this.http.put<any>(`${environment.apiUrl}/inscriptions/${id}/update-public`, payload).subscribe({
+      next: () => {
+        this.submitting.set(false);
+        this.toast.success('Inscripción actualizada correctamente');
+        this.isModifying.set(false);
+        this.welcomeAction.set(null);
+        this.typeformMode.set(true);
+      },
+      error: (err) => {
+        this.submitting.set(false);
+        this.error.set(err.error?.detail || 'Error al guardar. Intentá de nuevo.');
+      }
+    });
+  }
+
+  cancelModify(): void {
+    this.isModifying.set(false);
+    this.modifySection.set(null);
+    this.modifyRawData.set(null);
+  }
+
+  saveSection(): void {
+    const id = this.registeredData()?.inscription_id;
+    if (!id) return;
+    this.savingSection.set(true);
+    this.error.set('');
+    const payload: any = {
+      email: this.data.email,
+      first_name: this.data.firstName,
+      last_name: this.data.lastName,
+      full_name: `${this.data.firstName} ${this.data.lastName}`.trim(),
+      phone: this.data.phone,
+      dni: this.data.dni,
+      birth_date: this.data.birthDate,
+      age: this.data.age,
+      address: this.data.address,
+      locality: this.data.locality,
+      province: this.data.province,
+      stage_name: this.data.stageName || `${this.data.firstName} ${this.data.lastName}`.trim(),
+      artistic_name: this.data.artisticName,
+      proposal_name: this.data.proposalName,
+      choreographer_name: this.data.choreographerName,
+      style: this.data.style,
+      dance_list: this.data.danceList,
+      bio: this.data.biography,
+      presentation: this.data.presentation,
+      songs_list: this.data.songsList,
+      themes: this.data.themes,
+      members: this.data.members,
+      accompanying_persons: this.data.accompanyingPersons,
+      rider_tecnico: this.data.riderTecnico,
+      dance_style: this.data.danceStyle,
+      dance_themes: this.data.danceThemes,
+      work_title: this.data.workTitle,
+      assistants_count: this.data.assistantsCount,
+      band_members: this.data.bandMembers,
+      instrument_type: this.data.instrumentType,
+      instrument_name: this.data.instrumentName,
+      has_accompaniment: this.data.hasAccompaniment,
+      accompaniment_instrument: this.data.accompanimentInstrument,
+      accompaniment_musician: this.data.accompanimentMusician,
+      technical_needs: this.data.technicalNeeds,
+    };
+    this.http.put<any>(`${environment.apiUrl}/inscriptions/${id}/update-public`, payload).subscribe({
+      next: () => {
+        this.savingSection.set(false);
+        this.toast.success('Cambios guardados correctamente');
+        this.modifySection.set(null);
+        this.startModify();
+      },
+      error: (err) => {
+        this.savingSection.set(false);
+        this.error.set(err.error?.detail || 'Error al guardar. Intentá de nuevo.');
+      }
+    });
+  }
+
+  getSubcategoryLabel(id: string): string {
+    const all = [...subcategoriesByCategory['musica'], ...subcategoriesByCategory['danza']];
+    return all.find(s => s.id === id)?.name || id;
+  }
+
+  formatDateShort(dateStr: string): string {
+    if (!dateStr) return '-';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   loadDraft(): void {
@@ -1122,11 +1968,6 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     let bodyHtml = '';
     bodyHtml += f('N° de Inscripción', result.id, 'constancia-id');
     bodyHtml += f('Fecha de Inscripción', createdDate);
-
-    if (result.qr_code_base64) {
-      const qrUrl = `${environment.apiUrl}/inscriptions/${result.id}/qr-image`;
-      bodyHtml += `<div style="text-align:center;margin:16px 0"><div style="font-size:9px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">C&#243;digo QR para Acreditaci&#243;n</div><img src="${qrUrl}" alt="QR Acreditaci&#243;n" width="150" height="150" style="border-radius:8px;border:2px solid #e2e8f0" /><div style="font-size:9px;color:#64748b;margin-top:6px">Present&#225; este c&#243;digo QR en la acreditaci&#243;n del festival</div></div>`;
-    }
 
     bodyHtml += '<hr class="divider">';
     bodyHtml += '<div class="section-title">Datos Personales</div>';

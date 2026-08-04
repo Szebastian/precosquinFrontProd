@@ -1600,7 +1600,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
   ];
 
   thumbImagePresets = [
-    { value: 'assets/img/cruzBaila.webp', label: 'Cruz' },
+    { value: 'assets/img/cruzBaila-thumb.webp', label: 'Cruz' },
     { value: 'assets/img/logoballena.webp', label: 'Ballena' },
   ];
 
