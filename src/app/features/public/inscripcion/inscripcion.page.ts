@@ -802,7 +802,7 @@ InscripcionStepAccessosComponent, OtpVerifyComponent, CircularProgressComponent,
                     <app-inscripcion-step-accessos [data]="data" [lastDirection]="lastDirection()" (addPerson)="addAccompanyingPerson()" (removePerson)="removeAccompanyingPerson($event)" />
                   }
                   @if (currentStep() === 8) {
-                    <app-inscripcion-step-7 [data]="data" [lastDirection]="lastDirection()" (goToStep)="goToStep($event)" (resetForm)="resetForm()" />
+                    <app-inscripcion-step-7 [data]="data" [lastDirection]="lastDirection()" (goToStep)="goToStep($event)" (resetForm)="resetForm()" (verified)="emailVerified.set($event)" />
                   }
                 </div>
               </form>
@@ -957,9 +957,10 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     '¿Quiénes te acompañan?',
     'Revisá todo antes de enviar',
   ];
-  submitted = signal(false);
+submitted = signal(false);
   submitting = signal(false);
   error = signal('');
+  emailVerified = signal(false);
   errorStatus = signal(0);
   inscriptionResult = signal<InscripcionResult | null>(null);
   filePreviews: Record<string, string> = {};
@@ -1516,17 +1517,16 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetForm(): void {
+resetForm(): void {
     this.clearDraft();
     this.data = createEmptyInscripcionData();
     this.currentStep.set(1);
     this.submitted.set(false);
     this.submitting.set(false);
     this.inscriptionResult.set(null);
+    this.emailVerified.set(false);
     this.showConfirmSubmit.set(false);
     this.showConstanciaModal.set(false);
-    this.uploadFailedFiles.set([]);
-    this.filePreviews = {};
   }
 
   closeConstanciaModal(): void {
@@ -1816,7 +1816,7 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
       case 7:
         return true;
       case 8:
-        return this.data.acceptRegulations && this.data.acceptImageRights && this.data.acceptDataTruth
+        return this.emailVerified() && this.data.acceptRegulations && this.data.acceptImageRights && this.data.acceptDataTruth
           && this.data.acceptNoPriorWin && this.data.acceptNotJurorOrg;
       default:
         return false;
@@ -1879,13 +1879,14 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
         if (this.needsDanceMp3() && !this.data.danceMp3File) missing.push('Música MP3 de danzas');
         return missing.length ? `Faltan subir: ${missing.join(', ')}` : '';
       }
-      case 8: {
+case 8: {
         const missing: string[] = [];
+        if (!this.emailVerified()) missing.push('Verificar email');
         if (!this.data.acceptRegulations) missing.push('Aceptar reglamento');
         if (!this.data.acceptImageRights) missing.push('Aceptar derechos de imagen');
         if (!this.data.acceptDataTruth) missing.push('Declarar veracidad de datos');
         if (!this.data.acceptNoPriorWin) missing.push('Declarar no haber ganado anteriormente');
-        if (!this.data.acceptNotJurorOrg) missing.push('Declarar no ser jurado ni parte de la organización');
+        if (!this.data.acceptNotJurorOrg) missing.push('Declarar no ser jurado ni parte de la organizaci�n');
         return missing.length ? `Faltan completar: ${missing.join(', ')}` : '';
       }
       default:

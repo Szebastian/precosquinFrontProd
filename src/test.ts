@@ -12,6 +12,10 @@ import './app/core/services/theme.service.spec';
 import './app/core/services/inscriptions.service.spec';
 import './app/core/auth/auth.guard.spec';
 
+import './app/features/public/inscripcion/components/typeform-flow.component.spec';
+import './app/features/public/inscripcion/components/stage-plot/stage-plot.component';
+import './app/features/public/inscripcion/components/contact-form.component';
+
 // Component files (to ensure Angular decorators are in the program)
 import './app/shared/components/skeleton/skeleton.component';
 import './app/shared/components/skeleton/skeleton-card.component';

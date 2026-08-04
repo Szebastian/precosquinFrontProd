@@ -2,6 +2,7 @@ import { Component, input, output, signal, computed, effect, ElementRef, ViewChi
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import {
   InscripcionData, Member, ThemeRow, DanceTheme, BandMember,
   AccompanyingPerson, MELODIC_INSTRUMENTS, HARMONIC_INSTRUMENTS,
@@ -9,6 +10,7 @@ import {
 } from '../inscripcion.page';
 import { StagePlotComponent } from './stage-plot/stage-plot.component';
 import { ContactFormComponent } from './contact-form.component';
+import { environment } from '../../../../../environments/environment';
 
 export interface TfQuestion {
   id: string;
@@ -92,7 +94,7 @@ export interface TfQuestion {
           <app-contact-form [inscriptionId]="inscriptionId()" (close)="showContactForm.set(false)" />
         }
       } @else if (currentQ(); as q) {
-        <div class="tf-stage">
+        <div class="tf-stage" [class.tf-stage--top]="currentQ().type === 'declarations'">
           <div class="tf-content">
             <span class="tf-label-num">{{ currentVisibleIndex() + 1 }}</span>
             @if (q.label) {
@@ -403,6 +405,53 @@ export interface TfQuestion {
                   @if (data().acceptRegulations) { <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> } @else { <span class="tf-checkbox-empty tf-checkbox-empty--big"></span> }
                   <span>Acepto el reglamento, autorizo el uso de mi imagen y voz, y declaro que los datos proporcionados son verídicos</span>
                 </button>
+
+                <!-- EMAIL VERIFICATION -->
+                @if (data().acceptRegulations) {
+                  <div class="tf-otp-section" #otpSection>
+                    @if (!isEmailVerified()) {
+                      <div class="tf-otp-banner">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                          <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <span>Debés verificar tu email antes de enviar</span>
+                      </div>
+
+                      @if (!verificationSent()) {
+                        <div class="tf-otp-card">
+                          <h3 class="tf-otp-title">Verificá tu email</h3>
+                          <p class="tf-otp-desc">Te enviaremos un código de verificación a <strong>{{ data().email }}</strong></p>
+                          <button type="button" class="tf-btn-primary tf-btn-primary--active" (click)="sendVerification()" [disabled]="sendingCode()">
+                            @if (sendingCode()) { Enviando... } @else { Enviar código de verificación }
+                          </button>
+                        </div>
+                      } @else {
+                        <div class="tf-otp-card">
+                          <h3 class="tf-otp-title">Ingresá el código</h3>
+                          <p class="tf-otp-desc">Ingresá el código de 6 dígitos que recibiste en tu email</p>
+                          <div class="tf-otp-input-row">
+                            <input type="text" class="tf-otp-field" [ngModel]="verificationCode()" (ngModelChange)="verificationCode.set($event)" placeholder="000000" maxlength="6" (keyup.enter)="verifyCode()" />
+                            <button type="button" class="tf-btn-primary tf-btn-primary--active tf-otp-verify-btn" (click)="verifyCode()" [disabled]="verifyingCode() || verificationCode().length < 6">
+                              @if (verifyingCode()) { Verificando... } @else { Verificar }
+                            </button>
+                          </div>
+                          @if (verificationError()) {
+                            <p class="tf-otp-error">{{ verificationError() }}</p>
+                          }
+                          <p class="tf-otp-contact">¿No recibiste el código? Contactanos a <a href="mailto:info@precosquinpiramides.com">info@precosquinpiramides.com</a></p>
+                        </div>
+                      }
+                    } @else {
+                      <div class="tf-otp-card tf-otp-card--success">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 6 9 17l-5-5"/>
+                        </svg>
+                        <span>Email verificado correctamente</span>
+                      </div>
+                    }
+                  </div>
+                }
               </div>
             }
 
@@ -537,6 +586,7 @@ export interface TfQuestion {
       animation: tfFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
     @keyframes tfFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .tf-stage--top { align-items: flex-start; padding-top: 40px; }
 
     /* ===== CONTENT (centered card) ===== */
     .tf-content {
@@ -926,6 +976,53 @@ export interface TfQuestion {
     .tf-checkbox-btn--big.tf-checkbox-btn--checked { border-color: rgba(76,139,230,0.4); background: rgba(76,139,230,0.08); }
     .tf-checkbox-btn--big.tf-checkbox-btn--checked .tf-checkbox-empty--big { border-color: #4c8be6; background: #4c8be6; }
 
+    /* ===== OTP SECTION ===== */
+    .tf-otp-section {
+      display: flex; flex-direction: column; gap: 12px;
+      margin-top: 8px; padding: 18px;
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      scroll-margin-bottom: 100px;
+      animation: tfFadeIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .tf-otp-banner {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; background: rgba(234,179,8,0.08);
+      border: 1px solid rgba(234,179,8,0.2); border-radius: 10px;
+      color: #eab308; font-size: 0.82rem; font-weight: 600;
+    }
+    .tf-otp-banner svg { flex-shrink: 0; }
+    .tf-otp-card {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 20px; gap: 12px;
+    }
+    .tf-otp-card--success {
+      flex-direction: row; justify-content: center;
+      background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.2);
+      border-radius: 10px; padding: 14px; color: #4ade80; font-size: 0.85rem; font-weight: 600;
+    }
+    .tf-otp-title { font-size: 1rem; font-weight: 700; color: #e2e8f0; margin: 0; }
+    .tf-otp-desc { font-size: 0.85rem; color: #94a3b8; margin: 0; line-height: 1.5; }
+    .tf-otp-desc strong { color: #e2e8f0; }
+    .tf-otp-input-row { display: flex; gap: 10px; align-items: center; justify-content: center; margin: 4px 0; }
+    .tf-otp-field {
+      width: 140px; height: 48px; text-align: center; font-size: 1.25rem;
+      font-weight: 700; letter-spacing: 0.5em;
+      background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 10px; color: #f1f5f9; padding: 0 8px;
+      outline: none; transition: border-color 0.25s; font-family: inherit;
+    }
+    .tf-otp-field:focus { border-color: #4c8be6; }
+    .tf-otp-verify-btn { padding: 12px 24px !important; }
+    .tf-otp-error {
+      background: rgba(239,68,68,0.1); color: #f87171;
+      padding: 8px 12px; border-radius: 8px; font-size: 0.78rem;
+      margin: 0; border: 1px solid rgba(239,68,68,0.2);
+    }
+    .tf-otp-contact { font-size: 0.72rem; color: #475569; margin: 0; }
+    .tf-otp-contact a { color: #4c8be6; text-decoration: none; }
+    .tf-otp-contact a:hover { text-decoration: underline; }
+
     /* ===== ACCOMPANYING ===== */
     .tf-accompanying { display: flex; flex-direction: column; gap: 16px; }
     .tf-accompanying-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
@@ -1045,7 +1142,17 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
   saveDraft = output<void>();
   showContactForm = signal(false);
 
+  private http = inject(HttpClient);
+
+  verificationSent = signal(false);
+  isEmailVerified = signal(false);
+  verificationCode = signal('');
+  sendingCode = signal(false);
+  verifyingCode = signal(false);
+  verificationError = signal('');
+
   @ViewChild('tfInput') tfInputRef!: ElementRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
+  @ViewChild('otpSection') otpSectionRef?: ElementRef<HTMLElement>;
 
   questions = signal<TfQuestion[]>([]);
   currentIdx = signal(0);
@@ -1596,7 +1703,7 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
     const d = this.data();
     const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((d.email || '').trim());
     const hasRequired = !!(d.firstName?.trim() && d.lastName?.trim() && emailValid && d.phone?.trim() && d.category && d.subcategory);
-    return hasRequired && !!d.acceptRegulations;
+    return hasRequired && !!d.acceptRegulations && this.isEmailVerified();
   }
 
   onInput(value: string): void {
@@ -1669,6 +1776,11 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
 
   toggleDecl(field: string): void {
     (this.data() as any)[field] = !(this.data() as any)[field];
+    if (field === 'acceptRegulations' && (this.data() as any)[field]) {
+      setTimeout(() => {
+        this.otpSectionRef?.nativeElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
   }
 
   isEquipmentChecked(value: string): boolean {
@@ -1904,8 +2016,40 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
     }
   }
 
+  sendVerification(): void {
+    this.sendingCode.set(true);
+    this.verificationError.set('');
+    this.http.post(`${environment.apiUrl}/inscriptions/send-otp`, { email: this.data().email }).subscribe({
+      next: () => {
+        this.sendingCode.set(false);
+        this.verificationSent.set(true);
+      },
+      error: (err) => {
+        this.sendingCode.set(false);
+        this.verificationError.set(err.error?.detail || 'Error al enviar el código. Intentá de nuevo.');
+      }
+    });
+  }
+
+  verifyCode(): void {
+    if (!this.verificationCode().trim()) return;
+    this.verifyingCode.set(true);
+    this.verificationError.set('');
+    this.http.post(`${environment.apiUrl}/inscriptions/verify-otp`, { email: this.data().email, code: this.verificationCode() }).subscribe({
+      next: () => {
+        this.verifyingCode.set(false);
+        this.isEmailVerified.set(true);
+      },
+      error: (err) => {
+        this.verifyingCode.set(false);
+        this.verificationError.set(err.error?.detail || 'Código incorrecto. Verificá e intentá de nuevo.');
+      }
+    });
+  }
+
   onSubmit(): void {
     if (!this.allDeclarationsChecked()) return;
+    if (!this.isEmailVerified()) return;
     this.submitted.emit();
   }
 

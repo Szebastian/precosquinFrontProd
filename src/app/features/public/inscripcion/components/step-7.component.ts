@@ -1,9 +1,11 @@
-import { Component, input, computed, output, signal } from '@angular/core';
+import { Component, input, computed, output, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { InscripcionData, InscripcionResult } from '../inscripcion.page';
 import { subcategoriesByCategory } from '../inscripcion.page';
 import { StagePlotComponent } from './stage-plot/stage-plot.component';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-inscripcion-step-7',
@@ -350,6 +352,75 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
         </div>
       </div>
 
+      <div class="verification-section">
+        @if (!isVerified()) {
+          <div class="verification-banner">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span>Deb&eacute;s verificar tu email antes de enviar la inscripci&oacute;n</span>
+          </div>
+        }
+        @if (!verificationSent()) {
+          <div class="verification-card">
+            <div class="verification-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </div>
+            <h3 class="verification-title">Verificá tu email</h3>
+            <p class="verification-desc">Te enviaremos un código de verificación a <strong>{{ data().email || 'tu email' }}</strong></p>
+            <button type="button" class="btn-verify-send" (click)="sendVerification()" [disabled]="sendingCode()">
+              @if (sendingCode()) {
+                Enviando...
+              } @else {
+                Enviar código
+              }
+            </button>
+            @if (verificationError()) {
+              <p class="verification-error">{{ verificationError() }}</p>
+            }
+          </div>
+        } @else if (!isVerified()) {
+          <div class="verification-card">
+            <div class="verification-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+            </div>
+            <h3 class="verification-title">Ingresá el código</h3>
+            <p class="verification-desc">Ingresá el código de 6 dígitos que recibiste en tu email</p>
+            <div class="verification-input-row">
+              <input type="text" class="otp-field" [ngModel]="verificationCode()" (ngModelChange)="verificationCode.set($event)" placeholder="000000" maxlength="6" (keyup.enter)="verifyCode()" />
+              <button type="button" class="btn-verify-confirm" (click)="verifyCode()" [disabled]="verifyingCode() || verificationCode().length < 6">
+                @if (verifyingCode()) {
+                  Verificando...
+                } @else {
+                  Verificar
+                }
+              </button>
+            </div>
+            @if (verificationError()) {
+              <p class="verification-error">{{ verificationError() }}</p>
+            }
+            <p class="verification-contact">¿No recibiste el código? Contactanos a <a href="mailto:info@precosquinpiramides.com">info@precosquinpiramides.com</a></p>
+          </div>
+        } @else {
+          <div class="verification-card verification-card--success">
+            <div class="verification-icon verification-icon--success">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6 9 17l-5-5"/>
+              </svg>
+            </div>
+            <h3 class="verification-title">Email verificado</h3>
+            <p class="verification-desc">Tu email ha sido verificado correctamente</p>
+          </div>
+        }
+      </div>
+
       <div class="reset-section">
         <button type="button" class="btn-reset" (click)="confirmReset()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -427,6 +498,56 @@ import { StagePlotComponent } from './stage-plot/stage-plot.component';
       .btn-edit { min-height: 40px; font-size: 0.75rem; }
     }
 
+    .verification-section { margin-bottom: 1.5rem; }
+    .verification-banner {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1rem; margin-bottom: 1rem;
+      background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.2);
+      border-radius: 0.5rem; color: #eab308; font-size: 0.8rem; font-weight: 500;
+    }
+    .verification-banner svg { flex-shrink: 0; }
+    .verification-card {
+      background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.75rem; padding: 1.5rem; text-align: center;
+    }
+    .verification-card--success { border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.04); }
+    .verification-icon {
+      width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 1rem;
+      background: rgba(76, 139, 230, 0.12); display: flex; align-items: center;
+      justify-content: center; color: #4c8be6;
+    }
+    .verification-icon--success { background: rgba(34, 197, 94, 0.12); color: #22c55e; }
+    .verification-title { font-size: 1rem; font-weight: 600; color: #e2e8f0; margin: 0 0 0.5rem; }
+    .verification-desc { font-size: 0.85rem; color: #94a3b8; margin: 0 0 1.25rem; line-height: 1.5; }
+    .btn-verify-send {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.5rem; font-size: 0.85rem; font-weight: 500;
+      color: #fff; background: #4c8be6; border: none; border-radius: 0.5rem;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-verify-send:hover { background: #3b7bd5; }
+    .btn-verify-send:disabled { opacity: 0.5; cursor: not-allowed; }
+    .verification-input-row { display: flex; gap: 0.75rem; align-items: center; justify-content: center; margin-bottom: 1rem; }
+    .otp-field {
+      width: 120px; height: 48px; text-align: center; font-size: 1.25rem;
+      font-weight: 600; letter-spacing: 0.5em;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.5rem; color: #e2e8f0; padding: 0 0.5rem;
+      outline: none; transition: border-color 0.2s ease;
+    }
+    .otp-field:focus { border-color: #4c8be6; }
+    .btn-verify-confirm {
+      padding: 0.6rem 1.25rem; font-size: 0.85rem; font-weight: 500;
+      color: #fff; background: #22c55e; border: none; border-radius: 0.5rem;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-verify-confirm:hover { background: #16a34a; }
+    .btn-verify-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+    .verification-contact { font-size: 0.75rem; color: #64748b; margin: 0; }
+    .verification-contact a { color: #4c8be6; text-decoration: none; }
+    .verification-contact a:hover { text-decoration: underline; }
+    .verification-error { background: rgba(239, 68, 68, 0.1); color: #f87171; padding: 0.5rem 0.75rem; border-radius: 0.375rem; font-size: 0.75rem; margin: 0.75rem 0 0; border: 1px solid rgba(239, 68, 68, 0.2); }
+
     .reset-section {
       display: flex;
       justify-content: center;
@@ -499,8 +620,18 @@ export class InscripcionStep7Component {
   lastDirection = input.required<'left' | 'right'>();
   goToStep = output<number>();
   resetForm = output<void>();
+  verified = output<boolean>();
+
+  private http = inject(HttpClient);
 
   showResetModal = signal(false);
+
+  verificationSent = signal(false);
+  isVerified = signal(false);
+  verificationCode = signal('');
+  sendingCode = signal(false);
+  verifyingCode = signal(false);
+  verificationError = signal('');
 
   subcategoryName = computed(() => {
     const all = [
@@ -562,5 +693,37 @@ export class InscripcionStep7Component {
   executeReset(): void {
     this.showResetModal.set(false);
     this.resetForm.emit();
+  }
+
+  sendVerification(): void {
+    this.sendingCode.set(true);
+    this.verificationError.set('');
+    this.http.post(`${environment.apiUrl}/inscriptions/send-otp`, { email: this.data().email }).subscribe({
+      next: () => {
+        this.sendingCode.set(false);
+        this.verificationSent.set(true);
+      },
+      error: (err) => {
+        this.sendingCode.set(false);
+        this.verificationError.set(err.error?.detail || 'Error al enviar el código. Intentá de nuevo.');
+      }
+    });
+  }
+
+  verifyCode(): void {
+    if (!this.verificationCode().trim()) return;
+    this.verifyingCode.set(true);
+    this.verificationError.set('');
+    this.http.post(`${environment.apiUrl}/inscriptions/verify-otp`, { email: this.data().email, code: this.verificationCode() }).subscribe({
+      next: () => {
+        this.verifyingCode.set(false);
+        this.isVerified.set(true);
+        this.verified.emit(true);
+      },
+      error: (err) => {
+        this.verifyingCode.set(false);
+        this.verificationError.set(err.error?.detail || 'Código incorrecto. Verificá y intentá de nuevo.');
+      }
+    });
   }
 }
