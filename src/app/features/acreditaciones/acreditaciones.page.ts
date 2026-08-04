@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed, HostListener, ViewChild, ElementRef, AfterViewInit, OnDestroy, afterNextRender } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, HostListener, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Html5Qrcode } from 'html5-qrcode';
@@ -232,6 +232,7 @@ import {
             <div class="qr-body">
               @if (cameraAvailable()) {
                 <div id="qr-video-container" class="qr-video-container">
+                  <div id="qr-reader"></div>
                   <div class="qr-overlay">
                     <div class="qr-crosshair">
                       <div class="qr-corner qr-corner-tl"></div>
@@ -248,7 +249,7 @@ import {
                     <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
                     <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
                   </svg>
-                  <p>{{ cameraError() || 'Iniciando cámara...' }}</p>
+                  <p>{{ cameraError() || 'Cámara no disponible' }}</p>
                 </div>
               }
               <div class="qr-manual-section">
@@ -884,73 +885,63 @@ export class AcreditacionesPageComponent implements OnInit, AfterViewInit, OnDes
   async openQRScanner() {
     this.showQRScanner.set(true);
     this.manualQRCode.set('');
+    this.cameraAvailable.set(false);
     this.cameraError.set('');
-    this.cameraAvailable.set(true);
 
-    afterNextRender(() => {
-      setTimeout(async () => {
-        try {
-          const container = document.getElementById('qr-video-container');
-          if (!container) {
-            this.cameraError.set('No se pudo inicializar el escáner.');
-            return;
-          }
-          // Show the container now so Html5Qrcode can render into it
-          this.cameraAvailable.set(true);
-          this.html5QrCode = new Html5Qrcode('qr-video-container');
-          await this.html5QrCode.start(
-            { facingMode: 'environment' },
-            {
-              fps: 10,
-              qrbox: { width: 250, height: 250 },
-              aspectRatio: 1,
-            },
-            (decoded: string) => {
-              if (decoded && decoded !== this.manualQRCode()) {
-                this.manualQRCode.set(decoded);
-                this.closeQRScanner();
-                this.searchByQR();
-              }
-            },
-            (error: any) => {
-              // Ignore minor scan errors
+    setTimeout(async () => {
+      try {
+        this.html5QrCode = new Html5Qrcode('qr-video-container');
+        const instance = this.html5QrCode;
+        await instance.start(
+          { facingMode: 'environment' },
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1,
+          },
+          (decoded: string) => {
+            if (decoded && decoded !== this.manualQRCode()) {
+              this.manualQRCode.set(decoded);
+              this.stopQRScanner();
+              this.searchByQR();
             }
-          );
-        } catch (err: any) {
-          console.warn('Camera access failed:', err);
-          this.cameraAvailable.set(false);
-          if (err?.name === 'NotAllowedError' || err?.message?.includes('permission')) {
-            this.cameraError.set('Permiso de cámara denegado. Permití el acceso y volvé a intentar.');
-          } else if (err?.name === 'NotFoundError' || err?.message?.includes('no camera')) {
-            this.cameraError.set('No se encontró cámara en este dispositivo.');
-          } else if (err?.name === 'NotReadableError' || err?.message?.includes('already')) {
-            this.cameraError.set('La cámara está en uso. Cerrá otras aplicaciones que la usan.');
-          } else {
-            this.cameraError.set('No se pudo acceder a la cámara: ' + (err?.message || 'Error desconocido'));
+          },
+          (error: any) => {
+            // Ignore minor scan errors
           }
+        );
+        this.cameraAvailable.set(true);
+      } catch (err: any) {
+        console.warn('Camera access failed:', err);
+        this.cameraAvailable.set(false);
+        if (err?.name === 'NotAllowedError' || err?.message?.includes('permission')) {
+          this.cameraError.set('Permiso de cámara denegado. Permití el acceso y volvé a intentar.');
+        } else if (err?.name === 'NotFoundError' || err?.message?.includes('no camera')) {
+          this.cameraError.set('No se encontró cámara en este dispositivo.');
+        } else {
+          this.cameraError.set('No se pudo acceder a la cámara: ' + err?.message || 'Error desconocido');
         }
-      }, 100);
-    });
+      }
+    }, 100);
   }
 
-  private stopCamera() {
+  private stopQRScanner() {
     if (this.html5QrCode) {
       try {
         this.html5QrCode.clear();
       } catch (e) {}
       this.html5QrCode = null;
     }
+    this.cameraAvailable.set(false);
   }
 
   closeQRScanner() {
-    this.stopCamera();
+    this.stopQRScanner();
     this.showQRScanner.set(false);
-    this.cameraAvailable.set(false);
-    this.cameraError.set('');
   }
 
   ngOnDestroy() {
-    this.stopCamera();
+    this.stopQRScanner();
   }
   showParticipantQR(item: AccreditationParticipant) { alert(`QR Code: ${item.registrationNumber}`); }
 
