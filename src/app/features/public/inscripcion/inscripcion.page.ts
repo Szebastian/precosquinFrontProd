@@ -668,6 +668,7 @@ InscripcionStepAccessosComponent, StagePlotComponent, OtpVerifyComponent, Circul
                     <p class="modify-note" style="margin:0 0 12px">Ubicá los instrumentos y equipo en el escenario.</p>
                     <app-stage-plot
                       [initialInstruments]="data.riderTecnico.stagePlotInstruments"
+                      [category]="data.category"
                       (instrumentsChange)="onStagePlotChange($event)">
                     </app-stage-plot>
                   </div>

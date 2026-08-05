@@ -132,7 +132,33 @@ export interface TfQuestion {
             }
 
             <!-- TEXTAREA -->
-            @if (q.type === 'textarea') {
+            @if (q.type === 'textarea' && q.id === 'songsList') {
+              <div class="tf-themes-list">
+                @for (item of songsListItems(); track $index; let i = $index) {
+                  <div class="tf-theme-item">
+                    <span class="tf-theme-num">{{ i + 1 }}</span>
+                    <input type="text"
+                      class="tf-theme-input"
+                      [value]="item"
+                      (input)="onSongItemInput($any($event.target).value, i)"
+                      placeholder="Tema · Ritmo · Autor"
+                      autocomplete="off" />
+                    @if (songsListItems().length > 1) {
+                      <button type="button" class="tf-theme-remove" (click)="removeSongItem(i)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      </button>
+                    }
+                  </div>
+                }
+                <button type="button" class="tf-theme-add" (click)="addSongItem()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Agregar tema
+                </button>
+                @if (fieldError()) {
+                  <span class="tf-field-error">{{ fieldError() }}</span>
+                }
+              </div>
+            } @else if (q.type === 'textarea') {
               <div class="tf-input-wrap">
                 <textarea #tfInput
                   class="tf-textarea"
@@ -249,6 +275,7 @@ export interface TfQuestion {
               <div class="tf-stage-plot-wrap">
                 <app-stage-plot
                   [initialInstruments]="stagePlotInstruments()"
+                  [category]="data().category"
                   (instrumentsChange)="onStagePlotChange($event)">
                 </app-stage-plot>
               </div>
@@ -1174,6 +1201,16 @@ export interface TfQuestion {
     .tf-accompanying-title { font-size: 1rem; font-weight: 700; color: #e2e8f0; margin: 0; flex: 1; }
     .tf-accompanying-subtitle { font-size: 0.82rem; color: #94a3b8; margin: 0 0 4px; line-height: 1.5; }
     .tf-accompanying-empty { display: flex; align-items: center; gap: 8px; padding: 16px; background: rgba(100,116,139,0.06); border: 1px dashed rgba(100,116,139,0.2); border-radius: 10px; color: #64748b; font-size: 0.85rem; }
+    .tf-themes-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    .tf-theme-item { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 4px 8px 4px 4px; transition: border-color 0.2s; }
+    .tf-theme-item:focus-within { border-color: #4c8be6; }
+    .tf-theme-num { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; background: rgba(76,139,230,0.12); color: #4c8be6; font-size: 0.7rem; font-weight: 700; border-radius: 6px; flex-shrink: 0; }
+    .tf-theme-input { flex: 1; background: transparent; border: none; color: #f1f5f9; font-size: 0.9rem; font-family: inherit; padding: 10px 8px; outline: none; }
+    .tf-theme-input::placeholder { color: #475569; }
+    .tf-theme-remove { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: none; border-radius: 6px; background: transparent; color: #64748b; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+    .tf-theme-remove:hover { background: rgba(239,68,68,0.12); color: #ef4444; }
+    .tf-theme-add { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; border: 1.5px dashed rgba(74,222,128,0.25); border-radius: 10px; background: transparent; color: #4ade80; font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .tf-theme-add:hover { border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.05); }
     .tf-accompanying-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px; margin-bottom: 8px; }
     .tf-accompanying-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .tf-accompanying-card-number { width: 26px; height: 26px; border-radius: 50%; background: rgba(76,139,230,0.15); color: #4c8be6; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -1295,6 +1332,9 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
   sendingCode = signal(false);
   verifyingCode = signal(false);
   verificationError = signal('');
+  emailAlreadyRegistered = signal(false);
+  checkingEmail = signal(false);
+  songsListItems = signal<string[]>(['']);
 
   @ViewChild('tfInput') tfInputRef!: ElementRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
   @ViewChild('otpSection') otpSectionRef?: ElementRef<HTMLElement>;
@@ -1706,7 +1746,9 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
        // BIOGRAPHY
        {
          id: 'biography', type: 'textarea', label: 'Contanos sobre vos o tu grupo', sublabel: 'Trayectoria, logros, experiencia...',
-         visibleIf: (d) => d.category === 'musica'
+         required: true,
+         visibleIf: (d) => d.category === 'musica',
+         validate: (d) => !d.biography || d.biography.trim().length < 10 ? 'Contanos más sobre vos o tu grupo (mínimo 10 caracteres)' : ''
        },
 
        // PRESENTATION INFO (general for all performers)
@@ -1755,7 +1797,7 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
         visibleIf: () => true
       },
       {
-        id: 'dniBackFile', type: 'file', label: 'Foto del DNI (dorso)', required: false,
+        id: 'dniBackFile', type: 'file', label: 'Foto del DNI (dorso)', required: true,
         visibleIf: () => true
       },
       {
@@ -1947,6 +1989,32 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
     this.data().riderTecnico.stagePlotInstruments = instruments;
   }
 
+  addSongItem(): void {
+    this.songsListItems.update(items => [...items, '']);
+  }
+
+  removeSongItem(index: number): void {
+    this.songsListItems.update(items => items.filter((_, i) => i !== index));
+    this.syncSongsList();
+  }
+
+  onSongItemInput(value: string, index: number): void {
+    this.songsListItems.update(items => items.map((item, i) => i === index ? value : item));
+    this.syncSongsList();
+  }
+
+  private syncSongsList(): void {
+    const filtered = this.songsListItems().filter(s => s.trim());
+    (this.data() as any).songsList = filtered.join('\n');
+    this.currentValue.set(filtered.join('\n'));
+  }
+
+  initSongsListItems(): void {
+    const raw = this.data().songsList || '';
+    const items = raw.split('\n').filter(s => s.trim());
+    this.songsListItems.set(items.length > 0 ? items : ['']);
+  }
+
   getInstrumentColor(type: string): string {
     if (type.includes('guitar') || type.includes('charango') || type.includes('violin') || type.includes('contrabajo') || type.includes('guitarron')) return '#4c8be6';
     if (type.includes('quena') || type.includes('siku') || type.includes('sicus') || type.includes('flauta') || type.includes('erke')) return '#10b981';
@@ -2103,6 +2171,32 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
     }
     if (this.isLastQuestion()) return;
 
+    const q = this.currentQ();
+    if (q?.id === 'email') {
+      this.checkingEmail.set(true);
+      this.emailAlreadyRegistered.set(false);
+      this.http.get<any>(`${environment.apiUrl}/inscriptions/check-email?email=${encodeURIComponent(this.data().email)}`).subscribe({
+        next: (res) => {
+          this.checkingEmail.set(false);
+          if (res.exists) {
+            this.emailAlreadyRegistered.set(true);
+            this.fieldError.set('¡Ya estás registrado! Volvé atrás y elegí "Ya estoy registrado" para consultar tu inscripción.');
+          } else {
+            this.proceedNext();
+          }
+        },
+        error: () => {
+          this.checkingEmail.set(false);
+          this.proceedNext();
+        }
+      });
+      return;
+    }
+
+    this.proceedNext();
+  }
+
+  private proceedNext(): void {
     this.animating.set(true);
     setTimeout(() => {
       this.currentIdx.set(this.currentIdx() + 1);
@@ -2160,7 +2254,7 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
       case 'danceSong3': this.currentValue.set(d.danceThemes[2]?.song || ''); break;
       case 'presentation': this.currentValue.set(d.presentation || ''); break;
       case 'artisticName': this.currentValue.set(d.artisticName || ''); break;
-      case 'songsList': this.currentValue.set(d.songsList || ''); break;
+      case 'songsList': this.currentValue.set(d.songsList || ''); this.initSongsListItems(); break;
       default: this.currentValue.set(''); break;
     }
   }

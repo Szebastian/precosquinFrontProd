@@ -112,7 +112,7 @@ export class YoutubeLiveWidgetComponent implements OnInit {
   private router = inject(Router);
 
   ytExpanded = signal(false);
-  ytIsLive = signal(true);
+  ytIsLive = signal(false);
   hidden = signal(false);
 
   ngOnInit(): void {

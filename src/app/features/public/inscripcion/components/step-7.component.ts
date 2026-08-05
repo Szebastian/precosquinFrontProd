@@ -290,6 +290,7 @@ import { environment } from '../../../../../environments/environment';
             <span class="review-label">Stage Plot</span>
             <app-stage-plot
               [initialInstruments]="data().riderTecnico.stagePlotInstruments"
+              [category]="data().category"
               [readonly]="true">
             </app-stage-plot>
           </div>

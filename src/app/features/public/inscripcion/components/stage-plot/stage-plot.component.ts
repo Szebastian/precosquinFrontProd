@@ -13,6 +13,7 @@ import { Instrument } from '../../inscripcion.page';
 export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() initialInstruments: Instrument[] = [];
   @Input() readonly = false;
+  @Input() category: string = 'musica';
   @Output() instrumentsChange = new EventEmitter<Instrument[]>();
   @ViewChild('stageArea')   stageAreaRef?: ElementRef<HTMLDivElement>;
 
@@ -56,7 +57,7 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   paletteGroups = ['Cuerdas', 'Vientos', 'Teclados', 'Percusión', 'Equipo'];
-  expandedGroups = signal<Set<string>>(new Set(['Cuerdas']));
+  expandedGroups = signal<Set<string>>(new Set(['Cuerdas', 'Equipo']));
 
   constructor() { }
 
@@ -77,12 +78,13 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
   private centerDefaultMusician(): boolean {
     if (this.instruments.length > 0 || !this.stageAreaRef) return false;
     const rect = this.stageAreaRef.nativeElement.getBoundingClientRect();
+    const isDanza = this.category === 'danza';
     const defaultMusician: Instrument = {
       id: `instrument-${this.nextInstrumentId++}`,
-      type: 'musico-alt',
+      type: isDanza ? 'bailarin-alt' : 'musico-alt',
       x: rect.width / 2,
       y: rect.height / 2,
-      label: 'Músico',
+      label: isDanza ? 'Bailarín' : 'Músico',
       channel: '',
       rotation: 0,
       centered: true,

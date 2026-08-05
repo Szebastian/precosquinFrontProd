@@ -162,11 +162,11 @@ import {
                 </div>
 
                 <div class="checkin-actions">
-                  <button class="btn btn-accredit-xlarge" (click)="confirmAccreditation()">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    ACREDITAR PARTICIPANTE
-                  </button>
-                  <button class="btn btn-secondary btn-large" (click)="clearSearch()">Cancelar</button>
+                  <div class="accredited-success-banner">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span class="accredited-success-text">Acreditado correctamente</span>
+                  </div>
+                  <button class="btn btn-secondary btn-large" (click)="clearSearch()">Cerrar</button>
                 </div>
               </div>
             }
@@ -463,7 +463,10 @@ import {
     .schedule-time { font-family: var(--font-mono); background: #f0fdf4; padding: 4px 12px; border-radius: 8px; }
     .schedule-order { font-family: var(--font-mono); }
 
-    .checkin-actions { display: flex; gap: 12px; justify-content: center; }
+    .checkin-actions { display: flex; gap: 12px; justify-content: center; flex-direction: column; align-items: center; }
+    .accredited-success-banner { display: flex; align-items: center; gap: 12px; padding: 16px 28px; background: rgba(22,163,74,0.08); border: 1.5px solid rgba(22,163,74,0.25); border-radius: 12px; animation: successPulse 0.6s ease; }
+    .accredited-success-text { font-size: 1.1rem; font-weight: 700; color: #16a34a; }
+    @keyframes successPulse { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
     /* ═══════════ SUCCESS SCREEN ═══════════ */
     .success-screen {
@@ -966,7 +969,7 @@ export class AcreditacionesPageComponent implements OnInit, AfterViewInit, OnDes
       else if (this.checkInResult()) this.clearSearch();
     }
     if (event.key === 'Enter' && this.checkInResult()?.type === 'found' && !this.showConfirmDialog()) {
-      this.confirmAccreditation();
+      this.clearSearch();
     }
     if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
       event.preventDefault();
