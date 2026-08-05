@@ -14,6 +14,7 @@ import { InscripcionStep5Component } from './components/step-5.component';
 import { InscripcionStep6Component } from './components/step-6.component';
 import { InscripcionStep7Component } from './components/step-7.component';
 import { InscripcionStepAccessosComponent } from './components/step-accessos.component';
+import { StagePlotComponent } from './components/stage-plot/stage-plot.component';
 import { OtpVerifyComponent } from './components/otp-verify.component';
 import { CircularProgressComponent } from '../../../shared/components/circular-progress/circular-progress.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
@@ -214,7 +215,7 @@ export const groupSubcategories = [
 imports: [CommonModule, FormsModule, RouterLink, 
 InscripcionConstanciaComponent, InscripcionStep1Component, InscripcionStep2Component, InscripcionStep3Component, 
 InscripcionStep4Component, InscripcionStep5Component, InscripcionStep6Component, InscripcionStep7Component, 
-InscripcionStepAccessosComponent, OtpVerifyComponent, CircularProgressComponent, TypeformFlowComponent],
+InscripcionStepAccessosComponent, StagePlotComponent, OtpVerifyComponent, CircularProgressComponent, TypeformFlowComponent],
   styleUrl: './inscripcion.page.scss',
   animations: [
     trigger('stepSlide', [
@@ -423,8 +424,9 @@ InscripcionStepAccessosComponent, OtpVerifyComponent, CircularProgressComponent,
             <!-- SUMMARY VIEW -->
             <div class="modify-summary">
               <div class="modify-header">
-                <button type="button" class="back-home-link" (click)="cancelModify(); welcomeAction.set(null)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg> Volver
+                <button type="button" class="modify-back-btn" (click)="cancelModify(); welcomeAction.set(null)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+                  <span>Volver</span>
                 </button>
                 <span class="question-counter">TU INSCRIPCIÓN</span>
                 <h1>Datos de tu inscripción</h1>
@@ -528,8 +530,9 @@ InscripcionStepAccessosComponent, OtpVerifyComponent, CircularProgressComponent,
             <!-- EDIT SECTION FORM -->
             <div class="modify-edit">
               <div class="modify-header">
-                <button type="button" class="back-home-link" (click)="modifySection.set(null)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg> Volver al resumen
+                <button type="button" class="modify-back-btn" (click)="modifySection.set(null)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+                  <span>Volver al resumen</span>
                 </button>
                 <span class="question-counter">EDITANDO</span>
                 <h1>
@@ -569,21 +572,74 @@ InscripcionStepAccessosComponent, OtpVerifyComponent, CircularProgressComponent,
                   <label class="modify-field"><span class="modify-label">Biografía</span><textarea [value]="data.biography" (input)="data.biography = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal;min-height:80px;resize:vertical" rows="4"></textarea></label>
                 } @else if (modifySection() === 'themes') {
                   @if (data.category === 'musica') {
+                    <div class="modify-themes-header">
+                      <span class="modify-themes-count">{{ data.themes.length }} tema(s) cargado(s)</span>
+                      <span class="modify-themes-limit">Máximo 10</span>
+                    </div>
                     @for (theme of data.themes; track $index; let i = $index) {
                       <div class="modify-theme-card">
-                        <span class="modify-label">Tema {{ i + 1 }}</span>
-                        <input type="text" [value]="theme.title" (input)="theme.title = $any($event.target).value" placeholder="Título" class="otp-field" style="text-align:left;letter-spacing:normal" />
-                        <input type="text" [value]="theme.rhythm" (input)="theme.rhythm = $any($event.target).value" placeholder="Ritmo" class="otp-field" style="text-align:left;letter-spacing:normal;margin-top:8px" />
-                        <input type="text" [value]="theme.author" (input)="theme.author = $any($event.target).value" placeholder="Autor" class="otp-field" style="text-align:left;letter-spacing:normal;margin-top:8px" />
+                        <div class="modify-theme-card-header">
+                          <span class="modify-theme-badge">{{ i + 1 }}</span>
+                          <span class="modify-theme-card-title">Tema {{ i + 1 }}</span>
+                          @if (data.themes.length > 1) {
+                            <button type="button" class="modify-theme-remove" (click)="removeTheme(i)" title="Quitar tema">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                          }
+                        </div>
+                        <div class="modify-theme-fields">
+                          <div class="modify-theme-field">
+                            <label class="modify-theme-field-label">Nombre del tema</label>
+                            <input type="text" [value]="theme.title" (input)="theme.title = $any($event.target).value" placeholder="Ej: Luna de los Quenes" class="modify-theme-input" />
+                          </div>
+                          <div class="modify-theme-row">
+                            <div class="modify-theme-field">
+                              <label class="modify-theme-field-label">Ritmo / Estilo</label>
+                              <input type="text" [value]="theme.rhythm" (input)="theme.rhythm = $any($event.target).value" placeholder="Ej: Chacarera" class="modify-theme-input" />
+                            </div>
+                            <div class="modify-theme-field">
+                              <label class="modify-theme-field-label">Autor / Compositor</label>
+                              <input type="text" [value]="theme.author" (input)="theme.author = $any($event.target).value" placeholder="Ej: Los Hermanos Ábalos" class="modify-theme-input" />
+                            </div>
+                          </div>
+                        </div>
                       </div>
+                    }
+                    @if (data.themes.length < 10) {
+                      <button type="button" class="modify-theme-add-btn" (click)="addTheme()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Agregar tema
+                      </button>
                     }
                   } @else {
                     @for (dt of data.danceThemes; track $index; let i = $index) {
                       <div class="modify-theme-card">
-                        <span class="modify-label">Ronda {{ i + 1 }}</span>
-                        <input type="text" [value]="dt.title" (input)="dt.title = $any($event.target).value" placeholder="Título" class="otp-field" style="text-align:left;letter-spacing:normal" />
-                        <input type="text" [value]="dt.song" (input)="dt.song = $any($event.target).value" placeholder="Canción" class="otp-field" style="text-align:left;letter-spacing:normal;margin-top:8px" />
+                        <div class="modify-theme-card-header">
+                          <span class="modify-theme-badge modify-theme-badge--dance">{{ i + 1 }}</span>
+                          <span class="modify-theme-card-title">Ronda {{ i + 1 }}</span>
+                          @if (data.danceThemes.length > 1) {
+                            <button type="button" class="modify-theme-remove" (click)="removeDanceTheme(i)" title="Quitar ronda">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                          }
+                        </div>
+                        <div class="modify-theme-fields">
+                          <div class="modify-theme-field">
+                            <label class="modify-theme-field-label">Nombre de la danza</label>
+                            <input type="text" [value]="dt.title" (input)="dt.title = $any($event.target).value" placeholder="Ej: Chacarera" class="modify-theme-input" />
+                          </div>
+                          <div class="modify-theme-field">
+                            <label class="modify-theme-field-label">Canción / Tema musical</label>
+                            <input type="text" [value]="dt.song" (input)="dt.song = $any($event.target).value" placeholder="Ej: La López" class="modify-theme-input" />
+                          </div>
+                        </div>
                       </div>
+                    }
+                    @if (data.danceThemes.length < 3) {
+                      <button type="button" class="modify-theme-add-btn" (click)="addDanceTheme()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Agregar ronda
+                      </button>
                     }
                   }
                 } @else if (modifySection() === 'members') {
@@ -607,6 +663,14 @@ InscripcionStepAccessosComponent, OtpVerifyComponent, CircularProgressComponent,
                     </label>
                     <label class="modify-field"><span class="modify-label">Nombre del instrumento</span><input type="text" [value]="data.instrumentName" (input)="data.instrumentName = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
                   }
+                  <div class="modify-stage-plot-section">
+                    <span class="modify-label">Stage Plot</span>
+                    <p class="modify-note" style="margin:0 0 12px">Ubicá los instrumentos y equipo en el escenario.</p>
+                    <app-stage-plot
+                      [initialInstruments]="data.riderTecnico.stagePlotInstruments"
+                      (instrumentsChange)="onStagePlotChange($event)">
+                    </app-stage-plot>
+                  </div>
                 } @else if (modifySection() === 'contact') {
                   <label class="modify-field"><span class="modify-label">Teléfono</span><input type="tel" [value]="data.phone" (input)="data.phone = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal" /></label>
                   <label class="modify-field"><span class="modify-label">Email</span><input type="email" [value]="data.email" disabled class="otp-field" style="text-align:left;letter-spacing:normal;opacity:0.6" /></label>
@@ -615,8 +679,8 @@ InscripcionStepAccessosComponent, OtpVerifyComponent, CircularProgressComponent,
               </div>
 
               <div class="modify-edit-footer">
-                <button type="button" class="otp-resend-btn" (click)="modifySection.set(null)">Cancelar</button>
-                <button type="button" class="otp-verify-btn" (click)="saveSection()" [disabled]="savingSection()">
+                <button type="button" class="modify-cancel-btn" (click)="modifySection.set(null)">Cancelar</button>
+                <button type="button" class="modify-save-btn" (click)="saveSection()" [disabled]="savingSection()">
                   @if (savingSection()) { <span class="spinner"></span> Guardando... } @else { Guardar cambios }
                 </button>
               </div>
@@ -711,7 +775,7 @@ InscripcionStepAccessosComponent, OtpVerifyComponent, CircularProgressComponent,
             [inscriptionId]="inscriptionResult()?.id || ''"
             [inscriptionCreatedAt]="inscriptionResult()?.created_at || ''"
             (submitted)="onTypeformSubmit()"
-            (exitTypeform)="typeformMode.set(false)" />
+            (exitTypeform)="otpVerified.set(false)" />
         } @loading (minimum 500ms) {
           <div style="padding: 40px; text-align: center; color: #64748b;">Cargando formulario...</div>
         }
@@ -1743,6 +1807,30 @@ resetForm(): void {
       age--;
     }
     return age >= 0 ? age : null;
+  }
+
+  addTheme(): void {
+    if (this.data.themes.length >= 10) return;
+    this.data.themes.push({ title: '', rhythm: '', author: '' });
+  }
+
+  removeTheme(index: number): void {
+    if (this.data.themes.length <= 1) return;
+    this.data.themes.splice(index, 1);
+  }
+
+  addDanceTheme(): void {
+    if (this.data.danceThemes.length >= 3) return;
+    this.data.danceThemes.push({ title: '', song: '' });
+  }
+
+  removeDanceTheme(index: number): void {
+    if (this.data.danceThemes.length <= 1) return;
+    this.data.danceThemes.splice(index, 1);
+  }
+
+  onStagePlotChange(instruments: Instrument[]): void {
+    this.data.riderTecnico.stagePlotInstruments = instruments;
   }
 
   addMember(): void {

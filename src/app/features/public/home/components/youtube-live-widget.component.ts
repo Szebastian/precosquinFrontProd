@@ -1,9 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-youtube-live-widget',
   standalone: true,
   template: `
+    @if (!hidden()) {
     <div class="yt-widget" [class.yt-expanded]="ytExpanded()">
       @if (ytExpanded()) {
         <div class="yt-player">
@@ -54,6 +57,7 @@ import { Component, signal } from '@angular/core';
         </button>
       }
     </div>
+    }
   `,
   styles: [`
     .yt-widget { position: fixed; bottom: 24px; right: 24px; z-index: 999; }
@@ -104,9 +108,21 @@ import { Component, signal } from '@angular/core';
     }
   `]
 })
-export class YoutubeLiveWidgetComponent {
+export class YoutubeLiveWidgetComponent implements OnInit {
+  private router = inject(Router);
+
   ytExpanded = signal(false);
   ytIsLive = signal(true);
+  hidden = signal(false);
+
+  ngOnInit(): void {
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd)
+    ).subscribe(e => {
+      this.hidden.set(e.urlAfterRedirects.startsWith('/inscripcion'));
+    });
+    this.hidden.set(this.router.url.startsWith('/inscripcion'));
+  }
 
   toggleLive() { this.ytIsLive.set(!this.ytIsLive()); }
 }

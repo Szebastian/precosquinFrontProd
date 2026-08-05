@@ -337,58 +337,184 @@ export interface TfQuestion {
             <!-- DECLARATIONS -->
             @if (q.type === 'declarations') {
               <div class="tf-declarations">
-                <div class="tf-decl-grid">
-                  <div class="tf-decl-card">
-                    <div class="tf-decl-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <h3>Datos Personales</h3>
-                    <p>{{ data().firstName || '-' }} {{ data().lastName || '' }}</p>
-                    <p>DNI {{ data().dni || '-' }} · {{ data().age || '-' }} años</p>
-                    <p>{{ data().locality || '-' }}, {{ data().province || '-' }}</p>
+
+                <!-- 1. DATOS DEL TITULAR -->
+                <div class="tf-decl-section">
+                  <div class="tf-decl-section-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4c8be6" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span class="tf-decl-section-title">Datos del Titular</span>
                   </div>
-                  <div class="tf-decl-card">
-                    <div class="tf-decl-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                  <div class="tf-decl-detail-grid">
+                    <div class="tf-decl-field">
+                      <span class="tf-decl-field-label">Nombre completo</span>
+                      <span class="tf-decl-field-value">{{ data().firstName || '-' }} {{ data().lastName || '' }}</span>
                     </div>
-                    <h3>Categoría</h3>
-                    <p>{{ data().category === 'musica' ? 'Música' : 'Danza' }}</p>
-                    <p>{{ getSubcategoryName() }}</p>
+                    <div class="tf-decl-field">
+                      <span class="tf-decl-field-label">DNI</span>
+                      <span class="tf-decl-field-value">{{ data().dni || '-' }}</span>
+                    </div>
+                    <div class="tf-decl-field">
+                      <span class="tf-decl-field-label">Email</span>
+                      <span class="tf-decl-field-value">{{ data().email || '-' }}</span>
+                    </div>
+                    <div class="tf-decl-field">
+                      <span class="tf-decl-field-label">Teléfono</span>
+                      <span class="tf-decl-field-value">{{ data().phone || '-' }}</span>
+                    </div>
+                    <div class="tf-decl-field">
+                      <span class="tf-decl-field-label">Rubro</span>
+                      <span class="tf-decl-field-value">{{ data().category === 'musica' ? 'Música' : 'Danza' }}</span>
+                    </div>
+                    <div class="tf-decl-field">
+                      <span class="tf-decl-field-label">Subcategoría</span>
+                      <span class="tf-decl-field-value">{{ getSubcategoryName() }}</span>
+                    </div>
                   </div>
                 </div>
 
-                @if (stagePlotInstruments().length > 0) {
-                  <div class="tf-decl-stage-section">
-                    <div class="tf-decl-stage-header">
+                <!-- 2. FICHA TÉCNICA & SONIDO -->
+                @if (hasTechnicalData()) {
+                  <div class="tf-decl-section">
+                    <div class="tf-decl-section-header">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4c8be6" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                      <span class="tf-decl-stage-header-title">Stage Plot</span>
-                      <span class="tf-decl-stage-count">{{ stagePlotInstruments().length }} instrumento{{ stagePlotInstruments().length > 1 ? 's' : '' }}</span>
+                      <span class="tf-decl-section-title">Ficha Técnica & Sonido</span>
                     </div>
-                    <div class="tf-decl-stage-canvas">
-                      <div class="tf-decl-stage-zone tf-decl-stage-zone--back">
-                        <span>FONDO</span>
-                      </div>
-                      @for (inst of normalizedInstruments(); track inst.id) {
-                        <div class="tf-decl-stage-inst" [style.left.%]="inst.nx" [style.top.%]="inst.ny">
-                          <img [src]="getInstrumentIcon(inst.type)" class="tf-decl-stage-inst-icon" />
-                          <span class="tf-decl-stage-inst-label">{{ getInstrumentLabel(inst.type) }}</span>
+
+                    <!-- Stage Plot -->
+                    @if (stagePlotInstruments().length > 0) {
+                      <div class="tf-decl-tech-block">
+                        <span class="tf-decl-tech-label">Ubicación en Escenario (Stage Plan)</span>
+                        <div class="tf-decl-stage-canvas">
+                          <div class="tf-decl-stage-zone tf-decl-stage-zone--back">
+                            <span>FONDO</span>
+                          </div>
+                          @for (inst of normalizedInstruments(); track inst.id) {
+                            <div class="tf-decl-stage-inst" [style.left.%]="inst.nx" [style.top.%]="inst.ny">
+                              <img [src]="getInstrumentIcon(inst.type)" class="tf-decl-stage-inst-icon" />
+                              <span class="tf-decl-stage-inst-label">{{ getInstrumentLabel(inst.type) }}</span>
+                            </div>
+                          }
+                          <div class="tf-decl-stage-zone tf-decl-stage-zone--front">
+                            <span>PÚBLICO</span>
+                          </div>
                         </div>
-                      }
-                      <div class="tf-decl-stage-zone tf-decl-stage-zone--front">
-                        <span>PÚBLICO</span>
-                      </div>
-                    </div>
-                    <div class="tf-decl-stage-legend">
-                      @for (inst of normalizedInstruments(); track inst.id) {
-                        <div class="tf-decl-stage-chip">
-                          <img [src]="getInstrumentIcon(inst.type)" class="tf-decl-stage-chip-icon" />
-                          <span>{{ getInstrumentLabel(inst.type) }}</span>
+                        <div class="tf-decl-stage-legend">
+                          @for (inst of normalizedInstruments(); track inst.id) {
+                            <div class="tf-decl-stage-chip">
+                              <img [src]="getInstrumentIcon(inst.type)" class="tf-decl-stage-chip-icon" />
+                              <span>{{ getInstrumentLabel(inst.type) }}</span>
+                            </div>
+                          }
                         </div>
-                      }
-                    </div>
+                      </div>
+                    }
+
+                    <!-- Instrumentos a Utilizar -->
+                    @if (data().equipmentDesc.trim()) {
+                      <div class="tf-decl-tech-block">
+                        <span class="tf-decl-tech-label">Instrumentos a Utilizar</span>
+                        <p class="tf-decl-tech-text">{{ data().equipmentDesc }}</p>
+                      </div>
+                    }
+
+                    <!-- Rider Técnico -->
+                    @if (hasRiderData()) {
+                      <div class="tf-decl-tech-block">
+                        <span class="tf-decl-tech-label">Requerimiento Técnico (Rider)</span>
+                        <div class="tf-decl-rider-grid">
+                          @if (data().riderTecnico.sonido.microfonos.length > 0) {
+                            <div class="tf-decl-rider-item">
+                              <span class="tf-decl-rider-key">Micrófonos</span>
+                              <span class="tf-decl-rider-val">{{ data().riderTecnico.sonido.microfonos.join(', ') }}</span>
+                            </div>
+                          }
+                          @if (data().riderTecnico.monitorCount) {
+                            <div class="tf-decl-rider-item">
+                              <span class="tf-decl-rider-key">Monitores</span>
+                              <span class="tf-decl-rider-val">{{ data().riderTecnico.monitorCount }}</span>
+                            </div>
+                          }
+                          @if (data().riderTecnico.sonido.diBoxes) {
+                            <div class="tf-decl-rider-item">
+                              <span class="tf-decl-rider-key">DI Boxes</span>
+                              <span class="tf-decl-rider-val">{{ data().riderTecnico.sonido.diBoxes }}</span>
+                            </div>
+                          }
+                          @if (data().riderTecnico.sonido.backline.length > 0) {
+                            <div class="tf-decl-rider-item">
+                              <span class="tf-decl-rider-key">Backline</span>
+                              <span class="tf-decl-rider-val">{{ data().riderTecnico.sonido.backline.join(', ') }}</span>
+                            </div>
+                          }
+                          @if (data().riderTecnico.otros.trim()) {
+                            <div class="tf-decl-rider-item tf-decl-rider-item--full">
+                              <span class="tf-decl-rider-key">Otros</span>
+                              <span class="tf-decl-rider-val">{{ data().riderTecnico.otros }}</span>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Descripción del Escenario -->
+                    @if (data().stagePlotDesc.trim()) {
+                      <div class="tf-decl-tech-block">
+                        <span class="tf-decl-tech-label">Descripción del Escenario</span>
+                        <p class="tf-decl-tech-text">{{ data().stagePlotDesc }}</p>
+                      </div>
+                    }
                   </div>
                 }
 
+                <!-- 3. ACOMPAÑANTES / INTEGRANTES -->
+                <div class="tf-decl-section">
+                  <div class="tf-decl-section-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4c8be6" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="tf-decl-section-title">Acompañantes / Integrantes</span>
+                    <span class="tf-decl-section-count">{{ getPeopleCount() }}</span>
+                  </div>
+
+                  <!-- Titular (siempre presente) -->
+                  <div class="tf-decl-people-grid">
+                    <div class="tf-decl-people-card tf-decl-people-card--titular">
+                      <span class="tf-decl-people-num">T</span>
+                      <div class="tf-decl-people-info">
+                        <span class="tf-decl-people-name">{{ data().firstName || '-' }} {{ data().lastName || '' }}</span>
+                        <span class="tf-decl-people-detail">DNI {{ data().dni || '-' }} · Titular</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  @if (data().members.length > 0) {
+                    <div class="tf-decl-people-grid">
+                      @for (member of data().members; track member; let i = $index) {
+                        <div class="tf-decl-people-card">
+                          <span class="tf-decl-people-num">{{ i + 1 }}</span>
+                          <div class="tf-decl-people-info">
+                            <span class="tf-decl-people-name">{{ member.fullName || '-' }}</span>
+                            <span class="tf-decl-people-detail">DNI {{ member.dni || '-' }}{{ member.role ? ' · ' + member.role : '' }}</span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  @if (data().accompanyingPersons.length > 0) {
+                    <div class="tf-decl-people-grid">
+                      @for (person of data().accompanyingPersons; track person; let i = $index) {
+                        <div class="tf-decl-people-card">
+                          <span class="tf-decl-people-num">{{ data().members.length + i + 1 }}</span>
+                          <div class="tf-decl-people-info">
+                            <span class="tf-decl-people-name">{{ person.fullName || '-' }}</span>
+                            <span class="tf-decl-people-detail">DNI {{ person.dni || '-' }}</span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <!-- 4. ART. 31 RULES (conditional) -->
                 @if (data().subcategory === 'solista_instrumental') {
                   <div class="tf-decl-rules-box">
                     <h4 class="tf-decl-rules-title">Reglas Solista Instrumental — Art. 31</h4>
@@ -494,7 +620,12 @@ export interface TfQuestion {
             </div>
           }
           <div class="tf-bottom-left">
-            @if (canGoBack()) {
+            @if (currentIdx() === 0) {
+              <button type="button" class="tf-btn-ghost" (click)="exitTypeform.emit()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+                Volver
+              </button>
+            } @else if (canGoBack()) {
               <button type="button" class="tf-btn-ghost" (click)="onGoBack()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
                 Volver
@@ -939,17 +1070,31 @@ export interface TfQuestion {
 
     /* ===== DECLARATIONS ===== */
     .tf-declarations { display: flex; flex-direction: column; gap: 16px; }
-    .tf-decl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .tf-decl-card {
-      padding: 18px; background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
-    }
-    .tf-decl-icon { color: #4c8be6; margin-bottom: 8px; }
-    .tf-decl-card h3 {
-      font-size: 0.7rem; font-weight: 700; color: #475569;
-      text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 6px;
-    }
-    .tf-decl-card p { font-size: 0.85rem; color: #94a3b8; margin: 0; line-height: 1.5; }
+    .tf-decl-section { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; }
+    .tf-decl-section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .tf-decl-section-title { font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.08em; flex: 1; }
+    .tf-decl-section-count { font-size: 0.7rem; color: #64748b; background: rgba(255,255,255,0.04); padding: 2px 8px; border-radius: 10px; }
+    .tf-decl-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+    .tf-decl-field { display: flex; flex-direction: column; gap: 2px; }
+    .tf-decl-field-label { font-size: 0.65rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; }
+    .tf-decl-field-value { font-size: 0.85rem; color: #cbd5e1; line-height: 1.4; }
+    .tf-decl-tech-block { margin-bottom: 14px; }
+    .tf-decl-tech-block:last-child { margin-bottom: 0; }
+    .tf-decl-tech-label { display: block; font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .tf-decl-tech-text { font-size: 0.82rem; color: #94a3b8; margin: 0; line-height: 1.6; }
+    .tf-decl-rider-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tf-decl-rider-item { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; }
+    .tf-decl-rider-item--full { grid-column: 1 / -1; }
+    .tf-decl-rider-key { font-size: 0.6rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+    .tf-decl-rider-val { font-size: 0.8rem; color: #94a3b8; line-height: 1.4; }
+    .tf-decl-people-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tf-decl-people-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; }
+    .tf-decl-people-num { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; background: rgba(76,139,230,0.12); color: #4c8be6; font-size: 0.65rem; font-weight: 700; border-radius: 50%; flex-shrink: 0; }
+    .tf-decl-people-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .tf-decl-people-name { font-size: 0.82rem; color: #cbd5e1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tf-decl-people-detail { font-size: 0.7rem; color: #64748b; }
+    .tf-decl-people-card--titular { border-color: rgba(76,139,230,0.2); background: rgba(76,139,230,0.04); }
+    .tf-decl-people-card--titular .tf-decl-people-num { background: rgba(76,139,230,0.2); }
 
     /* Stage Plot */
     .tf-decl-stage-section { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; }
@@ -1904,6 +2049,29 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
     const d = this.data();
     const all = [...(subcategoriesByCategory['musica'] || []), ...(subcategoriesByCategory['danza'] || [])];
     return all.find(s => s.id === d.subcategory)?.name || d.subcategory;
+  }
+
+  hasTechnicalData(): boolean {
+    const d = this.data();
+    return !!(d.equipmentDesc?.trim() || d.stagePlotDesc?.trim() ||
+      d.riderTecnico?.stagePlotInstruments?.length ||
+      d.riderTecnico?.sonido?.microfonos?.length ||
+      d.riderTecnico?.sonido?.backline?.length ||
+      d.riderTecnico?.monitorCount ||
+      d.riderTecnico?.sonido?.diBoxes ||
+      d.riderTecnico?.otros?.trim());
+  }
+
+  hasRiderData(): boolean {
+    const r = this.data().riderTecnico;
+    return !!(r?.sonido?.microfonos?.length || r?.sonido?.backline?.length ||
+      r?.monitorCount || r?.sonido?.diBoxes || r?.otros?.trim());
+  }
+
+  getPeopleCount(): string {
+    const d = this.data();
+    const total = 1 + d.members.length + d.accompanyingPersons.length;
+    return total + (total === 1 ? ' persona' : ' personas');
   }
 
   getDanzaInfoText(): string {

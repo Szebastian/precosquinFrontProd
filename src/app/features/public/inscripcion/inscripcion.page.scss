@@ -2630,24 +2630,39 @@ select.form-input {
 .modify-edit-fields { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
 .modify-field { display: flex; flex-direction: column; gap: 8px; }
 .modify-label { font-size: 0.82rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.03em; }
-.modify-theme-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
-.modify-theme-card input, .modify-theme-card textarea, .modify-theme-card select { background: rgba(255,255,255,0.02); color: #f8fafc; border: 1.5px solid rgba(255,255,255,0.06); border-radius: 8px; font-family: inherit; font-size: 0.95rem; }
-.modify-theme-card input, .modify-theme-card select { padding: 10px 12px; font-size: 0.9rem; }
-.modify-theme-card input:focus, .modify-theme-card select:focus, .modify-theme-card textarea:focus { border-color: #4c8be6; outline: none; background: rgba(76,139,230,0.03); }
-.modify-theme-card textarea { padding: 12px; min-height: 100px; resize: vertical; }
+.modify-theme-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0; overflow: hidden; transition: border-color 0.2s; }
+.modify-theme-card:hover { border-color: rgba(255,255,255,0.1); }
+.modify-theme-card-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.015); }
+.modify-theme-badge { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
+.modify-theme-badge--dance { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+.modify-theme-card-title { font-size: 0.85rem; font-weight: 600; color: #f8fafc; flex: 1; }
+.modify-theme-remove { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: none; border-radius: 6px; background: transparent; color: #64748b; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+.modify-theme-remove:hover { background: rgba(239,68,68,0.12); color: #ef4444; }
+.modify-theme-fields { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.modify-theme-field { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.modify-theme-field-label { font-size: 0.72rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; }
+.modify-theme-input { width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.03); color: #f8fafc; border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.2s, background 0.2s; box-sizing: border-box; }
+.modify-theme-input::placeholder { color: #475569; }
+.modify-theme-input:focus { border-color: #4c8be6; background: rgba(76,139,230,0.04); }
+.modify-theme-row { display: flex; gap: 10px; }
+.modify-theme-add-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border: 1.5px dashed rgba(74,222,128,0.25); border-radius: 10px; background: transparent; color: #4ade80; font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.modify-theme-add-btn:hover { border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.05); }
+.modify-themes-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.modify-themes-count { font-size: 0.82rem; font-weight: 600; color: #94a3b8; }
+.modify-themes-limit { font-size: 0.75rem; color: #475569; }
 .modify-note { font-size: 0.8rem; color: #64748b; font-style: italic; margin: 0; }
 .modify-edit .otp-field, .modify-edit select { background: rgba(255,255,255,0.02); color: #f8fafc; border: 1.5px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 14px 16px; font-size: 1rem; }
 .modify-edit .otp-field:focus, .modify-edit select:focus { border-color: #4c8be6; background: rgba(76,139,230,0.03); }
 .modify-edit-footer { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
-.modify-summary .back-home-link,
-.modify-edit .back-home-link { color: #64748b; }
-.modify-summary .back-home-link:hover,
-.modify-edit .back-home-link:hover { color: #94a3b8; }
-.modify-edit .otp-resend-btn { color: #64748b; }
-.modify-edit .otp-resend-btn:hover { color: #94a3b8; }
-.modify-edit .otp-verify-btn { width: auto; padding: 12px 28px; border: none; border-radius: 12px; background: #4c8be6; color: #fff; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
-.modify-edit .otp-verify-btn:hover:not(:disabled) { background: #3b7ad4; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(76, 139, 230, 0.3); }
-.modify-edit .otp-verify-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; background: #64748b; }
+.modify-back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #94a3b8; font-family: inherit; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-bottom: 4px; }
+.modify-back-btn:hover { background: rgba(255,255,255,0.07); color: #f8fafc; border-color: rgba(255,255,255,0.14); }
+.modify-back-btn svg { opacity: 0.7; transition: transform 0.2s; }
+.modify-back-btn:hover svg { transform: translateX(-2px); opacity: 1; }
+.modify-cancel-btn { padding: 12px 24px; border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; background: transparent; color: #94a3b8; font-family: inherit; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.modify-cancel-btn:hover { border-color: rgba(255,255,255,0.2); color: #f8fafc; background: rgba(255,255,255,0.03); }
+.modify-save-btn { padding: 12px 28px; border: none; border-radius: 10px; background: #4c8be6; color: #fff; font-family: inherit; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+.modify-save-btn:hover:not(:disabled) { background: #3b7ad4; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(76,139,230,0.3); }
+.modify-save-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; background: #475569; }
 
 /* ─── OTP Sending State ─── */
 .otp-sending {
@@ -2860,6 +2875,11 @@ select.form-input {
   color: #fff;
 }
 
+@media (max-width: 480px) {
+  .modify-theme-row { flex-direction: column; gap: 10px; }
+  .modify-theme-card-header { padding: 10px 12px; }
+  .modify-theme-fields { padding: 12px; }
+}
 
 
 
