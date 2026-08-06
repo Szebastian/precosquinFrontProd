@@ -611,14 +611,14 @@ export interface TfQuestion {
             <!-- FILE UPLOAD -->
             @if (q.type === 'file') {
               <div class="tf-file-zone">
-                <label class="tf-file-drop" (dragover)="$event.preventDefault()" (drop)="$event.preventDefault(); onFileDrop($event, q.id)">
-                  <input type="file" accept="image/*,.pdf" (change)="onFileSelect($event, q.id)" hidden />
+                <div class="tf-file-drop" (click)="triggerFileInput($event, q.id)" (dragover)="$event.preventDefault()" (drop)="$event.preventDefault(); onFileDrop($event, q.id)">
+                  <input type="file" [attr.data-qid]="q.id" accept="image/*,.pdf" (change)="onFileSelect($event, q.id)" style="display:none" />
                   <div class="tf-file-icon">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                   </div>
                   <span class="tf-file-label">Hacé click o arrastrá tu archivo</span>
                   <span class="tf-file-hint">PDF o imagen, máx. 5MB</span>
-                </label>
+                </div>
                 @if (getFileForQuestion(q.id)) {
                   <div class="tf-file-loaded">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1078,6 +1078,7 @@ export interface TfQuestion {
       cursor: pointer; transition: all 0.25s; text-align: center;
     }
     .tf-file-drop:hover { border-color: rgba(76, 139, 230, 0.3); background: rgba(76, 139, 230, 0.03); }
+    .tf-file-drop:active { border-color: rgba(76, 139, 230, 0.4); background: rgba(76, 139, 230, 0.05); transform: scale(0.98); }
     .tf-file-icon { color: #334155; margin-bottom: 4px; }
     .tf-file-label { font-size: 0.9rem; color: #64748b; }
     .tf-file-hint { font-size: 0.75rem; color: #334155; }
@@ -2116,6 +2117,15 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       this.setFileForQuestion(questionId, input.files[0]);
+    }
+  }
+
+  triggerFileInput(event: Event, questionId: string): void {
+    const dropZone = (event.currentTarget as HTMLElement);
+    const input = dropZone.querySelector('input[type="file"]') as HTMLInputElement;
+    if (input) {
+      input.value = '';
+      input.click();
     }
   }
 
