@@ -1227,11 +1227,12 @@ export interface TfQuestion {
 
     /* ===== BOTTOM NAV ===== */
     .tf-bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 80px; background: rgba(17, 17, 24, 0.95);
+      padding: 14px 24px; background: rgba(17, 17, 24, 0.97);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
     }
     .tf-bottom-left, .tf-bottom-right { display: flex; align-items: center; }
     .tf-btn-ghost {
@@ -1322,21 +1323,43 @@ export interface TfQuestion {
       .tf-success-title { font-size: 1.6rem; }
       .tf-success-email-info { padding: 12px 14px; }
     }
+    @media (max-width: 400px) {
+      .tf-bottom-nav { padding: 12px 10px; gap: 6px; }
+      .tf-btn-primary { padding: 10px 18px; font-size: 0.85rem; }
+      .tf-btn-ghost { padding: 8px 12px; font-size: 0.8rem; }
+    }
     @media (max-width: 360px) {
       .tf-topbar { padding: 10px 12px; }
       .tf-logo { font-size: 0.78rem; }
-      .tf-stage { padding: 24px 12px 140px; }
-      .tf-label { font-size: 1.35rem; }
-      .tf-input, .tf-select { font-size: 1rem; }
-      .tf-radio-btn { padding: 12px 12px; }
-      .tf-card-option { padding: 16px 12px; }
-      .tf-bottom-nav { padding: 12px 12px; }
-      .tf-btn-primary { padding: 10px 20px; font-size: 0.85rem; }
-      .tf-btn-ghost { padding: 8px 14px; font-size: 0.82rem; }
+      .tf-stage { padding: 24px 12px 120px; }
+      .tf-label { font-size: 1.25rem; }
+      .tf-input, .tf-select { font-size: 0.95rem; }
+      .tf-radio-btn { padding: 12px 12px; font-size: 0.85rem; }
+      .tf-card-option { padding: 14px 12px; }
+      .tf-bottom-nav {
+        padding: 10px 12px;
+        gap: 8px;
+      }
+      .tf-btn-primary {
+        padding: 10px 16px;
+        font-size: 0.82rem;
+        border-radius: 10px;
+        gap: 6px;
+      }
+      .tf-btn-primary svg { width: 14px; height: 14px; }
+      .tf-btn-ghost {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        border-radius: 8px;
+        gap: 4px;
+      }
+      .tf-btn-ghost svg { width: 14px; height: 14px; }
       .tf-checkbox-btn { padding: 10px 12px; font-size: 0.8rem; }
       .tf-checklist-item { padding: 12px 14px; }
       .tf-otp-field { width: 100px; font-size: 1rem; }
       .tf-theme-item { padding: 4px 6px 4px 4px; }
+      .tf-submit-btn-text { display: none; }
+      .tf-btn-submit { padding: 10px 16px; font-size: 0.8rem; }
     }
   `]
 })

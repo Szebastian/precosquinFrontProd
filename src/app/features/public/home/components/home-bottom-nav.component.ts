@@ -1,11 +1,15 @@
-import { Component, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, signal, inject, OnInit, OnDestroy, HostBinding } from '@angular/core';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home-bottom-nav',
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
+  host: { '[style.display]': 'hidden() ? "none" : ""' },
   template: `
+    @if (!hidden()) {
     <nav class="bottom-nav" role="navigation" aria-label="Navegación principal">
       <a routerLink="/" routerLinkActive="nav-active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -73,6 +77,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
           </a>
         </div>
       </div>
+    }
     }
   `,
   styles: [`
@@ -282,8 +287,28 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     }
   `]
 })
-export class HomeBottomNavComponent {
+export class HomeBottomNavComponent implements OnInit, OnDestroy {
   moreOpen = signal(false);
+  hidden = signal(false);
+  private router = inject(Router);
+  private sub?: Subscription;
+
+  ngOnInit(): void {
+    this.checkRoute(this.router.url);
+    this.sub = this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd)
+    ).subscribe(e => {
+      this.checkRoute(e.urlAfterRedirects);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
+
+  private checkRoute(url: string): void {
+    this.hidden.set(url.startsWith('/inscripcion'));
+  }
 
   toggleMore() {
     this.moreOpen.set(!this.moreOpen());
