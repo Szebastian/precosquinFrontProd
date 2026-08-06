@@ -1072,6 +1072,9 @@ interface NewsItem {
 
     .secondary-news-item-preview .news-item-thumb {
       width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1081,8 +1084,7 @@ interface NewsItem {
     .secondary-news-item-preview .news-item-thumb img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      padding: 4px;
+      object-fit: cover;
     }
 
     .secondary-news-item-preview .news-item-thumb ::ng-deep svg {

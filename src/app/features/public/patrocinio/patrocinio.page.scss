@@ -289,15 +289,18 @@
 }
 
 .pat-socio img {
-  max-height: 72px;
+  max-height: 48px;
+  max-width: 140px;
   width: auto;
   object-fit: contain;
-  filter: brightness(0) invert(1);
-  opacity: 0.8;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  object-position: center;
+  filter: grayscale(100%);
+  opacity: 0.5;
+  transition: all 0.3s ease;
 }
 
 .pat-socio:hover img {
+  filter: grayscale(0%);
   opacity: 1;
   transform: translateY(-2px);
 }
@@ -868,6 +871,6 @@
   .pat-socios-list {
     gap: 2rem;
   }
-  .pat-socio { height: 52px; }
-  .pat-socio img { max-height: 52px; }
+  .pat-socio { height: 40px; }
+  .pat-socio img { max-height: 36px; max-width: 100px; }
 }

@@ -43,6 +43,10 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
     { nombre: 'Rayentray', logo: 'assets/img/LRayentray.webp' },
     { nombre: 'Hydro', logo: 'assets/img/LHydro.webp' },
     { nombre: 'Piramides', logo: 'assets/img/LPiramides.webp' },
+    { nombre: 'HH', logo: 'assets/img/logoHH.webp' },
+    { nombre: 'Bodegón El Refugio', logo: 'assets/img/BodegonElRefugio.webp' },
+    { nombre: 'El Refugio Pirámides', logo: 'assets/img/ElRefugioPIramiLogo.webp' },
+    { nombre: 'La Reserva En El Mar', logo: 'assets/img/logoLaReservaEnElMar.webp' },
   ];
 
   canales: Canal[] = [
