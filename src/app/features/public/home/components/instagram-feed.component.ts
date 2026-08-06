@@ -183,6 +183,16 @@ div[class*="eapps-widget-toolbar-panel-share-button"],
 div[class*="eapps-widget-toolbar-panel-views"] {
   display: none !important;
 }
+
+a[href*="elfsight.com"],
+a[title*="Remove Elfsight"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
   `],
 })
 export class InstagramFeedComponent implements AfterViewInit {
@@ -226,11 +236,22 @@ export class InstagramFeedComponent implements AfterViewInit {
 
     container.appendChild(widget);
 
+    const observer = new MutationObserver(() => {
+      container.querySelectorAll('a').forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        if (href.includes('elfsight.com') || link.textContent.includes('Free Instagram Feed')) {
+          link.remove();
+        }
+      });
+      container.querySelectorAll('[data-remove-url]').forEach((el) => el.remove());
+    });
+    observer.observe(container, { childList: true, subtree: true });
+
     setTimeout(() => {
       const allLinks = container.querySelectorAll('a');
       allLinks.forEach((link) => {
         const href = link.getAttribute('href') || '';
-        if (href.includes('elfsight.com')) {
+        if (href.includes('elfsight.com') || link.textContent.includes('Free Instagram Feed')) {
           link.remove();
         }
       });
