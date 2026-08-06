@@ -117,7 +117,7 @@
         </div>
         <div class="accordion-text">
           <h2>Categorías de Música</h2>
-          <p>10 categorías con tiempos y criterios de evaluación</p>
+          <p>7 categorías con tiempos y criterios de evaluación</p>
         </div>
         <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
@@ -156,7 +156,7 @@
         </div>
         <div class="accordion-text">
           <h2>Categorías de Danza</h2>
-          <p>3 categorías con tiempos y criterios de evaluación</p>
+          <p>6 categorías con tiempos y criterios de evaluación</p>
         </div>
         <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
@@ -265,88 +265,7 @@
     </div>
 
     <!-- SECCIÓN 5: INFORMACIÓN DE SEDES -->
-    <div class="accordion-section" [class.open]="openSection() === 'sedes'">
-      <button class="accordion-trigger" (click)="toggleSection('sedes')">
-        <div class="accordion-icon icon-sedes">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </div>
-        <div class="accordion-text">
-          <h2>Información de Sedes</h2>
-          <p>Canon de pago, cuentas bancarias y contactos</p>
-        </div>
-        <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="accordion-body">
-        <div class="accordion-inner">
-
-          <div class="doc-block">
-            <h3>Canon de Participación</h3>
-            <div class="doc-table">
-              <div class="table-row table-header">
-                <span>Fecha de pago</span>
-                <span>Monto</span>
-              </div>
-              <div class="table-row">
-                <span>Hasta el 30 de septiembre 2026</span>
-                <span class="doc-highlight">$3.900.000</span>
-              </div>
-              <div class="table-row">
-                <span>Hasta el 31 de octubre 2026</span>
-                <span class="doc-highlight">$4.300.000</span>
-              </div>
-              <div class="table-row">
-                <span>Hasta el 30 de noviembre 2026</span>
-                <span class="doc-highlight">$4.500.000</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="doc-block">
-            <h3>Cuentas Bancarias Oficiales</h3>
-            <div class="doc-split">
-              <div class="doc-split-col doc-bank">
-                <h4>Banco de la Nación Argentina</h4>
-                <p><strong>Sucursal:</strong> Cosquín N° 1635</p>
-                <p><strong>Cta Cte:</strong> 03 16352220013274</p>
-                <p><strong>CBU:</strong> 0110222420022200132745</p>
-              </div>
-              <div class="doc-split-col doc-bank">
-                <h4>Banco Provincia de Córdoba</h4>
-                <p><strong>Cuenta:</strong> 31501336906</p>
-                <p><strong>CBU:</strong> 0200315101000001336965</p>
-                <p><strong>Alias:</strong> MUNICMF369</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="doc-block">
-            <h3>Correos de Contacto</h3>
-            <ul>
-              <li><strong>Pagos:</strong> haciendafestivaldecosquin&#64;gmail.com</li>
-              <li><strong>Administración:</strong> precosquincmf&#64;gmail.com</li>
-              <li><strong>Teléfono:</strong> 3541-235377</li>
-              <li><strong>Contacto:</strong> Lic. Fernanda G. Rodríguez, Secretaria de Pre Cosquín</li>
-            </ul>
-          </div>
-
-          <div class="doc-block">
-            <h3>Nuevas Sedes 2026</h3>
-            <div class="sedes-tags">
-              <span class="sede-tag">San Rafael, Mendoza</span>
-              <span class="sede-tag">Reconquista, Santa Fe</span>
-              <span class="sede-tag">Tostado, Santa Fe</span>
-              <span class="sede-tag">Rufino, Santa Fe</span>
-              <span class="sede-tag">Caleta Olivia, Santa Cruz</span>
-              <span class="sede-tag">Azul, Buenos Aires</span>
-              <span class="sede-tag">Lomas de Zamora, Buenos Aires</span>
-              <span class="sede-tag">Ubajay, Entre Ríos</span>
-              <span class="sede-tag">Tigre, Buenos Aires</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
+    
 
     <!-- SECCIÓN 6: MÚSICA POPULAR -->
     <div class="accordion-section" [class.open]="openSection() === 'musica-popular'">
@@ -390,43 +309,7 @@
     </div>
 
     <!-- SECCIÓN 7: LOCUTORES -->
-    <div class="accordion-section" [class.open]="openSection() === 'locutores'">
-      <button class="accordion-trigger" (click)="toggleSection('locutores')">
-        <div class="accordion-icon icon-locutores">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-        </div>
-        <div class="accordion-text">
-          <h2>Locutores y Comunicación</h2>
-          <p>Requisitos para locutores del certamen</p>
-        </div>
-        <svg class="accordion-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="accordion-body">
-        <div class="accordion-inner">
-          <div class="doc-block">
-            <h3>Funciones del Locutor</h3>
-            <ul>
-              <li>Definir el <strong>tono</strong> del evento</li>
-              <li>Brindar <strong>seriedad, calidez y respeto</strong></li>
-              <li>Garantizar <strong>exactitud</strong> en datos: nombres, obras, autores, categorías</li>
-              <li>Solicitar el <strong>programa completo</strong> con anticipación</li>
-              <li>Conocer las <strong>reglas básicas</strong> del certamen</li>
-            </ul>
-          </div>
-          <div class="doc-block">
-            <h3>Cualidades Requeridas</h3>
-            <ul>
-              <li>Voz clara, natural y agradable</li>
-              <li>Buena dicción, ritmo y fluidez en la lectura</li>
-              <li>Comunicar con respeto y pausas</li>
-              <li>Conocimiento mínimo del repertorio folklórico</li>
-              <li>Presencia escénica profesional</li>
-              <li>Compromiso con los valores culturales</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+    
 
     <!-- CTAs -->
     <div class="doc-ctas">
