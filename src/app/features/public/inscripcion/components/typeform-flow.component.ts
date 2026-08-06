@@ -1309,6 +1309,34 @@ export interface TfQuestion {
       .tf-card-option { padding: 20px 16px; }
       .tf-bottom-nav { padding: 14px 16px; }
       .tf-btn-primary { padding: 12px 24px; font-size: 0.9rem; }
+      .tf-decl-detail-grid { grid-template-columns: 1fr; }
+      .tf-decl-rider-grid { grid-template-columns: 1fr; }
+      .tf-decl-people-grid { grid-template-columns: 1fr; }
+      .tf-date-parts { flex-direction: column; }
+      .tf-otp-field { width: 120px; font-size: 1.1rem; }
+      .tf-accompanying-fields { grid-template-columns: 1fr; }
+      .tf-sublabel { font-size: 0.82rem; padding: 0 4px; }
+      .tf-checkbox-btn { padding: 12px 14px; font-size: 0.82rem; }
+      .tf-card-option-desc { font-size: 0.78rem; }
+      .tf-file-drop { padding: 32px 16px; }
+      .tf-success-title { font-size: 1.6rem; }
+      .tf-success-email-info { padding: 12px 14px; }
+    }
+    @media (max-width: 360px) {
+      .tf-topbar { padding: 10px 12px; }
+      .tf-logo { font-size: 0.78rem; }
+      .tf-stage { padding: 24px 12px 140px; }
+      .tf-label { font-size: 1.35rem; }
+      .tf-input, .tf-select { font-size: 1rem; }
+      .tf-radio-btn { padding: 12px 12px; }
+      .tf-card-option { padding: 16px 12px; }
+      .tf-bottom-nav { padding: 12px 12px; }
+      .tf-btn-primary { padding: 10px 20px; font-size: 0.85rem; }
+      .tf-btn-ghost { padding: 8px 14px; font-size: 0.82rem; }
+      .tf-checkbox-btn { padding: 10px 12px; font-size: 0.8rem; }
+      .tf-checklist-item { padding: 12px 14px; }
+      .tf-otp-field { width: 100px; font-size: 1rem; }
+      .tf-theme-item { padding: 4px 6px 4px 4px; }
     }
   `]
 })

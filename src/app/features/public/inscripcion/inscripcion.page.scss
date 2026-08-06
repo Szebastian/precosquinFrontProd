@@ -2881,5 +2881,207 @@ select.form-input {
   .modify-theme-fields { padding: 12px; }
 }
 
+/* --- Very small phones (iPhone SE 320px, etc.) --- */
+@media (max-width: 360px) {
+  .form-main-content {
+    padding: var(--space-3) var(--space-2);
+    padding-bottom: 140px;
+  }
 
+  .form-card {
+    padding: var(--space-4) var(--space-3);
+    border-radius: var(--radius-sm);
+  }
+
+  .form-header h1 {
+    font-size: 1rem;
+  }
+
+  .form-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .btn-next-large {
+    padding: var(--space-3) var(--space-4);
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .minimal-input {
+    font-size: 0.9rem;
+    padding: var(--space-2) 0;
+  }
+
+  .minimal-label {
+    font-size: 0.6rem;
+  }
+
+  .date-select {
+    font-size: 0.85rem;
+    padding: var(--space-2);
+  }
+
+  .date-picker-row {
+    gap: var(--space-2);
+  }
+
+  .category-card {
+    padding: 0.75rem;
+  }
+
+  .category-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .category-name {
+    font-size: 0.85rem;
+  }
+
+  .subcategory-chip {
+    padding: var(--space-2);
+    font-size: 0.75rem;
+  }
+
+  .member-card {
+    padding: 0.75rem;
+  }
+
+  .form-row {
+    gap: 0.5rem;
+  }
+
+  .rider-section {
+    padding: var(--space-2);
+  }
+
+  .rider-chip {
+    min-height: 36px;
+    padding: 4px var(--space-2);
+    font-size: 0.7rem;
+  }
+
+  .upload-grid-2col {
+    gap: 0.375rem;
+  }
+
+  .file-drop-zone.compact {
+    padding: 0.5rem;
+  }
+
+  .preview-image {
+    width: 36px;
+    height: 36px;
+  }
+
+  .preview-placeholder {
+    width: 36px;
+    height: 36px;
+  }
+
+  .constancia-modal {
+    margin: 0;
+    max-height: 75vh;
+  }
+
+  .constancia-modal ::ng-deep .constancia-card {
+    padding: var(--space-4) var(--space-2);
+  }
+
+  .constancia-modal ::ng-deep .constancia-logo-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .constancia-modal ::ng-deep .constancia-title {
+    font-size: var(--text-sm);
+  }
+
+  .constancia-modal ::ng-deep .constancia-value {
+    font-size: 0.75rem;
+  }
+
+  .bottom-nav-bar {
+    padding: var(--space-1);
+  }
+
+  .btn-ghost,
+  .save-link {
+    font-size: 0.7rem;
+    min-height: 36px;
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .missing-fields-hint {
+    font-size: 0.65rem;
+    padding: var(--space-1);
+  }
+
+  .modify-summary {
+    padding: 24px 12px;
+  }
+
+  .modify-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .modify-section {
+    padding: 12px;
+  }
+
+  .modify-section-title {
+    font-size: 0.85rem;
+  }
+
+  .modify-section-preview {
+    padding-left: 40px;
+    font-size: 0.75rem;
+  }
+
+  .modify-edit {
+    padding: 24px 12px;
+  }
+
+  .modify-edit .modify-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .modify-theme-input {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+
+  .modify-cancel-btn,
+  .modify-save-btn {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+  }
+
+  .tf-welcome {
+    padding: 24px 12px;
+  }
+
+  .tf-welcome-title {
+    font-size: 1.6rem;
+  }
+
+  .tf-welcome-opt {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .tf-welcome-opt-num {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+
+  .tf-welcome-opt-title {
+    font-size: 0.85rem;
+  }
+
+  .tf-welcome-opt-desc {
+    font-size: 0.7rem;
+  }
+}
 

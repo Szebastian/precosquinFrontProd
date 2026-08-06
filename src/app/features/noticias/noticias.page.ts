@@ -84,8 +84,8 @@ interface NewsItem {
                 <h3 class="news-card-title">{{ item.title }}</h3>
                 <div class="news-card-footer">
                   <div class="news-thumb-preview" [ngClass]="item.thumbBg">
-                    @if (item.thumbType === 'img') {
-                      <img [src]="resolveUrl(item.thumbSrc)" alt="thumbnail" />
+                    @if (item.image) {
+                      <img [src]="resolveUrl(item.image)" alt="thumbnail" />
                     } @else {
                       <span [innerHTML]="sanitizeHtml(item.thumbSrc)"></span>
                     }
@@ -253,13 +253,13 @@ interface NewsItem {
                     </div>
                   </div>
 
-                  <!-- Section: Thumbnail del Carrusel -->
+                  <!-- Section: Thumbnail del Carrusel (automático desde imagen destacada) -->
                   <div class="form-section">
                     <h3 class="form-section-title">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
                       Thumbnail del Carrusel
                     </h3>
-                    <p class="form-section-desc">Configurá la miniatura que aparece en la barra lateral derecha del carrusel del home.</p>
+                    <p class="form-section-desc">La imagen destacada se usa automáticamente como thumbnail en el carrusel del home.</p>
 
                     <div class="form-row">
                       <div class="form-group col">
@@ -276,49 +276,7 @@ interface NewsItem {
                           }
                         </div>
                       </div>
-                      <div class="form-group col">
-                        <label class="form-label">Tipo de contenido</label>
-                        <div class="toggle-group">
-                          <button class="toggle-btn" [class.toggle-active]="form.thumbType === 'img'"
-                            (click)="form.thumbType = 'img'">Imagen</button>
-                          <button class="toggle-btn" [class.toggle-active]="form.thumbType === 'icon'"
-                            (click)="form.thumbType = 'icon'">Ícono SVG</button>
-                        </div>
-                      </div>
                     </div>
-
-                    @if (form.thumbType === 'img') {
-                      <div class="form-group">
-                        <label class="form-label">Seleccionar imagen del thumbnail</label>
-                        <div class="thumb-presets">
-                          @for (preset of thumbImagePresets; track preset.value) {
-                            <button class="thumb-preset" [class.thumb-preset-active]="form.thumbSrc === preset.value"
-                              (click)="form.thumbSrc = preset.value">
-                              <img [src]="preset.value" [alt]="preset.label" />
-                            </button>
-                          }
-                        </div>
-                        <div class="url-input-group">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                          <input type="text" class="form-input" [(ngModel)]="form.thumbSrc"
-                            placeholder="Ruta de imagen del thumbnail..." />
-                        </div>
-                      </div>
-                    } @else {
-                      <div class="form-group">
-                        <label class="form-label">Seleccionar ícono SVG</label>
-                        <div class="icon-presets">
-                          @for (icon of iconPresets; track icon.name) {
-                            <button class="icon-preset" [class.icon-preset-active]="form.thumbSrc === icon.svg"
-                              (click)="form.thumbSrc = icon.svg" [title]="icon.name">
-                              <span [innerHTML]="sanitizeHtml(icon.svg)"></span>
-                            </button>
-                          }
-                        </div>
-                        <textarea class="form-input form-textarea code-textarea mt-2" [(ngModel)]="form.thumbSrc"
-                          placeholder="O pegá el código SVG del ícono aquí..." rows="3"></textarea>
-                      </div>
-                    }
                   </div>
                 </div>
 
@@ -328,7 +286,7 @@ interface NewsItem {
                   <p class="preview-desc">Así se verá tu noticia en el carrusel del home</p>
 
                   <div class="carousel-preview-container">
-                    <div class="featured-news-preview" [style.background-image]="form.image ? 'url(' + form.image + ')' : 'none'" [style.background-position]="form.imagePosition || 'center center'">
+                    <div class="featured-news-preview" [style.background-image]="form.image ? 'url(' + resolveUrl(form.image) + ')' : 'none'" [style.background-position]="form.imagePosition || 'center center'">
                       <div class="featured-overlay"></div>
                       <div class="featured-content">
                         <span class="news-category-preview">{{ form.category || 'CATEGORÍA' }}</span>
@@ -341,10 +299,12 @@ interface NewsItem {
                         <h3 class="news-item-title">{{ form.title || 'Título de la Noticia' }}</h3>
                       </div>
                       <div class="news-item-thumb" [ngClass]="form.thumbBg">
-                        @if (form.thumbType === 'img') {
-                          <img [src]="form.thumbSrc" alt="preview" />
+                        @if (form.image) {
+                          <img [src]="resolveUrl(form.image)" alt="preview" />
                         } @else {
-                          <span [innerHTML]="sanitizeHtml(form.thumbSrc)"></span>
+                          <span class="thumb-placeholder-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                          </span>
                         }
                       </div>
                     </div>
@@ -1131,6 +1091,13 @@ interface NewsItem {
       color: white;
     }
 
+    .thumb-placeholder-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.5);
+    }
+
     /* Buttons */
     .btn {
       display: inline-flex;
@@ -1673,7 +1640,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
       image: '',
       imagePosition: 'center center',
       thumbType: 'img',
-      thumbSrc: 'assets/img/cruzBaila.webp',
+      thumbSrc: '',
       thumbBg: 'bg-blue'
     };
   }
@@ -1709,9 +1676,15 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
     this.saving.set(true);
     this.errorMsg.set('');
 
-    const payload = this.editingId() ? { ...this.form, id: this.editingId() } : this.form;
+    const payload = {
+      ...this.form,
+      thumbSrc: this.form.image,
+      thumbType: 'img' as const,
+    };
 
-    this.http.post<NewsItem>(`${environment.apiUrl}/news/`, payload).subscribe({
+    const finalPayload = this.editingId() ? { ...payload, id: this.editingId() } : payload;
+
+    this.http.post<NewsItem>(`${environment.apiUrl}/news/`, finalPayload).subscribe({
       next: () => {
         this.saving.set(false);
         this.closeModal();
