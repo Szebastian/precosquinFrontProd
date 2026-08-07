@@ -30,7 +30,7 @@ import { RouterLink } from '@angular/router';
     </section>
   `,
   styles: [`
-    .portal-scoreboard { background-color: white; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); padding: 8px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); width: 100%; border-radius: var(--radius); }
+    .portal-scoreboard { background-color: white; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); padding: 8px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); width: 100%; border-radius: 0; }
     .scoreboard-inner { width: 100%; display: flex; align-items: center; justify-content: center; gap: 24px; padding: 0 24px; flex-wrap: wrap; }
     .score-item { display: flex; align-items: center; gap: var(--space-3); }
     .score-label { font-size: var(--text-xs); color: var(--gray-700); font-weight: var(--weight-bold); }
@@ -40,7 +40,7 @@ import { RouterLink } from '@angular/router';
     .score-link:hover { opacity: 0.8; }
     .score-link:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
     @media (max-width: 640px) {
-      .portal-scoreboard { padding: 8px 0; border-radius: var(--radius-sm); }
+      .portal-scoreboard { padding: 8px 0; border-radius: 0; }
       .scoreboard-inner { flex-direction: column; gap: 8px; padding: 0 16px; }
       .score-divider { width: 40px; height: 1px; }
       .score-item { justify-content: center; }

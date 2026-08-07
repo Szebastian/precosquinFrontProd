@@ -29,36 +29,40 @@ import { InstagramFeedComponent } from './components/instagram-feed.component';
       <app-home-header />
 
       <main class="portal-main">
-        <!-- 1. HERO CAROUSEL -->
-        <section class="portal-content">
-          <app-news-carousel [newsItems]="newsItems()" />
-        </section>
+        <!-- 1. HERO CAROUSEL — dark band -->
+        <div class="band-dark">
+          <div class="band-inner">
+            <app-news-carousel [newsItems]="newsItems()" />
+          </div>
+        </div>
 
-        <!-- 2. INSCRIPCIONES CTA -->
-        <section class="portal-content">
-          <div class="inscripciones-block">
-            <div class="inscripciones-inner">
-              <div class="inscripciones-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                INSCRIPCIONES ABIERTAS
-              </div>
-              <h2 class="inscripciones-title">¿Listo para participar?</h2>
-              <p class="inscripciones-desc">Inscribí tu propuesta artística y formá parte del festival folclórico más importante de la Patagonia.</p>
-              <div class="inscripciones-actions">
-                <a routerLink="/inscripcion" class="btn-primary">
-                  INSCRIBIRME AHORA
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </a>
-                <a routerLink="/documentacion" class="btn-secondary">
-                  Ver documentación
-                </a>
+        <!-- 2. INSCRIPCIONES CTA — light band -->
+        <section class="band-light">
+          <div class="band-inner">
+            <div class="inscripciones-block">
+              <div class="inscripciones-inner">
+                <div class="inscripciones-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  INSCRIPCIONES ABIERTAS
+                </div>
+                <h2 class="inscripciones-title">¿Listo para participar?</h2>
+                <p class="inscripciones-desc">Inscribí tu propuesta artística y formá parte del festival folclórico más importante de la Patagonia.</p>
+                <div class="inscripciones-actions">
+                  <a routerLink="/inscripcion" class="btn-primary">
+                    INSCRIBIRME AHORA
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  </a>
+                  <a routerLink="/documentacion" class="btn-secondary">
+                    Ver documentación
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- 3. CATEGORÍAS -->
-        <section class="portal-content">
+        <!-- 3. CATEGORÍAS — blue band (full-bleed image) -->
+        <div class="band-blue">
           <app-home-separator variant="wave">
             <span class="separator-label">MÚSICA Y DANZA</span>
             <h2 class="separator-title">Categorías del Festival</h2>
@@ -76,43 +80,51 @@ import { InstagramFeedComponent } from './components/instagram-feed.component';
               <span class="sep-cat">Coro</span>
             </div>
           </app-home-separator>
+        </div>
+
+        <!-- 4. SCOREBOARD — light band -->
+        <section class="band-light">
+          <div class="band-inner">
+            @defer (on idle) {
+              <app-home-scoreboard />
+            } @loading (minimum 500ms) {
+              <div style="height: 80px;"></div>
+            }
+          </div>
         </section>
 
-        <!-- 4. SCOREBOARD -->
-        <section class="portal-content">
-          @defer (on idle) {
-            <app-home-scoreboard />
-          } @loading (minimum 500ms) {
-            <div style="height: 80px;"></div>
-          }
+        <!-- 5. INSTITUCIONAL — dark band -->
+        <div class="band-dark">
+          <div class="band-inner">
+            @defer (on idle) {
+              <app-home-declaracion-hero />
+            } @loading (minimum 500ms) {
+              <div style="height: 200px;"></div>
+            }
+          </div>
+        </div>
+
+        <!-- 6. INSTAGRAM — light band -->
+        <section class="band-light">
+          <div class="band-inner">
+            @defer (on idle) {
+              <app-instagram-feed />
+            } @loading (minimum 1s) {
+              <div style="height: 80px; text-align: center;">
+                <div class="loading-spinner"></div>
+              </div>
+            }
+          </div>
         </section>
 
-        <!-- 5. INSTITUCIONAL -->
-        <section class="portal-content">
+        <!-- 7. FOOTER — dark band -->
+        <div class="band-dark band-dark--flush">
           @defer (on idle) {
-            <app-home-declaracion-hero />
+            <app-home-footer />
           } @loading (minimum 500ms) {
             <div style="height: 200px;"></div>
           }
-        </section>
-
-        <!-- 6. INSTAGRAM -->
-        <section class="portal-content">
-          @defer (on idle) {
-            <app-instagram-feed />
-          } @loading (minimum 1s) {
-            <div style="height: 80px; text-align: center;">
-              <div class="loading-spinner"></div>
-            </div>
-          }
-        </section>
-
-        <!-- 7. FOOTER -->
-        @defer (on idle) {
-          <app-home-footer />
-        } @loading (minimum 500ms) {
-          <div style="height: 200px;"></div>
-        }
+        </div>
       </main>
     </div>
   `,
@@ -125,11 +137,10 @@ import { InstagramFeedComponent } from './components/instagram-feed.component';
       --radius-sm: 12px;
       --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
       --shadow-hover: 0 4px 16px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
-      --grid-gap: 4px;
     }
 
     /* ═══════════════════════════════════════════════════
-       PORTAL — ADAPTIVE GRID LAYOUT
+       PORTAL — FLEX + FULL-BLEED BANDS
        ═══════════════════════════════════════════════════ */
     .portal {
       min-height: 100vh;
@@ -141,16 +152,47 @@ import { InstagramFeedComponent } from './components/instagram-feed.component';
 
     .portal-main {
       flex: 1;
-      display: grid;
-      grid-template-columns: min(92%, 1200px);
-      justify-content: center;
-      gap: var(--grid-gap);
-      padding: 32px 16px 80px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .portal-content {
+    /* ─── Band: dark (full-bleed) ─── */
+    .band-dark {
       width: 100%;
-      min-width: 0;
+      background-color: var(--gray-900);
+    }
+
+    .band-dark .band-inner {
+      width: 100%;
+      max-width: min(92%, 1200px);
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .band-dark--flush {
+      padding: 0;
+    }
+
+    .band-dark--flush .band-inner {
+      padding: 0;
+    }
+
+    /* ─── Band: light (uses portal beige bg) ─── */
+    .band-light {
+      width: 100%;
+      background-color: var(--gray-50);
+    }
+
+    .band-light .band-inner {
+      width: 100%;
+      max-width: min(92%, 1200px);
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* ─── Band: blue/image (full-bleed) ─── */
+    .band-blue {
+      width: 100%;
     }
 
     .loading-spinner {
@@ -254,19 +296,20 @@ import { InstagramFeedComponent } from './components/instagram-feed.component';
       align-items: center;
       gap: 6px;
       background: transparent;
-      color: rgba(255,255,255,0.85);
+      color: var(--gray-200);
       padding: 12px 20px;
       border-radius: 999px;
       font-size: var(--text-sm);
       font-weight: 600;
       text-decoration: none;
-      border: 1px solid rgba(255,255,255,0.25);
+      border: 1px solid var(--gray-600);
       transition: all 0.2s ease;
       min-height: 48px;
     }
     .btn-secondary:hover {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08);
       color: #fff;
+      border-color: var(--gray-500);
     }
     .btn-secondary:focus-visible {
       outline: 3px solid rgba(255,255,255,0.5);
@@ -274,53 +317,50 @@ import { InstagramFeedComponent } from './components/instagram-feed.component';
     }
 
     /* ═══════════════════════════════════════════════════
-       RESPONSIVE — ADAPTIVE COLUMNS
+       RESPONSIVE
        ═══════════════════════════════════════════════════ */
-
-    /* 1280px+ : 2-column grid, sections reorganize */
     @media (min-width: 1280px) {
-      .portal-main {
-        grid-template-columns: min(90%, 1400px);
-        gap: 4px;
-        padding: 40px 24px 80px;
+      .band-dark .band-inner,
+      .band-light .band-inner {
+        max-width: min(90%, 1400px);
+        padding: 40px 32px;
       }
     }
 
-    /* 1600px+ : 3-column grid */
     @media (min-width: 1600px) {
-      .portal-main {
-        grid-template-columns: min(88%, 1600px);
-        gap: 4px;
-        padding: 48px 32px 80px;
+      .band-dark .band-inner,
+      .band-light .band-inner {
+        max-width: min(88%, 1600px);
+        padding: 48px 40px;
       }
     }
 
-    /* 1920px+ : 4-column grid */
     @media (min-width: 1920px) {
-      .portal-main {
-        grid-template-columns: min(86%, 1800px);
-        gap: 4px;
-        padding: 48px 40px 80px;
+      .band-dark .band-inner,
+      .band-light .band-inner {
+        max-width: min(86%, 1800px);
+        padding: 48px 48px;
       }
     }
 
-    /* 2560px+ : 5-column grid */
     @media (min-width: 2560px) {
-      .portal-main {
-        grid-template-columns: min(82%, 2100px);
-        gap: 4px;
-        padding: 56px 48px 80px;
+      .band-dark .band-inner,
+      .band-light .band-inner {
+        max-width: min(82%, 2100px);
+        padding: 56px 56px;
       }
     }
 
-    /* ─── Mobile ─── */
     @media (max-width: 640px) {
-      .portal-main { padding: 16px 16px 80px; gap: 2px; }
+      .band-dark .band-inner,
+      .band-light .band-inner {
+        padding: 20px 16px;
+      }
       .inscripciones-block { padding: 20px 16px; border-radius: var(--radius-sm); }
       .inscripciones-title { font-size: var(--text-xl); }
       .inscripciones-actions { flex-direction: column; width: 100%; }
       .btn-primary { width: 100%; justify-content: center; }
-      .btn-secondary { width: 100%; justify-content: center; border-color: rgba(255,255,255,0.15); }
+      .btn-secondary { width: 100%; justify-content: center; }
     }
   `]
 })
