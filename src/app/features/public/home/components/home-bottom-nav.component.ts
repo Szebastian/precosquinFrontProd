@@ -38,6 +38,7 @@ import { Subscription } from 'rxjs';
     @if (moreOpen()) {
       <div class="more-overlay" (click)="toggleMore()"></div>
       <div class="more-panel">
+        <div class="more-handle"></div>
         <div class="more-header">
           <h3 class="more-title">Más opciones</h3>
           <button class="more-close" (click)="toggleMore()" aria-label="Cerrar menú">
@@ -46,34 +47,46 @@ import { Subscription } from 'rxjs';
         </div>
         <div class="more-links">
           <a routerLink="/documentacion" class="more-link" (click)="toggleMore()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
-            Documentación
+            <div class="more-link-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+            </div>
+            <div class="more-link-text">
+              <span class="more-link-label">Documentación</span>
+              <span class="more-link-desc">Bases y reglamentos</span>
+            </div>
           </a>
           <a routerLink="/patrocinio" class="more-link" (click)="toggleMore()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-            Patrocinadores
-          </a>
-          <a href="#" class="more-link" (click)="toggleMore()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-            Preguntas Frecuentes
-          </a>
-          <a href="#" class="more-link" (click)="toggleMore()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Contacto
+            <div class="more-link-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </div>
+            <div class="more-link-text">
+              <span class="more-link-label">Patrocinadores</span>
+              <span class="more-link-desc">Conocé a nuestros aliados</span>
+            </div>
           </a>
           <a href="https://www.instagram.com/precosquinpuertopiramides" target="_blank" class="more-link" (click)="toggleMore()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-            Instagram
+            <div class="more-link-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </div>
+            <div class="more-link-text">
+              <span class="more-link-label">Instagram</span>
+              <span class="more-link-desc">Seguinos en redes</span>
+            </div>
           </a>
           <a href="https://www.youtube.com/@PreCosquinPuertoPirámides" target="_blank" class="more-link" (click)="toggleMore()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
-            YouTube
+            <div class="more-link-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+            </div>
+            <div class="more-link-text">
+              <span class="more-link-label">YouTube</span>
+              <span class="more-link-desc">Videos y transmisiones</span>
+            </div>
           </a>
         </div>
         <div class="more-footer">
           <a routerLink="/auth/login" class="more-login" (click)="toggleMore()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            Acceder
+            Acceder al panel
           </a>
         </div>
       </div>
@@ -83,6 +96,7 @@ import { Subscription } from 'rxjs';
   styles: [`
     :host { display: none; }
 
+    /* ═══ BOTTOM NAV — DARK ═══ */
     .bottom-nav {
       display: flex;
       align-items: center;
@@ -92,10 +106,11 @@ import { Subscription } from 'rxjs';
       left: 0;
       right: 0;
       z-index: 900;
-      background: #fff;
-      border-top: 1px solid rgba(0,0,0,0.08);
+      background: rgba(17, 17, 24, 0.92);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
     }
 
     .nav-item {
@@ -103,83 +118,118 @@ import { Subscription } from 'rxjs';
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
+      gap: 3px;
       min-width: 48px;
       min-height: 48px;
-      padding: 4px 8px;
+      padding: 4px 10px;
       border: none;
       background: transparent;
-      color: var(--gray-500, #857a68);
+      color: rgba(255, 255, 255, 0.4);
       text-decoration: none;
       cursor: pointer;
-      transition: color 0.15s ease;
+      transition: color 0.2s ease;
       -webkit-tap-highlight-color: transparent;
+      position: relative;
     }
 
     .nav-item:active {
-      transform: scale(0.92);
+      transform: scale(0.9);
     }
 
     .nav-label {
       font-size: 10px;
       font-weight: 600;
       line-height: 1;
-      letter-spacing: 0.01em;
+      letter-spacing: 0.02em;
     }
 
     .nav-active {
-      color: var(--brand-600, #2563eb);
+      color: #fff;
     }
 
+    .nav-active::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 2px;
+      background: var(--brand-accent, #d1ba73);
+      border-radius: 0 0 2px 2px;
+    }
+
+    /* ═══ CTA BUTTON ═══ */
     .nav-item-cta {
-      color: var(--brand-600, #2563eb);
-      margin-top: -16px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: -12px;
+    }
+
+    .nav-item-cta.nav-active {
+      color: #fff;
+    }
+
+    .nav-item-cta.nav-active::after {
+      display: none;
     }
 
     .nav-cta-icon {
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: var(--brand-accent, #d1ba73);
-      color: var(--gray-900, #1a1a1a);
+      background: linear-gradient(135deg, var(--brand-accent, #d1ba73), #b8993e);
+      color: #111118;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(209,186,115,0.4);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow:
+        0 4px 16px rgba(209, 186, 115, 0.35),
+        0 0 0 3px rgba(17, 17, 24, 1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .nav-item-cta:active .nav-cta-icon {
-      transform: scale(0.92);
+      transform: scale(0.9);
+      box-shadow:
+        0 2px 8px rgba(209, 186, 115, 0.3),
+        0 0 0 3px rgba(17, 17, 24, 1);
     }
 
     .nav-label-cta {
       font-weight: 700;
-      color: var(--brand-900, #1e3a8a);
+      color: var(--brand-accent, #d1ba73);
     }
 
-    /* More overlay */
+    /* ═══ MORE OVERLAY ═══ */
     .more-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0, 0, 0, 0.6);
       z-index: 950;
       animation: fadeIn 0.2s ease;
     }
 
+    /* ═══ MORE PANEL — DARK ═══ */
     .more-panel {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       z-index: 951;
-      background: #fff;
+      background: #1a1a24;
       border-radius: 20px 20px 0 0;
-      box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
-      animation: slideUp 0.25s ease;
-      max-height: 70vh;
+      animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      max-height: 75vh;
       overflow-y: auto;
       padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .more-handle {
+      width: 36px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 99px;
+      margin: 10px auto 0;
     }
 
     .more-header {
@@ -187,14 +237,14 @@ import { Subscription } from 'rxjs';
       align-items: center;
       justify-content: space-between;
       padding: 16px 20px 12px;
-      border-bottom: 1px solid rgba(0,0,0,0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .more-title {
       margin: 0;
       font-size: 16px;
       font-weight: 700;
-      color: var(--gray-900, #1a1a1a);
+      color: #fff;
     }
 
     .more-close {
@@ -202,17 +252,18 @@ import { Subscription } from 'rxjs';
       height: 36px;
       border-radius: 50%;
       border: none;
-      background: rgba(0,0,0,0.06);
-      color: var(--gray-700, #4d4638);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.5);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.15s ease;
+      transition: all 0.15s ease;
     }
 
     .more-close:hover {
-      background: rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
     }
 
     .more-links {
@@ -223,32 +274,57 @@ import { Subscription } from 'rxjs';
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 14px 12px;
+      padding: 12px;
       font-size: 15px;
       font-weight: 500;
-      color: var(--gray-900, #1a1a1a);
+      color: rgba(255, 255, 255, 0.85);
       text-decoration: none;
-      border-radius: 12px;
+      border-radius: 14px;
       transition: background 0.15s ease;
-      min-height: 48px;
+      min-height: 52px;
     }
 
     .more-link:hover {
-      background: rgba(0,0,0,0.04);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .more-link:active {
-      background: rgba(0,0,0,0.08);
+      background: rgba(255, 255, 255, 0.1);
     }
 
-    .more-link svg {
-      color: var(--gray-500, #857a68);
+    .more-link-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.5);
       flex-shrink: 0;
     }
 
+    .more-link-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .more-link-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .more-link-desc {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+      font-weight: 400;
+    }
+
     .more-footer {
-      padding: 8px 12px 12px;
-      border-top: 1px solid rgba(0,0,0,0.06);
+      padding: 8px 12px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .more-login {
@@ -258,18 +334,19 @@ import { Subscription } from 'rxjs';
       gap: 8px;
       width: 100%;
       padding: 14px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
-      color: #fff;
-      background: var(--brand-700, #1d4ed8);
+      color: #111118;
+      background: linear-gradient(135deg, var(--brand-accent, #d1ba73), #b8993e);
       border-radius: 14px;
       text-decoration: none;
-      transition: background 0.15s ease;
+      transition: all 0.15s ease;
       min-height: 48px;
     }
 
     .more-login:hover {
-      background: var(--brand-800, #1e40af);
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
 
     @keyframes fadeIn {
