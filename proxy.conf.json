@@ -6,5 +6,10 @@
     "pathRewrite": {
       "^/api": ""
     }
+  },
+  "/v1/gallery": {
+    "target": "http://localhost:8001",
+    "secure": false,
+    "changeOrigin": true
   }
 }

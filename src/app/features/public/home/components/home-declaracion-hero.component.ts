@@ -54,9 +54,9 @@ import { RouterLink } from '@angular/router';
     .declaracion-hero-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
     .declaracion-hero-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
     .declaracion-hero-highlight { display: flex; flex-direction: column; gap: var(--space-3); flex-shrink: 0; }
-    .highlight-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); backdrop-filter: blur(4px); text-align: center; min-width: 140px; }
-    .highlight-value { display: block; font-family: var(--font-display); font-size: var(--text-xl); font-weight: var(--weight-extrabold); color: #fff; line-height: 1; margin-bottom: 4px; }
-    .highlight-label { display: block; font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.1em; color: rgba(255,255,255,0.6); text-transform: uppercase; }
+    .highlight-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-lg); padding: 20px 28px; backdrop-filter: blur(4px); text-align: center; min-width: 160px; }
+    .highlight-value { display: block; font-family: var(--font-display); font-size: 2.2rem; font-weight: var(--weight-extrabold); color: #fff; line-height: 1; margin-bottom: 6px; }
+    .highlight-label { display: block; font-size: 11px; font-weight: var(--weight-semibold); letter-spacing: 0.08em; color: rgba(255,255,255,0.55); text-transform: uppercase; }
     @media (max-width: 1024px) {
       .declaracion-hero-inner { flex-direction: column; text-align: center; }
       .declaracion-hero-desc { margin-left: auto; margin-right: auto; }
@@ -69,7 +69,8 @@ import { RouterLink } from '@angular/router';
     @media (min-width: 1600px) {
       .declaracion-hero-title { font-size: 2.5rem; }
       .declaracion-hero-highlight { gap: var(--space-4); }
-      .highlight-card { padding: 20px 24px; min-width: 160px; }
+      .highlight-card { padding: 24px 32px; min-width: 180px; }
+      .highlight-value { font-size: 2.5rem; }
     }
     @media (min-width: 1920px) {
       .declaracion-hero-title { font-size: 2.75rem; }
@@ -83,8 +84,9 @@ import { RouterLink } from '@angular/router';
       .declaracion-hero-title { font-size: var(--text-2xl); }
       .declaracion-hero-desc { font-size: var(--text-sm); }
       .declaracion-hero-btn { width: 100%; justify-content: center; padding: 12px 20px; font-size: 0.7rem; }
-      .highlight-card { padding: var(--space-3) var(--space-4); }
-      .highlight-value { font-size: var(--text-lg); }
+      .highlight-card { padding: 16px 20px; }
+      .highlight-value { font-size: 1.75rem; }
+      .highlight-label { font-size: 10px; }
     }
   `]
 })

@@ -9,6 +9,7 @@ import { HomeDeclaracionHeroComponent } from './components/home-declaracion-hero
 import { HomeScoreboardComponent } from './components/home-scoreboard.component';
 import { HomeFooterComponent } from './components/home-footer.component';
 import { InstagramFeedComponent } from './components/instagram-feed.component';
+import { ThreeGalleryComponent } from './components/three-gallery.component';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +23,7 @@ import { InstagramFeedComponent } from './components/instagram-feed.component';
     HomeScoreboardComponent,
     HomeFooterComponent,
     InstagramFeedComponent,
+    ThreeGalleryComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -116,6 +118,17 @@ import { InstagramFeedComponent } from './components/instagram-feed.component';
             }
           </div>
         </section>
+
+        <!-- 6.5. GALERÍA 3D — dark band -->
+        <div class="band-dark">
+          <div class="band-inner">
+            @defer (on idle) {
+              <app-three-gallery />
+            } @loading (minimum 1s) {
+              <div style="height: 500px;"></div>
+            }
+          </div>
+        </div>
 
         <!-- 7. FOOTER — dark band -->
         <div class="band-dark band-dark--flush">

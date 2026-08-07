@@ -125,6 +125,11 @@ export const appRoutes: Routes = [
         data: { roles: ['organizador', 'admin', 'staff'] }
       },
       {
+        path: 'galeria',
+        loadChildren: () => import('./features/galeria/galeria.routes').then(m => m.GALERIA_ROUTES),
+        data: { roles: ['organizador', 'admin', 'staff'] }
+      },
+      {
         path: 'mensajes',
         loadComponent: () => import('./features/mensajes/mensajes-list.page').then(m => m.MensajesListPageComponent),
         data: { title: 'Mensajes', roles: ['organizador', 'admin', 'staff'] }

@@ -35,11 +35,11 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "budgets": [
+               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "250kB",
-                  "maximumError": "450kB"
+                  "maximumWarning": "500kB",
+                  "maximumError": "800kB"
                 },
                 {
                   "type": "anyComponentStyle",

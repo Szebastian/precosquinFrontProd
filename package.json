@@ -23,6 +23,7 @@
     "chart.js": "^4.5.1",
     "html5-qrcode": "^2.3.8",
     "rxjs": "~7.8.0",
+    "three": "^0.185.1",
     "tslib": "^2.6.0",
     "zone.js": "~0.15.0"
   },
@@ -33,6 +34,7 @@
     "@angular/cli": "^21.2.0",
     "@angular/compiler-cli": "^21.2.0",
     "@types/node": "^26.1.0",
+    "@types/three": "^0.185.4",
     "autoprefixer": "^10.5.2",
     "http-server": "^14.1.1",
     "jsdom": "^29.1.1",

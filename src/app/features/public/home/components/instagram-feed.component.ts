@@ -173,9 +173,53 @@ div[class*="eapps-instagram-feed"] {
   margin: 0 !important;
 }
 
+div[class*="eapps-instagram-feed"] a,
+div[class*="eapps-instagram-feed"] .eapps-instagram-post,
+div[class*="eapps-instagram-feed"] .eapps-post {
+  aspect-ratio: 1 / 1 !important;
+  overflow: hidden !important;
+  position: relative !important;
+  display: block !important;
+}
+
+div[class*="eapps-instagram-feed"] a img,
+div[class*="eapps-instagram-feed"] .eapps-instagram-post img,
+div[class*="eapps-instagram-feed"] .eapps-post img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+div[class*="eapps-instagram-feed"] a::before,
+div[class*="eapps-instagram-feed"] .eapps-instagram-post::before,
+div[class*="eapps-instagram-feed"] .eapps-post::before {
+  content: '';
+  position: absolute !important;
+  top: 8px !important;
+  left: 8px !important;
+  width: 20px !important;
+  height: 20px !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z'/%3E%3C/svg%3E") no-repeat center !important;
+  background-size: contain !important;
+  border-radius: 4px !important;
+  opacity: 0.8 !important;
+  z-index: 5 !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)) !important;
+}
+
 @media (max-width: 640px) {
   div[class*="eapps-instagram-feed"] {
     grid-template-columns: repeat(2, 1fr) !important;
+  }
+  div[class*="eapps-instagram-feed"] a::before,
+  div[class*="eapps-instagram-feed"] .eapps-instagram-post::before,
+  div[class*="eapps-instagram-feed"] .eapps-post::before {
+    width: 16px !important;
+    height: 16px !important;
+    top: 6px !important;
+    left: 6px !important;
   }
 }
 

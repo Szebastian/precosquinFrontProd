@@ -28,13 +28,13 @@
   object-fit: contain;
   object-position: center;
   flex-shrink: 0;
-  filter: grayscale(100%);
-  opacity: 0.5;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
   transition: all 0.3s ease;
 }
 
 .sponsor-logo:hover {
-  filter: grayscale(0%);
+  filter: brightness(1) invert(0);
   opacity: 1;
 }
 
