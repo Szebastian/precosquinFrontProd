@@ -5,6 +5,6 @@ export const environment = {
   supabaseUrl: 'https://xctlxyhcravqmibyjyby.supabase.co',
   supabaseAnonKey: 'sb_publishable_Y2wFjopJcybwlsTmWsylrg_t1sexT7H',
   appUrl: 'http://localhost:4200',
-  enableAnalytics: false,
+  enableAnalytics: true,
   logLevel: 'debug'
 };
