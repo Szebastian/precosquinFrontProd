@@ -91,7 +91,9 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
 
-        <div class="lightbox-content">
+        <div class="lightbox-content"
+          (touchstart)="onTouchStart($event)"
+          (touchend)="onTouchEnd($event)">
           <div class="lightbox-img-wrapper">
             <img [src]="filteredItems()[activeIndex()!].image" [alt]="filteredItems()[activeIndex()!].title" class="lightbox-img" />
           </div>
@@ -445,13 +447,45 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
 
     /* ═══ RESPONSIVE ═══ */
     @media (max-width: 640px) {
+      .gallery-header { margin-bottom: 18px; }
       .gallery-title { font-size: var(--text-xl); }
-      .gallery-subtitle { font-size: 12px; }
-      .filter-scroll { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
-      .filter-pill { flex-shrink: 0; padding: 6px 12px; font-size: 11px; }
+      .gallery-subtitle { font-size: 12px; margin-top: 5px; }
+      .filter-row { margin-bottom: 16px; }
+      .filter-scroll {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+        gap: 6px;
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+      .filter-pill { flex-shrink: 0; padding: 5px 11px; font-size: 11px; }
+      .masonry-scroll { max-height: 420px; }
+      .masonry-overlay { opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 40%); }
+      .masonry-category { font-size: 8px; }
+      .masonry-title { font-size: 11px; }
       .lightbox-nav { display: none; }
       .lightbox-img { max-width: 95vw; max-height: 65vh; }
       .lightbox-close { top: 10px; right: 10px; width: 38px; height: 38px; }
+    }
+
+    @media (max-width: 380px) {
+      .gallery-badge { font-size: 9px; padding: 4px 10px; margin-bottom: 10px; }
+      .gallery-title { font-size: 17px; }
+      .gallery-subtitle { font-size: 11px; }
+      .filter-scroll { gap: 5px; }
+      .filter-pill { padding: 4px 9px; font-size: 10px; gap: 4px; }
+      .pill-count { font-size: 9px; padding: 0 5px; min-width: 16px; }
+      .masonry-scroll { max-height: 360px; }
+      .masonry-item { padding: 4px; }
+      .masonry-overlay { padding: 8px; inset: 4px; }
+      .masonry-category { font-size: 7px; margin-bottom: 2px; }
+      .masonry-title { font-size: 10px; }
+      .lightbox-img { max-width: 100vw; max-height: 60vh; border-radius: 0; }
+      .lightbox-info { padding: 0 12px; }
+      .lightbox-title { font-size: var(--text-base); }
     }
   `],
 })
@@ -489,6 +523,8 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
   private itemPositions: { x: number; y: number; w: number; h: number }[] = [];
   private resizeObserver: ResizeObserver | null = null;
   private containerWidth = 0;
+  private touchStartX = 0;
+  private touchStartY = 0;
 
   private readonly aspectRatios = [0.75, 1.0, 1.33, 0.8, 1.1, 0.65, 1.2, 0.9];
 
@@ -548,8 +584,7 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
     if (w >= 1500) this.columns = 5;
     else if (w >= 1000) this.columns = 4;
     else if (w >= 600) this.columns = 3;
-    else if (w >= 400) this.columns = 2;
-    else this.columns = 1;
+    else this.columns = 2;
   }
 
   private calculateLayout(): void {
@@ -619,5 +654,18 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
     const len = this.filteredItems().length;
     if (len === 0) return;
     this.activeIndex.set((this.activeIndex()! + 1) % len);
+  }
+
+  onTouchStart(event: TouchEvent): void {
+    this.touchStartX = event.changedTouches[0].screenX;
+    this.touchStartY = event.changedTouches[0].screenY;
+  }
+
+  onTouchEnd(event: TouchEvent): void {
+    const dx = event.changedTouches[0].screenX - this.touchStartX;
+    const dy = event.changedTouches[0].screenY - this.touchStartY;
+    if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
+    if (dx < 0) this.nextItem(event);
+    else this.prevItem(event);
   }
 }
