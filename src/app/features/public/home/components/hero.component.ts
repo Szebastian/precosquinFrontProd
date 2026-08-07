@@ -141,7 +141,8 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
     if (!isMobile) return;
     const activeItem = container.children[index] as HTMLElement | undefined;
     if (activeItem) {
-      activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      const scrollTarget = activeItem.offsetLeft - (container.clientWidth - activeItem.clientWidth) / 2;
+      container.scrollTo({ left: scrollTarget, behavior: 'smooth' });
     }
   }
 
