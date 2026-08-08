@@ -7,33 +7,33 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   template: `
     <footer class="portal-footer">
-      <div class="footer-sponsors">
-        <div class="sponsors-inner">
-          <span class="sponsors-label">COLABORAN</span>
-          <div class="sponsors-grid">
-            <div class="sponsor-link" role="link" tabindex="0" title="Municipalidad Puerto Pirámides" (click)="openSponsor('https://www.instagram.com/municipalidad_puerto_piramides/')" (keydown.enter)="openSponsor('https://www.instagram.com/municipalidad_puerto_piramides/')">
-              <img src="assets/img/LPiramides.webp" alt="Puerto Pirámides" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+      <div class="footer-collab">
+        <div class="collab-inner">
+          <span class="collab-label">COLABORAN</span>
+          <div class="collab-grid">
+            <div class="collab-item" role="link" tabindex="0" title="Municipalidad Puerto Pirámides" (click)="openUrl('https://www.instagram.com/municipalidad_puerto_piramides/')" (keydown.enter)="openUrl('https://www.instagram.com/municipalidad_puerto_piramides/')">
+              <img src="assets/img/LPiramides.webp" alt="Puerto Pirámides" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
-            <div class="sponsor-link" role="link" tabindex="0" title="Hotel Rayentray" (click)="openSponsor('https://www.instagram.com/rayentrayhoteles')" (keydown.enter)="openSponsor('https://www.instagram.com/rayentrayhoteles')">
-              <img src="assets/img/LRayentray.webp" alt="Hotel Rayentray" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <div class="collab-item" role="link" tabindex="0" title="Hotel Rayentray" (click)="openUrl('https://www.instagram.com/rayentrayhoteles')" (keydown.enter)="openUrl('https://www.instagram.com/rayentrayhoteles')">
+              <img src="assets/img/LRayentray.webp" alt="Hotel Rayentray" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
-            <div class="sponsor-link" role="link" tabindex="0" title="Hydro Sport Avistajes" (click)="openSponsor('https://www.instagram.com/hydrosportavistajes')" (keydown.enter)="openSponsor('https://www.instagram.com/hydrosportavistajes')">
-              <img src="assets/img/LHydro.webp" alt="Hydro" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <div class="collab-item" role="link" tabindex="0" title="Hydro Sport Avistajes" (click)="openUrl('https://www.instagram.com/hydrosportavistajes')" (keydown.enter)="openUrl('https://www.instagram.com/hydrosportavistajes')">
+              <img src="assets/img/LHydro.webp" alt="Hydro" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
-            <div class="sponsor-link" role="link" tabindex="0" title="Hidden House" (click)="openSponsor('https://www.instagram.com/hidden.house')" (keydown.enter)="openSponsor('https://www.instagram.com/hidden.house')">
-              <img src="assets/img/logoHH.webp" alt="HH" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <div class="collab-item" role="link" tabindex="0" title="Hidden House" (click)="openUrl('https://www.instagram.com/hidden.house')" (keydown.enter)="openUrl('https://www.instagram.com/hidden.house')">
+              <img src="assets/img/logoHH.webp" alt="HH" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
-            <div class="sponsor-link" role="link" tabindex="0" title="Bodegón El Refugio" (click)="openSponsor('https://www.instagram.com/bodegon_elrefugio')" (keydown.enter)="openSponsor('https://www.instagram.com/bodegon_elrefugio')">
-              <img src="assets/img/BodegonElRefugio.webp" alt="Bodegón El Refugio" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <div class="collab-item" role="link" tabindex="0" title="Bodegón El Refugio" (click)="openUrl('https://www.instagram.com/bodegon_elrefugio')" (keydown.enter)="openUrl('https://www.instagram.com/bodegon_elrefugio')">
+              <img src="assets/img/BodegonElRefugio.webp" alt="Bodegón El Refugio" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
-            <div class="sponsor-link" role="link" tabindex="0" title="El Refugio Pirámides" (click)="openSponsor('https://www.instagram.com/elrefugiopiramides')" (keydown.enter)="openSponsor('https://www.instagram.com/elrefugiopiramides')">
-              <img src="assets/img/ElRefugioPIramiLogo.webp" alt="El Refugio Pirámides" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <div class="collab-item" role="link" tabindex="0" title="El Refugio Pirámides" (click)="openUrl('https://www.instagram.com/elrefugiopiramides')" (keydown.enter)="openUrl('https://www.instagram.com/elrefugiopiramides')">
+              <img src="assets/img/ElRefugioPIramiLogo.webp" alt="El Refugio Pirámides" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
-            <div class="sponsor-link" role="link" tabindex="0" title="La Reserva En El Mar" (click)="openSponsor('https://www.instagram.com/lareservaenelmar')" (keydown.enter)="openSponsor('https://www.instagram.com/lareservaenelmar')">
-              <img src="assets/img/logoLaReservaEnElMar.webp" alt="La Reserva En El Mar" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <div class="collab-item" role="link" tabindex="0" title="La Reserva En El Mar" (click)="openUrl('https://www.instagram.com/lareservaenelmar')" (keydown.enter)="openUrl('https://www.instagram.com/lareservaenelmar')">
+              <img src="assets/img/logoLaReservaEnElMar.webp" alt="La Reserva En El Mar" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
-            <div class="sponsor-link" role="link" tabindex="0" title="Avistajes Peke Sosa" (click)="openSponsor('https://www.instagram.com/avistajespekesosa')" (keydown.enter)="openSponsor('https://www.instagram.com/avistajespekesosa')">
-              <img src="assets/img/LOGO-PEKE-png-4k.webp" alt="Avistajes Peke Sosa" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <div class="collab-item" role="link" tabindex="0" title="Avistajes Peke Sosa" (click)="openUrl('https://www.instagram.com/avistajespekesosa')" (keydown.enter)="openUrl('https://www.instagram.com/avistajespekesosa')">
+              <img src="assets/img/LOGO-PEKE-png-4k.webp" alt="Avistajes Peke Sosa" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
           </div>
         </div>
@@ -75,14 +75,14 @@ import { RouterLink } from '@angular/router';
   `,
   styles: [`
     .portal-footer { margin-top: auto; background-color: var(--gray-900); border-top: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
-    .footer-sponsors { background-color: rgba(0,0,0,0.3); padding: 48px 24px; display: flex; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .sponsors-inner { width: 100%; max-width: min(92%, 1200px); display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    .sponsors-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: var(--gray-300); }
-    .sponsors-grid { display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; }
-    .sponsor-logo { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
-    .sponsor-link { display: inline-flex; text-decoration: none; cursor: pointer; }
-    .sponsor-link:hover .sponsor-logo { filter: grayscale(0%); opacity: 1; transform: translateY(-2px); }
-    .sponsor-link:focus-visible .sponsor-logo { outline: 2px solid var(--brand-500); outline-offset: 4px; }
+    .footer-collab { background-color: rgba(0,0,0,0.3); padding: 48px 24px; display: flex; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .collab-inner { width: 100%; max-width: min(92%, 1200px); display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .collab-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: var(--gray-300); }
+    .collab-grid { display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; }
+    .collab-img { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
+    .collab-item { display: inline-flex; text-decoration: none; cursor: pointer; }
+    .collab-item:hover .collab-img { filter: grayscale(0%); opacity: 1; transform: translateY(-2px); }
+    .collab-item:focus-visible .collab-img { outline: 2px solid var(--brand-500); outline-offset: 4px; }
     .footer-main { width: 100%; max-width: min(92%, 1200px); margin: 0 auto; padding: 48px 24px; display: grid; grid-template-columns: 1fr; gap: 32px; }
     .footer-brand { display: flex; align-items: center; gap: var(--space-4); }
     .footer-logo { height: 60px; width: auto; opacity: 0.85; }
@@ -101,19 +101,19 @@ import { RouterLink } from '@angular/router';
     .social-icon:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
     .footer-copyright { background-color: rgba(0,0,0,0.4); color: var(--gray-300); text-align: center; padding: var(--space-4); font-size: var(--text-xs); border-top: 1px solid rgba(255,255,255,0.05); }
     @media (min-width: 1280px) {
-      .sponsors-inner, .footer-main { max-width: min(90%, 1400px); }
+      .collab-inner, .footer-main { max-width: min(90%, 1400px); }
       .footer-main { grid-template-columns: 1fr 1fr 1fr; gap: 40px; }
       .footer-links { justify-content: flex-start; }
       .footer-social { align-items: flex-end; }
     }
     @media (min-width: 1600px) {
-      .sponsors-inner, .footer-main { max-width: min(88%, 1600px); }
+      .collab-inner, .footer-main { max-width: min(88%, 1600px); }
     }
     @media (min-width: 1920px) {
-      .sponsors-inner, .footer-main { max-width: min(86%, 1800px); }
+      .collab-inner, .footer-main { max-width: min(86%, 1800px); }
     }
     @media (min-width: 2560px) {
-      .sponsors-inner, .footer-main { max-width: min(82%, 2100px); }
+      .collab-inner, .footer-main { max-width: min(82%, 2100px); }
     }
     @media (max-width: 1024px) {
       .footer-main { justify-items: center; text-align: center; }
@@ -122,10 +122,10 @@ import { RouterLink } from '@angular/router';
       .footer-social { align-items: center; text-align: center; }
     }
     @media (max-width: 640px) {
-      .footer-sponsors { padding: var(--space-5) var(--space-4); }
-.sponsor-logo { height: 36px; max-width: 100px; filter: grayscale(100%); opacity: 0.6; }
-.sponsor-link:hover .sponsor-logo { filter: grayscale(0%); opacity: 1; }
-      .sponsors-grid { gap: var(--space-8); }
+      .footer-collab { padding: var(--space-5) var(--space-4); }
+      .collab-img { height: 36px; max-width: 100px; filter: grayscale(100%); opacity: 0.6; }
+      .collab-item:hover .collab-img { filter: grayscale(0%); opacity: 1; }
+      .collab-grid { gap: var(--space-8); }
       .footer-main { padding: var(--space-6) var(--space-4); gap: var(--space-5); }
       .footer-logo { height: 40px; }
       .brand-text h4 { font-size: var(--text-base); }
@@ -137,7 +137,7 @@ import { RouterLink } from '@angular/router';
 export class HomeFooterComponent {
   currentYear = new Date().getFullYear();
 
-  openSponsor(url: string): void {
+  openUrl(url: string): void {
     window.open(url, '_blank');
   }
 }
