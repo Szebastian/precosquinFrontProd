@@ -6,6 +6,16 @@ import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="location">
+      <div class="sliced-waves">
+        <div class="sw-row" style="--r:0"></div>
+        <div class="sw-row" style="--r:1"></div>
+        <div class="sw-row" style="--r:2"></div>
+        <div class="sw-row" style="--r:3"></div>
+        <div class="sw-row" style="--r:4"></div>
+        <div class="sw-row" style="--r:5"></div>
+        <div class="sw-row" style="--r:6"></div>
+        <div class="sw-row" style="--r:7"></div>
+      </div>
       <div class="location-inner">
         <div class="location-card">
           <div class="location-badge">
@@ -73,11 +83,69 @@ import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
     </section>
   `,
   styles: [`
-    .location { width: 100%; }
+    .location { width: 100%; position: relative; overflow: visible; }
+
+    /* ─── Sliced Waves — thick undulating bands ─── */
+    .sliced-waves {
+      position: absolute;
+      top: -40px;
+      bottom: -40px;
+      left: 50%;
+      width: 100vw;
+      transform: translateX(-50%);
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .sw-row {
+      position: absolute;
+      left: -10%;
+      width: 120%;
+      height: 18px;
+      border-radius: 999px;
+      top: calc(var(--r) * 12.5%);
+      animation: sw-move 4s ease-in-out calc(var(--r) * 0.3s) infinite alternate;
+    }
+
+    .sw-row::before,
+    .sw-row::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+
+    .sw-row::before {
+      filter: blur(0px);
+    }
+
+    .sw-row::after {
+      filter: blur(12px);
+      opacity: 0.5;
+    }
+
+    .sw-row:nth-child(1) { background: linear-gradient(90deg, transparent 5%, rgba(251,191,36,0.5) 30%, rgba(251,191,36,0.7) 50%, rgba(251,191,36,0.5) 70%, transparent 95%); }
+    .sw-row:nth-child(2) { background: linear-gradient(90deg, transparent 10%, rgba(236,72,153,0.4) 35%, rgba(236,72,153,0.6) 55%, rgba(236,72,153,0.4) 75%, transparent 90%); }
+    .sw-row:nth-child(3) { background: linear-gradient(90deg, transparent 8%, rgba(96,165,250,0.5) 25%, rgba(96,165,250,0.7) 50%, rgba(96,165,250,0.5) 75%, transparent 92%); }
+    .sw-row:nth-child(4) { background: linear-gradient(90deg, transparent 12%, rgba(251,191,36,0.4) 30%, rgba(236,72,153,0.5) 55%, rgba(96,165,250,0.4) 80%, transparent 88%); }
+    .sw-row:nth-child(5) { background: linear-gradient(90deg, transparent 6%, rgba(96,165,250,0.45) 28%, rgba(96,165,250,0.65) 52%, rgba(96,165,250,0.45) 72%, transparent 94%); }
+    .sw-row:nth-child(6) { background: linear-gradient(90deg, transparent 15%, rgba(236,72,153,0.35) 32%, rgba(251,191,36,0.5) 58%, rgba(236,72,153,0.35) 78%, transparent 85%); }
+    .sw-row:nth-child(7) { background: linear-gradient(90deg, transparent 10%, rgba(251,191,36,0.4) 25%, rgba(251,191,36,0.6) 48%, rgba(251,191,36,0.4) 70%, transparent 90%); }
+    .sw-row:nth-child(8) { background: linear-gradient(90deg, transparent 8%, rgba(96,165,250,0.35) 30%, rgba(236,72,153,0.45) 55%, rgba(96,165,250,0.35) 75%, transparent 92%); }
+
+    @keyframes sw-move {
+      0% { transform: translateY(0) scaleY(1); opacity: 0.7; }
+      30% { transform: translateY(-12px) scaleY(1.4); opacity: 0.9; }
+      60% { transform: translateY(8px) scaleY(0.7); opacity: 0.6; }
+      100% { transform: translateY(-6px) scaleY(1.2); opacity: 0.8; }
+    }
+
     .location-inner {
       display: grid; grid-template-columns: 1fr; gap: 0;
       border-radius: 16px; overflow: hidden;
       box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+      position: relative; z-index: 1;
     }
     .location-card {
       background: linear-gradient(160deg, #0f172a 0%, #1a2332 100%);

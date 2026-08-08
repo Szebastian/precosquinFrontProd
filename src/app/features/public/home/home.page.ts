@@ -11,6 +11,7 @@ import { HomeFooterComponent } from './components/home-footer.component';
 import { InstagramFeedComponent } from './components/instagram-feed.component';
 import { ThreeGalleryComponent } from './components/three-gallery.component';
 import { LocationSectionComponent } from './components/location-section.component';
+import { HomeCategoriesComponent } from './components/home-categories.component';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +27,7 @@ import { LocationSectionComponent } from './components/location-section.componen
     InstagramFeedComponent,
     ThreeGalleryComponent,
     LocationSectionComponent,
+    HomeCategoriesComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -65,37 +67,16 @@ import { LocationSectionComponent } from './components/location-section.componen
           </div>
         </section>
 
-        <!-- 3. CATEGORÍAS — blue band (full-bleed image) -->
-        <div class="band-blue">
-          <app-home-separator variant="wave">
-            <span class="separator-label">MÚSICA Y DANZA</span>
-            <h2 class="separator-title">Categorías del Festival</h2>
-            <div class="separator-groups">
-              <div class="separator-group">
-                <span class="separator-group-label">Música</span>
-                <div class="separator-cats">
-                  <span class="sep-cat">Solista Vocal</span>
-                  <span class="sep-cat">Dúo Vocal</span>
-                  <span class="sep-cat">Expresión Oral Folclórica</span>
-                  <span class="sep-cat">Conjunto Vocal</span>
-                  <span class="sep-cat">Solista Instrumental</span>
-                  <span class="sep-cat">Conjunto Instrumental</span>
-                  <span class="sep-cat">Canción Inédita</span>
-                </div>
-              </div>
-              <div class="separator-group">
-                <span class="separator-group-label">Danza</span>
-                <div class="separator-cats">
-                  <span class="sep-cat">Malambo Masculino</span>
-                  <span class="sep-cat">Malambo Femenino</span>
-                  <span class="sep-cat">Conjunto de Malambo</span>
-                  <span class="sep-cat">Pareja Tradicional</span>
-                  <span class="sep-cat">Pareja Estilizada</span>
-                  <span class="sep-cat">Conjunto de Baile</span>
-                </div>
-              </div>
-            </div>
-          </app-home-separator>
+        <!-- 3. CATEGORÍAS — dark band with background image -->
+        <div class="band-dark band-categories">
+          <div class="band-categories-bg"></div>
+          <div class="band-inner band-inner--relative">
+            @defer (on idle) {
+              <app-home-categories />
+            } @loading (minimum 500ms) {
+              <div style="height: 200px;"></div>
+            }
+          </div>
         </div>
 
         <!-- 4. SCOREBOARD — light band -->
@@ -207,6 +188,38 @@ import { LocationSectionComponent } from './components/location-section.componen
       padding: 32px 24px;
     }
 
+    /* ─── Band: categories with background image ─── */
+    .band-categories {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .band-categories-bg {
+      position: absolute;
+      inset: 0;
+      background: url('/assets/fondoCategoria.webp') center 35%/cover no-repeat;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .band-categories::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(17,17,24,0.95) 0%,
+        rgba(17,17,24,0.55) 50%,
+        rgba(17,17,24,0.95) 100%
+      );
+      pointer-events: none;
+    }
+
+    .band-inner--relative {
+      position: relative;
+      z-index: 1;
+    }
+
     .band-dark--flush {
       padding: 0;
     }
@@ -247,13 +260,15 @@ import { LocationSectionComponent } from './components/location-section.componen
        INSCRIPCIONES BLOCK
        ═══════════════════════════════════════════════════ */
     .inscripciones-block {
-      background: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-800) 100%);
+      background: linear-gradient(135deg, rgba(30,64,120,0.88) 0%, rgba(17,17,24,0.82) 50%, rgba(30,64,120,0.85) 100%),
+                  url('/assets/fondoInstripcion.webp') center/cover no-repeat;
       border-radius: var(--radius);
       padding: 24px 32px;
       text-align: center;
       position: relative;
       overflow: hidden;
       box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.06);
     }
     .inscripciones-block::before {
       content: '';
@@ -263,9 +278,25 @@ import { LocationSectionComponent } from './components/location-section.componen
       width: 300px;
       height: 300px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.05);
+      background: rgba(251,191,36,0.08);
+      animation: pulse-glow 4s ease-in-out infinite;
     }
-    .inscripciones-inner { position: relative; z-index: 1; }
+    .inscripciones-block::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(251,191,36,0.05);
+      animation: pulse-glow 5s ease-in-out infinite 1s;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    .inscripciones-inner { position: relative; z-index: 2; }
     .inscripciones-badge {
       display: inline-flex;
       align-items: center;
