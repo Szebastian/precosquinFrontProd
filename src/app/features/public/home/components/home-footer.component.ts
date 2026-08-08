@@ -79,9 +79,9 @@ import { RouterLink } from '@angular/router';
     .sponsors-inner { width: 100%; max-width: min(92%, 1200px); display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .sponsors-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: var(--gray-300); }
     .sponsors-grid { display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; }
-    .sponsor-logo { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; filter: brightness(0) invert(1); opacity: 0.8; transition: all 0.3s ease; }
+    .sponsor-logo { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; opacity: 0.8; transition: all 0.3s ease; }
     .sponsor-link { display: inline-flex; text-decoration: none; }
-    .sponsor-link:hover .sponsor-logo { filter: brightness(1) invert(0); opacity: 1; transform: translateY(-2px); }
+    .sponsor-link:hover .sponsor-logo { opacity: 1; transform: translateY(-2px); }
     .sponsor-link:focus-visible .sponsor-logo { outline: 2px solid var(--brand-500); outline-offset: 4px; }
     .footer-main { width: 100%; max-width: min(92%, 1200px); margin: 0 auto; padding: 48px 24px; display: grid; grid-template-columns: 1fr; gap: 32px; }
     .footer-brand { display: flex; align-items: center; gap: var(--space-4); }
@@ -123,8 +123,8 @@ import { RouterLink } from '@angular/router';
     }
     @media (max-width: 640px) {
       .footer-sponsors { padding: var(--space-5) var(--space-4); }
-      .sponsor-logo { height: 36px; max-width: 100px; filter: brightness(0) invert(1); opacity: 0.8; }
-      .sponsor-link:hover .sponsor-logo { filter: brightness(1) invert(0); opacity: 1; }
+      .sponsor-logo { height: 36px; max-width: 100px; opacity: 0.8; }
+      .sponsor-link:hover .sponsor-logo { opacity: 1; }
       .sponsors-grid { gap: var(--space-8); }
       .footer-main { padding: var(--space-6) var(--space-4); gap: var(--space-5); }
       .footer-logo { height: 40px; }
