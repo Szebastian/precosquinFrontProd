@@ -10,6 +10,7 @@ import { HomeScoreboardComponent } from './components/home-scoreboard.component'
 import { HomeFooterComponent } from './components/home-footer.component';
 import { InstagramFeedComponent } from './components/instagram-feed.component';
 import { ThreeGalleryComponent } from './components/three-gallery.component';
+import { LocationSectionComponent } from './components/location-section.component';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +25,7 @@ import { ThreeGalleryComponent } from './components/three-gallery.component';
     HomeFooterComponent,
     InstagramFeedComponent,
     ThreeGalleryComponent,
+    LocationSectionComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -114,6 +116,17 @@ import { ThreeGalleryComponent } from './components/three-gallery.component';
               <app-home-declaracion-hero />
             } @loading (minimum 500ms) {
               <div style="height: 200px;"></div>
+            }
+          </div>
+        </div>
+
+        <!-- 5.5. SEDE & UBICACIÓN — dark band -->
+        <div class="band-dark">
+          <div class="band-inner">
+            @defer (on idle) {
+              <app-location-section />
+            } @loading (minimum 500ms) {
+              <div style="height: 400px;"></div>
             }
           </div>
         </div>
