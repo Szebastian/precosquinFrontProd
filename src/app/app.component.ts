@@ -1,9 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastContainerComponent } from './shared/components/toast/toast-container.component';
 import { initClarity } from './shared/utils/clarity-init';
-
-initClarity();
 
 @Component({
   selector: 'app-root',
@@ -32,6 +30,10 @@ initClarity();
     }
   `]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Precosquin';
+
+  ngOnInit(): void {
+    initClarity();
+  }
 }
