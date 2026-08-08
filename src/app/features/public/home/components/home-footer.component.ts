@@ -11,37 +11,29 @@ import { RouterLink } from '@angular/router';
         <div class="sponsors-inner">
           <span class="sponsors-label">COLABORAN</span>
           <div class="sponsors-grid">
-            <a href="https://www.instagram.com/municipalidad_puerto_piramides/" target="_blank" class="sponsor-link" aria-label="Puerto Pirámides en Instagram">
+            <a href="https://www.instagram.com/municipalidad_puerto_piramides/" target="_blank" class="sponsor-link" title="Municipalidad Puerto Pirámides">
               <img src="assets/img/LPiramides.webp" alt="Puerto Pirámides" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-              <span class="sponsor-tooltip">Municipalidad Puerto Pirámides</span>
             </a>
-            <a href="https://www.instagram.com/rayentrayhoteles" target="_blank" class="sponsor-link" aria-label="Rayentray en Instagram">
+            <a href="https://www.instagram.com/rayentrayhoteles" target="_blank" class="sponsor-link" title="Hotel Rayentray">
               <img src="assets/img/LRayentray.webp" alt="Hotel Rayentray" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-              <span class="sponsor-tooltip">Hotel Rayentray</span>
             </a>
-            <a href="https://www.instagram.com/hydrosportavistajes" target="_blank" class="sponsor-link" aria-label="Hydro en Instagram">
+            <a href="https://www.instagram.com/hydrosportavistajes" target="_blank" class="sponsor-link" title="Hydro Sport Avistajes">
               <img src="assets/img/LHydro.webp" alt="Hydro" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-              <span class="sponsor-tooltip">Hydro Sport Avistajes</span>
             </a>
-            <a href="https://www.instagram.com/hidden.house" target="_blank" class="sponsor-link" aria-label="Hidden House en Instagram">
+            <a href="https://www.instagram.com/hidden.house" target="_blank" class="sponsor-link" title="Hidden House">
               <img src="assets/img/logoHH.webp" alt="HH" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-              <span class="sponsor-tooltip">Hidden House</span>
             </a>
-            <a href="https://www.instagram.com/bodegon_elrefugio" target="_blank" class="sponsor-link" aria-label="Bodegón El Refugio en Instagram">
+            <a href="https://www.instagram.com/bodegon_elrefugio" target="_blank" class="sponsor-link" title="Bodegón El Refugio">
               <img src="assets/img/BodegonElRefugio.webp" alt="Bodegón El Refugio" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-              <span class="sponsor-tooltip">Bodegón El Refugio</span>
             </a>
-            <a href="https://www.instagram.com/elrefugiopiramides" target="_blank" class="sponsor-link" aria-label="El Refugio Pirámides en Instagram">
+            <a href="https://www.instagram.com/elrefugiopiramides" target="_blank" class="sponsor-link" title="El Refugio Pirámides">
               <img src="assets/img/ElRefugioPIramiLogo.webp" alt="El Refugio Pirámides" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-              <span class="sponsor-tooltip">El Refugio Pirámides</span>
             </a>
-            <a href="https://www.instagram.com/lareservaenelmar" target="_blank" class="sponsor-link" aria-label="La Reserva En El Mar en Instagram">
+            <a href="https://www.instagram.com/lareservaenelmar" target="_blank" class="sponsor-link" title="La Reserva En El Mar">
               <img src="assets/img/logoLaReservaEnElMar.webp" alt="La Reserva En El Mar" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-              <span class="sponsor-tooltip">La Reserva En El Mar</span>
             </a>
-            <a href="https://www.instagram.com/avistajespekesosa" target="_blank" class="sponsor-link" aria-label="Avistajes Peke Sosa en Instagram">
+            <a href="https://www.instagram.com/avistajespekesosa" target="_blank" class="sponsor-link" title="Avistajes Peke Sosa">
               <img src="assets/img/LOGO-PEKE-png-4k.webp" alt="Avistajes Peke Sosa" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-              <span class="sponsor-tooltip">Avistajes Peke Sosa</span>
             </a>
           </div>
         </div>
@@ -88,11 +80,9 @@ import { RouterLink } from '@angular/router';
     .sponsors-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: var(--gray-300); }
     .sponsors-grid { display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; }
     .sponsor-logo { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; filter: brightness(0) invert(1); opacity: 0.8; transition: all 0.3s ease; }
-    .sponsor-link { display: inline-flex; text-decoration: none; position: relative; padding-top: 24px; }
+    .sponsor-link { display: inline-flex; text-decoration: none; }
     .sponsor-link:hover .sponsor-logo { filter: brightness(1) invert(0); opacity: 1; transform: translateY(-2px); }
     .sponsor-link:focus-visible .sponsor-logo { outline: 2px solid var(--brand-500); outline-offset: 4px; }
-    .sponsor-tooltip { position: absolute; top: 0; left: 50%; transform: translateX(-50%) translateY(4px); background: rgba(0,0,0,0.85); color: #fff; font-size: 10px; font-weight: 500; padding: 4px 10px; border-radius: 6px; white-space: nowrap; pointer-events: none; opacity: 0; transition: all 0.25s cubic-bezier(0.22,1,0.36,1); z-index: 10; }
-    .sponsor-link:hover .sponsor-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
     .footer-main { width: 100%; max-width: min(92%, 1200px); margin: 0 auto; padding: 48px 24px; display: grid; grid-template-columns: 1fr; gap: 32px; }
     .footer-brand { display: flex; align-items: center; gap: var(--space-4); }
     .footer-logo { height: 60px; width: auto; opacity: 0.85; }
@@ -135,8 +125,6 @@ import { RouterLink } from '@angular/router';
       .footer-sponsors { padding: var(--space-5) var(--space-4); }
       .sponsor-logo { height: 36px; max-width: 100px; filter: brightness(0) invert(1); opacity: 0.8; }
       .sponsor-link:hover .sponsor-logo { filter: brightness(1) invert(0); opacity: 1; }
-      .sponsor-link { padding-top: 20px; }
-      .sponsor-tooltip { font-size: 9px; padding: 3px 8px; }
       .sponsors-grid { gap: var(--space-8); }
       .footer-main { padding: var(--space-6) var(--space-4); gap: var(--space-5); }
       .footer-logo { height: 40px; }
