@@ -88,10 +88,10 @@ import { RouterLink } from '@angular/router';
     .sponsors-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: var(--gray-300); }
     .sponsors-grid { display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; }
     .sponsor-logo { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; filter: brightness(0) invert(1); opacity: 0.8; transition: all 0.3s ease; }
-    .sponsor-link { display: inline-flex; flex-direction: column; align-items: center; text-decoration: none; position: relative; }
+    .sponsor-link { display: inline-flex; text-decoration: none; position: relative; padding-top: 24px; }
     .sponsor-link:hover .sponsor-logo { filter: brightness(1) invert(0); opacity: 1; transform: translateY(-2px); }
     .sponsor-link:focus-visible .sponsor-logo { outline: 2px solid var(--brand-500); outline-offset: 4px; }
-    .sponsor-tooltip { position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%) translateY(4px); background: rgba(0,0,0,0.85); color: #fff; font-size: 10px; font-weight: 500; padding: 4px 10px; border-radius: 6px; white-space: nowrap; pointer-events: none; opacity: 0; transition: all 0.25s cubic-bezier(0.22,1,0.36,1); z-index: 10; }
+    .sponsor-tooltip { position: absolute; top: 0; left: 50%; transform: translateX(-50%) translateY(4px); background: rgba(0,0,0,0.85); color: #fff; font-size: 10px; font-weight: 500; padding: 4px 10px; border-radius: 6px; white-space: nowrap; pointer-events: none; opacity: 0; transition: all 0.25s cubic-bezier(0.22,1,0.36,1); z-index: 10; }
     .sponsor-link:hover .sponsor-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
     .footer-main { width: 100%; max-width: min(92%, 1200px); margin: 0 auto; padding: 48px 24px; display: grid; grid-template-columns: 1fr; gap: 32px; }
     .footer-brand { display: flex; align-items: center; gap: var(--space-4); }
@@ -135,7 +135,8 @@ import { RouterLink } from '@angular/router';
       .footer-sponsors { padding: var(--space-5) var(--space-4); }
       .sponsor-logo { height: 36px; max-width: 100px; filter: brightness(0) invert(1); opacity: 0.8; }
       .sponsor-link:hover .sponsor-logo { filter: brightness(1) invert(0); opacity: 1; }
-      .sponsor-tooltip { font-size: 9px; padding: 3px 8px; bottom: -24px; }
+      .sponsor-link { padding-top: 20px; }
+      .sponsor-tooltip { font-size: 9px; padding: 3px 8px; }
       .sponsors-grid { gap: var(--space-8); }
       .footer-main { padding: var(--space-6) var(--space-4); gap: var(--space-5); }
       .footer-logo { height: 40px; }
