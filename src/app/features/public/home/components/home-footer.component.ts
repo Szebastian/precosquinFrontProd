@@ -18,6 +18,7 @@ import { RouterLink } from '@angular/router';
             <img src="assets/img/BodegonElRefugio.webp" alt="Bodegón El Refugio" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
             <img src="assets/img/ElRefugioPIramiLogo.webp" alt="El Refugio Pirámides" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
             <img src="assets/img/logoLaReservaEnElMar.webp" alt="La Reserva En El Mar" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
+            <img src="assets/img/LOGO-PEKE-png-4k.webp" alt="Puerto Pirámides" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>
