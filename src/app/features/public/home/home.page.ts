@@ -68,18 +68,30 @@ import { ThreeGalleryComponent } from './components/three-gallery.component';
           <app-home-separator variant="wave">
             <span class="separator-label">MÚSICA Y DANZA</span>
             <h2 class="separator-title">Categorías del Festival</h2>
-            <div class="separator-cats">
-              <span class="sep-cat">Solista Vocal</span>
-              <span class="sep-cat-dot"></span>
-              <span class="sep-cat">Solista Instrumental</span>
-              <span class="sep-cat-dot"></span>
-              <span class="sep-cat">Dúo</span>
-              <span class="sep-cat-dot"></span>
-              <span class="sep-cat">Trío</span>
-              <span class="sep-cat-dot"></span>
-              <span class="sep-cat">Conjunto</span>
-              <span class="sep-cat-dot"></span>
-              <span class="sep-cat">Coro</span>
+            <div class="separator-groups">
+              <div class="separator-group">
+                <span class="separator-group-label">Música</span>
+                <div class="separator-cats">
+                  <span class="sep-cat">Solista Vocal</span>
+                  <span class="sep-cat">Dúo Vocal</span>
+                  <span class="sep-cat">Expresión Oral Folclórica</span>
+                  <span class="sep-cat">Conjunto Vocal</span>
+                  <span class="sep-cat">Solista Instrumental</span>
+                  <span class="sep-cat">Conjunto Instrumental</span>
+                  <span class="sep-cat">Canción Inédita</span>
+                </div>
+              </div>
+              <div class="separator-group">
+                <span class="separator-group-label">Danza</span>
+                <div class="separator-cats">
+                  <span class="sep-cat">Malambo Masculino</span>
+                  <span class="sep-cat">Malambo Femenino</span>
+                  <span class="sep-cat">Conjunto de Malambo</span>
+                  <span class="sep-cat">Pareja Tradicional</span>
+                  <span class="sep-cat">Pareja Estilizada</span>
+                  <span class="sep-cat">Conjunto de Baile</span>
+                </div>
+              </div>
             </div>
           </app-home-separator>
         </div>
