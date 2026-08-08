@@ -11,30 +11,30 @@ import { RouterLink } from '@angular/router';
         <div class="sponsors-inner">
           <span class="sponsors-label">COLABORAN</span>
           <div class="sponsors-grid">
-            <a href="https://www.instagram.com/municipalidad_puerto_piramides/" target="_blank" class="sponsor-link" title="Municipalidad Puerto Pirámides">
+            <div class="sponsor-link" role="link" tabindex="0" title="Municipalidad Puerto Pirámides" (click)="openSponsor('https://www.instagram.com/municipalidad_puerto_piramides/')" (keydown.enter)="openSponsor('https://www.instagram.com/municipalidad_puerto_piramides/')">
               <img src="assets/img/LPiramides.webp" alt="Puerto Pirámides" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-            </a>
-            <a href="https://www.instagram.com/rayentrayhoteles" target="_blank" class="sponsor-link" title="Hotel Rayentray">
+            </div>
+            <div class="sponsor-link" role="link" tabindex="0" title="Hotel Rayentray" (click)="openSponsor('https://www.instagram.com/rayentrayhoteles')" (keydown.enter)="openSponsor('https://www.instagram.com/rayentrayhoteles')">
               <img src="assets/img/LRayentray.webp" alt="Hotel Rayentray" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-            </a>
-            <a href="https://www.instagram.com/hydrosportavistajes" target="_blank" class="sponsor-link" title="Hydro Sport Avistajes">
+            </div>
+            <div class="sponsor-link" role="link" tabindex="0" title="Hydro Sport Avistajes" (click)="openSponsor('https://www.instagram.com/hydrosportavistajes')" (keydown.enter)="openSponsor('https://www.instagram.com/hydrosportavistajes')">
               <img src="assets/img/LHydro.webp" alt="Hydro" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-            </a>
-            <a href="https://www.instagram.com/hidden.house" target="_blank" class="sponsor-link" title="Hidden House">
+            </div>
+            <div class="sponsor-link" role="link" tabindex="0" title="Hidden House" (click)="openSponsor('https://www.instagram.com/hidden.house')" (keydown.enter)="openSponsor('https://www.instagram.com/hidden.house')">
               <img src="assets/img/logoHH.webp" alt="HH" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-            </a>
-            <a href="https://www.instagram.com/bodegon_elrefugio" target="_blank" class="sponsor-link" title="Bodegón El Refugio">
+            </div>
+            <div class="sponsor-link" role="link" tabindex="0" title="Bodegón El Refugio" (click)="openSponsor('https://www.instagram.com/bodegon_elrefugio')" (keydown.enter)="openSponsor('https://www.instagram.com/bodegon_elrefugio')">
               <img src="assets/img/BodegonElRefugio.webp" alt="Bodegón El Refugio" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-            </a>
-            <a href="https://www.instagram.com/elrefugiopiramides" target="_blank" class="sponsor-link" title="El Refugio Pirámides">
+            </div>
+            <div class="sponsor-link" role="link" tabindex="0" title="El Refugio Pirámides" (click)="openSponsor('https://www.instagram.com/elrefugiopiramides')" (keydown.enter)="openSponsor('https://www.instagram.com/elrefugiopiramides')">
               <img src="assets/img/ElRefugioPIramiLogo.webp" alt="El Refugio Pirámides" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-            </a>
-            <a href="https://www.instagram.com/lareservaenelmar" target="_blank" class="sponsor-link" title="La Reserva En El Mar">
+            </div>
+            <div class="sponsor-link" role="link" tabindex="0" title="La Reserva En El Mar" (click)="openSponsor('https://www.instagram.com/lareservaenelmar')" (keydown.enter)="openSponsor('https://www.instagram.com/lareservaenelmar')">
               <img src="assets/img/logoLaReservaEnElMar.webp" alt="La Reserva En El Mar" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-            </a>
-            <a href="https://www.instagram.com/avistajespekesosa" target="_blank" class="sponsor-link" title="Avistajes Peke Sosa">
+            </div>
+            <div class="sponsor-link" role="link" tabindex="0" title="Avistajes Peke Sosa" (click)="openSponsor('https://www.instagram.com/avistajespekesosa')" (keydown.enter)="openSponsor('https://www.instagram.com/avistajespekesosa')">
               <img src="assets/img/LOGO-PEKE-png-4k.webp" alt="Avistajes Peke Sosa" class="sponsor-logo" width="120" height="60" loading="lazy" decoding="async" />
-            </a>
+            </div>
           </div>
         </div>
       </div>
@@ -79,9 +79,9 @@ import { RouterLink } from '@angular/router';
     .sponsors-inner { width: 100%; max-width: min(92%, 1200px); display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .sponsors-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: var(--gray-300); }
     .sponsors-grid { display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; }
-    .sponsor-logo { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; opacity: 0.8; transition: all 0.3s ease; }
-    .sponsor-link { display: inline-flex; text-decoration: none; }
-    .sponsor-link:hover .sponsor-logo { opacity: 1; transform: translateY(-2px); }
+    .sponsor-logo { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
+    .sponsor-link { display: inline-flex; text-decoration: none; cursor: pointer; }
+    .sponsor-link:hover .sponsor-logo { filter: grayscale(0%); opacity: 1; transform: translateY(-2px); }
     .sponsor-link:focus-visible .sponsor-logo { outline: 2px solid var(--brand-500); outline-offset: 4px; }
     .footer-main { width: 100%; max-width: min(92%, 1200px); margin: 0 auto; padding: 48px 24px; display: grid; grid-template-columns: 1fr; gap: 32px; }
     .footer-brand { display: flex; align-items: center; gap: var(--space-4); }
@@ -123,8 +123,8 @@ import { RouterLink } from '@angular/router';
     }
     @media (max-width: 640px) {
       .footer-sponsors { padding: var(--space-5) var(--space-4); }
-      .sponsor-logo { height: 36px; max-width: 100px; opacity: 0.8; }
-      .sponsor-link:hover .sponsor-logo { opacity: 1; }
+.sponsor-logo { height: 36px; max-width: 100px; filter: grayscale(100%); opacity: 0.6; }
+.sponsor-link:hover .sponsor-logo { filter: grayscale(0%); opacity: 1; }
       .sponsors-grid { gap: var(--space-8); }
       .footer-main { padding: var(--space-6) var(--space-4); gap: var(--space-5); }
       .footer-logo { height: 40px; }
@@ -136,4 +136,8 @@ import { RouterLink } from '@angular/router';
 })
 export class HomeFooterComponent {
   currentYear = new Date().getFullYear();
+
+  openSponsor(url: string): void {
+    window.open(url, '_blank');
+  }
 }
