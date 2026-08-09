@@ -51,23 +51,29 @@ export interface Inscription {
   accompanying_persons?: { fullName: string; dni: string }[];
   rider_tecnico?: any;
   // Declarations
-  acceptRegulations?: boolean;
-  acceptNoPriorWin?: boolean;
-  acceptNotJurorOrg?: boolean;
+  accept_regulations?: boolean;
+  accept_no_prior_win?: boolean;
+  accept_not_juror_org?: boolean;
   // Nuevos campos para solista instrumental
-  instrumentType?: string;
-  instrumentName?: string;
-  hasAccompaniment?: boolean;
-  accompanimentInstrument?: string;
-  accompanimentMusician?: string;
-  acceptPurelyInstrumental?: boolean;
-  acceptOneInstrument?: boolean;
-  acceptNoPrerecorded?: boolean;
-  acceptNoInstrumentChange?: boolean;
+  instrument_type?: string;
+  instrument_name?: string;
+  has_accompaniment?: boolean;
+  accompaniment_instrument?: string;
+  accompaniment_musician?: string;
+  accept_purely_instrumental?: boolean;
+  accept_one_instrument?: boolean;
+  accept_no_prerecorded?: boolean;
+  accept_no_instrument_change?: boolean;
   // Presentación
   presentation?: string;
-  artisticName?: string;
-  songsList?: string;
+  artistic_name?: string;
+  songs_list?: string;
+  // Archivos subidos
+  dni_front_url?: string;
+  dni_back_url?: string;
+  promo_photo_url?: string;
+  lyrics_url?: string;
+  score_url?: string;
   // Stage plot
   x?: number;
   y?: number;
@@ -122,5 +128,13 @@ export class InscriptionsService {
 
   bulkDelete(ids: string[]): Observable<{ message: string; deleted: number; not_found: string[] }> {
     return this.http.post<{ message: string; deleted: number; not_found: string[] }>(`${this.apiUrl}/bulk-delete`, { ids });
+  }
+
+  getSignedUrl(storagePath: string): Observable<{ signed_url: string }> {
+    return this.http.get<{ signed_url: string }>(`${environment.apiUrl}/storage/signed-url/inscriptions/${storagePath}`);
+  }
+
+  getPublicUrl(storagePath: string): Observable<{ public_url: string }> {
+    return this.http.get<{ public_url: string }>(`${environment.apiUrl}/storage/public-url/inscriptions/${storagePath}`);
   }
 }

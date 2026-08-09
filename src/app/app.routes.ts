@@ -92,7 +92,7 @@ export const appRoutes: Routes = [
       {
         path: 'jurado',
         loadChildren: () => import('./features/jurado/jurado.routes').then(m => m.JURADO_ROUTES),
-        data: { roles: ['admin'] }
+        data: { roles: ['admin', 'jurado'] }
       },
       {
         path: 'staff',
@@ -133,6 +133,11 @@ export const appRoutes: Routes = [
         path: 'mensajes',
         loadComponent: () => import('./features/mensajes/mensajes-list.page').then(m => m.MensajesListPageComponent),
         data: { title: 'Mensajes', roles: ['organizador', 'admin', 'staff'] }
+      },
+      {
+        path: 'documentation',
+        loadComponent: () => import('./features/documentation/admin-documentation.page').then(m => m.AdminDocumentationComponent),
+        data: { title: 'Documentación', roles: ['organizador', 'admin', 'staff', 'jurado'] }
       }
     ]
   },

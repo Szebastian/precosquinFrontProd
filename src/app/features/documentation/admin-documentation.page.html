@@ -1,0 +1,792 @@
+<div class="doc-admin">
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="doc-header-content">
+      <h1 class="doc-title">Documentación Oficial</h1>
+      <p class="doc-subtitle">55° Certamen para Nuevos Valores Pre Cosquín · Edición 2027</p>
+    </div>
+    <div class="doc-actions">
+      <button class="btn-expand" (click)="expandAll()" title="Expandir todo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5"/><path d="M7 6l5 5 5-5"/></svg>
+        Expandir
+      </button>
+      <button class="btn-collapse" (click)="collapseAll()" title="Colapsar todo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 11l-5-5-5 5"/><path d="M17 18l-5-5-5 5"/></svg>
+        Colapsar
+      </button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="doc-search">
+    <div class="search-input-wrap">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar en documentación..."
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+      />
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="clearSearch()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      }
+    </div>
+    @if (searchQuery()) {
+      <span class="search-count">{{ totalResults() }} resultados</span>
+    }
+  </div>
+
+  <!-- Tabs -->
+  <div class="doc-tabs">
+    @for (section of filteredSections(); track section.id) {
+      <button
+        class="tab-btn"
+        [class.tab-active]="activeTab() === section.id"
+        (click)="setActiveTab(section.id)"
+      >
+        <span class="tab-icon" [innerHTML]="section.icon"></span>
+        <span class="tab-label">{{ section.title }}</span>
+        <span class="tab-count">{{ section.content.length }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="doc-content">
+    @for (section of filteredSections(); track section.id) {
+      @if (activeTab() === section.id) {
+        <div class="section-content">
+          @for (block of section.content; track block.title) {
+            <div
+              class="content-card"
+              [class.card-expanded]="isCardExpanded(section.id, block.title)"
+              (click)="toggleCard(section.id, block.title)"
+            >
+              <div class="card-header">
+                <h3 class="card-title">{{ block.title }}</h3>
+                <svg class="card-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+
+              @if (isCardExpanded(section.id, block.title)) {
+                <div class="card-body">
+
+                  <!-- Text Block -->
+                  @if (block.type === 'text' && block.content) {
+                    <p class="block-text" [innerHTML]="block.content"></p>
+                  }
+
+                  <!-- List Block -->
+                  @if (block.type === 'list' && block.items) {
+                    <ul class="block-list">
+                      @for (item of block.items; track $index) {
+                        <li [innerHTML]="item"></li>
+                      }
+                    </ul>
+                  }
+
+                  <!-- Table Block -->
+                  @if (block.type === 'table' && block.rows) {
+                    <div class="block-table">
+                      @for (row of block.rows; track row.label) {
+                        <div class="table-row">
+                          <span class="table-label">{{ row.label }}</span>
+                          <span class="table-value">{{ row.value }}</span>
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  <!-- Quote Block -->
+                  @if (block.type === 'quote') {
+                    <blockquote class="block-quote" [innerHTML]="block.content"></blockquote>
+                    @if (block.attr) {
+                      <p class="quote-attr">{{ block.attr }}</p>
+                    }
+                  }
+
+                  <!-- Split Block -->
+                  @if (block.type === 'split' && block.columns) {
+                    <div class="block-split">
+                      @for (col of block.columns; track col.title) {
+                        <div class="split-col">
+                          <h4 class="split-title">{{ col.title }}</h4>
+                          <p class="split-text">{{ col.text }}</p>
+                          @if (col.examples) {
+                            <p class="split-examples"><strong>Ejemplos:</strong> {{ col.examples }}</p>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  <!-- Flow Map Block -->
+                  @if (block.type === 'flow-map') {
+                    <div class="flow-map-container">
+                      <!-- Zoom Controls -->
+                      <div class="zoom-controls">
+                        <button class="zoom-btn" (click)="zoomIn()" title="Acercar">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                        </button>
+                        <span class="zoom-level">{{ (zoomLevel() * 100) | number:'1.0-0' }}%</span>
+                        <button class="zoom-btn" (click)="zoomOut()" title="Alejar">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                        </button>
+                        <button class="zoom-btn" (click)="resetZoom()" title="Restablecer">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                        </button>
+                      </div>
+
+                      <div class="flow-map-viewport"
+                        (wheel)="onWheel($event)"
+                        (mousedown)="onMouseDown($event)"
+                        (mousemove)="onMouseMove($event)"
+                        (mouseup)="onMouseUp()"
+                        (mouseleave)="onMouseUp()"
+                      >
+                        <svg class="flow-map-svg" viewBox="0 0 1200 5200" xmlns="http://www.w3.org/2000/svg" [style.transform]="getZoomTransform()">
+                        <defs>
+                          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                          </filter>
+                          <filter id="glow-strong" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                          </filter>
+                          <linearGradient id="grad-start" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#10b981"/><stop offset="100%" style="stop-color:#059669"/>
+                          </linearGradient>
+                          <linearGradient id="grad-personal" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#3b82f6"/><stop offset="100%" style="stop-color:#2563eb"/>
+                          </linearGradient>
+                          <linearGradient id="grad-category" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#7c3aed"/>
+                          </linearGradient>
+                          <linearGradient id="grad-musica" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f59e0b"/><stop offset="100%" style="stop-color:#d97706"/>
+                          </linearGradient>
+                          <linearGradient id="grad-danza" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ec4899"/><stop offset="100%" style="stop-color:#db2777"/>
+                          </linearGradient>
+                          <linearGradient id="grad-common" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#06b6d4"/><stop offset="100%" style="stop-color:#0891b2"/>
+                          </linearGradient>
+                          <linearGradient id="grad-end" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#10b981"/><stop offset="100%" style="stop-color:#059669"/>
+                          </linearGradient>
+                          <linearGradient id="grad-info" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#6366f1"/><stop offset="100%" style="stop-color:#4f46e5"/>
+                          </linearGradient>
+                          <linearGradient id="grad-file" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#14b8a6"/><stop offset="100%" style="stop-color:#0d9488"/>
+                          </linearGradient>
+                        </defs>
+
+                        <!-- ==================== INICIO ==================== -->
+                        <text x="600" y="30" text-anchor="middle" class="section-label">INICIO</text>
+                        <line x1="200" y1="40" x2="1000" y2="40" stroke="#334155" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+
+                        <g class="flow-node" transform="translate(600, 80)">
+                          <rect x="-90" y="-26" width="180" height="52" rx="26" fill="url(#grad-start)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">OTP + Email</text>
+                        </g>
+
+                        <!-- ==================== DATOS PERSONALES ==================== -->
+                        <line x1="600" y1="106" x2="600" y2="140" class="flow-line" stroke-dasharray="6,4">
+                          <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/>
+                        </line>
+                        <polygon points="595,140 605,140 600,150" fill="#94a3b8"/>
+
+                        <text x="600" y="175" text-anchor="middle" class="section-label">DATOS PERSONALES</text>
+                        <line x1="200" y1="185" x2="1000" y2="185" stroke="#334155" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+
+                        <g class="flow-node" transform="translate(600, 220)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-personal)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Nombre + Apellido</text>
+                        </g>
+                        <line x1="600" y1="240" x2="600" y2="268" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,268 605,268 600,278" fill="#94a3b8"/>
+
+                        <g class="flow-node" transform="translate(600, 305)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-personal)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">DNI + Nacimiento</text>
+                        </g>
+                        <line x1="600" y1="325" x2="600" y2="353" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,353 605,353 600,363" fill="#94a3b8"/>
+
+                        <g class="flow-node" transform="translate(600, 390)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-personal)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Dirección + Ciudad</text>
+                        </g>
+                        <line x1="600" y1="410" x2="600" y2="438" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,438 605,438 600,448" fill="#94a3b8"/>
+
+                        <g class="flow-node" transform="translate(600, 475)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-personal)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Teléfono + Email</text>
+                        </g>
+
+                        <!-- ==================== CATEGORÍA ==================== -->
+                        <line x1="600" y1="495" x2="600" y2="545" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,545 605,545 600,555" fill="#94a3b8"/>
+
+                        <text x="600" y="580" text-anchor="middle" class="section-label">CATEGORÍA</text>
+                        <line x1="200" y1="590" x2="1000" y2="590" stroke="#334155" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+
+                        <g class="flow-node flow-node-decision" transform="translate(600, 630)">
+                          <rect x="-100" y="-28" width="200" height="56" rx="28" fill="url(#grad-category)" filter="url(#glow-strong)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text node-text-bold">¿Qué vas a presentar?</text>
+                        </g>
+
+                        <!-- Branch to Música / Danza -->
+                        <line x1="600" y1="658" x2="600" y2="695" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="600" y1="695" x2="300" y2="695" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="600" y1="695" x2="900" y2="695" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="300" y1="695" x2="300" y2="725" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="900" y1="695" x2="900" y2="725" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="295,725 305,725 300,735" fill="#f59e0b"/>
+                        <polygon points="895,725 905,725 900,735" fill="#ec4899"/>
+
+                        <!-- ==================== MÚSICA ==================== -->
+                        <text x="300" y="760" text-anchor="middle" class="section-label section-label-musica">MÚSICA</text>
+                        <line x1="100" y1="770" x2="500" y2="770" stroke="#d97706" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+
+                        <!-- Subcategorías Música -->
+                        <g class="flow-node flow-node-sm" transform="translate(300, 800)">
+                          <rect x="-70" y="-16" width="140" height="32" rx="16" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Solista Vocal</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(300, 845)">
+                          <rect x="-70" y="-16" width="140" height="32" rx="16" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Dúo Vocal</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(300, 890)">
+                          <rect x="-70" y="-16" width="140" height="32" rx="16" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Expresión Oral</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(300, 935)">
+                          <rect x="-70" y="-16" width="140" height="32" rx="16" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Conjunto Vocal</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(300, 980)">
+                          <rect x="-80" y="-16" width="160" height="32" rx="16" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Solista Instrumental</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(300, 1025)">
+                          <rect x="-70" y="-16" width="140" height="32" rx="16" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Conjunto Instr.</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(300, 1070)">
+                          <rect x="-70" y="-16" width="140" height="32" rx="16" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Canción Inédita</text>
+                        </g>
+
+                        <!-- Info Música (todas) -->
+                        <line x1="300" y1="1086" x2="300" y2="1115" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="295,1115 305,1115 300,1125" fill="#f59e0b"/>
+
+                        <g class="flow-node" transform="translate(300, 1155)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-info)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Info: Sin pistas</text>
+                        </g>
+
+                        <!-- ===== Solista Instrumental sub-branch ===== -->
+                        <line x1="300" y1="996" x2="130" y2="996" class="flow-line" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="130" y1="996" x2="130" y2="1200" class="flow-line" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="125,1200 135,1200 130,1210" fill="#b45309"/>
+
+                        <g class="flow-node flow-node-xs" transform="translate(130, 1235)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#b45309" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">¿Melódico/Armónico?</text>
+                        </g>
+                        <line x1="130" y1="1248" x2="130" y2="1272" class="flow-line" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+
+                        <g class="flow-node flow-node-xs" transform="translate(130, 1295)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#b45309" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">Nombre Instrumento</text>
+                        </g>
+                        <line x1="130" y1="1308" x2="130" y2="1332" class="flow-line" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+
+                        <!-- Acompañamiento (only if melódico) -->
+                        <line x1="130" y1="1332" x2="130" y2="1355" class="flow-line" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+                        <g class="flow-node flow-node-xs" transform="translate(130, 1378)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#92400e" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">¿Acompañamiento?</text>
+                        </g>
+                        <text x="130" y="1410" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:8px">(solo si melódico)</text>
+                        <!-- Conexión de vuelta al merge -->
+                        <line x1="130" y1="1391" x2="130" y2="1920" class="flow-line" stroke-dasharray="6,4" opacity="0.4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+
+                        <!-- ===== Canción Inédita sub-branch ===== -->
+                        <line x1="300" y1="1086" x2="470" y2="1086" class="flow-line" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="470" y1="1086" x2="470" y2="1200" class="flow-line" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="465,1200 475,1200 470,1210" fill="#b45309"/>
+
+                        <g class="flow-node flow-node-xs" transform="translate(470, 1235)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#b45309" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">Subir Letra</text>
+                        </g>
+                        <line x1="470" y1="1248" x2="470" y2="1272" class="flow-line" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+                        <g class="flow-node flow-node-xs" transform="translate(470, 1295)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#b45309" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">Subir Partitura</text>
+                        </g>
+                        <!-- Conexión de vuelta al merge -->
+                        <line x1="470" y1="1308" x2="470" y2="1920" class="flow-line" stroke-dasharray="6,4" opacity="0.4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+
+                        <!-- ===== Música común después de info ===== -->
+                        <line x1="300" y1="1175" x2="300" y2="1440" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="295,1440 305,1440 300,1450" fill="#f59e0b"/>
+
+                        <g class="flow-node" transform="translate(300, 1475)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Biografía</text>
+                        </g>
+                        <line x1="300" y1="1495" x2="300" y2="1523" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="295,1523 305,1523 300,1533" fill="#f59e0b"/>
+
+                        <g class="flow-node" transform="translate(300, 1560)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Presentación</text>
+                        </g>
+                        <line x1="300" y1="1580" x2="300" y2="1608" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="295,1608 305,1608 300,1618" fill="#f59e0b"/>
+
+                        <g class="flow-node" transform="translate(300, 1645)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">¿Nombre Artístico?</text>
+                        </g>
+                        <line x1="300" y1="1665" x2="300" y2="1693" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="295,1693 305,1693 300,1703" fill="#f59e0b"/>
+
+                        <g class="flow-node" transform="translate(300, 1730)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-musica)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Temas a Presentar</text>
+                        </g>
+
+                        <!-- ==================== DANZA ==================== -->
+                        <text x="900" y="760" text-anchor="middle" class="section-label section-label-danza">DANZA</text>
+                        <line x1="700" y1="770" x2="1100" y2="770" stroke="#db2777" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+
+                        <!-- Subcategorías Danza -->
+                        <g class="flow-node flow-node-sm" transform="translate(900, 800)">
+                          <rect x="-80" y="-16" width="160" height="32" rx="16" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Malambo Masculino</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(900, 845)">
+                          <rect x="-80" y="-16" width="160" height="32" rx="16" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Malambo Femenino</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(900, 890)">
+                          <rect x="-75" y="-16" width="150" height="32" rx="16" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Conjunto Malambo</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(900, 935)">
+                          <rect x="-80" y="-16" width="160" height="32" rx="16" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Pareja Tradicional</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(900, 980)">
+                          <rect x="-80" y="-16" width="160" height="32" rx="16" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Pareja Estilizada</text>
+                        </g>
+                        <g class="flow-node flow-node-sm" transform="translate(900, 1025)">
+                          <rect x="-80" y="-16" width="160" height="32" rx="16" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-sm">Conjunto de Baile</text>
+                        </g>
+
+                        <!-- Info Danza (todas) -->
+                        <line x1="900" y1="1041" x2="900" y2="1070" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="895,1070 905,1070 900,1080" fill="#ec4899"/>
+
+                        <g class="flow-node" transform="translate(900, 1110)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-info)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Info: Reglamento</text>
+                        </g>
+
+                        <!-- ===== Malambo sub-branch ===== -->
+                        <line x1="900" y1="816" x2="750" y2="816" class="flow-line" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="750" y1="816" x2="750" y2="1170" class="flow-line" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="745,1170 755,1170 750,1180" fill="#9d174d"/>
+
+                        <g class="flow-node flow-node-xs" transform="translate(750, 1205)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#9d174d" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">¿Norteño/Sureño?</text>
+                        </g>
+                        <text x="750" y="1237" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:8px">(solo malambo)</text>
+                        <!-- Conexión de vuelta al merge -->
+                        <line x1="750" y1="1218" x2="750" y2="1920" class="flow-line" stroke-dasharray="6,4" opacity="0.4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+
+                        <!-- ===== Parejas sub-branch ===== -->
+                        <line x1="900" y1="951" x2="1050" y2="951" class="flow-line" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="1050" y1="951" x2="1050" y2="1170" class="flow-line" stroke-dasharray="6,4" opacity="0.6"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="1045,1170 1055,1170 1050,1180" fill="#9d174d"/>
+
+                        <g class="flow-node flow-node-xs" transform="translate(1050, 1205)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#9d174d" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">Ronda 1 (danza+canción)</text>
+                        </g>
+                        <line x1="1050" y1="1218" x2="1050" y2="1242" class="flow-line" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+
+                        <g class="flow-node flow-node-xs" transform="translate(1050, 1265)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#9d174d" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">Ronda 2 (danza+canción)</text>
+                        </g>
+                        <line x1="1050" y1="1278" x2="1050" y2="1302" class="flow-line" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+
+                        <g class="flow-node flow-node-xs" transform="translate(1050, 1325)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#9d174d" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">Ronda 3 (danza+canción)</text>
+                        </g>
+
+                        <!-- Pareja Tradicional: Asistentes -->
+                        <line x1="1050" y1="1338" x2="1050" y2="1368" class="flow-line" stroke-dasharray="4,3" opacity="0.5"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+                        <g class="flow-node flow-node-xs" transform="translate(1050, 1390)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#831843" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">¿Cuántos asistentes?</text>
+                        </g>
+                        <text x="1050" y="1422" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:8px">(solo pareja tradicional)</text>
+
+                        <!-- Pareja Estilizada: MP3 -->
+                        <line x1="1050" y1="1338" x2="1140" y2="1338" class="flow-line" stroke-dasharray="4,3" opacity="0.5"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+                        <line x1="1140" y1="1338" x2="1140" y2="1368" class="flow-line" stroke-dasharray="4,3" opacity="0.5"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+                        <g class="flow-node flow-node-xs" transform="translate(1140, 1390)">
+                          <rect x="-45" y="-13" width="90" height="26" rx="13" fill="url(#grad-file)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">Subir MP3</text>
+                        </g>
+                        <text x="1140" y="1422" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:8px">(pareja estilizada)</text>
+                        <!-- Conexión de vuelta al merge -->
+                        <line x1="1050" y1="1422" x2="1050" y2="1920" class="flow-line" stroke-dasharray="6,4" opacity="0.4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="1140" y1="1422" x2="1140" y2="1920" class="flow-line" stroke-dasharray="6,4" opacity="0.4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+
+                        <!-- ===== Conjunto Baile sub-branch ===== -->
+                        <line x1="900" y1="1041" x2="750" y2="1041" class="flow-line" stroke-dasharray="6,4" opacity="0"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="900" y1="1041" x2="900" y2="1450" class="flow-line" stroke-dasharray="6,4" opacity="0"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+
+                        <!-- Danza común después de info -->
+                        <line x1="900" y1="1130" x2="900" y2="1450" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="895,1450 905,1450 900,1460" fill="#ec4899"/>
+
+                        <!-- Propuesta + Coreógrafo (todas danza) -->
+                        <g class="flow-node" transform="translate(900, 1490)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Propuesta</text>
+                        </g>
+                        <line x1="900" y1="1510" x2="900" y2="1538" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="895,1538 905,1538 900,1548" fill="#ec4899"/>
+
+                        <g class="flow-node" transform="translate(900, 1575)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Coreógrafo</text>
+                        </g>
+                        <line x1="900" y1="1595" x2="900" y2="1623" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="895,1623 905,1623 900,1633" fill="#ec4899"/>
+
+                        <g class="flow-node" transform="translate(900, 1660)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">¿Estilo?</text>
+                        </g>
+                        <line x1="900" y1="1680" x2="900" y2="1708" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="895,1708 905,1708 900,1718" fill="#ec4899"/>
+
+                        <!-- Conjunto Baile: Nombre Obra -->
+                        <g class="flow-node flow-node-xs" transform="translate(780, 1740)">
+                          <rect x="-55" y="-13" width="110" height="26" rx="13" fill="#9d174d" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">Nombre Obra</text>
+                        </g>
+                        <text x="780" y="1772" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:8px">(conjunto baile)</text>
+
+                        <!-- Conjunto Baile: MP3 -->
+                        <g class="flow-node flow-node-xs" transform="translate(1020, 1740)">
+                          <rect x="-45" y="-13" width="90" height="26" rx="13" fill="url(#grad-file)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text-xs">Subir MP3</text>
+                        </g>
+                        <text x="1020" y="1772" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:8px">(pareja est. + conj. baile)</text>
+                        <!-- Conexión de vuelta al merge -->
+                        <line x1="780" y1="1772" x2="780" y2="1920" class="flow-line" stroke-dasharray="6,4" opacity="0.4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="1020" y1="1772" x2="1020" y2="1920" class="flow-line" stroke-dasharray="6,4" opacity="0.4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+
+                        <!-- Danza: Lista de Danzas -->
+                        <line x1="900" y1="1680" x2="900" y2="1800" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="895,1800 905,1800 900,1810" fill="#ec4899"/>
+
+                        <g class="flow-node" transform="translate(900, 1840)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-danza)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">¿Qué danzas incluye?</text>
+                        </g>
+
+                        <!-- ==================== MERGE ==================== -->
+                        <line x1="300" y1="1750" x2="300" y2="1920" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="900" y1="1860" x2="900" y2="1920" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="300" y1="1920" x2="900" y2="1920" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="600" y1="1920" x2="600" y2="1955" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,1955 605,1955 600,1965" fill="#94a3b8"/>
+
+                        <!-- ==================== SECCIÓN COMÚN ==================== -->
+                        <text x="600" y="1995" text-anchor="middle" class="section-label">SECCIÓN COMÚN</text>
+                        <line x1="200" y1="2005" x2="1000" y2="2005" stroke="#334155" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+
+                        <g class="flow-node" transform="translate(600, 2040)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-common)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">DNI Frente + Dorso</text>
+                        </g>
+                        <line x1="600" y1="2060" x2="600" y2="2088" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,2088 605,2088 600,2098" fill="#94a3b8"/>
+
+                        <g class="flow-node" transform="translate(600, 2125)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-file)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Foto Promocional</text>
+                        </g>
+                        <line x1="600" y1="2145" x2="600" y2="2173" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,2173 605,2173 600,2183" fill="#94a3b8"/>
+
+                        <g class="flow-node" transform="translate(600, 2210)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-common)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Equipo Técnico</text>
+                        </g>
+                        <line x1="600" y1="2230" x2="600" y2="2258" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,2258 605,2258 600,2268" fill="#94a3b8"/>
+
+                        <g class="flow-node" transform="translate(600, 2295)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-common)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Stage Plot</text>
+                        </g>
+                        <line x1="600" y1="2315" x2="600" y2="2343" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,2343 605,2343 600,2353" fill="#94a3b8"/>
+
+                        <g class="flow-node" transform="translate(600, 2380)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-common)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Acompañantes</text>
+                        </g>
+                        <line x1="600" y1="2400" x2="600" y2="2428" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,2428 605,2428 600,2438" fill="#94a3b8"/>
+
+                        <g class="flow-node" transform="translate(600, 2465)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-common)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Declaraciones</text>
+                        </g>
+
+                        <!-- ==================== ENVÍO ==================== -->
+                        <line x1="600" y1="2485" x2="600" y2="2530" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,2530 605,2530 600,2540" fill="#94a3b8"/>
+
+                        <text x="600" y="2570" text-anchor="middle" class="section-label">ENVÍO</text>
+                        <line x1="200" y1="2580" x2="1000" y2="2580" stroke="#334155" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+
+                        <g class="flow-node flow-node-decision" transform="translate(600, 2620)">
+                          <rect x="-90" y="-26" width="180" height="52" rx="26" fill="url(#grad-end)" filter="url(#glow-strong)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text node-text-bold">Enviar Inscripción</text>
+                        </g>
+                        <line x1="600" y1="2646" x2="600" y2="2680" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,2680 605,2680 600,2690" fill="#94a3b8"/>
+
+                        <g class="flow-node flow-node-end" transform="translate(600, 2725)">
+                          <rect x="-100" y="-28" width="200" height="56" rx="28" fill="url(#grad-end)" filter="url(#glow-strong)"/>
+                          <text x="0" y="-5" text-anchor="middle" dominant-baseline="middle" class="node-text node-text-bold">¡Inscripción Recibida!</text>
+                          <text x="0" y="14" text-anchor="middle" dominant-baseline="middle" class="node-text-sub">Guardada en sistema</text>
+                        </g>
+
+                        <!-- ==================== VERIFICACIÓN ==================== -->
+                        <line x1="600" y1="2753" x2="600" y2="2800" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,2800 605,2800 600,2810" fill="#94a3b8"/>
+
+                        <text x="600" y="2840" text-anchor="middle" class="section-label">VERIFICACIÓN</text>
+                        <line x1="200" y1="2850" x2="1000" y2="2850" stroke="#334155" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+
+                        <g class="flow-node" transform="translate(600, 2890)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-start)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Código Verificación</text>
+                        </g>
+                        <line x1="600" y1="2910" x2="600" y2="2945" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,2945 605,2945 600,2955" fill="#94a3b8"/>
+
+                        <g class="flow-node" transform="translate(600, 2985)">
+                          <rect x="-90" y="-20" width="180" height="40" rx="20" fill="url(#grad-info)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Email Confirmación</text>
+                        </g>
+                        <text x="600" y="3020" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:9px">Se envía constancia con N° de inscripción</text>
+
+                        <!-- ==================== REVISIÓN ==================== -->
+                        <line x1="600" y1="3040" x2="600" y2="3090" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,3090 605,3090 600,3100" fill="#94a3b8"/>
+
+                        <text x="600" y="3130" text-anchor="middle" class="section-label">REVISIÓN</text>
+                        <line x1="200" y1="3140" x2="1000" y2="3140" stroke="#334155" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+
+                        <g class="flow-node" transform="translate(600, 3180)">
+                          <rect x="-90" y="-20" width="180" height="40" rx="20" fill="url(#grad-category)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Jurado / Admin</text>
+                        </g>
+                        <text x="600" y="3215" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:9px">Evalúa documentación y trayectoria</text>
+                        <line x1="600" y1="3225" x2="600" y2="3260" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="595,3260 605,3260 600,3270" fill="#94a3b8"/>
+
+                        <!-- Decision Node -->
+                        <g class="flow-node flow-node-decision" transform="translate(600, 3310)">
+                          <rect x="-100" y="-26" width="200" height="52" rx="26" fill="url(#grad-category)" filter="url(#glow-strong)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text node-text-bold">¿Aceptado?</text>
+                        </g>
+
+                        <!-- Branch: Aceptado / Rechazado -->
+                        <line x1="600" y1="3336" x2="600" y2="3375" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="600" y1="3375" x2="350" y2="3375" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="600" y1="3375" x2="850" y2="3375" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="350" y1="3375" x2="350" y2="3405" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <line x1="850" y1="3375" x2="850" y2="3405" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="345,3405 355,3405 350,3415" fill="#10b981"/>
+                        <polygon points="845,3405 855,3405 850,3415" fill="#ef4444"/>
+
+                        <!-- ===== ACEPTADO ===== -->
+                        <g class="flow-node" transform="translate(350, 3445)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="url(#grad-start)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">ACEPTADO</text>
+                        </g>
+                        <line x1="350" y1="3465" x2="350" y2="3500" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="345,3500 355,3500 350,3510" fill="#10b981"/>
+
+                        <g class="flow-node" transform="translate(350, 3540)">
+                          <rect x="-90" y="-20" width="180" height="40" rx="20" fill="url(#grad-start)" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Email Bienvenida</text>
+                        </g>
+                        <text x="350" y="3575" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:9px">Aceptación + QR de Acreditación</text>
+                        <line x1="350" y1="3585" x2="350" y2="3620" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="345,3620 355,3620 350,3630" fill="#10b981"/>
+
+                        <!-- QR Node -->
+                        <g class="flow-node flow-node-decision" transform="translate(350, 3665)">
+                          <rect x="-80" y="-22" width="160" height="44" rx="22" fill="url(#grad-start)" filter="url(#glow-strong)"/>
+                          <text x="0" y="-3" text-anchor="middle" dominant-baseline="middle" class="node-text node-text-bold">QR Acreditación</text>
+                          <text x="0" y="12" text-anchor="middle" dominant-baseline="middle" class="node-text-sub">Código único por inscripto</text>
+                        </g>
+                        <line x1="350" y1="3687" x2="350" y2="3720" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="345,3720 355,3720 350,3730" fill="#10b981"/>
+
+                        <g class="flow-node flow-node-end" transform="translate(350, 3770)">
+                          <rect x="-90" y="-26" width="180" height="52" rx="26" fill="url(#grad-end)" filter="url(#glow-strong)"/>
+                          <text x="0" y="-5" text-anchor="middle" dominant-baseline="middle" class="node-text node-text-bold">Acreditado para</text>
+                          <text x="0" y="14" text-anchor="middle" dominant-baseline="middle" class="node-text-sub">Puerto Pirámides</text>
+                        </g>
+
+                        <!-- ===== RECHAZADO ===== -->
+                        <g class="flow-node" transform="translate(850, 3445)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="#ef4444" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">RECHAZADO</text>
+                        </g>
+                        <line x1="850" y1="3465" x2="850" y2="3500" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="845,3500 855,3500 850,3510" fill="#ef4444"/>
+
+                        <g class="flow-node" transform="translate(850, 3540)">
+                          <rect x="-90" y="-20" width="180" height="40" rx="20" fill="#ef4444" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Email Revisión</text>
+                        </g>
+                        <text x="850" y="3575" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:9px">Motivo de rechazo + feedback</text>
+                        <line x1="850" y1="3585" x2="850" y2="3620" class="flow-line" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite"/></line>
+                        <polygon points="845,3620 855,3620 850,3630" fill="#ef4444"/>
+
+                        <g class="flow-node" transform="translate(850, 3660)">
+                          <rect x="-80" y="-20" width="160" height="40" rx="20" fill="#ef4444" filter="url(#glow)"/>
+                          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" class="node-text">Corregir y Reenviar</text>
+                        </g>
+                        <text x="850" y="3695" text-anchor="middle" class="node-text-xs" fill="#94a3b8" style="font-size:9px">Puede volver a inscribirse</text>
+
+                        <!-- ==================== LEYENDA ==================== -->
+                        <g transform="translate(50, 3850)">
+                          <text x="0" y="0" class="legend-title">Leyenda</text>
+                          <circle cx="15" cy="25" r="8" fill="url(#grad-start)"/>
+                          <text x="30" y="29" class="legend-text">Inicio / Aceptado</text>
+
+                          <circle cx="140" cy="25" r="8" fill="url(#grad-personal)"/>
+                          <text x="155" y="29" class="legend-text">Datos Personales</text>
+
+                          <circle cx="280" cy="25" r="8" fill="url(#grad-category)"/>
+                          <text x="295" y="29" class="legend-text">Decisión / Revisión</text>
+
+                          <circle cx="420" cy="25" r="8" fill="url(#grad-info)"/>
+                          <text x="435" y="29" class="legend-text">Email</text>
+
+                          <circle cx="495" cy="25" r="8" fill="url(#grad-musica)"/>
+                          <text x="510" y="29" class="legend-text">Música</text>
+
+                          <circle cx="575" cy="25" r="8" fill="url(#grad-danza)"/>
+                          <text x="590" y="29" class="legend-text">Danza</text>
+
+                          <circle cx="645" cy="25" r="8" fill="url(#grad-file)"/>
+                          <text x="660" y="29" class="legend-text">Upload</text>
+
+                          <circle cx="720" cy="25" r="8" fill="url(#grad-common)"/>
+                          <text x="735" y="29" class="legend-text">Común</text>
+
+                          <circle cx="795" cy="25" r="8" fill="#ef4444"/>
+                          <text x="810" y="29" class="legend-text">Rechazado</text>
+
+                          <line x1="875" y1="25" x2="915" y2="25" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,4"/>
+                          <text x="925" y="29" class="legend-text">Flujo</text>
+                        </g>
+                      </svg>
+                      </div>
+
+                      <!-- Tooltip area -->
+                      <div class="flow-legend">
+                        <div class="legend-item">
+                          <span class="legend-dot" style="background: #10b981"></span>
+                          <span>Inicio / OTP</span>
+                        </div>
+                        <div class="legend-item">
+                          <span class="legend-dot" style="background: #3b82f6"></span>
+                          <span>Datos Personales</span>
+                        </div>
+                        <div class="legend-item">
+                          <span class="legend-dot" style="background: #8b5cf6"></span>
+                          <span>Decisión</span>
+                        </div>
+                        <div class="legend-item">
+                          <span class="legend-dot" style="background: #6366f1"></span>
+                          <span>Info/Reglas</span>
+                        </div>
+                        <div class="legend-item">
+                          <span class="legend-dot" style="background: #f59e0b"></span>
+                          <span>Música</span>
+                        </div>
+                        <div class="legend-item">
+                          <span class="legend-dot" style="background: #ec4899"></span>
+                          <span>Danza</span>
+                        </div>
+                        <div class="legend-item">
+                          <span class="legend-dot" style="background: #14b8a6"></span>
+                          <span>Upload (MP3/Letra/Partitura)</span>
+                        </div>
+                        <div class="legend-item">
+                          <span class="legend-dot" style="background: #06b6d4"></span>
+                          <span>Sección Común</span>
+                        </div>
+                      </div>
+                    </div>
+                  }
+
+                  <!-- Note -->
+                  @if (block.note) {
+                    <div class="block-note" [class.note-info]="block.style === 'info'" [class.note-warning]="block.style === 'warning'" [class.note-success]="block.style === 'success'">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                      <p [innerHTML]="block.note"></p>
+                    </div>
+                  }
+
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+
+    @if (filteredSections().length === 0) {
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <p>No se encontraron resultados para "{{ searchQuery() }}"</p>
+        <button class="btn-clear" (click)="clearSearch()">Limpiar búsqueda</button>
+      </div>
+    }
+  </div>
+</div>

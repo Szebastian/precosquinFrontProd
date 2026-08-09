@@ -8,5 +8,9 @@ export const JURADO_ROUTES: Routes = [
   {
     path: 'inscripciones',
     loadComponent: () => import('./jurado-inscripciones.page').then(m => m.JuradoInscripcionesPageComponent)
+  },
+  {
+    path: 'admission',
+    loadComponent: () => import('./jurado-admission.page').then(m => m.InscriptionsAdmissionComponent)
   }
 ];

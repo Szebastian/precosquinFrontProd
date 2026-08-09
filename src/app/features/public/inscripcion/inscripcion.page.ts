@@ -2398,7 +2398,6 @@ case 8: {
     if (this.data.promoPhotoFile) files.push({ file: this.data.promoPhotoFile, type: 'promo_photo' });
     if (this.data.lyricsFile) files.push({ file: this.data.lyricsFile, type: 'lyrics' });
     if (this.data.scoreFile) files.push({ file: this.data.scoreFile, type: 'score' });
-    if (this.data.danceMp3File) files.push({ file: this.data.danceMp3File, type: 'dance_mp3' });
 
     if (files.length === 0) return;
 

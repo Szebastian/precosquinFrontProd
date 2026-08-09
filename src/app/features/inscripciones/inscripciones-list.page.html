@@ -203,9 +203,15 @@
                     <input type="checkbox" [checked]="selectedIds().has(inscription.id)" (change)="toggleSelect(inscription.id)" />
                     <span class="checkbox-custom"></span>
                   </label>
-                  <span class="row-index">{{ idx + 1 }}</span>
-                  <div class="artist-avatar" [class.cat-musica]="inscription.category === 'Música'" [class.cat-danza]="inscription.category === 'Danza'">
-                    {{ getInitials(inscription.full_name) }}
+                  <div class="artist-photo-wrap">
+                    @if (documentUrls()[inscription.id + '_promo_photo']) {
+                      <img [src]="documentUrls()[inscription.id + '_promo_photo']" alt="" class="artist-photo" />
+                    } @else {
+                      <div class="artist-avatar" [class.cat-musica]="inscription.category === 'Música'" [class.cat-danza]="inscription.category === 'Danza'">
+                        {{ getInitials(inscription.full_name) }}
+                      </div>
+                    }
+                    <span class="row-index">{{ idx + 1 }}</span>
                   </div>
                   <div class="artist-info">
                     <div class="artist-name-row">
@@ -215,24 +221,22 @@
                       }
                     </div>
                     <div class="artist-meta">
-                      <span class="meta-chip">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                      <span class="meta-chip cat-chip" [class.cat-musica-chip]="inscription.category === 'Música'" [class.cat-danza-chip]="inscription.category === 'Danza'">
                         {{ inscription.category }} › {{ inscription.subcategory }}
-                      </span>
-                      <span class="meta-chip">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                        {{ inscription.email }}
                       </span>
                       @if (inscription.age) {
                         <span class="meta-chip">{{ inscription.age }} años</span>
+                      }
+                      @if (inscription.city || inscription.locality) {
+                        <span class="meta-chip">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                          {{ inscription.city || inscription.locality }}
+                        </span>
                       }
                     </div>
                   </div>
                 </div>
                 <div class="row-right">
-                  @if (inscription.style) {
-                    <span class="style-tag">{{ inscription.style }}</span>
-                  }
                   <span class="status-badge" [class]="'badge-' + inscription.status.toLowerCase()">
                     {{ formatStatus(inscription.status) }}
                   </span>
@@ -243,6 +247,36 @@
               <!-- Expanded detail -->
               @if (expandedId() === inscription.id) {
                 <div class="row-detail" (click)="$event.stopPropagation()">
+                  <!-- Hero Photo -->
+                  <div class="detail-hero">
+                    @if (documentUrls()[inscription.id + '_promo_photo']) {
+                      <img [src]="documentUrls()[inscription.id + '_promo_photo']" alt="Foto de {{ inscription.full_name }}" class="hero-photo" (click)="openLightbox(documentUrls()[inscription.id + '_promo_photo'], $event)" />
+                    } @else if (inscription.promo_photo_url) {
+                      <div class="hero-loading" (click)="loadDocUrl(inscription.id, 'promo_photo', inscription.promo_photo_url)">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        <span>Cargar foto</span>
+                      </div>
+                    } @else {
+                      <div class="hero-empty">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="1.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        <span>Sin foto</span>
+                      </div>
+                    }
+                    <div class="hero-overlay">
+                      <div class="hero-info">
+                        <h3 class="hero-name">{{ inscription.full_name }}</h3>
+                        @if (inscription.stage_name) {
+                          <span class="hero-stage">"{{ inscription.stage_name }}"</span>
+                        }
+                        <div class="hero-badges">
+                          <span class="hero-badge hero-badge-cat">{{ inscription.category }}</span>
+                          <span class="hero-badge hero-badge-sub">{{ inscription.subcategory }}</span>
+                          <span class="status-badge" [class]="'badge-' + inscription.status.toLowerCase()">{{ formatStatus(inscription.status) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="detail-sections">
                     <!-- Personal Data -->
                     <div class="detail-section">
@@ -450,10 +484,10 @@
                           Reglas Art. 31 - Solista Instrumental
                         </h4>
                         <div class="rules-list">
-                          @if (inscription.acceptPurelyInstrumental) { <span class="rule-check">&#10003;</span> La presentaci�n debe ser puramente instrumental }
-                          @if (inscription.acceptOneInstrument) { <span class="rule-check">&#10003;</span> Un (1) �nico instrumento para el solista }
-                          @if (inscription.acceptNoPrerecorded) { <span class="rule-check">&#10003;</span> No se permiten pistas ni bases pregrabadas }
-                          @if (inscription.acceptNoInstrumentChange) { <span class="rule-check">&#10003;</span> No se permite cambio de instrumento }
+                          @if (inscription.accept_purely_instrumental) { <span class="rule-check">&#10003;</span> La presentaci�n debe ser puramente instrumental }
+                          @if (inscription.accept_one_instrument) { <span class="rule-check">&#10003;</span> Un (1) �nico instrumento para el solista }
+                          @if (inscription.accept_no_prerecorded) { <span class="rule-check">&#10003;</span> No se permiten pistas ni bases pregrabadas }
+                          @if (inscription.accept_no_instrument_change) { <span class="rule-check">&#10003;</span> No se permite cambio de instrumento }
                         </div>
                       </div>
                     }
@@ -467,12 +501,117 @@
                     }
 
                     <!-- Songs List -->
-                    @if (inscription.songsList) {
+                    @if (inscription.songs_list) {
                       <div class="detail-section">
                         <h4 class="section-title">Temas a Interpretar</h4>
-                        <pre class="section-text songs-list">{{ inscription.songsList }}</pre>
+                        <pre class="section-text songs-list">{{ inscription.songs_list }}</pre>
                       </div>
                     }
+
+                    <!-- Documentos / Imágenes -->
+                    <div class="detail-section">
+                      <h4 class="section-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="1.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        Documentos / Imágenes
+                      </h4>
+                      <div class="docs-grid">
+                        <!-- Foto Promo -->
+                        <div class="doc-card">
+                          <span class="doc-label">Foto del Artista</span>
+                          @if (documentUrls()[inscription.id + '_promo_photo']) {
+                            <div class="doc-preview doc-clickable" (click)="openLightbox(documentUrls()[inscription.id + '_promo_photo'], $event)">
+                              <img [src]="documentUrls()[inscription.id + '_promo_photo']" alt="Foto promocional" class="doc-img" />
+                            </div>
+                          } @else if (inscription.promo_photo_url) {
+                            <div class="doc-preview doc-loading" (click)="loadDocUrl(inscription.id, 'promo_photo', inscription.promo_photo_url)">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                              <span>Clic para cargar</span>
+                            </div>
+                          } @else {
+                            <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'promo_photo')">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                              <span>Subir foto</span>
+                            </div>
+                          }
+                        </div>
+
+                        <!-- DNI Frente -->
+                        <div class="doc-card">
+                          <span class="doc-label">DNI (Frente)</span>
+                          @if (documentUrls()[inscription.id + '_dni_front']) {
+                            <div class="doc-preview doc-clickable" (click)="openLightbox(documentUrls()[inscription.id + '_dni_front'], $event)">
+                              <img [src]="documentUrls()[inscription.id + '_dni_front']" alt="DNI frente" class="doc-img" />
+                            </div>
+                          } @else if (inscription.dni_front_url) {
+                            <div class="doc-preview doc-loading" (click)="loadDocUrl(inscription.id, 'dni_front', inscription.dni_front_url)">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                              <span>Clic para cargar</span>
+                            </div>
+                          } @else {
+                            <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'dni_front')">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                              <span>Subir DNI frente</span>
+                            </div>
+                          }
+                        </div>
+
+                        <!-- DNI Dorso -->
+                        <div class="doc-card">
+                          <span class="doc-label">DNI (Dorso)</span>
+                          @if (documentUrls()[inscription.id + '_dni_back']) {
+                            <div class="doc-preview doc-clickable" (click)="openLightbox(documentUrls()[inscription.id + '_dni_back'], $event)">
+                              <img [src]="documentUrls()[inscription.id + '_dni_back']" alt="DNI dorso" class="doc-img" />
+                            </div>
+                          } @else if (inscription.dni_back_url) {
+                            <div class="doc-preview doc-loading" (click)="loadDocUrl(inscription.id, 'dni_back', inscription.dni_back_url)">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                              <span>Clic para cargar</span>
+                            </div>
+                          } @else {
+                            <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'dni_back')">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                              <span>Subir DNI dorso</span>
+                            </div>
+                          }
+                        </div>
+
+                        <!-- Letra -->
+                        <div class="doc-card">
+                          <span class="doc-label">Letra / Canción</span>
+                          @if (inscription.lyrics_url) {
+                            <div class="doc-preview doc-file">
+                              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                              <span class="doc-file-name">{{ getFileName(inscription.lyrics_url) }}</span>
+                            </div>
+                          } @else {
+                            <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'lyrics')">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                              <span>Subir letra</span>
+                            </div>
+                          }
+                        </div>
+
+                        <!-- Partitura -->
+                        <div class="doc-card">
+                          <span class="doc-label">Partitura</span>
+                          @if (inscription.score_url && isImageFile(inscription.score_url) && documentUrls()[inscription.id + '_score']) {
+                            <div class="doc-preview doc-clickable" (click)="openLightbox(documentUrls()[inscription.id + '_score'], $event)">
+                              <img [src]="documentUrls()[inscription.id + '_score']" alt="Partitura" class="doc-img" />
+                            </div>
+                          } @else if (inscription.score_url) {
+                            <div class="doc-preview doc-file">
+                              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                              <span class="doc-file-name">{{ getFileName(inscription.score_url) }}</span>
+                            </div>
+                          } @else {
+                            <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'score')">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                              <span>Subir partitura</span>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
 
                     <!-- Technical Needs -->
                     @if (inscription.technical_needs) {
@@ -527,6 +666,16 @@
     </div>
   </div>
 </div>
+
+<!-- Lightbox -->
+@if (lightboxUrl()) {
+  <div class="lightbox-overlay" (click)="closeLightbox()">
+    <button class="lightbox-close" (click)="closeLightbox()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+    <img [src]="lightboxUrl()" alt="Foto ampliada" class="lightbox-img" (click)="$event.stopPropagation()" />
+  </div>
+}
 
 <!-- Reject Reason Modal -->
 @if (rejectModalOpen()) {

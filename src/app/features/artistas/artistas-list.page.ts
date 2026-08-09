@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InscriptionsService, Inscription } from '../../core/services/inscriptions.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-artistas-list',
@@ -156,7 +157,11 @@ import { InscriptionsService, Inscription } from '../../core/services/inscriptio
                 <div class="inscription-card" [class]="'status-' + inscription.status.toLowerCase()" (click)="toggleDetail(inscription.id)">
                   <div class="card-top">
                     <div class="artist-avatar" [class]="'cat-' + inscription.category.toLowerCase()">
-                      {{ getInitials(inscription.full_name) }}
+                      @if (documentUrls()[inscription.id + '_promo']) {
+                        <img [src]="documentUrls()[inscription.id + '_promo']" alt="Foto de {{ inscription.full_name }}" class="avatar-img" />
+                      } @else {
+                        {{ getInitials(inscription.full_name) }}
+                      }
                     </div>
                     <div class="artist-info">
                       <h3 class="artist-name">{{ inscription.full_name }}</h3>
@@ -285,6 +290,112 @@ import { InscriptionsService, Inscription } from '../../core/services/inscriptio
                           </div>
                         }
                       </div>
+
+                      <!-- Documentos / Imágenes -->
+                      <div class="detail-section">
+                        <h4 class="detail-section-title">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="1.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                          Documentos / Imágenes
+                        </h4>
+                        <div class="docs-grid">
+                          <!-- Foto Promo -->
+                          <div class="doc-card">
+                            <span class="doc-label">Foto del Artista</span>
+                            @if (documentUrls()[inscription.id + '_promo']) {
+                              <div class="doc-preview">
+                                <img [src]="documentUrls()[inscription.id + '_promo']" alt="Foto promocional" class="doc-img" />
+                              </div>
+                            } @else if (inscription.promo_photo_url) {
+                              <div class="doc-preview doc-loading" (click)="loadDocUrl(inscription.id, 'promo', inscription.promo_photo_url!)">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                <span>Clic para cargar</span>
+                              </div>
+                            } @else {
+                              <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'promo_photo')">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                                <span>Subir foto</span>
+                              </div>
+                            }
+                          </div>
+
+                          <!-- DNI Frente -->
+                          <div class="doc-card">
+                            <span class="doc-label">DNI (Frente)</span>
+                            @if (documentUrls()[inscription.id + '_dni_front']) {
+                              <div class="doc-preview">
+                                <img [src]="documentUrls()[inscription.id + '_dni_front']" alt="DNI frente" class="doc-img" />
+                              </div>
+                            } @else if (inscription.dni_front_url) {
+                              <div class="doc-preview doc-loading" (click)="loadDocUrl(inscription.id, 'dni_front', inscription.dni_front_url!)">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                <span>Clic para cargar</span>
+                              </div>
+                            } @else {
+                              <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'dni_front')">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                                <span>Subir DNI frente</span>
+                              </div>
+                            }
+                          </div>
+
+                          <!-- DNI Dorso -->
+                          <div class="doc-card">
+                            <span class="doc-label">DNI (Dorso)</span>
+                            @if (documentUrls()[inscription.id + '_dni_back']) {
+                              <div class="doc-preview">
+                                <img [src]="documentUrls()[inscription.id + '_dni_back']" alt="DNI dorso" class="doc-img" />
+                              </div>
+                            } @else if (inscription.dni_back_url) {
+                              <div class="doc-preview doc-loading" (click)="loadDocUrl(inscription.id, 'dni_back', inscription.dni_back_url!)">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                <span>Clic para cargar</span>
+                              </div>
+                            } @else {
+                              <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'dni_back')">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                                <span>Subir DNI dorso</span>
+                              </div>
+                            }
+                          </div>
+
+                          <!-- Letra -->
+                          <div class="doc-card">
+                            <span class="doc-label">Letra / Canción</span>
+                            @if (inscription.lyrics_url) {
+                              <div class="doc-preview doc-file">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                                <span class="doc-file-name">{{ getFileName(inscription.lyrics_url) }}</span>
+                              </div>
+                            } @else {
+                              <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'lyrics')">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                                <span>Subir letra</span>
+                              </div>
+                            }
+                          </div>
+
+                          <!-- Partitura -->
+                          <div class="doc-card">
+                            <span class="doc-label">Partitura</span>
+                            @if (inscription.score_url && isImageFile(inscription.score_url) && documentUrls()[inscription.id + '_score']) {
+                              <div class="doc-preview">
+                                <img [src]="documentUrls()[inscription.id + '_score']" alt="Partitura" class="doc-img" />
+                              </div>
+                            } @else if (inscription.score_url) {
+                              <div class="doc-preview doc-file">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                                <span class="doc-file-name">{{ getFileName(inscription.score_url) }}</span>
+                              </div>
+                            } @else {
+                              <div class="doc-preview doc-upload" (click)="triggerFileInput($event, inscription.id, 'score')">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                                <span>Subir partitura</span>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+
                       @if (inscription.status !== 'CONTRATO_FIRMADO') {
                         <div class="status-actions">
                           <span class="status-actions-label">Cambiar estado:</span>
@@ -863,6 +974,134 @@ import { InscriptionsService, Inscription } from '../../core/services/inscriptio
       color: var(--gray-500);
     }
 
+    /* Detail Sections */
+    .detail-section {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .detail-section-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin: 0 0 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Documents Grid */
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .doc-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+
+    .doc-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--gray-500);
+    }
+
+    .doc-preview {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: 0.625rem;
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+      background: var(--gray-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .doc-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .doc-loading {
+      cursor: pointer;
+      flex-direction: column;
+      gap: 0.375rem;
+      color: var(--gray-400);
+      transition: all 0.15s ease;
+    }
+
+    .doc-loading:hover {
+      background: var(--gray-100);
+      color: var(--gray-600);
+      border-color: var(--gray-300);
+    }
+
+    .doc-loading span {
+      font-size: 0.6875rem;
+      font-weight: 500;
+    }
+
+    .doc-upload {
+      cursor: pointer;
+      flex-direction: column;
+      gap: 0.375rem;
+      color: var(--gray-400);
+      transition: all 0.15s ease;
+      border: 2px dashed var(--gray-300);
+      background: transparent;
+    }
+
+    .doc-upload:hover {
+      background: rgba(59,130,246,0.04);
+      color: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .doc-upload span {
+      font-size: 0.6875rem;
+      font-weight: 500;
+    }
+
+    .doc-file {
+      aspect-ratio: auto;
+      padding: 1rem;
+      flex-direction: column;
+      gap: 0.5rem;
+      color: var(--gray-400);
+    }
+
+    .doc-file-name {
+      font-size: 0.6875rem;
+      color: var(--gray-500);
+      text-align: center;
+      word-break: break-all;
+    }
+
+    .no-docs {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8125rem;
+      color: var(--gray-400);
+      background: var(--gray-50);
+      border-radius: 0.625rem;
+    }
+
+    /* Avatar Image */
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .detail-footer {
       display: flex;
       justify-content: space-between;
@@ -966,6 +1205,8 @@ export class ArtistasListPageComponent implements OnInit {
   searchQuery = signal('');
   expandedId = signal<string | null>(null);
   updatingId = signal<string | null>(null);
+  documentUrls = signal<Record<string, string>>({});
+  uploadingDoc = signal<string | null>(null);
 
   totalInscriptions = computed(() => this.allInscriptions().length);
   pendingCount = computed(() => this.allInscriptions().filter(i => i.status === 'PENDIENTE').length);
@@ -1015,6 +1256,12 @@ export class ArtistasListPageComponent implements OnInit {
       next: (res) => {
         this.allInscriptions.set(res.data);
         this.loading.set(false);
+        // Auto-load promo photos for all inscriptions
+        for (const ins of res.data) {
+          if (ins.promo_photo_url) {
+            this.loadDocUrl(ins.id, 'promo', ins.promo_photo_url);
+          }
+        }
       },
       error: () => {
         this.loading.set(false);
@@ -1068,5 +1315,120 @@ export class ArtistasListPageComponent implements OnInit {
     } catch {
       return dateStr;
     }
+  }
+
+  loadDocUrl(inscriptionId: string, docType: string, storagePath: string): void {
+    const key = `${inscriptionId}_${docType}`;
+    if (this.documentUrls()[key]) return;
+
+    // Try public URL first (no auth needed)
+    this.inscriptionsService.getPublicUrl(storagePath).subscribe({
+      next: (res) => {
+        if (res.public_url) {
+          this.documentUrls.update(urls => ({ ...urls, [key]: res.public_url }));
+        }
+      },
+      error: () => {
+        // Fallback to signed URL (requires auth)
+        this.inscriptionsService.getSignedUrl(storagePath).subscribe({
+          next: (res) => {
+            if (res.signed_url) {
+              this.documentUrls.update(urls => ({ ...urls, [key]: res.signed_url }));
+            }
+          },
+          error: () => {}
+        });
+      }
+    });
+  }
+
+  getFileName(url: string): string {
+    if (!url) return '';
+    const parts = url.split('/');
+    return parts[parts.length - 1] || url;
+  }
+
+  isImageFile(url: string): boolean {
+    if (!url) return false;
+    const ext = url.split('.').pop()?.toLowerCase() || '';
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
+  }
+
+  triggerFileInput(event: Event, inscriptionId: string, fileType: string): void {
+    event.stopPropagation();
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = this.getFileAccept(fileType);
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (file) {
+        this.uploadDoc(inscriptionId, fileType, file);
+      }
+    };
+    input.click();
+  }
+
+  private getFileAccept(fileType: string): string {
+    const map: Record<string, string> = {
+      promo_photo: 'image/jpeg,image/png',
+      dni_front: 'image/jpeg,image/png',
+      dni_back: 'image/jpeg,image/png',
+      lyrics: 'application/pdf,.doc,.docx',
+      score: 'application/pdf,image/jpeg,image/png',
+    };
+    return map[fileType] || '*/*';
+  }
+
+  uploadDoc(inscriptionId: string, fileType: string, file: File): void {
+    this.uploadingDoc.set(`${inscriptionId}_${fileType}`);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const url = `${this.getApiUrl()}/inscriptions/upload/${inscriptionId}?file_type=${fileType}`;
+    const token = localStorage.getItem('token') || '';
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData,
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Error al subir archivo');
+      return res.json();
+    })
+    .then((data: any) => {
+      const path = data.path;
+      const colMap: Record<string, string> = {
+        promo_photo: 'promo_photo_url',
+        dni_front: 'dni_front_url',
+        dni_back: 'dni_back_url',
+        lyrics: 'lyrics_url',
+        score: 'score_url',
+      };
+      const field = colMap[fileType];
+      this.allInscriptions.update(list =>
+        list.map(i => i.id === inscriptionId ? { ...i, [field]: path } : i)
+      );
+      const key = `${inscriptionId}_${fileType.replace('promo_photo', 'promo')}`;
+      this.inscriptionsService.getPublicUrl(path).subscribe({
+        next: (res) => {
+          if (res.public_url) {
+            this.documentUrls.update(urls => ({ ...urls, [key]: res.public_url }));
+          }
+        },
+        error: () => {}
+      });
+      this.uploadingDoc.set(null);
+      alert('Archivo subido correctamente');
+    })
+    .catch(err => {
+      console.error('Upload error:', err);
+      this.uploadingDoc.set(null);
+      alert('Error al subir: ' + err.message);
+    });
+  }
+
+  private getApiUrl(): string {
+    return environment.apiUrl;
   }
 }

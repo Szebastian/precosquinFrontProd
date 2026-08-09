@@ -11,5 +11,10 @@
     "target": "http://localhost:8001",
     "secure": false,
     "changeOrigin": true
+  },
+  "/v1/storage": {
+    "target": "http://localhost:8001",
+    "secure": false,
+    "changeOrigin": true
   }
 }

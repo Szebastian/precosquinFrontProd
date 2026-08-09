@@ -18,7 +18,10 @@ import { interval, Subscription } from 'rxjs';
         <div class="brand-logo">
           <img src="assets/img/logoballena.webp" alt="Precosquin" class="logo-img">
         </div>
-        <span class="brand-name">Precosquin</span>
+        <div class="brand-info">
+          <span class="brand-name">Pre-Cosquin</span>
+          <span class="brand-edition">Puerto Piramides 2026</span>
+        </div>
       </div>
 
       <!-- Navigation -->
@@ -40,6 +43,12 @@ import { interval, Subscription } from 'rxjs';
 
       <!-- User Section -->
       <div class="sidebar-footer">
+        <div class="sidebar-role-badge">
+          <span class="role-badge-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </span>
+          <span class="role-badge-label">{{ auth.profile()?.role === 'admin' ? 'ADMIN' : 'PANEL DE CONTROL' }}</span>
+        </div>
         <div class="sidebar-user" [class.jurado-user]="auth.isJurado()">
           <div class="user-avatar">
             <span class="avatar-text">{{ initials() }}</span>
@@ -88,27 +97,46 @@ import { interval, Subscription } from 'rxjs';
     }
 
     .brand-logo {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: 0.75rem;
       background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      flex-shrink: 0;
     }
 
     .logo-img {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       object-fit: contain;
     }
 
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      min-width: 0;
+    }
+
     .brand-name {
-      font-size: 1.125rem;
+      font-size: 1rem;
       font-weight: 700;
       color: #f8fafc;
       letter-spacing: -0.025em;
+      line-height: 1.2;
+    }
+
+    .brand-edition {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #94a3b8;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* Navigation */
@@ -208,6 +236,32 @@ import { interval, Subscription } from 'rxjs';
       border-radius: 9999px;
       line-height: 1;
       box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Role Badge */
+    .sidebar-role-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(99, 102, 241, 0.15));
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 0.625rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .role-badge-icon {
+      color: #60a5fa;
+      display: flex;
+      align-items: center;
+    }
+
+    .role-badge-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #93c5fd;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     /* Footer */
@@ -352,7 +406,8 @@ export class SidebarComponent {
       { label: 'Artistas', route: '/panel/artistas', roles: ['organizador', 'admin', 'staff', 'jurado'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
       { label: 'Cronograma', route: '/panel/cronograma', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>' },
       { label: 'Acreditaciones', route: '/panel/acreditaciones', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' },
-      { label: 'Jurado', route: '/panel/jurado', roles: ['admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' },
+      { label: 'Jurado', route: '/panel/jurado', roles: ['admin', 'jurado'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' },
+      { label: 'Admisión', route: '/panel/jurado/admission', roles: ['admin', 'jurado'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>' },
       { label: 'Staff', route: '/panel/staff', roles: ['staff', 'organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>' },
       { label: 'Comunicaciones', route: '/panel/comunicaciones', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>' },
       { label: 'Contratos', route: '/panel/contratos', roles: ['organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>' },
@@ -361,6 +416,7 @@ export class SidebarComponent {
       { label: 'Galería', route: '/panel/galeria', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' },
       { label: 'Mensajes', route: '/panel/mensajes', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>' },
       { label: 'Admin', route: '/panel/admin', roles: ['admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>' },
+      { label: 'Documentación', route: '/panel/documentation', roles: ['organizador', 'admin', 'staff', 'jurado'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>' },
     ];
   });
 

@@ -1,11 +1,10 @@
-import { Component, inject, signal, Input, Output, EventEmitter } from '@angular/core';
+import { Component, inject, signal, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { ThemeService } from '@core/services/theme.service';
-import { OrganizationStore } from '@core/state/organization.store';
-import { UserStore } from '@core/state/user.store';
-import { ToastService } from '@shared/components/toast/toast.service';
+import { filter, map } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -28,42 +27,10 @@ import { ToastService } from '@shared/components/toast/toast.service';
               }
             </svg>
           </button>
-          <a routerLink="/dashboard" class="header-brand">
-            <div class="brand-icon">
-              <img src="assets/img/logoballena.webp" alt="Precosquin Logo" class="h-full w-full object-contain" />
-            </div>
-            <span class="brand-text">Precosquin</span>
-          </a>
+          <span class="header-section-title">{{ sectionTitle() }}</span>
         </div>
 
         <div class="header-right">
-          <div class="org-switcher sm-down-hide">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            <select
-              [value]="orgStore.currentOrgId()"
-              (change)="onOrgChange($event)"
-              class="org-select"
-              aria-label="Seleccionar organizacion"
-            >
-              @for (org of orgStore.organizations(); track org.id) {
-                <option [value]="org.id">{{ org.name }}</option>
-              }
-            </select>
-          </div>
-
-          <button
-            class="btn-ghost btn-icon notification-btn"
-            (click)="notificationsOpen.set(!notificationsOpen())"
-            aria-label="Notificaciones"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-            </svg>
-            <span class="notification-badge">3</span>
-          </button>
-
           <button
             class="btn-ghost btn-icon theme-toggle"
             (click)="themeService.toggle()"
@@ -80,54 +47,37 @@ import { ToastService } from '@shared/components/toast/toast.service';
             }
           </button>
 
-          @if (notificationsOpen()) {
-            <div class="dropdown-menu dropdown-menu-right animate-fade-in-down">
-              <div class="dropdown-header">
-                <span class="font-semibold">Notificaciones</span>
-              </div>
-              <div class="dropdown-scroll">
-                @for (notif of mockNotifications; track notif.id) {
-                  <a [routerLink]="notif.link" class="dropdown-item notification-item">
-                    <div>
-                      <p class="text-sm font-medium">{{ notif.title }}</p>
-                      <p class="text-xs text-muted">{{ notif.time }}</p>
-                    </div>
-                  </a>
-                }
-              </div>
-              <div class="dropdown-footer">
-                <a routerLink="/notifications" class="text-sm text-brand font-medium">Ver todas</a>
-              </div>
-            </div>
-          }
-
           <div class="user-menu">
             <button
               (click)="userMenuOpen.set(!userMenuOpen())"
               class="user-menu-trigger"
               aria-label="Menu de usuario"
             >
-              <div class="avatar">
-                {{ initials() }}
-              </div>
-              <span class="user-name sm-down-hide">{{ auth.profile()?.full_name || 'Usuario' }}</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted">
-                <path d="m6 9 6 6 6-6"/>
-              </svg>
+              <div class="avatar">{{ initials() }}</div>
             </button>
 
             @if (userMenuOpen()) {
-              <div class="dropdown-menu dropdown-menu-right animate-fade-in-down">
+              <div class="dropdown-menu animate-fade-in-down">
                 <div class="dropdown-header">
-                  <p class="font-semibold">{{ auth.profile()?.full_name }}</p>
-                  <p class="text-xs text-muted">{{ auth.profile()?.email }}</p>
-                  <span class="badge badge-brand mt-1" [class.jurado-header-role]="auth.isJurado()">{{ auth.profile()?.role }}</span>
+                  <div class="dropdown-avatar">{{ initials() }}</div>
+                  <div class="dropdown-user-info">
+                    <p class="dropdown-user-name">{{ auth.profile()?.full_name || 'Usuario' }}</p>
+                    <p class="dropdown-user-email">{{ auth.profile()?.email }}</p>
+                    <span class="dropdown-role-badge">{{ auth.profile()?.role || 'admin' }}</span>
+                  </div>
                 </div>
                 <div class="dropdown-divider"></div>
-                <a routerLink="/settings" class="dropdown-item">Configuracion</a>
-                <a routerLink="/profile" class="dropdown-item">Mi perfil</a>
+                <a routerLink="/panel/dashboard" class="dropdown-item" (click)="userMenuOpen.set(false)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                  Dashboard
+                </a>
+                <a routerLink="/panel/admin" class="dropdown-item" (click)="userMenuOpen.set(false)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Administracion
+                </a>
                 <div class="dropdown-divider"></div>
-                <button (click)="logout()" class="dropdown-item text-danger">
+                <button class="dropdown-item logout-item" (click)="logout()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
                   Cerrar sesion
                 </button>
               </div>
@@ -160,9 +110,9 @@ import { ToastService } from '@shared/components/toast/toast.service';
       padding: 0 var(--space-4);
     }
 
-    @media (max-width: 639px) { /* sm breakpoint */
+    @media (max-width: 639px) {
       .header-inner {
-        padding: 0 var(--space-2); /* Reducir padding en pantallas muy pequeñas */
+        padding: 0 var(--space-2);
       }
     }
 
@@ -176,103 +126,33 @@ import { ToastService } from '@shared/components/toast/toast.service';
       display: none;
     }
 
-    .header-brand {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      text-decoration: none;
-    }
-
-    .brand-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--radius-lg);
-      background-color: var(--brand-600);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-text {
+    .header-section-title {
       font-size: var(--text-lg);
       font-weight: var(--weight-bold);
       color: var(--gray-900);
     }
 
-    @media (max-width: 639px) {
-      .brand-text {
-        display: none; /* Ocultar el texto en pantallas muy pequeñas */
-      }
+    :host-context(.dark) .header-section-title {
+      color: var(--gray-100);
     }
 
     .header-right {
       display: flex;
       align-items: center;
       gap: var(--space-3);
-      position: relative;
+    }
+
+    .theme-toggle {
+      color: var(--gray-500);
     }
 
     @media (max-width: 639px) {
-      .header-right {
-        gap: var(--space-2); /* Reducir el espacio entre elementos en móviles */
-      }
-
-      .org-switcher,
-      .user-name {
-        display: none; /* Ocultar el selector de organización y el nombre de usuario en móviles */
+      .mobile-menu-btn {
+        display: flex;
       }
     }
 
-    .org-switcher {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-1) var(--space-3);
-      background-color: var(--gray-50);
-      border-radius: var(--radius-lg);
-    }
-
-    :host-context(.dark) .org-switcher {
-      background-color: var(--gray-200);
-    }
-
-    .org-select {
-      border: none;
-      background: transparent;
-      font-size: var(--text-sm);
-      font-weight: var(--weight-medium);
-      color: var(--gray-700);
-      cursor: pointer;
-      outline: none;
-      padding-right: var(--space-6);
-    }
-
-    .notification-btn {
-      position: relative;
-    }
-
-    .notification-badge {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      width: 18px;
-      height: 18px;
-      background-color: var(--danger-500);
-      color: #fff;
-      font-size: 10px;
-      font-weight: var(--weight-bold);
-      border-radius: var(--radius-full);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #fff;
-    }
-
-    :host-context(.dark) .notification-badge {
-      border-color: var(--gray-100);
-    }
-
+    /* User Menu */
     .user-menu {
       position: relative;
     }
@@ -280,34 +160,38 @@ import { ToastService } from '@shared/components/toast/toast.service';
     .user-menu-trigger {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-1);
+      padding: 0;
       border: none;
       background: transparent;
-      border-radius: var(--radius-lg);
       cursor: pointer;
-      transition: background-color var(--transition-fast);
     }
 
-    .user-menu-trigger:hover {
-      background-color: var(--gray-100);
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+      color: #fff;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.02em;
+      border: 2px solid transparent;
+      transition: border-color 0.2s ease;
     }
 
-    :host-context(.dark) .user-menu-trigger:hover {
-      background-color: var(--gray-200);
+    .user-menu-trigger:hover .avatar {
+      border-color: var(--brand-400);
     }
 
-    .user-name {
-      font-size: var(--text-sm);
-      font-weight: var(--weight-medium);
-      color: var(--gray-700);
-    }
-
+    /* Dropdown */
     .dropdown-menu {
       position: absolute;
-      top: calc(100% + 4px);
+      top: calc(100% + 8px);
       right: 0;
-      min-width: 200px;
+      width: 240px;
       background-color: #fff;
       border: 1px solid var(--gray-200);
       border-radius: var(--radius-xl);
@@ -321,38 +205,105 @@ import { ToastService } from '@shared/components/toast/toast.service';
       border-color: var(--gray-200);
     }
 
-    .dropdown-menu-right {
-      right: 0;
-    }
-
     .dropdown-header {
-      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      background: var(--gray-50);
       border-bottom: 1px solid var(--gray-100);
     }
 
-    .dropdown-scroll {
-      max-height: 256px;
-      overflow-y: auto;
+    :host-context(.dark) .dropdown-header {
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom-color: var(--gray-200);
     }
 
-    .dropdown-footer {
-      padding: var(--space-2) var(--space-4);
-      text-align: center;
-      border-top: 1px solid var(--gray-100);
+    .dropdown-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+      color: #fff;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .dropdown-user-info {
+      min-width: 0;
+    }
+
+    .dropdown-user-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin: 0;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    :host-context(.dark) .dropdown-user-name {
+      color: var(--gray-100);
+    }
+
+    .dropdown-user-email {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      margin: 0;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dropdown-role-badge {
+      display: inline-block;
+      font-size: 0.625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--brand-600);
+      background-color: rgba(59, 130, 246, 0.1);
+      padding: 0.15em 0.5em;
+      border-radius: 0.375rem;
+      margin-top: 0.25rem;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background-color: var(--gray-100);
+      margin: 0;
+    }
+
+    :host-context(.dark) .dropdown-divider {
+      background-color: var(--gray-200);
     }
 
     .dropdown-item {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
       width: 100%;
-      padding: var(--space-2) var(--space-4);
-      font-size: var(--text-sm);
+      padding: 0.625rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
       color: var(--gray-700);
       text-align: left;
       border: none;
       background: none;
       cursor: pointer;
-      transition: background-color var(--transition-fast);
+      transition: background-color 0.15s ease;
       text-decoration: none;
+    }
+
+    :host-context(.dark) .dropdown-item {
+      color: var(--gray-300);
     }
 
     .dropdown-item:hover {
@@ -363,30 +314,25 @@ import { ToastService } from '@shared/components/toast/toast.service';
       background-color: var(--gray-200);
     }
 
-    .dropdown-item.text-danger {
+    .dropdown-item svg {
+      flex-shrink: 0;
+      color: var(--gray-400);
+    }
+
+    .logout-item {
       color: var(--danger-600);
     }
 
-    .jurado-header-role {
-      background-color: rgba(255, 193, 7, 0.15);
-      color: #ffc107;
-      font-weight: 700;
-      padding: 0.2em 0.5em;
-      border-radius: 0.5em;
-      line-height: 1;
-      display: inline-block;
+    .logout-item svg {
+      color: var(--danger-500);
     }
 
-    .notification-item {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-3);
+    .logout-item:hover {
+      background-color: rgba(239, 68, 68, 0.06);
     }
 
-    @media (max-width: 640px) {
-      .sm-down-hide {
-        display: none;
-      }
+    :host-context(.dark) .logout-item:hover {
+      background-color: rgba(239, 68, 68, 0.12);
     }
   `]
 })
@@ -395,34 +341,61 @@ export class HeaderComponent {
   @Output() toggleSidebar = new EventEmitter<void>();
   auth = inject(AuthService);
   themeService = inject(ThemeService);
-  orgStore = inject(OrganizationStore);
-  userStore = inject(UserStore);
-  toast = inject(ToastService);
+  private router = inject(Router);
 
-  sidebarOpen = signal(false);
-  notificationsOpen = signal(false);
   userMenuOpen = signal(false);
 
-  mockNotifications = [
-    { id: 1, title: 'Nueva inscripcion recibida', time: 'hace 5 min', link: '/inscripciones/123' },
-    { id: 2, title: 'Contrato firmado por Juan Perez', time: 'hace 1 hora', link: '/contratos/456' },
-    { id: 3, title: 'Recordatorio: soundcheck manana 14:00', time: 'hace 3 horas', link: '/cronograma' }
-  ];
+  private routeTitles: Record<string, string> = {
+    '/dashboard': 'Dashboard',
+    '/inscripciones': 'Inscripciones',
+    '/artistas': 'Artistas',
+    '/cronograma': 'Cronograma',
+    '/acreditaciones': 'Acreditaciones',
+    '/jurado': 'Jurado',
+    '/jurado/admission': 'Admisión',
+    '/staff': 'Staff',
+    '/comunicaciones': 'Comunicaciones',
+    '/contratos': 'Contratos',
+    '/reportes': 'Reportes',
+    '/noticias': 'Noticias',
+    '/galeria': 'Galeria',
+    '/mensajes': 'Mensajes',
+    '/documentation': 'Documentación',
+    '/admin': 'Administracion',
+    '/settings': 'Configuracion',
+  };
+
+  sectionTitle = toSignal(
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      map(() => {
+        const url = this.router.url.split('?')[0].split('#')[0];
+        return this.routeTitles[url] || 'Panel';
+      })
+    ),
+    { initialValue: this.getInitialTitle() }
+  );
+
+  private getInitialTitle(): string {
+    const url = this.router.url.split('?')[0].split('#')[0];
+    return this.routeTitles[url] || 'Panel';
+  }
 
   initials = (): string => {
     const name = this.auth.profile()?.full_name || 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
-  onOrgChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    this.orgStore.switchOrganization(select.value);
-    const selectedOption = select.options[select.selectedIndex];
-    this.toast.info('Organizacion cambiada', `Ahora en: ${selectedOption?.text || ''}`);
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-menu')) {
+      this.userMenuOpen.set(false);
+    }
   }
 
   async logout(): Promise<void> {
-    await this.auth.logout();
     this.userMenuOpen.set(false);
+    await this.auth.logout();
   }
 }

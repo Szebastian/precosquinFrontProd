@@ -1,7 +1,8 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InscriptionsService, Inscription } from '../../core/services/inscriptions.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-inscripciones-list',
@@ -10,8 +11,9 @@ import { InscriptionsService, Inscription } from '../../core/services/inscriptio
   templateUrl: './inscripciones-list.page.html',
   styleUrls: ['./inscripciones-list.page.scss']
 })
-export class InscripcionesListPageComponent implements OnInit {
+export class InscripcionesListPageComponent implements OnInit, OnDestroy {
   private inscriptionsService = inject(InscriptionsService);
+  private keyHandler = (e: KeyboardEvent) => { if (e.key === 'Escape') this.closeLightbox(); };
 
   allInscriptions = signal<Inscription[]>([]);
   loading = signal(true);
@@ -29,6 +31,9 @@ export class InscripcionesListPageComponent implements OnInit {
 
   selectedIds = signal<Set<string>>(new Set());
   deletingBulk = signal(false);
+  documentUrls = signal<Record<string, string>>({});
+  uploadingDoc = signal<string | null>(null);
+  lightboxUrl = signal<string | null>(null);
 
   totalInscriptions = computed(() => this.allInscriptions().length);
   pendingCount = computed(() => this.allInscriptions().filter(i => i.status === 'PENDIENTE').length);
@@ -249,5 +254,127 @@ export class InscripcionesListPageComponent implements OnInit {
     } catch {
       return dateStr;
     }
+  }
+
+  loadDocUrl(inscriptionId: string, docType: string, storagePath: string): void {
+    const key = `${inscriptionId}_${docType}`;
+    if (this.documentUrls()[key]) return;
+
+    this.inscriptionsService.getPublicUrl(storagePath).subscribe({
+      next: (res) => {
+        if (res.public_url) {
+          this.documentUrls.update(urls => ({ ...urls, [key]: res.public_url }));
+        }
+      },
+      error: () => {
+        this.inscriptionsService.getSignedUrl(storagePath).subscribe({
+          next: (res) => {
+            if (res.signed_url) {
+              this.documentUrls.update(urls => ({ ...urls, [key]: res.signed_url }));
+            }
+          },
+          error: () => {}
+        });
+      }
+    });
+  }
+
+  getFileName(url: string): string {
+    if (!url) return '';
+    const parts = url.split('/');
+    return parts[parts.length - 1] || url;
+  }
+
+  isImageFile(url: string): boolean {
+    if (!url) return false;
+    const ext = url.split('.').pop()?.toLowerCase() || '';
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
+  }
+
+  triggerFileInput(event: Event, inscriptionId: string, fileType: string): void {
+    event.stopPropagation();
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = this.getFileAccept(fileType);
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (file) {
+        this.uploadDoc(inscriptionId, fileType, file);
+      }
+    };
+    input.click();
+  }
+
+  private getFileAccept(fileType: string): string {
+    const map: Record<string, string> = {
+      promo_photo: 'image/jpeg,image/png',
+      dni_front: 'image/jpeg,image/png',
+      dni_back: 'image/jpeg,image/png',
+      lyrics: 'application/pdf,.doc,.docx',
+      score: 'application/pdf,image/jpeg,image/png',
+    };
+    return map[fileType] || '*/*';
+  }
+
+  openLightbox(url: string, event: Event): void {
+    event.stopPropagation();
+    this.lightboxUrl.set(url);
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', this.keyHandler);
+  }
+
+  closeLightbox(): void {
+    this.lightboxUrl.set(null);
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', this.keyHandler);
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('keydown', this.keyHandler);
+    document.body.style.overflow = '';
+  }
+
+  uploadDoc(inscriptionId: string, fileType: string, file: File): void {
+    this.uploadingDoc.set(`${inscriptionId}_${fileType}`);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch(`${environment.apiUrl}/inscriptions/upload/${inscriptionId}?file_type=${fileType}`, {
+      method: 'POST',
+      body: formData,
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Error al subir archivo');
+      return res.json();
+    })
+    .then((data: any) => {
+      const path = data.path;
+      const colMap: Record<string, string> = {
+        promo_photo: 'promo_photo_url',
+        dni_front: 'dni_front_url',
+        dni_back: 'dni_back_url',
+        lyrics: 'lyrics_url',
+        score: 'score_url',
+      };
+      const field = colMap[fileType];
+      this.allInscriptions.update(list =>
+        list.map(i => i.id === inscriptionId ? { ...i, [field]: path } : i)
+      );
+      const key = `${inscriptionId}_${fileType}`;
+      this.inscriptionsService.getPublicUrl(path).subscribe({
+        next: (res) => {
+          if (res.public_url) {
+            this.documentUrls.update(urls => ({ ...urls, [key]: res.public_url }));
+          }
+        },
+        error: () => {}
+      });
+      this.uploadingDoc.set(null);
+    })
+    .catch(err => {
+      console.error('Upload error:', err);
+      this.uploadingDoc.set(null);
+      alert('Error al subir: ' + err.message);
+    });
   }
 }
