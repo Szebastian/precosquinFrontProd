@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { HeroCarouselComponent, NewsItem } from './components/hero.component';
 import { HomeHeaderComponent } from './components/home-header.component';
-import { HomeComponentSeparatorComponent } from './components/home-separator.component';
 import { HomeDeclaracionHeroComponent } from './components/home-declaracion-hero.component';
 import { HomeScoreboardComponent } from './components/home-scoreboard.component';
 import { HomeFooterComponent } from './components/home-footer.component';
@@ -20,7 +19,6 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
     RouterLink,
     HomeHeaderComponent,
     HeroCarouselComponent,
-    HomeComponentSeparatorComponent,
     HomeDeclaracionHeroComponent,
     HomeScoreboardComponent,
     HomeFooterComponent,
