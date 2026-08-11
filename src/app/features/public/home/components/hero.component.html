@@ -28,13 +28,13 @@
       role="region"
       [attr.aria-label]="'Noticia destacada: ' + activeNews()!.title"
     >
-      @for (item of items(); track item.id) {
+      @for (item of items(); track item.id; let idx = $index) {
         <img
           class="featured-img featured-slide"
-          [class.slide-out-left]="isTransitioning() && slideDirection() === 'next'"
-          [class.slide-out-right]="isTransitioning() && slideDirection() === 'prev'"
-          [class.slide-in]="!isTransitioning()"
-          [class.hero-hidden]="activeIndex() !== $index"
+          [class.slide-out-left]="isTransitioning() && activeIndex() === idx && slideDirection() === 'next'"
+          [class.slide-out-right]="isTransitioning() && activeIndex() === idx && slideDirection() === 'prev'"
+          [class.slide-in]="!isTransitioning() && activeIndex() === idx"
+          [class.hero-hidden]="activeIndex() !== idx"
           [src]="item.imageUrl"
           [alt]="item.title"
           [style.object-position]="item.imagePosition"
