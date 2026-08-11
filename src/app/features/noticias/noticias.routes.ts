@@ -6,4 +6,3 @@ export const NOTICIAS_ROUTES: Routes = [
     loadComponent: () => import('./noticias.page').then(m => m.NoticiasPageComponent)
   }
 ];
-// force compile

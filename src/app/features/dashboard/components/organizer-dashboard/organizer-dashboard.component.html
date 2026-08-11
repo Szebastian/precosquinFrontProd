@@ -1,0 +1,210 @@
+<div class="dashboard">
+  <div class="welcome-section">
+    <div>
+      <h1 class="welcome-title">{{ greeting() }}, {{ fullName() }}</h1>
+      <p class="welcome-subtitle">Panel de organización — Pre-Cosquín Puerto Pirámides</p>
+    </div>
+    <div class="welcome-actions">
+      <span class="badge badge-organizador">Organización</span>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+  }
+
+  @if (data(); as d) {
+    <div class="stats-grid">
+      <div class="stat-card stat-card-brand">
+        <div class="stat-card-inner">
+          <div class="stat-icon-wrapper">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg>
+          </div>
+          <div class="stat-content">
+            <p class="stat-value">{{ d.total_inscripciones }}</p>
+            <p class="stat-label">Inscripciones Totales</p>
+          </div>
+        </div>
+        <div class="stat-footer">
+          @if (d.inscripciones_pendientes > 0) {
+            <span class="stat-trend-warn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> {{ d.inscripciones_pendientes }} pendientes</span>
+          } @else {
+            <span class="stat-trend-up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Al día</span>
+          }
+        </div>
+      </div>
+      <div class="stat-card stat-card-warning">
+        <div class="stat-card-inner">
+          <div class="stat-icon-wrapper">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-content">
+            <p class="stat-value">{{ d.inscripciones_pendientes }}</p>
+            <p class="stat-label">Pendientes Revisión</p>
+          </div>
+        </div>
+        <div class="stat-footer"><a routerLink="/panel/inscripciones" class="stat-link">Ver todas →</a></div>
+      </div>
+      <div class="stat-card stat-card-success">
+        <div class="stat-card-inner">
+          <div class="stat-icon-wrapper">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="stat-content">
+            <p class="stat-value">{{ d.acreditaciones_acreditadas }}</p>
+            <p class="stat-label">Acreditaciones</p>
+          </div>
+        </div>
+        <div class="stat-footer"><a routerLink="/panel/acreditaciones" class="stat-link">Ver acreditaciones →</a></div>
+      </div>
+      <div class="stat-card stat-card-danger">
+        <div class="stat-card-inner">
+          <div class="stat-icon-wrapper">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="stat-content">
+            <p class="stat-value">{{ d.jurados_activos }}</p>
+            <p class="stat-label">Jurados Activos</p>
+          </div>
+        </div>
+        <div class="stat-footer"><a routerLink="/panel/jurado" class="stat-link">Ver jurados →</a></div>
+      </div>
+    </div>
+
+    @if (d.pipeline.length > 0 && d.total_inscripciones > 0) {
+      <div class="card card-elevated">
+        <div class="card-header"><div><h3 class="card-title">Flujo de Inscripciones</h3><p class="card-description">Progreso del ciclo de vida</p></div></div>
+        <div class="card-body">
+          <div class="pipeline">
+            @for (stage of d.pipeline; track stage.label) {
+              <div class="pipe-step">
+                <div class="pipe-num">{{ stage.count }}</div>
+                <div class="pipe-bar-wrap"><div class="pipe-bar" [style.width.%]="stage.percentage"></div></div>
+                <div class="pipe-label">{{ stage.label }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ═══ Three-Column Row ═══ -->
+    <div class="main-grid-3">
+      <!-- Quick Actions -->
+      <div class="card card-elevated">
+        <div class="card-header"><div><h3 class="card-title">Acciones Rápidas</h3><p class="card-description">Las tareas más frecuentes</p></div></div>
+        <div class="card-body">
+          <div class="quick-actions">
+            <a routerLink="/panel/inscripciones" class="quick-action">
+              <div class="quick-action-icon action-brand"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg></div>
+              <div class="quick-action-content"><p class="quick-action-title">Revisar Inscripciones</p><p class="quick-action-desc">{{ d.inscripciones_pendientes }} pendientes</p></div>
+              <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a routerLink="/panel/acreditaciones" class="quick-action">
+              <div class="quick-action-icon action-success"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+              <div class="quick-action-content"><p class="quick-action-title">Acreditar Artistas</p><p class="quick-action-desc">{{ d.acreditaciones_acreditadas }} acreditados</p></div>
+              <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a routerLink="/panel/inscripciones" class="quick-action">
+              <div class="quick-action-icon action-warning"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              <div class="quick-action-content"><p class="quick-action-title">Admitir Inscriptos</p><p class="quick-action-desc">{{ d.inscripciones_pendientes }} pendientes</p></div>
+              <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a routerLink="/panel/reportes" class="quick-action">
+              <div class="quick-action-icon action-purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></div>
+              <div class="quick-action-content"><p class="quick-action-title">Reportes</p><p class="quick-action-desc">Estadísticas generales</p></div>
+              <svg class="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card card-elevated">
+        <div class="card-header"><h3 class="card-title">Últimas Inscripciones</h3><a routerLink="/panel/inscripciones" class="text-link">Ver todas</a></div>
+        <div class="card-body-list">
+          @for (ins of d.recent; track ins.id) {
+            <div class="activity-item">
+              <div class="activity-avatar" [ngClass]="statusClass(ins.status)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  @if (ins.status === 'PENDIENTE') { <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/> }
+                  @else if (ins.status === 'APROBADA') { <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/> }
+                  @else if (ins.status === 'RECHAZADA') { <circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/> }
+                  @else { <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/> }
+                </svg>
+              </div>
+              <div class="activity-content">
+                <p class="activity-text">{{ ins.stage_name || ins.full_name }}</p>
+                <p class="activity-time">{{ ins.category }} {{ ins.subcategory ? '· ' + ins.subcategory : '' }}</p>
+              </div>
+              <span class="activity-badge" [ngClass]="statusClass(ins.status)">{{ statusLabel(ins.status) }}</span>
+            </div>
+          }
+          @if (d.recent.length === 0) { <div class="empty-state"><p>No hay inscripciones todavía</p></div> }
+        </div>
+      </div>
+
+      <!-- Activity Chart -->
+      <div class="card card-elevated">
+        <div class="card-header">
+          <div><h3 class="card-title">Actividad del Día</h3><p class="card-description">{{ dayLabel(selectedDate()) }}</p></div>
+          <div class="date-picker">
+            <button class="date-nav-btn" (click)="prevDay()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+            @if (isToday()) { <span class="date-badge-today">Hoy</span> } @else { <span class="date-display">{{ shortDate(selectedDate()) }}</span> }
+            <button class="date-nav-btn" [disabled]="isToday()" (click)="nextDay()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="hourly-summary">
+            <div class="chart-summary-item"><span class="chart-summary-dot dot-blue"></span><span class="chart-summary-label">Visitas</span><span class="chart-summary-value">{{ totalDayViews() }}</span></div>
+            @if (peakHour(); as peak) { <div class="chart-summary-item"><span class="chart-summary-dot dot-amber"></span><span class="chart-summary-label">Pico</span><span class="chart-summary-value">{{ peak.hour_label }}</span></div> }
+          </div>
+          <div class="chart-wrap">
+            <svg class="chart-svg" viewBox="0 0 980 260" preserveAspectRatio="xMinYMid meet">
+              <line x1="40" y1="200" x2="960" y2="200" stroke="#e5e7eb" stroke-width="0.5"/>
+              <line x1="40" y1="20" x2="40" y2="200" stroke="#e5e7eb" stroke-width="0.5"/>
+              <line x1="40" y1="155" x2="960" y2="155" stroke="#e5e7eb" stroke-width="0.3" stroke-dasharray="4 2"/>
+              <line x1="40" y1="110" x2="960" y2="110" stroke="#e5e7eb" stroke-width="0.3" stroke-dasharray="4 2"/>
+              <line x1="40" y1="65" x2="960" y2="65" stroke="#e5e7eb" stroke-width="0.3" stroke-dasharray="4 2"/>
+              <text x="35" y="202" text-anchor="end" class="chart-label">0</text>
+              <text x="35" y="112" text-anchor="end" class="chart-label">{{ (maxHourViews() * 0.5) | number:'1.0-0' }}</text>
+              <text x="35" y="22" text-anchor="end" class="chart-label">{{ maxHourViews() }}</text>
+              @for (h of hourly(); track h.hour; let i = $index) {
+                @if (h.views > 0) {
+                  <rect [attr.x]="50 + i * 38" [attr.y]="200 - (h.views / maxHourViews()) * 175" width="24" [attr.height]="(h.views / maxHourViews()) * 175" rx="4" fill="url(#dailyGradient)" class="day-bar"/>
+                  <circle [attr.cx]="62 + i * 38" [attr.cy]="200 - (h.views / maxHourViews()) * 175 - 6" r="4" fill="#1e40af" stroke="#fff" stroke-width="1.5" class="day-dot"/>
+                }
+                <text [attr.x]="62 + i * 38" y="218" text-anchor="middle" class="chart-label">{{ h.hour_label }}</text>
+                <rect [attr.x]="50 + i * 38" y="10" width="38" height="200" fill="transparent" class="hover-area"><title>{{ h.hour_label }} — {{ h.views }} visitas</title></rect>
+              }
+              <defs><linearGradient id="dailyGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#2563eb"/></linearGradient></defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (d.by_category.length > 0) {
+      <div class="card card-elevated">
+        <div class="card-header"><div><h3 class="card-title">Por Categoría</h3><p class="card-description">Distribución de inscripciones</p></div></div>
+        <div class="card-body">
+          <div class="cat-list">
+            @for (cat of d.by_category; track cat.name) {
+              <div class="cat-item">
+                <div class="cat-head"><span class="cat-icon">{{ categoryIcon(cat.name) }}</span><span class="cat-name">{{ cat.name }}</span><span class="cat-count">{{ cat.count }}</span></div>
+                <div class="cat-bar-wrap"><div class="cat-bar" [style.width.%]="cat.percentage"></div></div>
+              </div>
+            }
+          </div>
+          @if (d.by_status.length > 0) {
+            <div class="status-row">
+              @for (st of d.by_status; track st.status) {
+                <span class="status-chip" [ngClass]="'chip-' + statusClass(st.status)"><span class="status-dot"></span> {{ statusLabel(st.status) }}: {{ st.count }}</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

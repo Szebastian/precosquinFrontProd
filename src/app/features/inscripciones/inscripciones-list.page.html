@@ -248,9 +248,54 @@
               @if (expandedId() === inscription.id) {
                 <div class="row-detail" (click)="$event.stopPropagation()">
                   <!-- Hero Photo -->
-                  <div class="detail-hero">
+                  <div class="detail-hero" [class.hero-portrait]="heroOrientations()[inscription.id] === 'portrait'" [class.hero-landscape]="heroOrientations()[inscription.id] === 'landscape'">
                     @if (documentUrls()[inscription.id + '_promo_photo']) {
-                      <img [src]="documentUrls()[inscription.id + '_promo_photo']" alt="Foto de {{ inscription.full_name }}" class="hero-photo" (click)="openLightbox(documentUrls()[inscription.id + '_promo_photo'], $event)" />
+                      @if (heroOrientations()[inscription.id] === 'portrait') {
+                        <!-- Portrait: side-by-side layout -->
+                        <div class="hero-portrait-layout">
+                          <div class="hero-portrait-photo" (click)="openLightbox(documentUrls()[inscription.id + '_promo_photo'], $event)">
+                            <img [src]="documentUrls()[inscription.id + '_promo_photo']" alt="Foto de {{ inscription.full_name }}" class="hero-photo" (load)="onHeroImageLoad($event, inscription.id)" />
+                          </div>
+                          <div class="hero-portrait-info">
+                            <h3 class="hero-name">{{ inscription.full_name }}</h3>
+                            @if (inscription.stage_name) {
+                              <span class="hero-stage">"{{ inscription.stage_name }}"</span>
+                            }
+                            <div class="hero-badges">
+                              <span class="hero-badge hero-badge-cat">{{ inscription.category }}</span>
+                              <span class="hero-badge hero-badge-sub">{{ inscription.subcategory }}</span>
+                            </div>
+                            <div class="hero-badges">
+                              <span class="status-badge" [class]="'badge-' + inscription.status.toLowerCase()">{{ formatStatus(inscription.status) }}</span>
+                            </div>
+                            @if (inscription.age) {
+                              <span class="hero-detail-line">{{ inscription.age }} años</span>
+                            }
+                            @if (inscription.city || inscription.locality) {
+                              <span class="hero-detail-line">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                {{ inscription.city || inscription.locality }}
+                              </span>
+                            }
+                          </div>
+                        </div>
+                      } @else {
+                        <!-- Landscape or unknown: banner with bottom overlay -->
+                        <img [src]="documentUrls()[inscription.id + '_promo_photo']" alt="Foto de {{ inscription.full_name }}" class="hero-photo" (load)="onHeroImageLoad($event, inscription.id)" (click)="openLightbox(documentUrls()[inscription.id + '_promo_photo'], $event)" />
+                        <div class="hero-overlay">
+                          <div class="hero-info">
+                            <h3 class="hero-name">{{ inscription.full_name }}</h3>
+                            @if (inscription.stage_name) {
+                              <span class="hero-stage">"{{ inscription.stage_name }}"</span>
+                            }
+                            <div class="hero-badges">
+                              <span class="hero-badge hero-badge-cat">{{ inscription.category }}</span>
+                              <span class="hero-badge hero-badge-sub">{{ inscription.subcategory }}</span>
+                              <span class="status-badge" [class]="'badge-' + inscription.status.toLowerCase()">{{ formatStatus(inscription.status) }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      }
                     } @else if (inscription.promo_photo_url) {
                       <div class="hero-loading" (click)="loadDocUrl(inscription.id, 'promo_photo', inscription.promo_photo_url)">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -262,19 +307,6 @@
                         <span>Sin foto</span>
                       </div>
                     }
-                    <div class="hero-overlay">
-                      <div class="hero-info">
-                        <h3 class="hero-name">{{ inscription.full_name }}</h3>
-                        @if (inscription.stage_name) {
-                          <span class="hero-stage">"{{ inscription.stage_name }}"</span>
-                        }
-                        <div class="hero-badges">
-                          <span class="hero-badge hero-badge-cat">{{ inscription.category }}</span>
-                          <span class="hero-badge hero-badge-sub">{{ inscription.subcategory }}</span>
-                          <span class="status-badge" [class]="'badge-' + inscription.status.toLowerCase()">{{ formatStatus(inscription.status) }}</span>
-                        </div>
-                      </div>
-                    </div>
                   </div>
 
                   <div class="detail-sections">

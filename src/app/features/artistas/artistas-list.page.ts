@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InscriptionsService, Inscription } from '../../core/services/inscriptions.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -1196,6 +1197,7 @@ import { environment } from '../../../environments/environment';
 })
 export class ArtistasListPageComponent implements OnInit {
   private inscriptionsService = inject(InscriptionsService);
+  private auth = inject(AuthService);
 
   allInscriptions = signal<Inscription[]>([]);
   loading = signal(true);
@@ -1385,7 +1387,7 @@ export class ArtistasListPageComponent implements OnInit {
     formData.append('file', file);
 
     const url = `${this.getApiUrl()}/inscriptions/upload/${inscriptionId}?file_type=${fileType}`;
-    const token = localStorage.getItem('token') || '';
+    const token = this.auth.session()?.access_token || '';
 
     fetch(url, {
       method: 'POST',

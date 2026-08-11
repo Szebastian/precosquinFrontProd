@@ -37,7 +37,6 @@ import { RouterLink } from '@angular/router';
           <a routerLink="/noticias" class="nav-link">Noticias</a>
           <a routerLink="/inscripcion" class="nav-link">Inscripciones</a>
           <a routerLink="/cronograma" class="nav-link">Cronograma</a>
-          <a routerLink="/patrocinio" class="nav-link">Patrocinio</a>
           <a routerLink="/documentacion" class="nav-link">Documentación</a>
         </nav>
 
@@ -64,7 +63,6 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/noticias" class="mobile-nav-link" (click)="toggleMenu()">Noticias</a>
             <a routerLink="/inscripcion" class="mobile-nav-link" (click)="toggleMenu()">Inscripciones</a>
             <a routerLink="/cronograma" class="mobile-nav-link" (click)="toggleMenu()">Cronograma</a>
-            <a routerLink="/patrocinio" class="mobile-nav-link" (click)="toggleMenu()">Patrocinio</a>
             <a routerLink="/documentacion" class="mobile-nav-link" (click)="toggleMenu()">Documentación</a>
           </nav>
           <div class="mobile-drawer-footer">

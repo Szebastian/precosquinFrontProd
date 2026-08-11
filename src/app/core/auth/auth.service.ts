@@ -28,12 +28,10 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private _user = signal<Record<string, unknown> | null>(null);
   private _session = signal<AuthSession | null>(null);
   private _profile = signal<UserProfile | null>(null);
   private _loading = signal(false);
 
-  readonly user = this._user.asReadonly();
   readonly session = this._session.asReadonly();
   readonly profile = this._profile.asReadonly();
   readonly loading = this._loading.asReadonly();
@@ -92,18 +90,9 @@ export class AuthService {
   }
 
   async logout(): Promise<void> {
-    this._user.set(null);
     this._session.set(null);
     this._profile.set(null);
     await this.router.navigate(['/auth/login']);
-  }
-
-  async getSession(): Promise<AuthSession | null> {
-    return this._session();
-  }
-
-  hasPermission(permission: string): boolean {
-    return this._profile()?.permissions?.includes(permission) ?? false;
   }
 
   hasRole(...roles: string[]): boolean {

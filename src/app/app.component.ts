@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { ToastContainerComponent } from './shared/components/toast/toast-container.component';
 import { initClarity } from './shared/utils/clarity-init';
+import { environment } from '../environments/environment';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -32,8 +34,30 @@ import { initClarity } from './shared/utils/clarity-init';
 })
 export class AppComponent implements OnInit {
   title = 'Precosquin';
+  private router = inject(Router);
 
   ngOnInit(): void {
     initClarity();
+    this.trackPageViews();
+  }
+
+  private trackPageViews(): void {
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        try {
+          const visitorId = localStorage.getItem('pv_id') || this.generateId();
+          localStorage.setItem('pv_id', visitorId);
+          fetch(`${environment.apiUrl}/dashboard/pageview`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: e.urlAfterRedirects || e.url, visitor_id: visitorId }),
+          }).catch(() => {});
+        } catch {}
+      });
+  }
+
+  private generateId(): string {
+    return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
   }
 }

@@ -95,43 +95,57 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
       id: 'bordon',
       nombre: 'El Bordón',
       tagline: 'Presencia Comercial',
-      precio: '$130.000',
-      precioLabel: 'Inversión · Julio',
+      precio: '$250.000',
+      precioLabel: '',
       popular: true,
       color: 'var(--brand-500)',
       destacado: 'Logo en pantallas y menciones en digital.',
       incluye: [
         'Banner digital rotativo en streaming (YouTube/Insta).',
-        '1 mención en redes por jornada.',
-        'Logo en la web oficial del festival.'
+        'Banner rotativo en streaming.',
+        'Logo en la web oficial.',
+        '2 menciones en redes sociales.',
+        '1 mención durante la transmisión en vivo.',
+        'Logo en placa de agradecimientos.',
+        'Presencia durante el evento de septiembre.'
       ]
     },
     {
       id: 'repique',
       nombre: 'El Repique',
       tagline: 'Destacado Multicanal',
-      precio: '$250.000',
-      precioLabel: 'Inversión · Julio',
+      precio: '$550.000',
+      precioLabel: '',
       color: 'var(--brand-600)',
       destacado: 'Publicidad digital preferencial.',
       incluye: [
-        'Banner fijo en la transmisión en vivo.',
-        '3 menciones en redes por jornada.',
-        'Presencia destacada en redes y sitio web.'
+        
+         'Banner destacado con mayor frecuencia.',
+         '6 menciones en redes.',
+         '4 menciones en streaming.',
+         'Logo destacado en la web.',
+         'Presencia en retransmisiones hasta enero.',
+        'Inclusión en piezas promocionales digitales.'
       ]
     },
     {
       id: 'payador',
       nombre: 'El Payador',
       tagline: 'Sponsor Oficial Exclusivo',
-      precio: '$500.000',
-      precioLabel: 'Inversión · Julio',
+      precio: '$1.500.000',
+      precioLabel: '',
       color: 'var(--brand-900)',
       destacado: 'Sponsor Oficial Exclusivo del festival.',
       incluye: [
-        'Publicidad exclusiva en pantalla principal de YouTube.',
-        'Menciones continuas en redes y transmisión.',
-        'Presencia total en gráfica digital y sitio web.'
+          'Todo El Repique.',
+          'Apertura y cierre del streaming.',
+          'Mención como Sponsor Oficial por el conductor.',
+          'Logo principal en la home.',
+          'Banner preferencial.',
+          '12 menciones en redes.',
+          'Retransmisiones oficiales hasta enero.',
+          'Presencia de marca en la cobertura desde Córdoba.',
+          'Derecho de uso del sello Sponsor Oficial Pre-Cosquín Puerto Pirámides 2026.'
       ]
     }
   ];

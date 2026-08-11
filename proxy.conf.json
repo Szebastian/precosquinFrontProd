@@ -7,12 +7,7 @@
       "^/api": ""
     }
   },
-  "/v1/gallery": {
-    "target": "http://localhost:8001",
-    "secure": false,
-    "changeOrigin": true
-  },
-  "/v1/storage": {
+  "/v1": {
     "target": "http://localhost:8001",
     "secure": false,
     "changeOrigin": true

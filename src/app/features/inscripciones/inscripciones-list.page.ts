@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InscriptionsService, Inscription } from '../../core/services/inscriptions.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -13,6 +14,7 @@ import { environment } from '../../../environments/environment';
 })
 export class InscripcionesListPageComponent implements OnInit, OnDestroy {
   private inscriptionsService = inject(InscriptionsService);
+  private auth = inject(AuthService);
   private keyHandler = (e: KeyboardEvent) => { if (e.key === 'Escape') this.closeLightbox(); };
 
   allInscriptions = signal<Inscription[]>([]);
@@ -32,6 +34,7 @@ export class InscripcionesListPageComponent implements OnInit, OnDestroy {
   selectedIds = signal<Set<string>>(new Set());
   deletingBulk = signal(false);
   documentUrls = signal<Record<string, string>>({});
+  heroOrientations = signal<Record<string, 'landscape' | 'portrait'>>({});
   uploadingDoc = signal<string | null>(null);
   lightboxUrl = signal<string | null>(null);
 
@@ -316,6 +319,12 @@ export class InscripcionesListPageComponent implements OnInit, OnDestroy {
     return map[fileType] || '*/*';
   }
 
+  onHeroImageLoad(event: Event, inscriptionId: string): void {
+    const img = event.target as HTMLImageElement;
+    const orientation = img.naturalWidth >= img.naturalHeight ? 'landscape' : 'portrait';
+    this.heroOrientations.update(prev => ({ ...prev, [inscriptionId]: orientation }));
+  }
+
   openLightbox(url: string, event: Event): void {
     event.stopPropagation();
     this.lightboxUrl.set(url);
@@ -339,8 +348,15 @@ export class InscripcionesListPageComponent implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append('file', file);
 
+    const token = this.auth.session()?.access_token;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     fetch(`${environment.apiUrl}/inscriptions/upload/${inscriptionId}?file_type=${fileType}`, {
       method: 'POST',
+      headers,
       body: formData,
     })
     .then(res => {

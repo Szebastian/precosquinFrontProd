@@ -25,7 +25,7 @@ export const publicGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  const publicRoutes = ['/', '/cronograma', '/noticias', '/documentacion', '/patrocinio', '/institucional/declaracion'];
+  const publicRoutes = ['/', '/cronograma', '/noticias', '/documentacion', '/institucional/declaracion'];
   const isPublicRoute = publicRoutes.some(route => state.url === route || state.url.startsWith(route + '/'));
 
   if (auth.isAuthenticated() && !isPublicRoute) {

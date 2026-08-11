@@ -9,6 +9,15 @@ import { RouterLink } from '@angular/router';
     <footer class="portal-footer">
       <div class="footer-collab">
         <div class="collab-inner">
+          <!-- Featured Sponsor -->
+          <div class="featured-sponsor" role="link" tabindex="0" title="Southern Spirit — Avistaje de Ballenas" (click)="openUrl('https://www.instagram.com/southernspiritwhalewatch?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')" (keydown.enter)="openUrl('https://www.instagram.com/southernspiritwhalewatch?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')">
+            <span class="featured-tag">SPONSOR</span>
+            <div class="featured-logo-wrap">
+              <img src="assets/img/SouthernSpirit_logo.webp" alt="Southern Spirit — Avistaje de Ballenas" class="featured-logo" width="180" height="90" loading="lazy" decoding="async" />
+            </div>
+            <span class="featured-sub">Whale Watching · Puerto Pirámides</span>
+          </div>
+
           <span class="collab-label">COLABORAN</span>
           <div class="collab-grid">
             <div class="collab-item" role="link" tabindex="0" title="Municipalidad Puerto Pirámides" (click)="openUrl('https://www.instagram.com/municipalidad_puerto_piramides/')" (keydown.enter)="openUrl('https://www.instagram.com/municipalidad_puerto_piramides/')">
@@ -34,6 +43,9 @@ import { RouterLink } from '@angular/router';
             </div>
             <div class="collab-item" role="link" tabindex="0" title="Avistajes Peke Sosa" (click)="openUrl('https://www.instagram.com/avistajespekesosa')" (keydown.enter)="openUrl('https://www.instagram.com/avistajespekesosa')">
               <img src="assets/img/LOGO-PEKE-png-4k.webp" alt="Avistajes Peke Sosa" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
+            </div>
+            <div class="collab-item" role="link" tabindex="0" title="AANPPV" (click)="openUrl('https://www.instagram.com/peninsulavaldesoficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')" (keydown.enter)="openUrl('https://www.instagram.com/peninsulavaldesoficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')">
+              <img src="assets/img/AANPPV_logo.webp" alt="AANPPV" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
           </div>
         </div>
@@ -83,6 +95,82 @@ import { RouterLink } from '@angular/router';
     .collab-item { display: inline-flex; text-decoration: none; cursor: pointer; }
     .collab-item:hover .collab-img { filter: grayscale(0%); opacity: 1; transform: translateY(-2px); }
     .collab-item:focus-visible .collab-img { outline: 2px solid var(--brand-500); outline-offset: 4px; }
+
+    /* Featured Sponsor — Southern Spirit */
+    .featured-sponsor {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 28px 40px 24px;
+      margin-bottom: 8px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .featured-sponsor::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(251,191,36,0.08) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .featured-sponsor:hover::before { opacity: 1; }
+    .featured-sponsor:hover {
+      border-color: rgba(251,191,36,0.25);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(251,191,36,0.1), 0 0 0 1px rgba(251,191,36,0.08);
+    }
+    .featured-sponsor:focus-visible {
+      outline: 2px solid var(--brand-500);
+      outline-offset: 4px;
+    }
+    .featured-tag {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: #fbbf24;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+    .featured-logo-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(4px);
+    }
+    .featured-logo {
+      height: 64px;
+      max-width: 220px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(251,191,36,0.15));
+      transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+    .featured-sponsor:hover .featured-logo {
+      filter: drop-shadow(0 4px 16px rgba(251,191,36,0.25));
+      transform: scale(1.04);
+    }
+    .featured-sub {
+      font-size: 11px;
+      color: var(--gray-400);
+      letter-spacing: 0.04em;
+      position: relative;
+      z-index: 1;
+    }
+
     .footer-main { width: 100%; max-width: min(92%, 1200px); margin: 0 auto; padding: 48px 24px; display: grid; grid-template-columns: 1fr; gap: 32px; }
     .footer-brand { display: flex; align-items: center; gap: var(--space-4); }
     .footer-logo { height: 60px; width: auto; opacity: 0.85; }
@@ -126,6 +214,10 @@ import { RouterLink } from '@angular/router';
       .collab-img { height: 36px; max-width: 100px; filter: grayscale(100%); opacity: 0.6; }
       .collab-item:hover .collab-img { filter: grayscale(0%); opacity: 1; }
       .collab-grid { gap: var(--space-8); }
+      .featured-sponsor { padding: 20px 20px 18px; }
+      .featured-logo { height: 48px; max-width: 160px; }
+      .featured-tag { font-size: 8px; }
+      .featured-sub { font-size: 10px; }
       .footer-main { padding: var(--space-6) var(--space-4); gap: var(--space-5); }
       .footer-logo { height: 40px; }
       .brand-text h4 { font-size: var(--text-base); }
