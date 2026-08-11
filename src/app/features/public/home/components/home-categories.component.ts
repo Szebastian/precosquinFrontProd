@@ -69,7 +69,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: #857a68;
+      color: rgba(247,243,234,0.6);
       text-transform: uppercase;
     }
 
@@ -103,27 +103,27 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
     }
 
     .cat-pill--musica {
-      color: #17191C;
-      background: rgba(40,85,184,0.06);
-      border-color: rgba(40,85,184,0.12);
+      color: #F7F3EA;
+      background: rgba(40,85,184,0.2);
+      border-color: rgba(40,85,184,0.35);
     }
 
     .cat-pill--musica:hover {
-      color: #2855B8;
-      background: rgba(40,85,184,0.1);
-      border-color: rgba(40,85,184,0.2);
+      color: #fff;
+      background: rgba(40,85,184,0.35);
+      border-color: rgba(40,85,184,0.5);
     }
 
     .cat-pill--danza {
-      color: #17191C;
-      background: rgba(200,107,74,0.06);
-      border-color: rgba(200,107,74,0.12);
+      color: #F7F3EA;
+      background: rgba(200,107,74,0.2);
+      border-color: rgba(200,107,74,0.35);
     }
 
     .cat-pill--danza:hover {
-      color: #C86B4A;
-      background: rgba(200,107,74,0.1);
-      border-color: rgba(200,107,74,0.2);
+      color: #fff;
+      background: rgba(200,107,74,0.35);
+      border-color: rgba(200,107,74,0.5);
     }
 
     @media (max-width: 640px) {
