@@ -62,7 +62,11 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
                   [style.top.px]="getItemY(i)"
                   [style.animationDelay.ms]="i * 70"
                   (click)="openLightbox(i)">
-                  <div class="masonry-img" [style.backgroundImage]="'url(' + item.image + ')'"></div>
+                  @if (visibleItems().has(i)) {
+                    <div class="masonry-img" [style.backgroundImage]="'url(' + item.image + ')'"></div>
+                  } @else {
+                    <div class="masonry-img masonry-img-placeholder"></div>
+                  }
                   <div class="masonry-overlay">
                     <span class="masonry-category">{{ item.category }}</span>
                     <span class="masonry-title">{{ item.title || 'Sin título' }}</span>
@@ -271,6 +275,10 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
       border-radius: 10px;
       box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.4);
       transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+    }
+
+    .masonry-img-placeholder {
+      background: linear-gradient(135deg, rgba(40,85,184,0.06) 0%, rgba(217,169,40,0.04) 100%);
     }
 
     .masonry-item:hover .masonry-img {
@@ -498,6 +506,7 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly activeFilter = signal('');
   readonly activeIndex = signal<number | null>(null);
   readonly containerHeight = signal(0);
+  readonly visibleItems = signal<Set<number>>(new Set());
 
   readonly filteredItems = computed(() => {
     const filter = this.activeFilter();
@@ -522,6 +531,7 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
   private columnHeights: number[] = [];
   private itemPositions: { x: number; y: number; w: number; h: number }[] = [];
   private resizeObserver: ResizeObserver | null = null;
+  private intersectionObserver: IntersectionObserver | null = null;
   private containerWidth = 0;
   private touchStartX = 0;
   private touchStartY = 0;
@@ -557,7 +567,33 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.containerRef) {
       this.resizeObserver.observe(this.containerRef.nativeElement);
     }
-    setTimeout(() => this.calculateLayout(), 50);
+
+    const scrollContainer = this.containerRef?.nativeElement?.closest('.masonry-scroll');
+    this.intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        const updated = new Set(this.visibleItems());
+        for (const entry of entries) {
+          const idx = parseInt(entry.target.getAttribute('data-idx') || '-1', 10);
+          if (idx < 0) continue;
+          if (entry.isIntersecting) {
+            updated.add(idx);
+          }
+        }
+        if (updated.size !== this.visibleItems().size) {
+          this.visibleItems.set(updated);
+        }
+      },
+      {
+        root: scrollContainer || null,
+        rootMargin: '400px 0px',
+        threshold: 0,
+      }
+    );
+
+    setTimeout(() => {
+      this.calculateLayout();
+      this.observeItems();
+    }, 50);
   }
 
   ngOnDestroy(): void {
@@ -565,12 +601,17 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
     window.removeEventListener('resize', this.onResize);
     document.body.style.overflow = '';
     this.resizeObserver?.disconnect();
+    this.intersectionObserver?.disconnect();
   }
 
   setFilter(category: string): void {
     this.activeFilter.set(category);
     this.activeIndex.set(null);
-    setTimeout(() => this.calculateLayout(), 0);
+    this.visibleItems.set(new Set());
+    setTimeout(() => {
+      this.calculateLayout();
+      this.observeItems();
+    }, 0);
   }
 
   private onResize = (): void => {
@@ -624,6 +665,17 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getItemY(index: number): number {
     return this.itemPositions[index]?.y || 0;
+  }
+
+  private observeItems(): void {
+    if (!this.intersectionObserver || !this.containerRef) return;
+    this.intersectionObserver.disconnect();
+    const container = this.containerRef.nativeElement;
+    const items = container.querySelectorAll('.masonry-item');
+    items.forEach((el, i) => {
+      el.setAttribute('data-idx', String(i));
+      this.intersectionObserver!.observe(el);
+    });
   }
 
   openLightbox(index: number): void {

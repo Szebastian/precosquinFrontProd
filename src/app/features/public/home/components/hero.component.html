@@ -28,19 +28,22 @@
       role="region"
       [attr.aria-label]="'Noticia destacada: ' + activeNews()!.title"
     >
-      <img
-        class="featured-img featured-slide"
-        [class.slide-out-left]="isTransitioning() && slideDirection() === 'next'"
-        [class.slide-out-right]="isTransitioning() && slideDirection() === 'prev'"
-        [class.slide-in]="!isTransitioning()"
-        [src]="activeNews()!.imageUrl"
-        [alt]="activeNews()!.title"
-        [style.object-position]="activeNews()!.imagePosition"
-        width="1200" height="525"
-        loading="eager"
-        fetchpriority="high"
-        decoding="async"
-      />
+      @for (item of items(); track item.id) {
+        <img
+          class="featured-img featured-slide"
+          [class.slide-out-left]="isTransitioning() && slideDirection() === 'next'"
+          [class.slide-out-right]="isTransitioning() && slideDirection() === 'prev'"
+          [class.slide-in]="!isTransitioning()"
+          [class.hero-hidden]="activeIndex() !== $index"
+          [src]="item.imageUrl"
+          [alt]="item.title"
+          [style.object-position]="item.imagePosition"
+          width="1200" height="525"
+          [attr.loading]="$index === 0 ? 'eager' : 'lazy'"
+          [attr.fetchpriority]="$index === 0 ? 'high' : 'low'"
+          decoding="async"
+        />
+      }
       <div class="featured-overlay"></div>
       <div class="featured-content featured-slide"
            [class.slide-out-left]="isTransitioning() && slideDirection() === 'next'"

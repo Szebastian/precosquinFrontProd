@@ -261,6 +261,23 @@ export class InstagramFeedComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    if (typeof IntersectionObserver === 'undefined') {
+      this.loadElfsight();
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          observer.disconnect();
+          this.loadElfsight();
+        }
+      },
+      { rootMargin: '600px 0px', threshold: 0 }
+    );
+    observer.observe(this.container.nativeElement);
+  }
+
+  private loadElfsight(): void {
     this.scriptLoader.loadScript(this.ELFSIGHT_SCRIPT_SRC);
     this.renderElfsightWidget();
   }

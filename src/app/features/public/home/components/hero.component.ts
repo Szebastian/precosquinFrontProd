@@ -30,6 +30,12 @@ function heroImageUrl(path: string): string {
   return base;
 }
 
+function thumbImageUrl(path: string): string {
+  const base = resolveUrl(path);
+  if (base.includes('/v1/news/images/')) return base + '?w=160';
+  return base;
+}
+
 export interface NewsItem {
   id: number;
   category: string;
@@ -94,7 +100,7 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
         imageUrl: heroImageUrl(item.image),
         imagePosition: item.imagePosition || 'center center',
         thumbType: item.thumbType,
-        badgeUrl: item.thumbType === 'img' ? resolveUrl(item.thumbSrc) : '',
+        badgeUrl: item.thumbType === 'img' ? thumbImageUrl(item.thumbSrc) : '',
         thumbBg: item.thumbBg,
         safeThumbHtml: item.thumbType === 'icon'
           ? this.sanitizer.bypassSecurityTrustHtml(item.thumbSrc)
