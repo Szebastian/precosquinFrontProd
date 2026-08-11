@@ -40,8 +40,7 @@ export const appRoutes: Routes = [
       {
         path: 'patrocinio',
         loadComponent: () => import('./features/public/patrocinio/patrocinio.page').then(m => m.PatrocinioPageComponent),
-        canActivate: [authGuard],
-        data: { title: 'Patrocinio', roles: ['admin', 'organizador'] }
+        data: { title: 'Patrocinio' }
       },
       {
         path: 'cronograma',

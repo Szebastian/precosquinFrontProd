@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
@@ -24,7 +25,7 @@ interface InviteResult {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="page-container">
       <div class="page-header">
@@ -32,13 +33,31 @@ interface InviteResult {
           <h1 class="page-title">Administración</h1>
           <p class="page-subtitle">Gestionar usuarios, permisos y configuración del sistema</p>
         </div>
-        <button class="btn btn-primary" (click)="showInviteModal.set(true)">
+        <div class="header-actions">
+          <a routerLink="/patrocinio" class="btn btn-ghost" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            Ver Patrocinadores
+          </a>
+          <button class="btn btn-primary" (click)="showInviteModal.set(true)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
             <line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>
           </svg>
           Invitar Usuario
         </button>
+        <button class="btn btn-secondary" (click)="syncUsers()" [disabled]="syncing()">
+          @if (syncing()) {
+            <span class="spinner"></span> Sincronizando...
+          } @else {
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+              <path d="M16 16h5v5"/>
+            </svg>
+            Sync Usuarios
+          }
+        </button>
+        </div>
       </div>
 
       <div class="tabs">
@@ -79,6 +98,7 @@ interface InviteResult {
                   <tr>
                     <th>Nombre</th>
                     <th>Email</th>
+                    <th>Contraseña</th>
                     <th>Rol</th>
                     <th>Estado</th>
                     <th>Creado</th>
@@ -96,7 +116,8 @@ interface InviteResult {
                           <span class="user-name">{{ user.full_name }}</span>
                         </div>
                       </td>
-                      <td><span class="text-muted">{{ user.email }}</span></td>
+                      <td><span class="text-email">{{ user.email }}</span></td>
+                      <td><span class="text-pwd">••••••</span></td>
                       <td>
                         <span class="role-badge" [attr.data-role]="user.role">{{ getRoleLabel(user.role) }}</span>
                       </td>
@@ -110,6 +131,11 @@ interface InviteResult {
                           <button class="btn-icon" title="Editar rol" (click)="editUser(user)">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                               <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                            </svg>
+                          </button>
+                          <button class="btn-icon" title="Resetear contraseña" (click)="resetPassword(user)" [disabled]="user.id === currentUserId()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                             </svg>
                           </button>
                           <button class="btn-icon btn-danger" title="Desactivar" (click)="deactivateUser(user)" [disabled]="user.id === currentUserId()">
@@ -235,6 +261,32 @@ interface InviteResult {
             <div class="modal-footer">
               <button class="btn btn-secondary" (click)="editingUser.set(null)">Cancelar</button>
               <button class="btn btn-primary" (click)="saveUser()">Guardar</button>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (resetResult()) {
+        <div class="modal-overlay" (click)="resetResult.set(null)">
+          <div class="modal modal-sm" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h2>Contraseña Reseteada</h2>
+              <button class="btn-close" (click)="resetResult.set(null)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Se generó una nueva contraseña para <strong>{{ resetResult()!.email }}</strong></p>
+              <div class="temp-credentials">
+                <span class="cred-label">Contraseña temporal:</span>
+                <code class="cred-value">{{ resetResult()!.temp_password }}</code>
+              </div>
+              <p class="cred-note">Compartí esta contraseña con el usuario. Se le pedirá cambiarla al iniciar sesión.</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" (click)="resetResult.set(null)">Cerrar</button>
             </div>
           </div>
         </div>
@@ -389,6 +441,19 @@ interface InviteResult {
     .text-muted {
       color: var(--gray-500);
       font-size: var(--text-xs);
+    }
+
+    .text-email {
+      color: var(--gray-700);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+    }
+
+    .text-pwd {
+      color: var(--gray-400);
+      font-size: var(--text-sm);
+      font-family: monospace;
+      letter-spacing: 0.15em;
     }
 
     .role-badge {
@@ -773,6 +838,20 @@ interface InviteResult {
 
     .btn-secondary:hover { background: var(--gray-200); }
 
+    .btn-ghost {
+      background: transparent;
+      color: var(--brand-600);
+      border: 1px solid var(--brand-200);
+    }
+
+    .btn-ghost:hover { background: var(--brand-50); }
+
+    .header-actions {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
     .spinner {
       width: 14px;
       height: 14px;
@@ -798,6 +877,8 @@ export class AdminPageComponent implements OnInit {
   editRole = '';
   activeTab = signal('all');
   currentUserId = signal('');
+  resetResult = signal<{ email: string; temp_password: string } | null>(null);
+  syncing = signal(false);
 
   inviteForm = { email: '', full_name: '', role: 'jurado' };
 
@@ -915,6 +996,37 @@ export class AdminPageComponent implements OnInit {
     if (!confirm(`¿Desactivar a ${user.full_name}?`)) return;
     this.http.delete(`${environment.apiUrl}/admin/users/${user.id}`).subscribe({
       next: () => this.loadUsers()
+    });
+  }
+
+  resetPassword(user: User): void {
+    if (!confirm(`¿Resetear la contraseña de ${user.full_name}?`)) return;
+    this.http.post<{ email: string; temp_password: string }>(
+      `${environment.apiUrl}/admin/users/${user.id}/reset-password`, {}
+    ).subscribe({
+      next: (result) => this.resetResult.set(result),
+      error: (err) => alert(err.error?.detail || 'Error al resetear contraseña')
+    });
+  }
+
+  syncUsers(): void {
+    this.syncing.set(true);
+    this.http.post<{ synced: number; emails: string[] }>(
+      `${environment.apiUrl}/admin/users/sync`, {}
+    ).subscribe({
+      next: (result) => {
+        this.syncing.set(false);
+        if (result.synced > 0) {
+          alert(`Se sincronizaron ${result.synced} usuario(s): ${result.emails.join(', ')}`);
+        } else {
+          alert('Todos los usuarios ya estaban sincronizados');
+        }
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.syncing.set(false);
+        alert(err.error?.detail || 'Error al sincronizar');
+      }
     });
   }
 }
