@@ -128,26 +128,26 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.15em;
-      color: rgba(255,255,255,0.7);
-      background: rgba(255,255,255,0.08);
+      color: #2855B8;
+      background: rgba(40,85,184,0.08);
       padding: 5px 14px;
       border-radius: 999px;
       margin-bottom: 14px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(40,85,184,0.15);
     }
 
     .gallery-title {
       font-family: var(--font-display);
       font-size: var(--text-2xl);
       font-weight: 800;
-      color: #fff;
+      color: #17191C;
       margin: 0;
       line-height: 1.2;
     }
 
     .gallery-subtitle {
       font-size: var(--text-sm);
-      color: rgba(255,255,255,0.45);
+      color: #857a68;
       margin: 8px 0 0;
       line-height: 1.5;
     }
@@ -172,9 +172,9 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
       gap: 6px;
       padding: 7px 16px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.04);
-      color: rgba(255,255,255,0.55);
+      border: 1px solid #E6DED0;
+      background: #fff;
+      color: #857a68;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
@@ -185,33 +185,33 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
     }
 
     .filter-pill:hover {
-      background: rgba(255,255,255,0.08);
-      color: rgba(255,255,255,0.8);
-      border-color: rgba(255,255,255,0.2);
+      background: #F1EDE4;
+      color: #17191C;
+      border-color: #d1c8b8;
     }
 
     .filter-pill-active {
-      background: #fff;
-      color: #111118;
-      border-color: #fff;
+      background: #2855B8;
+      color: #fff;
+      border-color: #2855B8;
     }
 
     .filter-pill-active:hover {
-      background: #fff;
-      color: #111118;
-      border-color: #fff;
+      background: #1F4498;
+      color: #fff;
+      border-color: #1F4498;
     }
 
     .filter-pill-active .pill-count {
-      background: rgba(17,17,24,0.12);
-      color: #111118;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
     }
 
     .pill-count {
       font-size: 10px;
       font-weight: 700;
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.5);
+      background: rgba(40,85,184,0.08);
+      color: #2855B8;
       padding: 1px 6px;
       border-radius: 99px;
       min-width: 18px;
@@ -319,7 +319,7 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
       left: 0;
       right: 0;
       height: 80px;
-      background: linear-gradient(to top, #111118 20%, transparent);
+      background: linear-gradient(to top, #1C2638 20%, transparent);
       pointer-events: none;
       border-radius: 0 0 12px 12px;
     }
@@ -327,7 +327,7 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
     .empty-filter {
       text-align: center;
       padding: 60px 20px;
-      color: rgba(255,255,255,0.3);
+      color: #857a68;
       font-size: var(--text-sm);
     }
 

@@ -86,10 +86,10 @@ import { RouterLink } from '@angular/router';
     </footer>
   `,
   styles: [`
-    .portal-footer { margin-top: auto; background-color: var(--gray-900); border-top: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
-    .footer-collab { background-color: rgba(0,0,0,0.3); padding: 48px 24px; display: flex; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .portal-footer { margin-top: auto; background-color: #151D2D; border-top: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; }
+    .footer-collab { background-color: rgba(17,19,21,0.5); padding: 48px 24px; display: flex; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
     .collab-inner { width: 100%; max-width: min(92%, 1200px); display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    .collab-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: var(--gray-300); }
+    .collab-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: rgba(247,243,234,0.5); }
     .collab-grid { display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; }
     .collab-img { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
     .collab-item { display: inline-flex; text-decoration: none; cursor: pointer; }
@@ -135,7 +135,7 @@ import { RouterLink } from '@angular/router';
       font-size: 9px;
       font-weight: 700;
       letter-spacing: 0.25em;
-      color: #fbbf24;
+      color: #D9A928;
       text-transform: uppercase;
       position: relative;
       z-index: 1;
@@ -148,7 +148,7 @@ import { RouterLink } from '@angular/router';
       justify-content: center;
       padding: 8px 16px;
       border-radius: 12px;
-      background: rgba(255,255,255,0.06);
+      background: rgba(28,38,56,0.6);
       backdrop-filter: blur(4px);
     }
     .featured-logo {
@@ -165,7 +165,7 @@ import { RouterLink } from '@angular/router';
     }
     .featured-sub {
       font-size: 11px;
-      color: var(--gray-400);
+      color: rgba(247,243,234,0.5);
       letter-spacing: 0.04em;
       position: relative;
       z-index: 1;
@@ -175,19 +175,19 @@ import { RouterLink } from '@angular/router';
     .footer-brand { display: flex; align-items: center; gap: var(--space-4); }
     .footer-logo { height: 60px; width: auto; opacity: 0.85; }
     .footer-logo:hover { opacity: 1; }
-    .brand-text h4 { margin: 0; color: #fff; font-size: var(--text-lg); font-weight: var(--weight-bold); }
-    .brand-text p { margin: 0; color: var(--gray-300); font-size: var(--text-sm); }
+    .brand-text h4 { margin: 0; color: #F7F3EA; font-size: var(--text-lg); font-weight: var(--weight-bold); }
+    .brand-text p { margin: 0; color: rgba(247,243,234,0.5); font-size: var(--text-sm); }
     .footer-links { display: flex; gap: var(--space-6); justify-content: center; }
-    .footer-links a { color: var(--gray-300); text-decoration: none; font-size: var(--text-sm); font-weight: var(--weight-medium); transition: color var(--transition-fast); }
-    .footer-links a:hover { color: #fff; }
-    .footer-links a:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; border-radius: 2px; }
+    .footer-links a { color: rgba(247,243,234,0.6); text-decoration: none; font-size: var(--text-sm); font-weight: var(--weight-medium); transition: color var(--transition-fast); }
+    .footer-links a:hover { color: #F7F3EA; }
+    .footer-links a:focus-visible { outline: 2px solid #2855B8; outline-offset: 2px; border-radius: 2px; }
     .footer-social { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2); }
-    .footer-social p { margin: 0; font-size: var(--text-sm); color: var(--gray-300); font-weight: var(--weight-medium); }
+    .footer-social p { margin: 0; font-size: var(--text-sm); color: rgba(247,243,234,0.5); font-weight: var(--weight-medium); }
     .social-icons { display: flex; gap: var(--space-3); }
-    .social-icon { color: var(--gray-300); transition: all var(--transition-fast); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background-color: rgba(255,255,255,0.08); }
-    .social-icon:hover { color: #fff; background-color: var(--brand-500); transform: translateY(-2px); }
-    .social-icon:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
-    .footer-copyright { background-color: rgba(0,0,0,0.4); color: var(--gray-300); text-align: center; padding: var(--space-4); font-size: var(--text-xs); border-top: 1px solid rgba(255,255,255,0.05); }
+    .social-icon { color: rgba(247,243,234,0.5); transition: all var(--transition-fast); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background-color: rgba(40,85,184,0.15); }
+    .social-icon:hover { color: #fff; background-color: #2855B8; transform: translateY(-2px); }
+    .social-icon:focus-visible { outline: 2px solid #2855B8; outline-offset: 2px; }
+    .footer-copyright { background-color: rgba(17,19,21,0.6); color: rgba(247,243,234,0.4); text-align: center; padding: var(--space-4); font-size: var(--text-xs); border-top: 1px solid rgba(255,255,255,0.04); }
     @media (min-width: 1280px) {
       .collab-inner, .footer-main { max-width: min(90%, 1400px); }
       .footer-main { grid-template-columns: 1fr 1fr 1fr; gap: 40px; }

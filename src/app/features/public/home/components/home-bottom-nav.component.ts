@@ -97,10 +97,10 @@ import { Subscription } from 'rxjs';
       left: 0;
       right: 0;
       z-index: 900;
-      background: rgba(17, 17, 24, 0.92);
+      background: rgba(241,237,228,0.95);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(0,0,0,0.08);
       padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
     }
 
@@ -115,7 +115,7 @@ import { Subscription } from 'rxjs';
       padding: 4px 10px;
       border: none;
       background: transparent;
-      color: rgba(255, 255, 255, 0.4);
+      color: rgba(23,25,28,0.4);
       text-decoration: none;
       cursor: pointer;
       transition: color 0.2s ease;
@@ -135,7 +135,7 @@ import { Subscription } from 'rxjs';
     }
 
     .nav-active {
-      color: #fff;
+      color: #2855B8;
     }
 
     .nav-active::after {
@@ -146,18 +146,18 @@ import { Subscription } from 'rxjs';
       transform: translateX(-50%);
       width: 20px;
       height: 2px;
-      background: var(--brand-accent, #d1ba73);
+      background: #D9A928;
       border-radius: 0 0 2px 2px;
     }
 
     /* ═══ CTA BUTTON ═══ */
     .nav-item-cta {
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(23,25,28,0.5);
       margin-top: -12px;
     }
 
     .nav-item-cta.nav-active {
-      color: #fff;
+      color: #2855B8;
     }
 
     .nav-item-cta.nav-active::after {
@@ -168,27 +168,27 @@ import { Subscription } from 'rxjs';
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--brand-accent, #d1ba73), #b8993e);
-      color: #111118;
+      background: linear-gradient(135deg, #D9A928, #B98B1D);
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow:
-        0 4px 16px rgba(209, 186, 115, 0.35),
-        0 0 0 3px rgba(17, 17, 24, 1);
+        0 4px 16px rgba(217, 169, 40, 0.35),
+        0 0 0 3px rgba(241, 237, 228, 1);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .nav-item-cta:active .nav-cta-icon {
       transform: scale(0.9);
       box-shadow:
-        0 2px 8px rgba(209, 186, 115, 0.3),
-        0 0 0 3px rgba(17, 17, 24, 1);
+        0 2px 8px rgba(217, 169, 40, 0.3),
+        0 0 0 3px rgba(241, 237, 228, 1);
     }
 
     .nav-label-cta {
       font-weight: 700;
-      color: var(--brand-accent, #d1ba73);
+      color: #D9A928;
     }
 
     /* ═══ MORE OVERLAY ═══ */
@@ -207,7 +207,7 @@ import { Subscription } from 'rxjs';
       left: 0;
       right: 0;
       z-index: 951;
-      background: #1a1a24;
+      background: #fff;
       border-radius: 20px 20px 0 0;
       animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
       max-height: 75vh;
@@ -218,7 +218,7 @@ import { Subscription } from 'rxjs';
     .more-handle {
       width: 36px;
       height: 4px;
-      background: rgba(255, 255, 255, 0.15);
+      background: #d1c8b8;
       border-radius: 99px;
       margin: 10px auto 0;
     }
@@ -228,7 +228,7 @@ import { Subscription } from 'rxjs';
       align-items: center;
       justify-content: space-between;
       padding: 16px 20px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid #E6DED0;
     }
 
     .more-title {
@@ -243,8 +243,8 @@ import { Subscription } from 'rxjs';
       height: 36px;
       border-radius: 50%;
       border: none;
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.5);
+      background: #F1EDE4;
+      color: #857a68;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -253,8 +253,8 @@ import { Subscription } from 'rxjs';
     }
 
     .more-close:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
+      background: #E6DED0;
+      color: #17191C;
     }
 
     .more-links {
@@ -268,7 +268,7 @@ import { Subscription } from 'rxjs';
       padding: 12px;
       font-size: 15px;
       font-weight: 500;
-      color: rgba(255, 255, 255, 0.85);
+      color: #17191C;
       text-decoration: none;
       border-radius: 14px;
       transition: background 0.15s ease;
@@ -276,22 +276,22 @@ import { Subscription } from 'rxjs';
     }
 
     .more-link:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: #F1EDE4;
     }
 
     .more-link:active {
-      background: rgba(255, 255, 255, 0.1);
+      background: #E6DED0;
     }
 
     .more-link-icon {
       width: 40px;
       height: 40px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.06);
+      background: #F1EDE4;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: rgba(255, 255, 255, 0.5);
+      color: #2855B8;
       flex-shrink: 0;
     }
 
@@ -304,18 +304,18 @@ import { Subscription } from 'rxjs';
     .more-link-label {
       font-size: 14px;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
+      color: #17191C;
     }
 
     .more-link-desc {
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.35);
+      color: #857a68;
       font-weight: 400;
     }
 
     .more-footer {
       padding: 8px 12px 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-top: 1px solid #E6DED0;
     }
 
     .more-login {
@@ -327,8 +327,8 @@ import { Subscription } from 'rxjs';
       padding: 14px;
       font-size: 14px;
       font-weight: 700;
-      color: #111118;
-      background: linear-gradient(135deg, var(--brand-accent, #d1ba73), #b8993e);
+      color: #fff;
+      background: linear-gradient(135deg, #2855B8, #1F4498);
       border-radius: 14px;
       text-decoration: none;
       transition: all 0.15s ease;

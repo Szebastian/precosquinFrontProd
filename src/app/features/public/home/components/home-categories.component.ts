@@ -57,24 +57,24 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
     }
 
     .cat-row-icon {
-      color: #fbbf24;
-      opacity: 0.7;
+      color: #2855B8;
+      opacity: 0.8;
     }
 
     .cat-row-icon--danza {
-      color: #ec4899;
+      color: #C86B4A;
     }
 
     .cat-row-label {
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.5);
+      color: #857a68;
       text-transform: uppercase;
     }
 
     .cat-row-label--danza {
-      color: rgba(236,72,153,0.5);
+      color: #C86B4A;
     }
 
     .cat-scroll {
@@ -103,27 +103,27 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
     }
 
     .cat-pill--musica {
-      color: rgba(255,255,255,0.7);
-      background: rgba(251,191,36,0.08);
-      border-color: rgba(251,191,36,0.1);
+      color: #17191C;
+      background: rgba(40,85,184,0.06);
+      border-color: rgba(40,85,184,0.12);
     }
 
     .cat-pill--musica:hover {
-      color: #fbbf24;
-      background: rgba(251,191,36,0.12);
-      border-color: rgba(251,191,36,0.2);
+      color: #2855B8;
+      background: rgba(40,85,184,0.1);
+      border-color: rgba(40,85,184,0.2);
     }
 
     .cat-pill--danza {
-      color: rgba(255,255,255,0.7);
-      background: rgba(236,72,153,0.08);
-      border-color: rgba(236,72,153,0.1);
+      color: #17191C;
+      background: rgba(200,107,74,0.06);
+      border-color: rgba(200,107,74,0.12);
     }
 
     .cat-pill--danza:hover {
-      color: #ec4899;
-      background: rgba(236,72,153,0.12);
-      border-color: rgba(236,72,153,0.2);
+      color: #C86B4A;
+      background: rgba(200,107,74,0.1);
+      border-color: rgba(200,107,74,0.2);
     }
 
     @media (max-width: 640px) {

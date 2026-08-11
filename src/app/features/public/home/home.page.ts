@@ -161,7 +161,7 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
        ═══════════════════════════════════════════════════ */
     .portal {
       min-height: 100vh;
-      background-color: var(--gray-50);
+      background-color: #F1EDE4;
       font-family: var(--font-sans);
       display: flex;
       flex-direction: column;
@@ -176,7 +176,7 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
     /* ─── Band: dark (full-bleed) ─── */
     .band-dark {
       width: 100%;
-      background-color: var(--gray-900);
+      background-color: #111315;
     }
 
     .band-dark .band-inner {
@@ -206,9 +206,9 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
       inset: 0;
       background: linear-gradient(
         to bottom,
-        rgba(17,17,24,0.95) 0%,
-        rgba(17,17,24,0.55) 50%,
-        rgba(17,17,24,0.95) 100%
+        rgba(17,19,21,0.95) 0%,
+        rgba(17,19,21,0.5) 50%,
+        rgba(17,19,21,0.95) 100%
       );
       pointer-events: none;
     }
@@ -229,7 +229,7 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
     /* ─── Band: light (uses portal beige bg) ─── */
     .band-light {
       width: 100%;
-      background-color: var(--gray-50);
+      background-color: #F1EDE4;
     }
 
     .band-light .band-inner {
@@ -246,8 +246,8 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
 
     .loading-spinner {
       width: 24px; height: 24px;
-      border: 3px solid var(--gray-200);
-      border-top-color: var(--brand-500);
+      border: 3px solid #E6DED0;
+      border-top-color: #2855B8;
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
       margin: 0 auto;
@@ -258,7 +258,7 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
        INSCRIPCIONES BLOCK
        ═══════════════════════════════════════════════════ */
     .inscripciones-block {
-      background: linear-gradient(135deg, rgba(30,64,120,0.88) 0%, rgba(17,17,24,0.82) 50%, rgba(30,64,120,0.85) 100%),
+      background: linear-gradient(135deg, rgba(40,85,184,0.92) 0%, rgba(31,68,152,0.88) 50%, rgba(40,85,184,0.9) 100%),
                   url('/assets/fondoInstripcion.webp') center/cover no-repeat;
       border-radius: var(--radius);
       padding: 24px 32px;
@@ -266,7 +266,7 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
       position: relative;
       overflow: hidden;
       box-shadow: var(--shadow);
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
     }
     .inscripciones-block::before {
       content: '';
@@ -276,7 +276,7 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
       width: 300px;
       height: 300px;
       border-radius: 50%;
-      background: rgba(251,191,36,0.08);
+      background: rgba(217,169,40,0.1);
       animation: pulse-glow 4s ease-in-out infinite;
     }
     .inscripciones-block::after {
@@ -287,7 +287,7 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
       width: 200px;
       height: 200px;
       border-radius: 50%;
-      background: rgba(251,191,36,0.05);
+      background: rgba(217,169,40,0.06);
       animation: pulse-glow 5s ease-in-out infinite 1s;
     }
     @keyframes pulse-glow {
@@ -312,13 +312,13 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
       font-family: var(--font-display);
       font-size: var(--text-2xl);
       font-weight: 800;
-      color: #fff;
+      color: #F7F3EA;
       margin: 0 0 8px;
       line-height: 1.15;
     }
     .inscripciones-desc {
       font-size: var(--text-sm);
-      color: rgba(255,255,255,0.8);
+      color: rgba(247,243,234,0.8);
       margin: 0 auto 24px;
       line-height: 1.6;
       max-width: 480px;
@@ -338,8 +338,8 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--brand-accent);
-      color: var(--gray-900);
+      background: #D9A928;
+      color: #17191C;
       padding: 12px 24px;
       border-radius: 999px;
       font-size: var(--text-sm);
@@ -351,11 +351,12 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
       min-height: 48px;
     }
     .btn-primary:hover {
+      background: #B98B1D;
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
     .btn-primary:focus-visible {
-      outline: 3px solid var(--brand-500);
+      outline: 3px solid #2855B8;
       outline-offset: 2px;
     }
     .btn-secondary {
@@ -363,23 +364,23 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
       align-items: center;
       gap: 6px;
       background: transparent;
-      color: var(--gray-200);
+      color: rgba(247,243,234,0.7);
       padding: 12px 20px;
       border-radius: 999px;
       font-size: var(--text-sm);
       font-weight: 600;
       text-decoration: none;
-      border: 1px solid var(--gray-600);
+      border: 1px solid rgba(247,243,234,0.2);
       transition: all 0.2s ease;
       min-height: 48px;
     }
     .btn-secondary:hover {
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      border-color: var(--gray-500);
+      background: rgba(247,243,234,0.08);
+      color: #F7F3EA;
+      border-color: rgba(247,243,234,0.3);
     }
     .btn-secondary:focus-visible {
-      outline: 3px solid rgba(255,255,255,0.5);
+      outline: 3px solid rgba(247,243,234,0.5);
       outline-offset: 2px;
     }
 

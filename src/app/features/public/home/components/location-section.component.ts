@@ -185,15 +185,15 @@ interface Venue {
     .venue-tab {
       flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px;
       padding: 16px 20px; background: transparent; border: 2px solid transparent;
-      border-radius: 12px; color: #94a3b8;
+      border-radius: 12px; color: rgba(247,243,234,0.5);
       font-size: 14px; font-weight: 700; letter-spacing: 0.03em;
       cursor: pointer; transition: all 0.25s ease; text-transform: uppercase;
       min-height: 52px;
     }
-    .venue-tab:hover { color: #e2e8f0; background: rgba(255,255,255,0.04); }
+    .venue-tab:hover { color: #F7F3EA; background: rgba(255,255,255,0.04); }
     .venue-tab.active {
-      color: #0f172a; background: #fbbf24; border-color: #fbbf24;
-      box-shadow: 0 2px 12px rgba(251,191,36,0.3);
+      color: #17191C; background: #D9A928; border-color: #D9A928;
+      box-shadow: 0 2px 12px rgba(217,169,40,0.3);
     }
     .venue-tab-icon { display: flex; align-items: center; }
     .venue-tab-icon :is(svg) { width: 20px; height: 20px; }
@@ -201,7 +201,7 @@ interface Venue {
 
     /* ─── Card ─── */
     .location-card {
-      background: linear-gradient(160deg, #0f172a 0%, #1a2332 100%);
+      background: linear-gradient(160deg, #111315 0%, #1C2638 100%);
       padding: 0 32px 32px; display: flex; flex-direction: column; gap: 0;
       position: relative; overflow: hidden;
     }
@@ -217,25 +217,25 @@ interface Venue {
     .venue-badge {
       display: inline-flex; align-items: center; gap: 8px;
       font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
-      color: #fff; background: color-mix(in srgb, var(--venue-color, #fbbf24) 20%, transparent);
-      border: 1px solid color-mix(in srgb, var(--venue-color, #fbbf24) 30%, transparent);
+      color: #F7F3EA; background: color-mix(in srgb, var(--venue-color, #D9A928) 20%, transparent);
+      border: 1px solid color-mix(in srgb, var(--venue-color, #D9A928) 30%, transparent);
       padding: 6px 16px; border-radius: 999px; width: fit-content; position: relative;
       text-transform: uppercase;
     }
     .venue-badge-dot {
       width: 8px; height: 8px; border-radius: 50%;
-      background: var(--venue-color, #fbbf24);
+      background: var(--venue-color, #D9A928);
     }
 
     .location-title {
       font-family: var(--font-display); font-size: 1.75rem;
-      font-weight: 800; color: #fff; margin: 0; line-height: 1.2; position: relative;
+      font-weight: 800; color: #F7F3EA; margin: 0; line-height: 1.2; position: relative;
     }
     .location-address {
-      font-size: 16px; font-weight: 600; color: #e2e8f0; margin: 0; position: relative;
+      font-size: 16px; font-weight: 600; color: rgba(247,243,234,0.85); margin: 0; position: relative;
     }
     .location-fulladdress {
-      font-size: 14px; font-weight: 400; color: #94a3b8; margin: 0; position: relative;
+      font-size: 14px; font-weight: 400; color: rgba(247,243,234,0.5); margin: 0; position: relative;
       line-height: 1.4;
     }
 
@@ -251,44 +251,44 @@ interface Venue {
       flex-shrink: 0; transition: transform 0.2s ease;
     }
     .detail-row:hover .detail-icon { transform: scale(1.08); }
-    .detail-icon--stage { background: rgba(251,191,36,0.12); color: #fbbf24; }
-    .detail-icon--date { background: rgba(96,165,250,0.12); color: #60a5fa; }
+    .detail-icon--stage { background: rgba(217,169,40,0.12); color: #D9A928; }
+    .detail-icon--date { background: rgba(40,85,184,0.12); color: #2855B8; }
     .detail-icon--hours { background: rgba(168,85,247,0.12); color: #a855f7; }
     .detail-text { display: flex; flex-direction: column; gap: 2px; }
     .detail-label {
       font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
-      color: #94a3b8; text-transform: uppercase;
+      color: rgba(247,243,234,0.5); text-transform: uppercase;
     }
-    .detail-value { font-size: 16px; font-weight: 500; color: #f1f5f9; line-height: 1.3; }
+    .detail-value { font-size: 16px; font-weight: 500; color: #F7F3EA; line-height: 1.3; }
 
     .location-actions {
       display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     }
     .location-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      background: var(--brand-accent); color: #0f172a;
+      background: #D9A928; color: #17191C;
       padding: 14px 28px; border-radius: 999px; font-size: 16px;
       font-weight: 800; text-decoration: none; letter-spacing: 0.02em;
       transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.25);
       min-height: 52px; width: fit-content; position: relative;
     }
-    .location-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
-    .location-btn:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
+    .location-btn:hover { background: #B98B1D; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
+    .location-btn:focus-visible { outline: 3px solid #D9A928; outline-offset: 2px; }
 
     .location-copy {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      background: rgba(255,255,255,0.06); color: #cbd5e1;
+      background: rgba(28,38,56,0.5); color: rgba(247,243,234,0.7);
       padding: 12px 20px; border-radius: 999px; font-size: 14px;
-      font-weight: 600; border: 1px solid rgba(255,255,255,0.1);
+      font-weight: 600; border: 1px solid rgba(247,243,234,0.1);
       cursor: pointer; transition: all 0.2s ease; min-height: 48px;
     }
-    .location-copy:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
-    .location-copy:focus-visible { outline: 3px solid rgba(255,255,255,0.4); outline-offset: 2px; }
+    .location-copy:hover { background: rgba(28,38,56,0.8); color: #F7F3EA; border-color: rgba(247,243,234,0.2); }
+    .location-copy:focus-visible { outline: 3px solid rgba(247,243,234,0.4); outline-offset: 2px; }
 
     /* ─── Map ─── */
     .location-map {
       position: relative; min-height: 400px;
-      background-color: #1e293b; overflow: hidden;
+      background-color: #1C2638; overflow: hidden;
     }
     .location-map iframe {
       display: block; width: 100%; height: 100%; min-height: 400px;
@@ -299,22 +299,22 @@ interface Venue {
     .map-gps-fab {
       position: absolute; bottom: 16px; right: 16px;
       display: flex; align-items: center; gap: 8px;
-      background: #fbbf24; color: #0f172a;
+      background: #D9A928; color: #17191C;
       padding: 14px 20px; border-radius: 14px;
       font-size: 14px; font-weight: 800; text-decoration: none;
       box-shadow: 0 4px 16px rgba(0,0,0,0.3);
       z-index: 5; transition: all 0.2s ease;
       min-height: 52px; min-width: 52px;
     }
-    .map-gps-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
-    .map-gps-fab:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+    .map-gps-fab:hover { background: #B98B1D; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+    .map-gps-fab:focus-visible { outline: 3px solid #F7F3EA; outline-offset: 2px; }
     .gps-fab-label { letter-spacing: 0.05em; }
 
     .map-venue-label {
       position: absolute; top: 12px; left: 12px;
       display: flex; align-items: center; gap: 8px;
-      background: rgba(15,23,42,0.9); backdrop-filter: blur(8px);
-      color: #f1f5f9; font-size: 13px; font-weight: 600;
+      background: rgba(17,19,21,0.9); backdrop-filter: blur(8px);
+      color: #F7F3EA; font-size: 13px; font-weight: 600;
       padding: 8px 14px; border-radius: 10px; z-index: 5;
       border: 1px solid rgba(255,255,255,0.08);
     }
@@ -354,7 +354,7 @@ export class LocationSectionComponent {
     {
       id: 'anfiteatro',
       badge: 'Certamen',
-      color: '#fbbf24',
+      color: '#D9A928',
       name: 'Esc. 87',
       fullAddress: 'Av. de las Ballenas S/N, Puerto Pirámides, Chubut, Argentina',
       shortAddress: 'Puerto Pirámides, Chubut',
@@ -368,7 +368,7 @@ export class LocationSectionComponent {
     {
       id: 'pena',
       badge: 'Peña Oficial',
-      color: '#ec4899',
+      color: '#2855B8',
       name: 'La Nona',
       fullAddress: '193 Av. de las Ballenas, Puerto Pirámides, Chubut, Argentina',
       shortAddress: 'Puerto Pirámides, Chubut',

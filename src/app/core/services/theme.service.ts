@@ -36,9 +36,8 @@ export class ThemeService {
     this._theme.set(theme);
   }
 
-  private _apply(theme: Theme): void {
-    if (isPlatformBrowser(this.platformId)) {
-      document.documentElement.classList.toggle('dark', theme === 'dark');
-    }
+  private _apply(_theme: Theme): void {
+    // No-op: dark mode is applied via [class.dark] binding on each layout's root div.
+    // Do NOT toggle .dark on document.documentElement — it leaks to other pages.
   }
 }
