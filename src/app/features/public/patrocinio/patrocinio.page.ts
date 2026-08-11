@@ -47,6 +47,8 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
     { nombre: 'Bodegón El Refugio', logo: 'assets/img/BodegonElRefugio.webp' },
     { nombre: 'El Refugio Pirámides', logo: 'assets/img/ElRefugioPIramiLogo.webp' },
     { nombre: 'La Reserva En El Mar', logo: 'assets/img/logoLaReservaEnElMar.webp' },
+    { nombre: 'AANPPV', logo: 'assets/img/AANPPV_logo.webp' },
+    { nombre: 'Southern Spirit', logo: 'assets/img/SouthernSpirit_logo.webp' },
   ];
 
   canales: Canal[] = [
@@ -101,7 +103,7 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
       color: 'var(--brand-500)',
       destacado: 'Logo en pantallas y menciones en digital.',
       incluye: [
-        'Banner digital rotativo en streaming (YouTube/Insta).',
+        
         'Banner rotativo en streaming.',
         'Logo en la web oficial.',
         '2 menciones en redes sociales.',
