@@ -25,7 +25,6 @@ export interface StandInfo {
 export interface StandDates {
   days: string[];
   start_time: string;
-  end_time: string;
 }
 
 export interface StandEquipment {

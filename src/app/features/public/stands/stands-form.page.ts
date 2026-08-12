@@ -25,7 +25,6 @@ interface StandData {
   dates: {
     days: string[];
     start_time: string;
-    end_time: string;
   };
   equipment: {
     space_size: string;
@@ -39,7 +38,7 @@ interface StandData {
     equipment: string;
     power_watts: number | null;
   };
-  gastronomy: {
+   gastronomy: {
     prepares_food: 'Si' | 'No';
     food_types: string[];
     uses_gas: 'Si' | 'No';
@@ -47,10 +46,6 @@ interface StandData {
     gas_amount: number | null;
     has_certification: 'Si' | 'No';
     certification_doc_url: string;
-  };
-  commercial: {
-    commercial_modality: string;
-    price_range: string;
   };
   personnel: {
     count: number;
@@ -77,11 +72,10 @@ function createEmptyStandData(): StandData {
   return {
     person: { full_name: '', dni: '', phone: '', email: '', locality: '', province: '', represents_company: 'No' },
     info: { stand_type: '', stand_name: '', description: '', main_products: '', instagram: '', website: '' },
-    dates: { days: [], start_time: '', end_time: '' },
+    dates: { days: [], start_time: '' },
     equipment: { space_size: '', brings_structure: 'No', elements: [], table_count: null, chair_count: null },
     electricity: { needs_electricity: 'No', equipment: '', power_watts: null },
     gastronomy: { prepares_food: 'No', food_types: [], uses_gas: 'No', gas_type: '', gas_amount: null, has_certification: 'No', certification_doc_url: '' },
-    commercial: { commercial_modality: '', price_range: '' },
     personnel: { count: 0 },
     logistics: { needs_vehicle: 'No', vehicle_type: '', vehicle_plate: '', early_access: 'No', needs_help: 'No' },
     docs: { dni_front_url: '', dni_back_url: '', cuit_url: '', logo_url: '', stand_photos: [], social_links: '' },
@@ -90,11 +84,8 @@ function createEmptyStandData(): StandData {
 }
 
 const DAYS = [
-  { value: 'jueves', label: 'Jueves' },
-  { value: 'viernes', label: 'Viernes' },
-  { value: 'sabado', label: 'Sábado' },
-  { value: 'domingo', label: 'Domingo' },
-  { value: 'todos', label: 'Todos los días' },
+  { value: 'sabado', label: 'Sábado 5' },
+  { value: 'domingo', label: 'Domingo 6' },
 ];
 
 const STAND_TYPES = [
@@ -140,20 +131,6 @@ const FOOD_TYPES = [
   { value: 'otros', label: 'Otros' },
 ];
 
-const COMMERCIAL_MODALITIES = [
-  { value: 'venta', label: 'Venta directa' },
-  { value: 'servicio', label: 'Servicio' },
-  { value: 'exhibicion', label: 'Exhibición / Portfolio' },
-  { value: 'experiencia', label: 'Experiencia interactiva' },
-];
-
-const PRICE_RANGES = [
-  { value: 'gratis', label: 'Gratis' },
-  { value: 'accesible', label: '$ — Accesible (hasta $5.000)' },
-  { value: 'medio', label: '$$ — Medio ($5.000 - $15.000)' },
-  { value: 'alto', label: '$$$ — Alto ($15.000+)' },
-];
-
 const VEHICLE_TYPES = [
   { value: 'auto', label: 'Automóvil' },
   { value: 'camioneta', label: 'Camioneta / Furgón' },
@@ -168,7 +145,6 @@ const STEPS = [
   { key: 'equipment', label: 'Equipamiento' },
   { key: 'electricity', label: 'Electricidad' },
   { key: 'gastronomy', label: 'Gastronomía' },
-  { key: 'commercial', label: 'Datos comerciales' },
   { key: 'personnel', label: 'Personal' },
   { key: 'logistics', label: 'Logística' },
   { key: 'docs', label: 'Documentación y fotos' },
@@ -299,16 +275,10 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
                     }
                   </div>
                 </div>
-                <div class="grid-2col">
-                  <div class="form-group">
-                    <label class="form-label">Hora de apertura</label>
-                    <input type="time" class="form-input" [(ngModel)]="data().dates.start_time" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Hora de cierre</label>
-                    <input type="time" class="form-input" [(ngModel)]="data().dates.end_time" />
-                  </div>
-                </div>
+<div class="form-group">
+  <label class="form-label">Hora de apertura</label>
+  <input type="time" class="form-input" [(ngModel)]="data().dates.start_time" />
+</div>
               </div>
             }
 
@@ -452,32 +422,9 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
                   </div>
                 }
               </div>
-            }
+             }
 
-            @if (currentStep() === 6) {
-              <div class="tf-question">
-                <div class="form-group">
-                  <label class="form-label">Modalidad comercial</label>
-                  <select class="form-select" [(ngModel)]="data().commercial.commercial_modality">
-                    <option value="">Seleccionar</option>
-                    @for (cm of COMMERCIAL_MODALITIES; track cm.value) {
-                      <option [value]="cm.value">{{ cm.label }}</option>
-                    }
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Rango de precios</label>
-                  <select class="form-select" [(ngModel)]="data().commercial.price_range">
-                    <option value="">Seleccionar</option>
-                    @for (pr of PRICE_RANGES; track pr.value) {
-                      <option [value]="pr.value">{{ pr.label }}</option>
-                    }
-                  </select>
-                </div>
-              </div>
-            }
-
-            @if (currentStep() === 7) {
+             @if (currentStep() === 6) {
               <div class="tf-question">
                 <div class="form-group">
                   <label class="form-label">¿Cuántas personas va a trabajar en el stand?</label>
@@ -486,7 +433,7 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
               </div>
             }
 
-            @if (currentStep() === 8) {
+            @if (currentStep() === 7) {
               <div class="tf-question">
                 <div class="form-group">
                   <label class="form-label">¿Necesitás ingreso de vehículo?</label>
@@ -541,9 +488,9 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
               </div>
             }
 
-            @if (currentStep() === 9) {
-              <div class="tf-question">
-                <div class="upload-card">
+             @if (currentStep() === 8) {
+               <div class="tf-question">
+                 <div class="upload-card">
                   <div class="upload-card-header">DNI — Frente</div>
                   @if (data().docs.dni_front_url) {
                     <div class="upload-success"><a [href]="data().docs.dni_front_url" target="_blank">Ver archivo</a></div>
@@ -607,9 +554,9 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
               </div>
             }
 
-            @if (currentStep() === 10) {
-              <div class="tf-question">
-                <div class="summary">
+             @if (currentStep() === 9) {
+               <div class="tf-question">
+                 <div class="summary">
                   <div class="summary-group">
                     <h3 class="summary-title">Persona</h3>
                     <p><strong>Nombre:</strong> {{ data().person.full_name || '(sin completar)' }}</p>
@@ -685,8 +632,6 @@ export class StandsFormPageComponent {
   EQUIPMENT_ELEMENTS = EQUIPMENT_ELEMENTS;
   GAS_TYPES = GAS_TYPES;
   FOOD_TYPES = FOOD_TYPES;
-  COMMERCIAL_MODALITIES = COMMERCIAL_MODALITIES;
-  PRICE_RANGES = PRICE_RANGES;
   VEHICLE_TYPES = VEHICLE_TYPES;
   YES_NO = YES_NO;
 
@@ -812,7 +757,7 @@ export class StandsFormPageComponent {
       case 'info':
         return !d.info.stand_type || !d.info.stand_name || !d.info.main_products;
       case 'dates':
-        return d.dates.days.length === 0 || !d.dates.start_time || !d.dates.end_time;
+        return d.dates.days.length === 0 || !d.dates.start_time;
       case 'equipment':
         return !d.equipment.space_size || !d.equipment.brings_structure ||
                d.equipment.elements.length === 0;
@@ -853,7 +798,6 @@ export class StandsFormPageComponent {
       },
       observations: d.observations || undefined,
       gastronomy: d.gastronomy.prepares_food === 'Si' ? d.gastronomy : undefined,
-      commercial: d.commercial.commercial_modality ? d.commercial : undefined,
       personnel: d.personnel.count > 0 ? d.personnel : undefined,
       logistics: d.logistics.needs_vehicle === 'Si' ? d.logistics : undefined,
       docs: d.docs,

@@ -3,6 +3,7 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   inject,
   signal,
   computed,
@@ -500,6 +501,7 @@ import { GalleryService, GalleryItem } from '../../../../core/services/gallery.s
 export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly galleryService = inject(GalleryService);
+  private readonly cdr = inject(ChangeDetectorRef);
   @ViewChild('masonryContainer') containerRef!: ElementRef<HTMLDivElement>;
 
   readonly allItems = signal<GalleryItem[]>([]);
@@ -552,7 +554,11 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.galleryService.getGallery().subscribe({
       next: (items) => {
         this.allItems.set(items);
-        setTimeout(() => this.calculateLayout(), 0);
+        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.calculateLayout();
+          this.observeItems();
+        }, 0);
       },
       error: () => {},
     });
@@ -581,6 +587,7 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         if (updated.size !== this.visibleItems().size) {
           this.visibleItems.set(updated);
+          this.cdr.markForCheck();
         }
       },
       {
@@ -608,6 +615,7 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
     this.activeFilter.set(category);
     this.activeIndex.set(null);
     this.visibleItems.set(new Set());
+    this.cdr.markForCheck();
     setTimeout(() => {
       this.calculateLayout();
       this.observeItems();
@@ -617,6 +625,7 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
   private onResize = (): void => {
     this.updateColumns();
     this.calculateLayout();
+    this.cdr.markForCheck();
   };
 
   private updateColumns(): void {
