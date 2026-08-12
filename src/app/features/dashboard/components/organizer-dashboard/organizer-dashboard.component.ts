@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '@core/auth/auth.service';
@@ -60,7 +61,7 @@ interface HourlyMetric {
 @Component({
   selector: 'app-organizer-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './organizer-dashboard.component.html',
   styleUrl: './organizer-dashboard.component.css'
 })
@@ -72,6 +73,14 @@ export class OrganizerDashboardComponent implements OnInit {
   hourly = signal<HourlyMetric[]>([]);
   selectedDate = signal(new Date().toISOString().slice(0, 10));
   loading = signal(true);
+
+  showPasswordForm = signal(false);
+  currentPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+  passwordError = signal('');
+  passwordSuccess = signal('');
+  changingPassword = signal(false);
 
   greeting = computed(() => {
     const h = new Date().getHours();
@@ -173,5 +182,50 @@ export class OrganizerDashboardComponent implements OnInit {
   dayLabel(dateStr: string): string {
     const d = new Date(dateStr + 'T12:00:00');
     return d.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+
+  togglePasswordForm(): void {
+    this.showPasswordForm.update(v => !v);
+    this.passwordError.set('');
+    this.passwordSuccess.set('');
+    this.currentPassword = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+  }
+
+  async onChangePassword(): Promise<void> {
+    this.passwordError.set('');
+    this.passwordSuccess.set('');
+
+    if (!this.currentPassword || !this.newPassword) {
+      this.passwordError.set('Completá todos los campos');
+      return;
+    }
+    if (this.newPassword.length < 6) {
+      this.passwordError.set('La nueva contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+    if (this.newPassword !== this.confirmPassword) {
+      this.passwordError.set('Las contraseñas no coinciden');
+      return;
+    }
+    if (this.currentPassword === this.newPassword) {
+      this.passwordError.set('La nueva contraseña debe ser diferente a la actual');
+      return;
+    }
+
+    this.changingPassword.set(true);
+    const result = await this.auth.changePassword(this.currentPassword, this.newPassword);
+    this.changingPassword.set(false);
+
+    if (result.error) {
+      this.passwordError.set(result.error);
+    } else {
+      this.passwordSuccess.set('Contraseña actualizada correctamente');
+      this.currentPassword = '';
+      this.newPassword = '';
+      this.confirmPassword = '';
+      setTimeout(() => this.showPasswordForm.set(false), 2000);
+    }
   }
 }

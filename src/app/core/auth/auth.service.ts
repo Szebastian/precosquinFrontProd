@@ -98,4 +98,13 @@ export class AuthService {
   hasRole(...roles: string[]): boolean {
     return roles.includes(this._profile()?.role ?? '');
   }
+
+  changePassword(currentPassword: string, newPassword: string): Promise<{ error: string | null }> {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/change-password`, {
+      current_password: currentPassword,
+      new_password: newPassword,
+    }).toPromise()
+      .then(() => ({ error: null }))
+      .catch((err) => ({ error: err.error?.detail || 'Error al cambiar contraseña' }));
+  }
 }
