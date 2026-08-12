@@ -11,6 +11,7 @@ import { InstagramFeedComponent } from './components/instagram-feed.component';
 import { ThreeGalleryComponent } from './components/three-gallery.component';
 import { LocationSectionComponent } from './components/location-section.component';
 import { HomeCategoriesComponent } from './components/home-categories.component';
+import { StandsPredioSectionComponent } from './components/stands-predio-section.component';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +27,7 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
     ThreeGalleryComponent,
     LocationSectionComponent,
     HomeCategoriesComponent,
+    StandsPredioSectionComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -106,6 +108,17 @@ import { HomeCategoriesComponent } from './components/home-categories.component'
               <app-location-section />
             } @loading (minimum 500ms) {
               <div style="height: 400px;"></div>
+            }
+          </div>
+        </div>
+
+        <!-- 5.75. STANDS — predio section -->
+        <div class="band-light">
+          <div class="band-inner">
+            @defer (on idle) {
+              <app-stands-predio-section />
+            } @loading (minimum 500ms) {
+              <div style="height: 140px;"></div>
             }
           </div>
         </div>
