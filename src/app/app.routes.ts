@@ -52,6 +52,11 @@ export const appRoutes: Routes = [
         loadComponent: () => import('./features/public/firma-contrato/firma-contrato.page').then(m => m.FirmaContratoPageComponent),
         data: { title: 'Firma de Contrato' }
       },
+      {
+        path: 'stands/nuevo',
+        loadComponent: () => import('./features/public/stands/stands-form.page').then(m => m.StandsFormPageComponent),
+        data: { title: 'Solicitud de Stand' }
+      },
     ]
   },
   {

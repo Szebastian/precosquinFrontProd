@@ -22,6 +22,14 @@ import { RouterLink } from '@angular/router';
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
       </div>
+
+      <div class="cta-stands-section">
+        <div class="cta-stands-content">
+          <h3 class="cta-stands-title">¿Tenés un stand?</h3>
+          <p class="cta-stands-desc">Solicitá tu espacio en el recinto del festival.</p>
+        </div>
+        <a routerLink="/stands/nuevo" class="cta-stands-btn">SOLICITAR STAND</a>
+      </div>
     </section>
   `,
   styles: [`
@@ -62,6 +70,60 @@ import { RouterLink } from '@angular/router';
       .cta-banner { padding: var(--space-8) var(--space-4); }
       .cta-title { font-size: 1.5rem; }
       .cta-btn { width: 100%; justify-content: center; padding: 14px 24px; }
+    }
+
+    .cta-stands-section {
+      margin-top: var(--space-8);
+      padding-top: var(--space-8);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .cta-stands-content { flex: 1; }
+
+    .cta-stands-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: var(--weight-extrabold);
+      color: #fff;
+      margin: 0 0 var(--space-2);
+    }
+
+    .cta-stands-desc {
+      font-size: var(--text-sm);
+      color: rgba(255,255,255,0.8);
+      margin: 0;
+    }
+
+    .cta-stands-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+      border: 1.5px solid rgba(255,255,255,0.3);
+    }
+
+    .cta-stands-btn:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    @media (max-width: 640px) {
+      .cta-stands-section {
+        flex-direction: column;
+        text-align: center;
+      }
     }
   `]
 })

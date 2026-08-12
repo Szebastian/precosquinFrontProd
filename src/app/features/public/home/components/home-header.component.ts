@@ -32,13 +32,14 @@ import { RouterLink } from '@angular/router';
           </div>
         </div>
 
-        <nav class="header-nav">
-          <a href="#" class="nav-link active">Inicio</a>
-          <a routerLink="/noticias" class="nav-link">Noticias</a>
-          <a routerLink="/inscripcion" class="nav-link">Inscripciones</a>
-          <a routerLink="/cronograma" class="nav-link">Cronograma</a>
-          <a routerLink="/documentacion" class="nav-link">Documentación</a>
-        </nav>
+          <nav class="header-nav">
+            <a href="#" class="nav-link active">Inicio</a>
+            <a routerLink="/noticias" class="nav-link">Noticias</a>
+            <a routerLink="/inscripcion" class="nav-link">Inscripciones</a>
+            <a routerLink="/stands/nuevo" class="nav-link">Stands</a>
+            <a routerLink="/cronograma" class="nav-link">Cronograma</a>
+            <a routerLink="/documentacion" class="nav-link">Documentación</a>
+          </nav>
 
         <div class="header-right">
           <a routerLink="/auth/login" class="login-btn">
@@ -62,6 +63,7 @@ import { RouterLink } from '@angular/router';
             <a href="#" class="mobile-nav-link active" (click)="toggleMenu()">Inicio</a>
             <a routerLink="/noticias" class="mobile-nav-link" (click)="toggleMenu()">Noticias</a>
             <a routerLink="/inscripcion" class="mobile-nav-link" (click)="toggleMenu()">Inscripciones</a>
+            <a routerLink="/stands/nuevo" class="mobile-nav-link" (click)="toggleMenu()">Stands</a>
             <a routerLink="/cronograma" class="mobile-nav-link" (click)="toggleMenu()">Cronograma</a>
             <a routerLink="/documentacion" class="mobile-nav-link" (click)="toggleMenu()">Documentación</a>
           </nav>
