@@ -93,26 +93,26 @@ interface QuickStandForm {
   styles: [`
     /* ═══ SECTION WRAPPER ═══ */
     .stands-predio-section {
-      padding: 24px 16px;
-      max-width: 1200px;
-      margin: 0 auto;
+      padding: 0;
+      max-width: none;
+      margin: 0;
     }
 
     /* ═══ BANNER PROMOCIONAL ═══ */
     .stands-banner {
-      background: linear-gradient(135deg, #D9A928, #B98B1D);
-      border-radius: 20px;
-      padding: 24px 28px;
+      background: #0B1B3D;
+      border-radius: 12px;
+      padding: 28px 32px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 8px 32px rgba(217, 169, 40, 0.35);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       border: none;
       position: relative;
       overflow: hidden;
     }
     .stands-banner:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(217, 169, 40, 0.45);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     }
     .stands-banner::before {
       content: '';
@@ -122,7 +122,7 @@ interface QuickStandForm {
       width: 200px;
       height: 200px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
       pointer-events: none;
     }
     .stands-banner-inner {
@@ -130,8 +130,6 @@ interface QuickStandForm {
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      position: relative;
-      z-index: 1;
     }
     .stands-badge {
       display: flex;
@@ -139,9 +137,9 @@ interface QuickStandForm {
       justify-content: center;
       width: 44px;
       height: 44px;
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.15);
       border-radius: 14px;
-      color: #17191C;
+      color: #FFFFFF;
       flex-shrink: 0;
     }
     .stands-banner-content {
@@ -151,12 +149,12 @@ interface QuickStandForm {
       font-family: var(--font-display, 'Playfair Display', serif);
       font-size: 18px;
       font-weight: 700;
-      color: #17191C;
+      color: #FFFFFF;
       margin: 0 0 4px;
     }
     .stands-banner-desc {
       font-size: 14px;
-      color: rgba(23, 25, 28, 0.8);
+      color: rgba(255, 255, 255, 0.8);
       margin: 0;
       line-height: 1.4;
     }
@@ -164,7 +162,7 @@ interface QuickStandForm {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.2);
+      background: #F59E0B;
       color: #17191C;
       padding: 10px 18px;
       border-radius: 999px;
@@ -174,7 +172,7 @@ interface QuickStandForm {
       flex-shrink: 0;
     }
     .stands-banner:hover .stands-banner-cta {
-      background: rgba(255, 255, 255, 0.3);
+      background: #EAB308;
     }
     .stands-cta-text {
       letter-spacing: 0.04em;
