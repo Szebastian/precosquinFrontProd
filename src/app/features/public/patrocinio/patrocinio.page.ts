@@ -229,7 +229,7 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
   contacto = {
     whatsappBase: 'https://wa.me/5492804872996?text=',
     instagram: 'https://www.instagram.com/precosquinpuertopiramides',
-    email: 'precosquinpuertopiramides@gmail.com'
+    email: 'info@precosquinpiramides.com'
   };
 
   planWhatsapp(nombre: string): string {

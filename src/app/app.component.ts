@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { ToastContainerComponent } from './shared/components/toast/toast-container.component';
+import { ChatWidgetComponent } from './shared/components/chat-widget/chat-widget.component';
 import { initClarity } from './shared/utils/clarity-init';
 import { environment } from '../environments/environment';
 import { filter } from 'rxjs';
@@ -8,12 +9,13 @@ import { filter } from 'rxjs';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ToastContainerComponent],
+  imports: [RouterOutlet, ToastContainerComponent, ChatWidgetComponent],
   template: `
     <div class="route-container">
       <router-outlet />
     </div>
     <app-toast-container />
+    <app-chat-widget />
   `,
   styles: [`
     .route-container {

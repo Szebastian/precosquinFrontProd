@@ -60,7 +60,7 @@ import { filter } from 'rxjs/operators';
     }
   `,
   styles: [`
-    .yt-widget { position: fixed; bottom: 24px; right: 24px; z-index: 999; }
+    .yt-widget { position: fixed; bottom: 24px; right: 116px; z-index: 999; }
     .yt-fab { display: flex; align-items: center; gap: 10px; background: #fff; border: none; border-radius: 60px; padding: 10px 18px 10px 14px; cursor: pointer; box-shadow: 0 8px 30px rgba(0,0,0,0.25); transition: all 0.3s ease; }
     .yt-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
     .yt-fab-icon { width: 40px; height: 40px; background: #ff0000; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; position: relative; }
@@ -89,14 +89,14 @@ import { filter } from 'rxjs/operators';
     .yt-channel-link { font-size: 12px; color: #ff0000; text-decoration: none; font-weight: 600; padding: 6px 14px; border: 1px solid #ff0000; border-radius: 20px; transition: all 0.2s; }
     .yt-channel-link:hover { background: #ff0000; color: #fff; }
     @media (max-width: 1024px) {
-      .yt-widget { bottom: 76px; right: 16px; }
+      .yt-widget { bottom: 164px; right: 16px; }
       .yt-fab { padding: 8px 14px 8px 10px; }
       .yt-fab-icon { width: 34px; height: 34px; }
       .yt-fab-label { font-size: 11px; }
       .yt-player { width: calc(100vw - 48px); max-width: 400px; bottom: 76px; }
     }
     @media (max-width: 480px) {
-      .yt-widget { bottom: 72px; right: 12px; }
+      .yt-widget { bottom: 160px; right: 12px; }
       .yt-fab { padding: 8px 12px 8px 8px; gap: 8px; }
       .yt-fab-icon { width: 32px; height: 32px; }
       .yt-fab-icon svg { width: 18px; height: 18px; }
