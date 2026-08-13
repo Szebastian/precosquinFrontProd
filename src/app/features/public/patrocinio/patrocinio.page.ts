@@ -241,5 +241,10 @@ export class PatrocinioPageComponent implements OnInit, OnDestroy {
     const msg = 'Hola! Quiero sumarme como patrocinador del Pre-Cosquín Puerto Pirámides.';
     return this.contacto.whatsappBase + encodeURIComponent(msg);
   }
+
+  contactarPlan(plan: Plan): void {
+    const msg = `Hola! Me interesa cotizar el Plan "${plan.nombre}" (${plan.tagline}) para el Pre-Cosquín.`;
+    window.open(this.contacto.whatsappBase + encodeURIComponent(msg), '_blank');
+  }
 }
 
