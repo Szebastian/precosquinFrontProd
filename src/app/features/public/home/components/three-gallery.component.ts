@@ -558,6 +558,7 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
         setTimeout(() => {
           this.calculateLayout();
           this.observeItems();
+          this.cdr.markForCheck();
         }, 0);
       },
       error: () => {},
@@ -600,6 +601,7 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => {
       this.calculateLayout();
       this.observeItems();
+      this.cdr.markForCheck();
     }, 50);
   }
 
@@ -619,6 +621,7 @@ export class ThreeGalleryComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => {
       this.calculateLayout();
       this.observeItems();
+      this.cdr.markForCheck();
     }, 0);
   }
 

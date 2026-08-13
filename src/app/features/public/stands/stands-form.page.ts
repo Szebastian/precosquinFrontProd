@@ -4,6 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { StandsService, StandCreate } from '../../../core/services/stands.service';
 
+interface AccompanyingPerson {
+  fullName: string;
+  dni: string;
+}
+
 interface StandData {
   person: {
     full_name: string;
@@ -12,31 +17,23 @@ interface StandData {
     email: string;
     locality: string;
     province: string;
-    represents_company: 'Si' | 'No';
   };
   info: {
     stand_type: string;
     stand_name: string;
     description: string;
-    main_products: string;
     instagram: string;
-    website: string;
   };
   dates: {
     days: string[];
-    start_time: string;
   };
   equipment: {
-    space_size: string;
     brings_structure: 'Si' | 'No';
-    elements: string[];
     table_count: number | null;
     chair_count: number | null;
   };
   electricity: {
     needs_electricity: 'Si' | 'No';
-    equipment: string;
-    power_watts: number | null;
   };
    gastronomy: {
     prepares_food: 'Si' | 'No';
@@ -50,35 +47,24 @@ interface StandData {
   personnel: {
     count: number;
   };
-  logistics: {
-    needs_vehicle: 'Si' | 'No';
-    vehicle_type: string;
-    vehicle_plate: string;
-    early_access: 'Si' | 'No';
-    needs_help: 'Si' | 'No';
-  };
+  accompanyingPersons: AccompanyingPerson[];
   docs: {
-    dni_front_url: string;
-    dni_back_url: string;
-    cuit_url: string;
-    logo_url: string;
     stand_photos: string[];
-    social_links: string;
   };
   observations: string;
 }
 
 function createEmptyStandData(): StandData {
   return {
-    person: { full_name: '', dni: '', phone: '', email: '', locality: '', province: '', represents_company: 'No' },
-    info: { stand_type: '', stand_name: '', description: '', main_products: '', instagram: '', website: '' },
-    dates: { days: [], start_time: '' },
-    equipment: { space_size: '', brings_structure: 'No', elements: [], table_count: null, chair_count: null },
-    electricity: { needs_electricity: 'No', equipment: '', power_watts: null },
+    person: { full_name: '', dni: '', phone: '', email: '', locality: '', province: '' },
+    info: { stand_type: '', stand_name: '', description: '', instagram: '' },
+    dates: { days: [] },
+    equipment: { brings_structure: 'No', table_count: null, chair_count: null },
+    electricity: { needs_electricity: 'No' },
     gastronomy: { prepares_food: 'No', food_types: [], uses_gas: 'No', gas_type: '', gas_amount: null, has_certification: 'No', certification_doc_url: '' },
     personnel: { count: 0 },
-    logistics: { needs_vehicle: 'No', vehicle_type: '', vehicle_plate: '', early_access: 'No', needs_help: 'No' },
-    docs: { dni_front_url: '', dni_back_url: '', cuit_url: '', logo_url: '', stand_photos: [], social_links: '' },
+    accompanyingPersons: [],
+    docs: { stand_photos: [] },
     observations: '',
   };
 }
@@ -93,6 +79,53 @@ const STAND_TYPES = [
   { value: 'GASTRONOMIA', label: 'Stands de Gastronomía' },
   { value: 'COMERCIAL', label: 'Stands Comerciales' },
   { value: 'ARTISTICO', label: 'Stands Artísticos' },
+];
+
+const PROVINCIAS = [
+  { value: 'Chubut', label: 'Chubut' },
+  { value: 'Buenos Aires', label: 'Buenos Aires' },
+  { value: 'CABA', label: 'Ciudad Autónoma de Buenos Aires' },
+  { value: 'Córdoba', label: 'Córdoba' },
+  { value: 'Santa Fe', label: 'Santa Fe' },
+  { value: 'Mendoza', label: 'Mendoza' },
+  { value: 'Neuquén', label: 'Neuquén' },
+  { value: 'Río Negro', label: 'Río Negro' },
+  { value: 'Santa Cruz', label: 'Santa Cruz' },
+  { value: 'Tierra del Fuego', label: 'Tierra del Fuego' },
+  { value: 'San Juan', label: 'San Juan' },
+  { value: 'San Luis', label: 'San Luis' },
+  { value: 'La Pampa', label: 'La Pampa' },
+  { value: 'Entre Ríos', label: 'Entre Ríos' },
+  { value: 'Corrientes', label: 'Corrientes' },
+  { value: 'Misiones', label: 'Misiones' },
+  { value: 'Formosa', label: 'Formosa' },
+  { value: 'Chaco', label: 'Chaco' },
+  { value: 'Santiago del Estero', label: 'Santiago del Estero' },
+  { value: 'Tucumán', label: 'Tucumán' },
+  { value: 'Salta', label: 'Salta' },
+  { value: 'Jujuy', label: 'Jujuy' },
+  { value: 'Catamarca', label: 'Catamarca' },
+  { value: 'La Rioja', label: 'La Rioja' },
+];
+
+const LOCALIDADES_CHUBUT = [
+  { value: 'Puerto Madryn', label: 'Puerto Madryn' },
+  { value: 'Puerto Pirámides', label: 'Puerto Pirámides' },
+  { value: 'Trelew', label: 'Trelew' },
+  { value: 'Rawson', label: 'Rawson' },
+  { value: 'Comodoro Rivadavia', label: 'Comodoro Rivadavia' },
+  { value: 'Esquel', label: 'Esquel' },
+  { value: 'Gaiman', label: 'Gaiman' },
+  { value: 'Dolavon', label: 'Dolavon' },
+  { value: 'Camarones', label: 'Camarones' },
+  { value: 'Lago Puelo', label: 'Lago Puelo' },
+  { value: 'El Hoyo', label: 'El Hoyo' },
+  { value: 'Epuyén', label: 'Epuyén' },
+  { value: 'Cholila', label: 'Cholila' },
+  { value: 'Gobernador Costa', label: 'Gobernador Costa' },
+  { value: 'Paso de Indios', label: 'Paso de Indios' },
+  { value: 'Sarmiento', label: 'Sarmiento' },
+  { value: 'Telsen', label: 'Telsen' },
 ];
 
 const SIZES = [
@@ -131,12 +164,7 @@ const FOOD_TYPES = [
   { value: 'otros', label: 'Otros' },
 ];
 
-const VEHICLE_TYPES = [
-  { value: 'auto', label: 'Automóvil' },
-  { value: 'camioneta', label: 'Camioneta / Furgón' },
-  { value: 'camion', label: 'Camión' },
-  { value: 'moto', label: 'Moto / Bicicleta' },
-];
+const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
 
 const STEPS = [
   { key: 'person', label: 'Datos de la persona' },
@@ -146,12 +174,10 @@ const STEPS = [
   { key: 'electricity', label: 'Electricidad' },
   { key: 'gastronomy', label: 'Gastronomía' },
   { key: 'personnel', label: 'Personal' },
-  { key: 'logistics', label: 'Logística' },
-  { key: 'docs', label: 'Documentación y fotos' },
+  { key: 'accompanying', label: 'Acompañantes' },
+  { key: 'docs', label: 'Fotos del stand' },
   { key: 'confirm', label: 'Confirmar y enviar' },
 ];
-
-const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
 
 @Component({
   selector: 'app-stands-form',
@@ -202,22 +228,25 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
                 </div>
                 <div class="grid-2col">
                   <div class="form-group">
-                    <label class="form-label">Localidad</label>
-                    <input type="text" class="form-input" [(ngModel)]="data().person.locality" placeholder="Puerto Pirámides" />
+                    <label class="form-label">Provincia</label>
+                    <select class="form-select" [(ngModel)]="data().person.province">
+                      <option value="">Seleccionar</option>
+                      @for (prov of PROVINCIAS; track prov.value) {
+                        <option [value]="prov.value">{{ prov.label }}</option>
+                      }
+                    </select>
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Provincia</label>
-                    <input type="text" class="form-input" [(ngModel)]="data().person.province" placeholder="Chubut" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">¿Representa empresa?</label>
-                  <div class="radio-cards">
-                    @for (opt of YES_NO; track opt.v) {
-                      <label class="radio-card" [class.selected]="data().person.represents_company === opt.v">
-                        <input type="radio" name="represents_company" [value]="opt.v" [(ngModel)]="data().person.represents_company" />
-                        <span class="radio-card-label">{{ opt.label }}</span>
-                      </label>
+                    <label class="form-label">Localidad</label>
+                    @if (data().person.province === 'Chubut') {
+                      <select class="form-select" [(ngModel)]="data().person.locality">
+                        <option value="">Seleccionar</option>
+                        @for (loc of LOCALIDADES_CHUBUT; track loc.value) {
+                          <option [value]="loc.value">{{ loc.label }}</option>
+                        }
+                      </select>
+                    } @else {
+                      <input type="text" class="form-input" [(ngModel)]="data().person.locality" placeholder="Nombre de localidad" />
                     }
                   </div>
                 </div>
@@ -228,14 +257,12 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
               <div class="tf-question">
                 <div class="form-group">
                   <label class="form-label">Tipo de stand</label>
-                  <div class="radio-cards">
+                  <select class="form-select" [(ngModel)]="data().info.stand_type">
+                    <option value="">Seleccionar tipo</option>
                     @for (opt of STAND_TYPES; track opt.value) {
-                      <label class="radio-card" [class.selected]="data().info.stand_type === opt.value">
-                        <input type="radio" name="stand_type" [value]="opt.value" [(ngModel)]="data().info.stand_type" />
-                        <span class="radio-card-label">{{ opt.label }}</span>
-                      </label>
+                      <option [value]="opt.value">{{ opt.label }}</option>
                     }
-                  </div>
+                  </select>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Nombre del stand / Marca</label>
@@ -246,85 +273,66 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
                   <textarea class="form-textarea" [(ngModel)]="data().info.description" placeholder="Contanos qué ofrecés en tu stand..." rows="3"></textarea>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Productos / Servicios principales</label>
-                  <textarea class="form-textarea" [(ngModel)]="data().info.main_products" placeholder="Ej: Empanadas saladas, dulces caseros..." rows="2"></textarea>
-                </div>
-                <div class="grid-2col">
-                  <div class="form-group">
-                    <label class="form-label">Instagram</label>
-                    <input type="text" class="form-input" [(ngModel)]="data().info.instagram" placeholder="@mistream" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Sitio web</label>
-                    <input type="text" class="form-input" [(ngModel)]="data().info.website" placeholder="https://..." />
-                  </div>
+                  <label class="form-label">Instagram</label>
+                  <input type="text" class="form-input" [(ngModel)]="data().info.instagram" placeholder="@mistream" />
                 </div>
               </div>
             }
 
             @if (currentStep() === 2) {
               <div class="tf-question">
-                <div class="form-group">
-                  <label class="form-label">¿Qué días vas a atender el stand?</label>
-                  <div class="checkbox-row">
-                    @for (day of DAYS; track day.value) {
-                      <label class="checkbox-option">
-                        <input type="checkbox" [value]="day.value" (change)="toggleDay($event)" />
-                        <span class="checkbox-label">{{ day.label }}</span>
-                      </label>
-                    }
-                  </div>
-                </div>
-<div class="form-group">
-  <label class="form-label">Hora de apertura</label>
-  <input type="time" class="form-input" [(ngModel)]="data().dates.start_time" />
-</div>
-              </div>
+                   <div class="form-group">
+                     <label class="form-label">¿Qué días vas a atender el stand?</label>
+                     <div class="checkbox-row">
+                       @for (day of DAYS; track day.value) {
+                         <label class="checkbox-option">
+                           <input type="checkbox" [value]="day.value" (change)="toggleDay($event)" />
+                           <span class="checkbox-label">{{ day.label }}</span>
+                         </label>
+                       }
+                     </div>
+                   </div>
+               </div>
             }
 
             @if (currentStep() === 3) {
               <div class="tf-question">
                 <div class="form-group">
-                  <label class="form-label">Tamaño del espacio</label>
-                  <div class="radio-cards">
-                    @for (sz of SIZES; track sz.value) {
-                      <label class="radio-card" [class.selected]="data().equipment.space_size === sz.value">
-                        <input type="radio" name="space_size" [value]="sz.value" [(ngModel)]="data().equipment.space_size" />
-                        <span class="radio-card-label">{{ sz.label }}</span>
-                      </label>
-                    }
-                  </div>
-                </div>
-                <div class="form-group">
                   <label class="form-label">¿Trae su propia estructura?</label>
-                  <div class="radio-cards">
+                  <select class="form-select" [(ngModel)]="data().equipment.brings_structure">
                     @for (opt of YES_NO; track opt.v) {
-                      <label class="radio-card" [class.selected]="data().equipment.brings_structure === opt.v">
-                        <input type="radio" name="brings_structure" [value]="opt.v" [(ngModel)]="data().equipment.brings_structure" />
-                        <span class="radio-card-label">{{ opt.label }}</span>
-                      </label>
+                      <option [value]="opt.v">{{ opt.label }}</option>
                     }
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Elementos solicitados</label>
-                  <div class="checkbox-row">
-                    @for (el of EQUIPMENT_ELEMENTS; track el.value) {
-                      <label class="checkbox-option">
-                        <input type="checkbox" [value]="el.value" (change)="toggleEquipment($event)" />
-                        <span class="checkbox-label">{{ el.label }}</span>
-                      </label>
-                    }
-                  </div>
+                  </select>
                 </div>
                 <div class="grid-2col">
                   <div class="form-group">
                     <label class="form-label">Mesas</label>
-                    <input type="number" class="form-input" [(ngModel)]="data().equipment.table_count" min="0" />
+                    <select class="form-select" [(ngModel)]="data().equipment.table_count">
+                      <option [ngValue]="null">0</option>
+                      <option [ngValue]="1">1</option>
+                      <option [ngValue]="2">2</option>
+                      <option [ngValue]="3">3</option>
+                      <option [ngValue]="4">4</option>
+                      <option [ngValue]="5">5</option>
+                      <option [ngValue]="6">6</option>
+                      <option [ngValue]="8">8</option>
+                      <option [ngValue]="10">10</option>
+                    </select>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Sillas</label>
-                    <input type="number" class="form-input" [(ngModel)]="data().equipment.chair_count" min="0" />
+                    <select class="form-select" [(ngModel)]="data().equipment.chair_count">
+                      <option [ngValue]="null">0</option>
+                      <option [ngValue]="2">2</option>
+                      <option [ngValue]="4">4</option>
+                      <option [ngValue]="6">6</option>
+                      <option [ngValue]="8">8</option>
+                      <option [ngValue]="10">10</option>
+                      <option [ngValue]="12">12</option>
+                      <option [ngValue]="15">15</option>
+                      <option [ngValue]="20">20</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -334,25 +342,12 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
               <div class="tf-question">
                 <div class="form-group">
                   <label class="form-label">¿Necesitás electricidad?</label>
-                  <div class="radio-cards">
+                  <select class="form-select" [(ngModel)]="data().electricity.needs_electricity">
                     @for (opt of YES_NO; track opt.v) {
-                      <label class="radio-card" [class.selected]="data().electricity.needs_electricity === opt.v">
-                        <input type="radio" name="needs_electricity" [value]="opt.v" [(ngModel)]="data().electricity.needs_electricity" />
-                        <span class="radio-card-label">{{ opt.label }}</span>
-                      </label>
+                      <option [value]="opt.v">{{ opt.label }}</option>
                     }
-                  </div>
+                  </select>
                 </div>
-                @if (data().electricity.needs_electricity === 'Si') {
-                  <div class="form-group">
-                    <label class="form-label">¿Qué equipamiento necesitás?</label>
-                    <textarea class="form-textarea" [(ngModel)]="data().electricity.equipment" placeholder="Ej: 2 luces LED, 1 equipo de sonido..." rows="2"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Potencia requerida (vatios)</label>
-                    <input type="number" class="form-input" [(ngModel)]="data().electricity.power_watts" min="0" placeholder="Ej: 2200" />
-                  </div>
-                }
               </div>
             }
 
@@ -360,14 +355,11 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
               <div class="tf-question">
                 <div class="form-group">
                   <label class="form-label">¿Preparás comida en tu stand?</label>
-                  <div class="radio-cards">
+                  <select class="form-select" [(ngModel)]="data().gastronomy.prepares_food">
                     @for (opt of YES_NO; track opt.v) {
-                      <label class="radio-card" [class.selected]="data().gastronomy.prepares_food === opt.v">
-                        <input type="radio" name="prepares_food" [value]="opt.v" [(ngModel)]="data().gastronomy.prepares_food" />
-                        <span class="radio-card-label">{{ opt.label }}</span>
-                      </label>
+                      <option [value]="opt.v">{{ opt.label }}</option>
                     }
-                  </div>
+                  </select>
                 </div>
                 @if (data().gastronomy.prepares_food === 'Si') {
                   <div class="form-group">
@@ -383,14 +375,11 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
                   </div>
                   <div class="form-group">
                     <label class="form-label">¿Utilizás gas?</label>
-                    <div class="radio-cards">
+                    <select class="form-select" [(ngModel)]="data().gastronomy.uses_gas">
                       @for (opt of YES_NO; track opt.v) {
-                        <label class="radio-card" [class.selected]="data().gastronomy.uses_gas === opt.v">
-                          <input type="radio" name="uses_gas" [value]="opt.v" [(ngModel)]="data().gastronomy.uses_gas" />
-                          <span class="radio-card-label">{{ opt.label }}</span>
-                        </label>
+                        <option [value]="opt.v">{{ opt.label }}</option>
                       }
-                    </div>
+                    </select>
                   </div>
                   @if (data().gastronomy.uses_gas === 'Si') {
                     <div class="grid-2col">
@@ -405,20 +394,24 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
                       </div>
                       <div class="form-group">
                         <label class="form-label">Cantidad (kg/mes)</label>
-                        <input type="number" class="form-input" [(ngModel)]="data().gastronomy.gas_amount" min="0" />
+                        <select class="form-select" [(ngModel)]="data().gastronomy.gas_amount">
+                          <option [ngValue]="null">No aplica</option>
+                          <option [ngValue]="5">Hasta 5 kg</option>
+                          <option [ngValue]="10">5 - 10 kg</option>
+                          <option [ngValue]="20">10 - 20 kg</option>
+                          <option [ngValue]="30">20 - 30 kg</option>
+                          <option [ngValue]="50">Más de 30 kg</option>
+                        </select>
                       </div>
                     </div>
                   }
                   <div class="form-group">
                     <label class="form-label">¿Tenés certificación sanitaria?</label>
-                    <div class="radio-cards">
+                    <select class="form-select" [(ngModel)]="data().gastronomy.has_certification">
                       @for (opt of YES_NO; track opt.v) {
-                        <label class="radio-card" [class.selected]="data().gastronomy.has_certification === opt.v">
-                          <input type="radio" name="has_certification" [value]="opt.v" [(ngModel)]="data().gastronomy.has_certification" />
-                          <span class="radio-card-label">{{ opt.label }}</span>
-                        </label>
+                        <option [value]="opt.v">{{ opt.label }}</option>
                       }
-                    </div>
+                    </select>
                   </div>
                 }
               </div>
@@ -431,115 +424,70 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
                   <input type="number" class="form-input" [(ngModel)]="data().personnel.count" min="0" />
                 </div>
               </div>
-            }
+             }
 
-            @if (currentStep() === 7) {
+             @if (currentStep() === 7) {
               <div class="tf-question">
-                <div class="form-group">
-                  <label class="form-label">¿Necesitás ingreso de vehículo?</label>
-                  <div class="radio-cards">
-                    @for (opt of YES_NO; track opt.v) {
-                      <label class="radio-card" [class.selected]="data().logistics.needs_vehicle === opt.v">
-                        <input type="radio" name="needs_vehicle" [value]="opt.v" [(ngModel)]="data().logistics.needs_vehicle" />
-                        <span class="radio-card-label">{{ opt.label }}</span>
-                      </label>
-                    }
-                  </div>
-                </div>
-                @if (data().logistics.needs_vehicle === 'Si') {
-                  <div class="grid-2col">
-                    <div class="form-group">
-                      <label class="form-label">Tipo de vehículo</label>
-                      <select class="form-select" [(ngModel)]="data().logistics.vehicle_type">
-                        <option value="">Seleccionar</option>
-                        @for (vt of VEHICLE_TYPES; track vt.value) {
-                          <option [value]="vt.value">{{ vt.label }}</option>
-                        }
-                      </select>
+                <p class="form-hint" style="margin-top: 0; margin-bottom: 1rem;">Registrá a las personas que te acompañan (opcional)</p>
+
+                @for (person of data().accompanyingPersons; track $index; let i = $index) {
+                  <div class="person-card">
+                    <div class="person-header">
+                      <span class="person-number">Persona {{ i + 1 }}</span>
+                      <button type="button" class="btn-remove-person" (click)="removePerson(i)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                      </button>
                     </div>
-                    <div class="form-group">
-                      <label class="form-label">Patente</label>
-                      <input type="text" class="form-input" [(ngModel)]="data().logistics.vehicle_plate" placeholder="AA 123 BB" />
+                    <div class="grid-2col">
+                      <div class="form-group">
+                        <label class="form-label">Nombre completo</label>
+                        <input type="text" class="form-input" [ngModel]="person.fullName"
+                          (ngModelChange)="person.fullName = $event"
+                          [name]="'personName_' + i"
+                          placeholder="Ej: Juan García" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">DNI</label>
+                        <input type="text" class="form-input" [ngModel]="person.dni"
+                          (ngModelChange)="person.dni = $event"
+                          [name]="'personDni_' + i"
+                          placeholder="12.345.678" maxlength="10" />
+                      </div>
                     </div>
                   </div>
                 }
-                <div class="form-group">
-                  <label class="form-label">¿Necesitás ingreso anticipado?</label>
-                  <div class="radio-cards">
-                    @for (opt of YES_NO; track opt.v) {
-                      <label class="radio-card" [class.selected]="data().logistics.early_access === opt.v">
-                        <input type="radio" name="early_access" [value]="opt.v" [(ngModel)]="data().logistics.early_access" />
-                        <span class="radio-card-label">{{ opt.label }}</span>
-                      </label>
-                    }
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">¿Necesitás ayuda del staff del festival?</label>
-                  <div class="radio-cards">
-                    @for (opt of YES_NO; track opt.v) {
-                      <label class="radio-card" [class.selected]="data().logistics.needs_help === opt.v">
-                        <input type="radio" name="needs_help" [value]="opt.v" [(ngModel)]="data().logistics.needs_help" />
-                        <span class="radio-card-label">{{ opt.label }}</span>
-                      </label>
-                    }
-                  </div>
-                </div>
-              </div>
-            }
 
-             @if (currentStep() === 8) {
-               <div class="tf-question">
-                 <div class="upload-card">
-                  <div class="upload-card-header">DNI — Frente</div>
-                  @if (data().docs.dni_front_url) {
-                    <div class="upload-success"><a [href]="data().docs.dni_front_url" target="_blank">Ver archivo</a></div>
-                  } @else {
-                    <div class="upload-area" (click)="docInput_front.click()">
-                      <input type="file" #docInput_front accept="image/*" hidden (change)="uploadDoc('dni_front', $event)" />
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                      <span>Subir DNI</span>
-                    </div>
-                  }
-                </div>
-                <div class="upload-card">
-                  <div class="upload-card-header">DNI — Dorso</div>
-                  @if (data().docs.dni_back_url) {
-                    <div class="upload-success"><a [href]="data().docs.dni_back_url" target="_blank">Ver archivo</a></div>
-                  } @else {
-                    <div class="upload-area" (click)="docInput_back.click()">
-                      <input type="file" #docInput_back accept="image/*" hidden (change)="uploadDoc('dni_back', $event)" />
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                      <span>Subir DNI</span>
-                    </div>
-                  }
-                </div>
-                <div class="upload-card">
-                  <div class="upload-card-header">CUIT</div>
-                  @if (data().docs.cuit_url) {
-                    <div class="upload-success"><a [href]="data().docs.cuit_url" target="_blank">Ver archivo</a></div>
-                  } @else {
-                    <div class="upload-area" (click)="docInput_cuit.click()">
-                      <input type="file" #docInput_cuit accept=".pdf,.jpg,.png" hidden (change)="uploadDoc('cuit', $event)" />
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                      <span>Subir CUIT</span>
-                    </div>
-                  }
-                </div>
-                <div class="upload-card">
-                  <div class="upload-card-header">Logo o imagen del stand</div>
-                  @if (data().docs.logo_url) {
-                    <img [src]="data().docs.logo_url" alt="Logo" class="logo-preview" />
-                  } @else {
-                    <div class="upload-area" (click)="docInput_logo.click()">
-                      <input type="file" #docInput_logo accept="image/*" hidden (change)="uploadDoc('logo', $event)" />
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 16 12 12"/><line x1="12" y1="12" x2="12" y2="12"/></svg>
-                      <span>Subir logo</span>
-                    </div>
-                  }
-                </div>
+                @if (data().accompanyingPersons.length === 0) {
+                  <div class="empty-accompanying">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <p>No registraste personas acompañantes</p>
+                    <span>Podés agregar personas para habilitar su ingreso</span>
+                  </div>
+                }
+
+                <button type="button" class="btn-add-person" (click)="addPerson()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+                  </svg>
+                  Agregar persona
+                </button>
+
+                <p class="form-hint">Si no llevás acompañantes, podés continuar directamente.</p>
+              </div>
+             }
+
+            @if (currentStep() === 8) {
+              <div class="tf-question">
                 <div class="form-group">
                   <label class="form-label">Fotos del stand</label>
+                  <p class="form-hint">Subí fotos de tu stand o de lo que vas a ofrecer</p>
                   <div class="photo-thumbs">
                     @for (photo of data().docs.stand_photos; track $index) {
                       <img [src]="photo" [alt]="'Foto ' + ($index + 1)" class="photo-thumb" />
@@ -570,9 +518,17 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
                   </div>
                   <div class="summary-group">
                     <h3 class="summary-title">Equipamiento</h3>
-                    <p><strong>Espacio:</strong> {{ getSpaceLabel(data().equipment.space_size) }}</p>
-                    <p><strong>Electricidad:</strong> {{ data().electricity.needs_electricity }}</p>
+                   <p><strong>Electricidad:</strong> {{ data().electricity.needs_electricity }}</p>
                   </div>
+                  @if (data().accompanyingPersons.length > 0) {
+                    <div class="summary-group">
+                      <h3 class="summary-title">Acompañantes</h3>
+                      <p><strong>Cantidad:</strong> {{ data().accompanyingPersons.length }} persona(s)</p>
+                      @for (person of data().accompanyingPersons; track $index) {
+                        <p>{{ person.fullName || '(sin nombre)' }} — DNI: {{ person.dni || '(sin DNI)' }}</p>
+                      }
+                    </div>
+                  }
                 </div>
                 <div class="form-group">
                   <label class="form-label">Observaciones adicionales</label>
@@ -584,21 +540,37 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
         </div>
 
         @if (currentStep() < STEPS.length - 1) {
-          <div class="next-section">
-            <button type="button" class="btn-next-large" (click)="nextStep()" [disabled]="!canProceed()">
-              CONTINUAR
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
-            </button>
+          <div class="nav-section">
+            @if (currentStep() > 0) {
+              <button type="button" class="btn-back" (click)="prevStep()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                VOLVER
+              </button>
+            }
+            <div class="next-wrapper">
+              <button type="button" class="btn-next-large" (click)="nextStep()" [disabled]="!canProceed()">
+                CONTINUAR
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
           </div>
         } @else {
-          <div class="next-section">
-            <button type="button" class="btn-next-large btn-submit" (click)="onSubmit()" [disabled]="submitting()">
-              @if (submitting()) {
-                <span class="spinner"></span> Enviando...
-              } @else {
-                ENVIAR SOLICITUD
-              }
-            </button>
+          <div class="nav-section">
+            @if (currentStep() > 0) {
+              <button type="button" class="btn-back" (click)="prevStep()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                VOLVER
+              </button>
+            }
+            <div class="next-wrapper">
+              <button type="button" class="btn-next-large btn-submit" (click)="onSubmit()" [disabled]="submitting()">
+                @if (submitting()) {
+                  <span class="spinner"></span> Enviando...
+                } @else {
+                  ENVIAR SOLICITUD
+                }
+              </button>
+            </div>
           </div>
         }
       </div>
@@ -614,9 +586,31 @@ const YES_NO = [{ v: 'Si', label: 'Sí' }, { v: 'No', label: 'No' }];
             </div>
             <h2 class="tf-success-title">¡Solicitud enviada!</h2>
             <p class="tf-success-sub">Tu solicitud de stand fue registrada correctamente.</p>
-            <p class="tf-success-id">N° <strong>{{ submittedId() }}</strong></p>
+            
+            <div class="tf-success-details">
+              <div class="tf-success-row">
+                <span class="tf-success-label">N° de solicitud</span>
+                <span class="tf-success-value">{{ submittedId() }}</span>
+              </div>
+              <div class="tf-success-row">
+                <span class="tf-success-label">Email</span>
+                <span class="tf-success-value">{{ data().person.email }}</span>
+              </div>
+            </div>
+
+            <div class="tf-success-email-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <p>Te enviamos un comprobante a <strong>{{ data().person.email }}</strong></p>
+            </div>
+
             <p class="tf-success-detail">Te contactaremos a la brevedad posible.</p>
-            <a routerLink="/" class="btn btn-primary tf-success-home">Volver al inicio</a>
+            
+            <div class="tf-success-actions">
+              <a routerLink="/" class="btn-success-home">Volver al inicio</a>
+            </div>
           </div>
         </div>
       }
@@ -628,11 +622,12 @@ export class StandsFormPageComponent {
   STEPS = STEPS;
   DAYS = DAYS;
   STAND_TYPES = STAND_TYPES;
+  PROVINCIAS = PROVINCIAS;
+  LOCALIDADES_CHUBUT = LOCALIDADES_CHUBUT;
   SIZES = SIZES;
   EQUIPMENT_ELEMENTS = EQUIPMENT_ELEMENTS;
   GAS_TYPES = GAS_TYPES;
   FOOD_TYPES = FOOD_TYPES;
-  VEHICLE_TYPES = VEHICLE_TYPES;
   YES_NO = YES_NO;
 
   data = signal(createEmptyStandData());
@@ -655,17 +650,7 @@ export class StandsFormPageComponent {
     }
   }
 
-  toggleEquipment(event: any): void {
-    const value = event.target.value;
-    const d = this.data();
-    if (event.target.checked) {
-      d.equipment.elements.push(value);
-    } else {
-      d.equipment.elements = d.equipment.elements.filter(el => el !== value);
-    }
-  }
-
-  toggleFoodType(event: any): void {
+   toggleFoodType(event: any): void {
     const value = event.target.value;
     const g = this.data().gastronomy;
     if (event.target.checked) {
@@ -675,21 +660,14 @@ export class StandsFormPageComponent {
     }
   }
 
-  uploadDoc(docType: string, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    const placeholderUrl = `https://placeholder.unsplash.com/400x300?${docType}&${Date.now()}`;
+  addPerson(): void {
     const d = this.data();
+    d.accompanyingPersons.push({ fullName: '', dni: '' });
+  }
 
-    switch (docType) {
-      case 'dni_front': d.docs.dni_front_url = placeholderUrl; break;
-      case 'dni_back': d.docs.dni_back_url = placeholderUrl; break;
-      case 'cuit': d.docs.cuit_url = placeholderUrl; break;
-      case 'logo': d.docs.logo_url = placeholderUrl; break;
-    }
-    input.value = '';
+  removePerson(index: number): void {
+    const d = this.data();
+    d.accompanyingPersons.splice(index, 1);
   }
 
   uploadPhotos(event: Event): void {
@@ -705,15 +683,6 @@ export class StandsFormPageComponent {
 
   getStandTypeLabel(val: string): string {
     return STAND_TYPES.find(s => s.value === val)?.label || val;
-  }
-
-  getSpaceLabel(val: string): string {
-    return SIZES.find(s => s.value === val)?.label || val;
-  }
-
-  getEquipmentLabels(vals: string[]): string {
-    if (!vals || vals.length === 0) return '-';
-    return vals.map(v => EQUIPMENT_ELEMENTS.find(e => e.value === v)?.label || v).join(', ');
   }
 
   getFoodLabels(vals: string[]): string {
@@ -752,20 +721,19 @@ export class StandsFormPageComponent {
     switch (key) {
       case 'person':
         return !d.person.full_name || !d.person.dni || !d.person.phone ||
-               !d.person.email || !d.person.locality || !d.person.province ||
-               !d.person.represents_company;
+               !d.person.email || !d.person.locality || !d.person.province;
       case 'info':
-        return !d.info.stand_type || !d.info.stand_name || !d.info.main_products;
+        return !d.info.stand_type || !d.info.stand_name;
       case 'dates':
-        return d.dates.days.length === 0 || !d.dates.start_time;
+        return d.dates.days.length === 0;
       case 'equipment':
-        return !d.equipment.space_size || !d.equipment.brings_structure ||
-               d.equipment.elements.length === 0;
+        return !d.equipment.brings_structure;
       case 'electricity':
         return !d.electricity.needs_electricity;
+      case 'gastronomy':
+        return !d.gastronomy.prepares_food;
       case 'docs':
-        return !d.docs.dni_front_url || !d.docs.dni_back_url || !d.docs.cuit_url ||
-               !d.docs.logo_url || d.docs.stand_photos.length === 0;
+        return false;
       default:
         return false;
     }
@@ -773,33 +741,32 @@ export class StandsFormPageComponent {
 
   buildPayload(): StandCreate {
     const d = this.data();
+    const accompanyingNames = d.accompanyingPersons.length > 0
+      ? d.accompanyingPersons.map(p => ({ name: p.fullName, id_number: p.dni }))
+      : undefined;
     return {
       person: d.person,
       info: {
         stand_type: d.info.stand_type,
         stand_name: d.info.stand_name,
         description: d.info.description || undefined,
-        main_products: d.info.main_products,
         instagram: d.info.instagram || undefined,
-        website: d.info.website || undefined,
       },
       dates: d.dates,
       equipment: {
-        space_size: d.equipment.space_size,
         brings_structure: d.equipment.brings_structure,
-        elements: d.equipment.elements,
         table_count: d.equipment.table_count ?? undefined,
         chair_count: d.equipment.chair_count ?? undefined,
       },
       electricity: {
         needs_electricity: d.electricity.needs_electricity,
-        equipment: d.electricity.equipment ? [d.electricity.equipment] : [],
-        power_watts: d.electricity.power_watts ?? undefined,
       },
       observations: d.observations || undefined,
       gastronomy: d.gastronomy.prepares_food === 'Si' ? d.gastronomy : undefined,
-      personnel: d.personnel.count > 0 ? d.personnel : undefined,
-      logistics: d.logistics.needs_vehicle === 'Si' ? d.logistics : undefined,
+      personnel: {
+        count: d.personnel.count,
+        names: accompanyingNames,
+      },
       docs: d.docs,
     };
   }

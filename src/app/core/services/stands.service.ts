@@ -10,35 +10,27 @@ export interface StandPerson {
   email: string;
   locality: string;
   province: string;
-  represents_company: string;
 }
 
 export interface StandInfo {
   stand_type: string;
   stand_name: string;
   description?: string;
-  main_products: string;
   instagram?: string;
-  website?: string;
 }
 
 export interface StandDates {
   days: string[];
-  start_time: string;
 }
 
 export interface StandEquipment {
-  space_size: string;
   brings_structure: string;
-  elements: string[];
   table_count?: number;
   chair_count?: number;
 }
 
 export interface StandElectricity {
   needs_electricity: string;
-  equipment?: string[];
-  power_watts?: number;
 }
 
 export interface StandGastronomy {
@@ -68,12 +60,7 @@ export interface StandLogistics {
 }
 
 export interface StandDocs {
-  dni_front_url?: string;
-  dni_back_url?: string;
-  cuit_url?: string;
-  logo_url?: string;
   stand_photos?: string[];
-  social_links?: string;
 }
 
 export interface StandCreate {
@@ -83,9 +70,7 @@ export interface StandCreate {
   equipment: StandEquipment;
   electricity: StandElectricity;
   gastronomy?: StandGastronomy;
-  commercial?: CommercialData;
   personnel?: StandPersonnel;
-  logistics?: StandLogistics;
   docs?: StandDocs;
   observations?: string;
 }
