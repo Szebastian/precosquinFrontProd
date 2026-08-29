@@ -12,6 +12,7 @@ import { ThreeGalleryComponent } from './components/three-gallery.component';
 import { LocationSectionComponent } from './components/location-section.component';
 import { HomeCategoriesComponent } from './components/home-categories.component';
 import { StandsPredioSectionComponent } from './components/stands-predio-section.component';
+import { PenaAcreditacionBannerComponent } from './components/pena-acreditacion-banner.component';
 
 @Component({
   selector: 'app-home',
@@ -28,6 +29,7 @@ import { StandsPredioSectionComponent } from './components/stands-predio-section
     LocationSectionComponent,
     HomeCategoriesComponent,
     StandsPredioSectionComponent,
+    PenaAcreditacionBannerComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -119,6 +121,17 @@ import { StandsPredioSectionComponent } from './components/stands-predio-section
               <app-stands-predio-section />
             } @loading (minimum 500ms) {
               <div style="height: 140px;"></div>
+            }
+          </div>
+        </div>
+
+        <!-- 5.8. PEÑA ACREDITACIÓN — dark band -->
+        <div class="band-dark">
+          <div class="band-inner">
+            @defer (on idle) {
+              <app-pena-acreditacion-banner />
+            } @loading (minimum 500ms) {
+              <div style="height: 120px;"></div>
             }
           </div>
         </div>

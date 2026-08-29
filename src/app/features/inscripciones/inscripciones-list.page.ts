@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { InscriptionsService, Inscription } from '../../core/services/inscriptions.service';
 import { AuthService } from '../../core/auth/auth.service';
+import { ExportService } from '../../core/services/export.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -14,7 +16,9 @@ import { environment } from '../../../environments/environment';
 })
 export class InscripcionesListPageComponent implements OnInit, OnDestroy {
   private inscriptionsService = inject(InscriptionsService);
-  private auth = inject(AuthService);
+  auth = inject(AuthService);
+  private router = inject(Router);
+  private exportService = inject(ExportService);
   private keyHandler = (e: KeyboardEvent) => { if (e.key === 'Escape') this.closeLightbox(); };
 
   allInscriptions = signal<Inscription[]>([]);
@@ -37,6 +41,10 @@ export class InscripcionesListPageComponent implements OnInit, OnDestroy {
   heroOrientations = signal<Record<string, 'landscape' | 'portrait'>>({});
   uploadingDoc = signal<string | null>(null);
   lightboxUrl = signal<string | null>(null);
+  exportModalOpen = signal(false);
+  exportCategoryFilter = signal('');
+  exportStatusFilter = signal('');
+  exporting = signal(false);
 
   totalInscriptions = computed(() => this.allInscriptions().length);
   pendingCount = computed(() => this.allInscriptions().filter(i => i.status === 'PENDIENTE').length);
@@ -341,6 +349,39 @@ export class InscripcionesListPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.keyHandler);
     document.body.style.overflow = '';
+  }
+
+  openProfile(id: string, event: Event): void {
+    event.stopPropagation();
+    this.router.navigate(['/panel/inscripciones', id]);
+  }
+
+  openExportModal(): void {
+    this.exportCategoryFilter.set(this.categoryFilter());
+    this.exportStatusFilter.set(this.statusFilter());
+    this.exportModalOpen.set(true);
+  }
+
+  closeExportModal(): void {
+    this.exportModalOpen.set(false);
+  }
+
+  exportToExcel(): void {
+    this.exporting.set(true);
+    let data = this.allInscriptions();
+
+    const cat = this.exportCategoryFilter();
+    const status = this.exportStatusFilter();
+    if (cat) data = data.filter(i => i.category === cat);
+    if (status) data = data.filter(i => i.status === status);
+
+    const catLabel = cat || 'todas';
+    const statusLabel = status ? this.formatStatus(status) : 'todos';
+    const filename = `inscripciones-precosquin-${catLabel}-${statusLabel}`.toLowerCase().replace(/\s+/g, '_');
+
+    this.exportService.exportListToExcel(data, filename, !cat);
+    this.exporting.set(false);
+    this.exportModalOpen.set(false);
   }
 
   uploadDoc(inscriptionId: string, fileType: string, file: File): void {

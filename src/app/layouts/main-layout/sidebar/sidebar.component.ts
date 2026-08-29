@@ -47,17 +47,20 @@ import { interval, Subscription } from 'rxjs';
           <span class="role-badge-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </span>
-          <span class="role-badge-label">{{ auth.profile()?.role === 'admin' ? 'ADMIN' : 'PANEL DE CONTROL' }}</span>
+          <span class="role-badge-label">{{ auth.profile()?.role === 'admin' ? 'ADMIN' : auth.profile()?.role === 'sede' ? 'SEDE COSQUÍN' : 'PANEL DE CONTROL' }}</span>
         </div>
-        <div class="sidebar-user" [class.jurado-user]="auth.isJurado()">
+        <div class="sidebar-user" [class.jurado-user]="auth.isJurado()" [class.sede-user]="auth.isSede()">
           <div class="user-avatar">
             <span class="avatar-text">{{ initials() }}</span>
           </div>
           <div class="user-info">
             <p class="user-name">{{ auth.profile()?.full_name || 'Usuario' }}</p>
-            <p class="user-role" [class.jurado-role-badge]="auth.isJurado()">
+            <p class="user-role" [class.jurado-role-badge]="auth.isJurado()" [class.sede-role-badge]="auth.isSede()">
               @if (auth.isJurado()) {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="jurado-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              }
+              @if (auth.isSede()) {
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
               }
               {{ auth.profile()?.role || 'staff' }}
             </p>
@@ -361,6 +364,28 @@ import { interval, Subscription } from 'rxjs';
       height: 0.9em;
     }
 
+    .sede-user {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.15));
+      border-color: rgba(168, 85, 247, 0.3);
+    }
+
+    .sede-user:hover {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(139, 92, 246, 0.2));
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+
+    .sede-role-badge {
+      font-weight: 700;
+      color: #a855f7;
+      background-color: rgba(168, 85, 247, 0.1);
+      padding: 0.2em 0.5em;
+      border-radius: 0.5em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25em;
+      line-height: 1;
+    }
+
     .nav-badge-pulse {
       animation: badge-pulse 2s ease-in-out infinite;
     }
@@ -376,6 +401,7 @@ export class SidebarComponent {
   private http = inject(HttpClient);
 
   pendingCount = signal(0);
+  penaCount = signal(0);
   private pollSub?: Subscription;
 
   sanitizeIcon(icon: string): SafeHtml {
@@ -396,13 +422,18 @@ export class SidebarComponent {
       next: (data) => this.pendingCount.set(data.inscripciones_pendientes || 0),
       error: () => {},
     });
+    this.http.get<{ total: number }>(`${environment.apiUrl}/pena-acreditaciones/?page=1&page_size=1`).subscribe({
+      next: (data) => this.penaCount.set(data.total || 0),
+      error: () => {},
+    });
   }
 
   navItems = computed(() => {
     const count = this.pendingCount();
+    const pena = this.penaCount();
     return [
-      { label: 'Dashboard', route: '/panel/dashboard', roles: ['organizador', 'admin', 'staff', 'jurado'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>' },
-      { label: 'Inscripciones', route: '/panel/inscripciones', roles: ['organizador', 'admin', 'staff'], badge: count > 0 ? String(count) : '', badgePulse: count > 0, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg>' },
+      { label: 'Dashboard', route: '/panel/dashboard', roles: ['organizador', 'admin', 'staff', 'jurado', 'sede'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>' },
+      { label: 'Inscripciones', route: '/panel/inscripciones', roles: ['organizador', 'admin', 'staff', 'sede'], badge: count > 0 ? String(count) : '', badgePulse: count > 0, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg>' },
       { label: 'Artistas', route: '/panel/artistas', roles: ['organizador', 'admin', 'staff', 'jurado'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
       { label: 'Cronograma', route: '/panel/cronograma', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>' },
       { label: 'Acreditaciones', route: '/panel/acreditaciones', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' },
@@ -411,7 +442,9 @@ export class SidebarComponent {
       { label: 'Staff', route: '/panel/staff', roles: ['staff', 'organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>' },
       { label: 'Comunicaciones', route: '/panel/comunicaciones', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>' },
       { label: 'Contratos', route: '/panel/contratos', roles: ['organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>' },
-      { label: 'Reportes', route: '/panel/reportes', roles: ['organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>' },
+      { label: 'Reportes', route: '/panel/reportes', roles: ['organizador', 'admin', 'sede'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>' },
+      { label: 'Peña Acreditaciones', route: '/panel/pena-acreditaciones', roles: ['organizador', 'admin'], badge: pena > 0 ? String(pena) : '', badgePulse: pena > 0, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11v-2a4 4 0 0 0-3-3.87"/></svg>' },
+      { label: 'Invitados', route: '/panel/invitados', roles: ['organizador', 'admin'], badge: pena > 0 || count > 0 ? String((pena||0)+(count||0)) : '', badgePulse: pena > 0 || count > 0, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
       { label: 'Noticias', route: '/panel/noticias', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M16 8h2m-2 4h2m-14 0h6m-6-4h6m-6 8h14"/></svg>' },
       { label: 'Galería', route: '/panel/galeria', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' },
       { label: 'Mensajes', route: '/panel/mensajes', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>' },

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
-export type UserRole = 'organizador' | 'admin' | 'staff' | 'jurado';
+export type UserRole = 'organizador' | 'admin' | 'staff' | 'jurado' | 'sede';
 
 export interface UserProfile {
   id: string;
@@ -41,6 +41,7 @@ export class AuthService {
   readonly isOrganizador = computed(() => this._profile()?.role === 'organizador');
   readonly isStaff = computed(() => this._profile()?.role === 'staff');
   readonly isJurado = computed(() => this._profile()?.role === 'jurado');
+  readonly isSede = computed(() => this._profile()?.role === 'sede');
   readonly currentOrgId = computed(() => this._profile()?.organization_id);
 
   async login(email: string, password: string): Promise<{ error: string | null }> {

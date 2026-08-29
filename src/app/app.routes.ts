@@ -57,6 +57,11 @@ export const appRoutes: Routes = [
         loadComponent: () => import('./features/public/stands/stands-form.page').then(m => m.StandsFormPageComponent),
         data: { title: 'Solicitud de Stand' }
       },
+      {
+        path: 'acreditacion-pena',
+        loadComponent: () => import('./features/public/acreditacion-pena/acreditacion-pena-form.page').then(m => m.AcreditacionPenaFormPageComponent),
+        data: { title: 'Acreditación Peña Oficial' }
+      },
     ]
   },
   {
@@ -72,12 +77,12 @@ export const appRoutes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () => import('./features/dashboard/dashboard.page').then(m => m.DashboardPageComponent),
-        data: { title: 'Dashboard', roles: ['organizador', 'admin', 'staff', 'jurado'] }
+        data: { title: 'Dashboard', roles: ['organizador', 'admin', 'staff', 'jurado', 'sede'] }
       },
       {
         path: 'inscripciones',
         loadChildren: () => import('./features/inscripciones/inscripciones.routes').then(m => m.INSCRIPCIONES_ROUTES),
-        data: { roles: ['organizador', 'admin', 'staff'] }
+        data: { roles: ['organizador', 'admin', 'staff', 'sede'] }
       },
       {
         path: 'artistas',
@@ -117,7 +122,17 @@ export const appRoutes: Routes = [
       {
         path: 'reportes',
         loadChildren: () => import('./features/reportes/reportes.routes').then(m => m.REPORTES_ROUTES),
-        data: { roles: ['organizador', 'admin'] }
+        data: { roles: ['organizador', 'admin', 'sede'] }
+      },
+      {
+        path: 'pena-acreditaciones',
+        loadComponent: () => import('./features/pena-acreditaciones/pena-acreditaciones-list.page').then(m => m.PenaAcreditacionesListPageComponent),
+        data: { title: 'Acreditaciones Peña', roles: ['organizador', 'admin'] }
+      },
+      {
+        path: 'invitados',
+        loadComponent: () => import('./features/invitados/invitados.page').then(m => m.InvitadosPageComponent),
+        data: { title: 'Invitados', roles: ['organizador', 'admin'] }
       },
       {
         path: 'admin',
