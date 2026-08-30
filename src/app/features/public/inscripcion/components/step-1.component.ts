@@ -600,7 +600,7 @@ export class InscripcionStep1Component implements OnInit, OnDestroy {
 
   readonly localidadesPorProvincia: Record<string, string[]> = {
     'Chubut': [
-      'Puerto Pirámides', 'Trelew', 'Rawson', 'Gaiman', 'Dolavon',
+      'Puerto Pirámides','Puerto Madryn', 'Trelew', 'Rawson', 'Gaiman', 'Dolavon',
       'Comodoro Rivadavia', 'Rada Tilly', 'Caleta Olivia', 'Cañadón Seco',
       'Paso de Indios', 'Los Altares', 'Esquel', 'Trevelin', 'Lago Blanco',
       'Río Pico', 'Gobernador Costa', 'Corcovado', 'Cholila', 'Epuyén',
