@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { NotificationService } from '../../core/services/notification.service';
 
 interface GuestRow {
   tipo: string;
@@ -257,6 +258,7 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
 })
 export class InvitadosPageComponent implements OnInit {
   private http = inject(HttpClient);
+  private notifications = inject(NotificationService);
 
   inscriptos = signal<InscRaw[]>([]);
   pena = signal<PenaRaw[]>([]);
@@ -322,6 +324,11 @@ export class InvitadosPageComponent implements OnInit {
         this.loadingPena.set(false);
       },
       error: () => this.loadingPena.set(false)
+    });
+
+    this.http.patch(`${environment.apiUrl}/pena-acreditaciones/read-all`, {}).subscribe({
+      next: () => this.notifications.penaUnread.set(0),
+      error: () => {},
     });
 
     this.loadingStands.set(true);

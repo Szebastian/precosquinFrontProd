@@ -62,6 +62,11 @@ export const appRoutes: Routes = [
         loadComponent: () => import('./features/public/acreditacion-pena/acreditacion-pena-form.page').then(m => m.AcreditacionPenaFormPageComponent),
         data: { title: 'Acreditación Peña Oficial' }
       },
+      {
+        path: 'sorteo-avistaje',
+        loadComponent: () => import('./features/public/sorteo-avistaje/sorteo-avistaje-form.page').then(m => m.SorteoAvistajePageComponent),
+        data: { title: 'Sorteo Avistaje de Ballenas' }
+      },
     ]
   },
   {

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '@core/auth/auth.service';
+import { NotificationService } from '@core/services/notification.service';
 import { environment } from '../../../../environments/environment';
 import { interval, Subscription } from 'rxjs';
 
@@ -30,6 +31,7 @@ import { interval, Subscription } from 'rxjs';
           <a
             [routerLink]="item.route"
             routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
             class="nav-item"
           >
             <span class="nav-icon" [innerHTML]="sanitizeIcon(item.icon)"></span>
@@ -399,9 +401,8 @@ export class SidebarComponent {
   auth = inject(AuthService);
   private sanitizer = inject(DomSanitizer);
   private http = inject(HttpClient);
+  notifications = inject(NotificationService);
 
-  pendingCount = signal(0);
-  penaCount = signal(0);
   private pollSub?: Subscription;
 
   sanitizeIcon(icon: string): SafeHtml {
@@ -419,18 +420,18 @@ export class SidebarComponent {
 
   fetchPendingCount(): void {
     this.http.get<{ inscripciones_pendientes: number }>(`${environment.apiUrl}/dashboard/stats`).subscribe({
-      next: (data) => this.pendingCount.set(data.inscripciones_pendientes || 0),
+      next: (data) => this.notifications.inscripcionesPendientes.set(data.inscripciones_pendientes || 0),
       error: () => {},
     });
-    this.http.get<{ total: number }>(`${environment.apiUrl}/pena-acreditaciones/?page=1&page_size=1`).subscribe({
-      next: (data) => this.penaCount.set(data.total || 0),
+    this.http.get<{ unread: number }>(`${environment.apiUrl}/pena-acreditaciones/unread-count`).subscribe({
+      next: (data) => this.notifications.penaUnread.set(data.unread || 0),
       error: () => {},
     });
   }
 
   navItems = computed(() => {
-    const count = this.pendingCount();
-    const pena = this.penaCount();
+    const count = this.notifications.inscripcionesPendientes();
+    const pena = this.notifications.penaUnread();
     return [
       { label: 'Dashboard', route: '/panel/dashboard', roles: ['organizador', 'admin', 'staff', 'jurado', 'sede'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>' },
       { label: 'Inscripciones', route: '/panel/inscripciones', roles: ['organizador', 'admin', 'staff', 'sede'], badge: count > 0 ? String(count) : '', badgePulse: count > 0, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg>' },
@@ -440,6 +441,7 @@ export class SidebarComponent {
       { label: 'Jurado', route: '/panel/jurado', roles: ['admin', 'jurado'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' },
       { label: 'Admisión', route: '/panel/jurado/admission', roles: ['admin', 'jurado'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>' },
       { label: 'Staff', route: '/panel/staff', roles: ['staff', 'organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>' },
+      { label: 'Stands', route: '/panel/admin/stands', roles: ['organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/></svg>' },
       { label: 'Comunicaciones', route: '/panel/comunicaciones', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>' },
       { label: 'Contratos', route: '/panel/contratos', roles: ['organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>' },
       { label: 'Reportes', route: '/panel/reportes', roles: ['organizador', 'admin', 'sede'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>' },

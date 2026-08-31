@@ -13,6 +13,7 @@ import { LocationSectionComponent } from './components/location-section.componen
 import { HomeCategoriesComponent } from './components/home-categories.component';
 import { StandsPredioSectionComponent } from './components/stands-predio-section.component';
 import { PenaAcreditacionBannerComponent } from './components/pena-acreditacion-banner.component';
+import { SorteoAvistajeBannerComponent } from './components/sorteo-avistaje-banner.component';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +31,7 @@ import { PenaAcreditacionBannerComponent } from './components/pena-acreditacion-
     HomeCategoriesComponent,
     StandsPredioSectionComponent,
     PenaAcreditacionBannerComponent,
+    SorteoAvistajeBannerComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -41,6 +43,17 @@ import { PenaAcreditacionBannerComponent } from './components/pena-acreditacion-
         <div class="band-dark">
           <div class="band-inner">
             <app-news-carousel [newsItems]="newsItems()" />
+          </div>
+        </div>
+
+        <!-- 1.5. SORTEO AVISTAJE — dark band (prominente) -->
+        <div class="band-dark band-sorteo">
+          <div class="band-inner">
+            @defer (on idle) {
+              <app-sorteo-avistaje-banner />
+            } @loading (minimum 500ms) {
+              <div style="height: 120px;"></div>
+            }
           </div>
         </div>
 

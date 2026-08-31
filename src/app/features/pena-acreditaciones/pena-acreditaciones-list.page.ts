@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { NotificationService } from '../../core/services/notification.service';
 
 interface PenaRow {
   id: string;
@@ -272,6 +273,7 @@ interface PenaRow {
 })
 export class PenaAcreditacionesListPageComponent implements OnInit {
   private http = inject(HttpClient);
+  private notifications = inject(NotificationService);
   rows = signal<PenaRow[]>([]);
   total = signal(0);
   loading = signal(false);
@@ -290,7 +292,17 @@ export class PenaAcreditacionesListPageComponent implements OnInit {
   noche1Count = computed(() => this.rows().filter(r => r.dia_presentacion === 'noche1').length);
   noche2Count = computed(() => this.rows().filter(r => r.dia_presentacion === 'noche2').length);
 
-  ngOnInit() { this.load(); }
+  ngOnInit() {
+    this.load();
+    this.markAllAsRead();
+  }
+
+  private markAllAsRead(): void {
+    this.http.patch(`${environment.apiUrl}/pena-acreditaciones/read-all`, {}).subscribe({
+      next: () => this.notifications.penaUnread.set(0),
+      error: () => {},
+    });
+  }
 
   load(): void {
     this.loading.set(true);

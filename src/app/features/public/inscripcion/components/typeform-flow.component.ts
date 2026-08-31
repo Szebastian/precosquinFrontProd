@@ -1519,7 +1519,7 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
   years = Array.from({ length: 100 }, (_, i) => String(new Date().getFullYear() - i));
 
   readonly localidadesPorProvincia: Record<string, string[]> = {
-    'Chubut': ['Puerto Pirámides', 'Puerto Madryn', 'Trelew', 'Rawson', 'Gaiman', 'Dolavon', 'Comodoro Rivadavia', 'Rada Tilly', 'Caleta Olivia', 'Cañadón Seco', 'Paso de Indios', 'Los Altares', 'Esquel', 'Trevelin', 'Lago Blanco', 'Río Pico', 'Gobernador Costa', 'Corcovado', 'Cholila', 'Epuyén', 'El Bolsón', 'Lago Puelo', 'El Hoyo', 'Gastre', 'Telsen', 'Languiñéo'],
+    'Chubut': ['Puerto Pirámides', 'Puerto Madryn', 'Trelew', 'Rawson', 'Gaiman', 'Dolavon', 'Comodoro Rivadavia', 'Rada Tilly', 'Caleta Olivia', 'Cañadón Seco', 'Las Plumas', 'Paso de Indios', 'Los Altares', 'Esquel', 'Trevelin', 'Lago Blanco', 'Río Pico', 'Gobernador Costa', 'Corcovado', 'Cholila', 'Epuyén', 'El Bolsón', 'Lago Puelo', 'El Hoyo', 'Gastre', 'Telsen', 'Languiñéo'],
     'Río Negro': ['Bariloche', 'Viedma', 'Cipolletti', 'General Roca', 'San Carlos de Bariloche', 'El Bolsón', 'Villa Regina', 'Choele Choel', 'Río Colorado'],
     'Neuquén': ['Neuquén', 'San Martín de los Andes', 'Villa La Angostura', 'Zapala', 'Añelo', 'Plottier', 'Cutral Co', 'Rincón de los Sauces'],
     'La Pampa': ['Santa Rosa', 'General Pico', 'Catriló', 'Winifreda', '25 de Mayo', 'Eduardo Castex', 'Quemú Quemú'],
