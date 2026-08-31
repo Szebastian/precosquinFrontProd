@@ -8,6 +8,7 @@ interface SorteoData {
   fullName: string;
   whatsapp: string;
   email: string;
+  province: string;
   city: string;
   comprobanteFile: File | null;
   comprobantePreview: string;
@@ -15,11 +16,47 @@ interface SorteoData {
   comprobanteNumero: string;
 }
 
+const PROVINCIAS = [
+  'Buenos Aires', 'CABA', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba',
+  'Corrientes', 'Entre Ríos', 'Formosa', 'Jujuy', 'La Pampa', 'La Rioja',
+  'Mendoza', 'Misiones', 'Neuquén', 'Río Negro', 'Salta', 'San Juan',
+  'San Luis', 'Santa Cruz', 'Santa Fe', 'Santiago del Estero',
+  'Tierra del Fuego', 'Tucumán',
+];
+
+const LOCALIDADES: Record<string, string[]> = {
+  'Chubut': ['Puerto Pirámides', 'Puerto Madryn', 'Trelew', 'Rawson', 'Gaiman', 'Dolavon', 'Comodoro Rivadavia', 'Rada Tilly', 'Caleta Olivia', 'Cañadón Seco', 'Las Plumas', 'Paso de Indios', 'Los Altares', 'Esquel', 'Trevelin', 'Lago Blanco', 'Río Pico', 'Gobernador Costa', 'Corcovado', 'Cholila', 'Epuyén', 'El Bolsón', 'Lago Puelo', 'El Hoyo', 'Gastre', 'Telsen', 'Languiñéo'],
+  'Río Negro': ['Bariloche', 'Viedma', 'Cipolletti', 'General Roca', 'San Carlos de Bariloche', 'El Bolsón', 'Villa Regina', 'Choele Choel', 'Río Colorado'],
+  'Neuquén': ['Neuquén', 'San Martín de los Andes', 'Villa La Angostura', 'Zapala', 'Añelo', 'Plottier', 'Cutral Co', 'Rincón de los Sauces'],
+  'La Pampa': ['Santa Rosa', 'General Pico', 'Catriló', 'Winifreda', '25 de Mayo', 'Eduardo Castex', 'Quemú Quemú'],
+  'Buenos Aires': ['La Plata', 'Mar del Plata', 'Bahía Blanca', 'Tandil', 'Olavarría', 'Dolores', 'Chascomús', 'Pinamar', 'Villa Gesell', 'Necochea', 'Junín', 'Pergamino', 'Azul', 'Lobos', 'Cañuelas', 'San Nicolás', 'Avellaneda', 'Lanús', 'Quilmes', 'Morón', 'La Matanza', 'Florencio Varela', 'Berazategui', 'Esteban Echeverría', 'Almirante Brown', 'Lomas de Zamora'],
+  'CABA': ['Ciudad Autónoma de Buenos Aires'],
+  'Córdoba': ['Córdoba', 'Villa Carlos Paz', 'Río Cuarto', 'Villa María', 'Cosquín', 'Alta Gracia', 'Jesús María', 'Unquillo', 'Mina Clavero'],
+  'Santa Fe': ['Rosario', 'Santa Fe', 'Rafaela', 'Venado Tuerto', 'Reconquista', 'Villa Gobernador Gálvez', 'Cañada de Gómez'],
+  'Entre Ríos': ['Paraná', 'Concordia', 'Villa María Grande', 'Colón', 'Federación', 'Villaguay', 'Gualeguaychú'],
+  'Mendoza': ['Mendoza', 'San Rafael', 'San Martín', 'Guaymallén', 'Las Heras', 'Luján de Cuyo', 'Tunuyán', 'San Carlos'],
+  'Salta': ['Salta', 'San Miguel de Tucumán', 'Jujuy', 'Orán', 'Rivadavia', 'Tartagal', 'Metán', 'Cafayate', 'Purmamarca', 'Tilcara'],
+  'Tucumán': ['San Miguel de Tucumán', 'Concepción', 'Bella Vista', 'Tafí Viejo', 'Monteros', 'Chicligasta'],
+  'Misiones': ['Posadas', 'Puerto Iguazú', 'Eldorado', 'Oberá', 'San Pedro', 'Apóstoles', 'Leandro N. Alem'],
+  'Corrientes': ['Corrientes', 'Resistencia', 'Goya', 'Mercedes', 'Curuzú Cuatiá', 'Paso de los Libres', 'Santo Tomé'],
+  'Chaco': ['Resistencia', 'Buenos Aires', 'Saenz Peña', 'Villa Ángela', 'Charata', 'General San Martín'],
+  'Formosa': ['Formosa', 'Clorinda', 'Pirané', 'El Colorado', 'Las Lomitas'],
+  'San Juan': ['San Juan', 'Chimbas', 'Santa Lucía', 'Rivadavia', 'Zonda', 'Calingasta', 'Jáchal', 'Iglesia'],
+  'San Luis': ['San Luis', 'Villa Mercedes', 'Quines', 'Merlo', 'Concarán'],
+  'La Rioja': ['La Rioja', 'Chilecito', 'Famatina', 'Villa Unión', 'Anillaco'],
+  'Catamarca': ['San Fernando del Valle de Catamarca', 'Belén', 'Tinogasta', 'Andalgalá', 'Santa María'],
+  'Santiago del Estero': ['Santiago del Estero', 'La Banda', 'Fermosa', 'Añatuya', 'Quimilí'],
+  'Santa Cruz': ['Río Gallegos', 'Caleta Olivia', 'El Calafate', 'Perito Moreno', 'Las Heras', '28 de Noviembre', 'Puerto Deseado'],
+  'Tierra del Fuego': ['Ushuaia', 'Río Grande', 'Tolhuin'],
+  'Jujuy': ['San Salvador de Jujuy', 'San Pedro', 'Ledesma', 'Santa Catalina', 'Tilcara', 'Purmamarca', 'Humahuaca'],
+};
+
 function createEmpty(): SorteoData {
   return {
     fullName: '',
     whatsapp: '+54 9 ',
     email: '',
+    province: '',
     city: '',
     comprobanteFile: null,
     comprobantePreview: '',
@@ -104,15 +141,37 @@ function createEmpty(): SorteoData {
               </div>
 
               <div class="form-group">
-                <label class="form-label">Ciudad de Residencia *</label>
-                <input
-                  type="text"
-                  class="form-input"
-                  placeholder="Ej: Puerto Madryn"
+                <label class="form-label">Provincia *</label>
+                <select
+                  class="form-input form-select"
+                  [ngModel]="data().province"
+                  (ngModelChange)="updateProvince($event)"
+                  (focus)="clearError('province')"
+                >
+                  <option value="" disabled>Seleccioná una provincia</option>
+                  @for (prov of provincias; track prov) {
+                    <option [value]="prov">{{ prov }}</option>
+                  }
+                </select>
+                @if (errors()['province']) {
+                  <span class="form-error">{{ errors()['province'] }}</span>
+                }
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Ciudad *</label>
+                <select
+                  class="form-input form-select"
                   [ngModel]="data().city"
                   (ngModelChange)="updateField('city', $event)"
                   (focus)="clearError('city')"
-                />
+                  [disabled]="!data().province"
+                >
+                  <option value="" disabled>Seleccioná una ciudad</option>
+                  @for (ciudad of ciudades(); track ciudad) {
+                    <option [value]="ciudad">{{ ciudad }}</option>
+                  }
+                </select>
                 @if (errors()['city']) {
                   <span class="form-error">{{ errors()['city'] }}</span>
                 }
@@ -135,8 +194,8 @@ function createEmpty(): SorteoData {
               <div class="bank-data">
                 <div class="bank-row">
                   <span class="bank-label">Alias</span>
-                  <span class="bank-value">PRECOSQUIN.PIRAMIDES</span>
-                  <button class="copy-btn" (click)="copyToClipboard('PRECOSQUIN.PIRAMIDES', 'alias')">
+                  <span class="bank-value">piracosquin26.mp</span>
+                  <button class="copy-btn" (click)="copyToClipboard('piracosquin26.mp', 'alias')">
                     @if (copiedField() === 'alias') {
                       <span class="copy-feedback">¡Copiado!</span>
                     } @else {
@@ -146,9 +205,9 @@ function createEmpty(): SorteoData {
                   </button>
                 </div>
                 <div class="bank-row">
-                  <span class="bank-label">CBU</span>
-                  <span class="bank-value bank-cbu">0000003100010001234567</span>
-                  <button class="copy-btn" (click)="copyToClipboard('0000003100010001234567', 'cbu')">
+                  <span class="bank-label">CBU / CVU</span>
+                  <span class="bank-value bank-cbu">0000003100085207150820</span>
+                  <button class="copy-btn" (click)="copyToClipboard('0000003100085207150820', 'cbu')">
                     @if (copiedField() === 'cbu') {
                       <span class="copy-feedback">¡Copiado!</span>
                     } @else {
@@ -158,11 +217,7 @@ function createEmpty(): SorteoData {
                   </button>
                 </div>
                 <div class="bank-row">
-                  <span class="bank-label">Titular</span>
-                  <span class="bank-value">Pre-Cosquín Pirámides</span>
-                </div>
-                <div class="bank-row">
-                  <span class="bank-label">Banco</span>
+                  <span class="bank-label">Entidad</span>
                   <span class="bank-value">Mercado Pago</span>
                 </div>
               </div>
@@ -422,6 +477,17 @@ function createEmpty(): SorteoData {
       font-size: 0.8rem;
       color: #f87171;
       margin-top: 0.375rem;
+    }
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+    .form-select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .payment-amount {
@@ -722,6 +788,11 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
   uploadError = signal('');
   copiedField = signal('');
   sorteoId = signal('');
+  provincias = PROVINCIAS;
+  ciudades = computed(() => {
+    const prov = this.data().province;
+    return prov ? (LOCALIDADES[prov] || []) : [];
+  });
 
   progressPercent = computed(() => ((this.currentStep() + 1) / 4) * 100);
 
@@ -739,6 +810,11 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
     this.data.update(d => ({ ...d, [field]: value }));
   }
 
+  updateProvince(province: string): void {
+    this.data.update(d => ({ ...d, province, city: '' }));
+    this.clearError('province');
+  }
+
   clearError(field: string): void {
     this.errors.update(e => { const n = { ...e }; delete n[field]; return n; });
   }
@@ -746,7 +822,7 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
   canProceed(): boolean {
     const d = this.data();
     switch (this.currentStep()) {
-      case 0: return !!d.fullName.trim() && !!d.whatsapp.trim() && this.isValidEmail(d.email) && !!d.city.trim();
+      case 0: return !!d.fullName.trim() && !!d.whatsapp.trim() && this.isValidEmail(d.email) && !!d.province && !!d.city.trim();
       case 1: return true;
       case 2: return !!d.comprobanteFile;
       default: return false;
@@ -783,7 +859,8 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
       if (!d.fullName.trim()) errs['fullName'] = 'Ingresá tu nombre';
       if (!d.whatsapp.trim()) errs['whatsapp'] = 'Ingresá tu WhatsApp';
       if (!this.isValidEmail(d.email)) errs['email'] = 'Ingresá un email válido';
-      if (!d.city.trim()) errs['city'] = 'Ingresá tu ciudad';
+      if (!d.province) errs['province'] = 'Seleccioná tu provincia';
+      if (!d.city.trim()) errs['city'] = 'Seleccioná tu ciudad';
     }
     this.errors.set(errs);
   }
@@ -874,6 +951,7 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
       full_name: this.data().fullName.trim(),
       whatsapp: this.data().whatsapp.trim(),
       email: this.data().email.trim(),
+      province: this.data().province,
       city: this.data().city.trim(),
       comprobante_numero: this.data().comprobanteNumero.trim() || undefined,
     };
@@ -952,10 +1030,10 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
 
       doc.setTextColor(100, 116, 139);
       doc.setFontSize(10);
-      doc.text('CIUDAD', cx + 10, 105);
+      doc.text('CIUDAD / PROVINCIA', cx + 10, 105);
       doc.setTextColor(241, 245, 249);
       doc.setFontSize(13);
-      doc.text(d.city, cx + 10, 113);
+      doc.text(d.province ? `${d.city}, ${d.province}` : d.city, cx + 10, 113);
 
       doc.line(35, 120, w - 35, 120);
 
