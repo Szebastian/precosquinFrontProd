@@ -616,7 +616,20 @@ export interface TfQuestion {
                             <span>{{ verificationError() }}</span>
                           </div>
                         }
-                        <p class="tf-otp-contact">¿No recibiste el código? Revisá la carpeta de spam o contactanos a <a href="mailto:info@precosquinpiramides.com">info@precosquinpiramides.com</a></p>
+                        <div class="tf-otp-resend-row">
+                          <button type="button" class="tf-otp-resend-btn" (click)="resendCode()" [disabled]="resendCooldown() > 0 || sendingCode()">
+                            @if (resendCooldown() > 0) {
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                              <span>Reenviar en {{ resendCooldown() }}s</span>
+                            } @else if (sendingCode()) {
+                              <span class="tf-btn-spinner"></span> <span>Reenviando...</span>
+                            } @else {
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                              <span>Reenviar código</span>
+                            }
+                          </button>
+                          <span class="tf-otp-hint">¿No llega? Revisá spam o escribinos a <a href="mailto:info@precosquinpiramides.com">info@precosquinpiramides.com</a></span>
+                        </div>
                       }
                     </div>
                   } @else {
@@ -1274,9 +1287,18 @@ export interface TfQuestion {
       border-radius: 10px; color: #f87171; font-size: 0.82rem; font-weight: 500;
     }
     .tf-otp-error-box svg { flex-shrink: 0; }
-    .tf-otp-contact { font-size: 0.75rem; color: #64748b; margin: 0; }
-    .tf-otp-contact a { color: #60a5fa; text-decoration: none; }
-    .tf-otp-contact a:hover { text-decoration: underline; }
+    .tf-otp-resend-row { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 4px; }
+    .tf-otp-resend-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: none; border: 1px solid rgba(96,165,250,0.25); border-radius: 8px;
+      color: #60a5fa; font-size: 0.8rem; font-weight: 500; cursor: pointer;
+      padding: 8px 16px; transition: all 0.2s;
+    }
+    .tf-otp-resend-btn:hover:not(:disabled) { background: rgba(96,165,250,0.1); border-color: #60a5fa; }
+    .tf-otp-resend-btn:disabled { color: #475569; border-color: #334155; cursor: not-allowed; }
+    .tf-otp-hint { font-size: 0.7rem; color: #64748b; margin: 0; text-align: center; }
+    .tf-otp-hint a { color: #60a5fa; text-decoration: none; }
+    .tf-otp-hint a:hover { text-decoration: underline; }
 
     .tf-otp-verified {
       display: flex; align-items: center; gap: 10px; padding: 14px 18px;
@@ -1488,6 +1510,8 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
   sendingCode = signal(false);
   verifyingCode = signal(false);
   verificationError = signal('');
+  resendCooldown = signal(0);
+  private resendTimer: ReturnType<typeof setInterval> | null = null;
   emailAlreadyRegistered = signal(false);
   checkingEmail = signal(false);
   songsListItems = signal<string[]>(['']);
@@ -1581,6 +1605,21 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
 
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.keyHandler);
+    this.resendTimer && clearInterval(this.resendTimer);
+  }
+
+  private startResendCooldown(): void {
+    this.resendCooldown.set(60);
+    this.resendTimer && clearInterval(this.resendTimer);
+    this.resendTimer = setInterval(() => {
+      const curr = this.resendCooldown();
+      if (curr <= 1) {
+        this.resendCooldown.set(0);
+        this.resendTimer && clearInterval(this.resendTimer);
+      } else {
+        this.resendCooldown.set(curr - 1);
+      }
+    }, 1000);
   }
 
   private initDateParts(): void {
@@ -2447,12 +2486,17 @@ export class TypeformFlowComponent implements AfterViewChecked, OnDestroy {
       next: () => {
         this.sendingCode.set(false);
         this.verificationSent.set(true);
+        this.startResendCooldown();
       },
       error: (err) => {
         this.sendingCode.set(false);
         this.verificationError.set(err.error?.detail || 'Error al enviar el código. Intentá de nuevo.');
       }
     });
+  }
+
+  resendCode(): void {
+    this.sendVerification();
   }
 
   verifyCode(): void {
