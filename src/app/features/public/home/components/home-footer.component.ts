@@ -9,22 +9,35 @@ import { RouterLink } from '@angular/router';
     <footer class="portal-footer">
       <div class="footer-collab">
         <div class="collab-inner">
-          <!-- Featured Sponsor -->
-          <div class="featured-sponsor" role="link" tabindex="0" title="Southern Spirit — Avistaje de Ballenas" (click)="openUrl('https://www.instagram.com/southernspiritwhalewatch?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')" (keydown.enter)="openUrl('https://www.instagram.com/southernspiritwhalewatch?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')">
-            <span class="featured-tag">SPONSOR</span>
-            <div class="featured-logo-wrap">
-              <img src="assets/img/SouthernSpirit_logo.webp" alt="Southern Spirit — Avistaje de Ballenas" class="featured-logo" width="180" height="90" loading="lazy" decoding="async" />
+          <!-- Featured Sponsors -->
+          <div class="featured-grid">
+            <div class="featured-sponsor" role="link" tabindex="0" title="Southern Spirit — Avistaje de Ballenas" (click)="openUrl('https://www.instagram.com/southernspiritwhalewatch?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')" (keydown.enter)="openUrl('https://www.instagram.com/southernspiritwhalewatch?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')">
+              <span class="featured-tag">SPONSOR</span>
+              <div class="featured-logo-wrap">
+                <img src="assets/img/SouthernSpirit_logo.webp" alt="Southern Spirit — Avistaje de Ballenas" class="featured-logo" width="180" height="90" loading="lazy" decoding="async" />
+              </div>
+              <span class="featured-sub">Whale Watching · Puerto Pirámides</span>
             </div>
-            <span class="featured-sub">Whale Watching · Puerto Pirámides</span>
+            <div class="featured-sponsor" role="link" tabindex="0" title="Hotel Rayentray" (click)="openUrl('https://www.instagram.com/rayentrayhoteles')" (keydown.enter)="openUrl('https://www.instagram.com/rayentrayhoteles')">
+              <span class="featured-tag">SPONSOR</span>
+              <div class="featured-logo-wrap">
+                <img src="assets/img/logoRayentray.webp" alt="Hotel Rayentray" class="featured-logo" width="180" height="90" loading="lazy" decoding="async" />
+              </div>
+              <span class="featured-sub">Hotel Rayentray · Puerto Pirámides</span>
+            </div>
+            <div class="featured-sponsor" role="link" tabindex="0" title="Banco del Chubut" (click)="openUrl('https://www.bancochubut.com.ar/webinstitucional/')" (keydown.enter)="openUrl('https://www.bancochubut.com.ar/webinstitucional/')">
+              <span class="featured-tag">SPONSOR</span>
+              <div class="featured-logo-wrap">
+                <img src="assets/img/bancodelchubut.webp" alt="Banco del Chubut" class="featured-logo" width="180" height="90" loading="lazy" decoding="async" />
+              </div>
+              <span class="featured-sub">Banco del Chubut</span>
+            </div>
           </div>
 
           <span class="collab-label">COLABORAN</span>
           <div class="collab-grid">
             <div class="collab-item" role="link" tabindex="0" title="Municipalidad Puerto Pirámides" (click)="openUrl('https://www.instagram.com/municipalidad_puerto_piramides/')" (keydown.enter)="openUrl('https://www.instagram.com/municipalidad_puerto_piramides/')">
               <img src="assets/img/LPiramides.webp" alt="Puerto Pirámides" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="Hotel Rayentray" (click)="openUrl('https://www.instagram.com/rayentrayhoteles')" (keydown.enter)="openUrl('https://www.instagram.com/rayentrayhoteles')">
-              <img src="assets/img/LRayentray.webp" alt="Hotel Rayentray" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
             <div class="collab-item" role="link" tabindex="0" title="Hydro Sport Avistajes" (click)="openUrl('https://www.instagram.com/hydrosportavistajes')" (keydown.enter)="openUrl('https://www.instagram.com/hydrosportavistajes')">
               <img src="assets/img/LHydro.webp" alt="Hydro" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
@@ -46,6 +59,15 @@ import { RouterLink } from '@angular/router';
             </div>
             <div class="collab-item" role="link" tabindex="0" title="AANPPV" (click)="openUrl('https://www.instagram.com/peninsulavaldesoficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')" (keydown.enter)="openUrl('https://www.instagram.com/peninsulavaldesoficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')">
               <img src="assets/img/AANPPV_logo.webp" alt="AANPPV" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
+            </div>
+            <div class="collab-item" role="link" tabindex="0" title="Lotería del Chubut" (click)="openUrl('https://loteriadelchubut.com.ar/juegos/')" (keydown.enter)="openUrl('https://loteriadelchubut.com.ar/juegos/')">
+              <img src="assets/img/loteria.webp" alt="Lotería del Chubut" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
+            </div>
+            <div class="collab-item" role="link" tabindex="0" title="Parry Smart Hotel" (click)="openUrl('https://www.parryhotel.com.ar/')" (keydown.enter)="openUrl('https://www.parryhotel.com.ar/')">
+              <img src="assets/img/parry-smartHotel.webp" alt="Parry Smart Hotel" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
+            </div>
+            <div class="collab-item" role="link" tabindex="0" title="Conservas Puerto Madryn" (click)="openUrl('https://www.instagram.com/conservas.puerto.madryn/')" (keydown.enter)="openUrl('https://www.instagram.com/conservas.puerto.madryn/')">
+              <img src="assets/img/conservas-puertomadryn.webp" alt="Conservas Puerto Madryn" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
             </div>
           </div>
         </div>
@@ -91,12 +113,20 @@ import { RouterLink } from '@angular/router';
     .collab-inner { width: 100%; max-width: min(92%, 1200px); display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .collab-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: rgba(247,243,234,0.5); }
     .collab-grid { display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; }
-    .collab-img { height: 48px; max-width: 140px; width: auto; object-fit: contain; object-position: center; filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
+    .collab-img { height: 60px; max-width: 180px; width: auto; object-fit: contain; object-position: center; filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
     .collab-item { display: inline-flex; text-decoration: none; cursor: pointer; }
     .collab-item:hover .collab-img { filter: grayscale(0%); opacity: 1; transform: translateY(-2px); }
     .collab-item:focus-visible .collab-img { outline: 2px solid var(--brand-500); outline-offset: 4px; }
 
-    /* Featured Sponsor — Southern Spirit */
+    /* Featured Sponsors Grid */
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    /* Featured Sponsor */
     .featured-sponsor {
       display: flex;
       flex-direction: column;
@@ -146,14 +176,14 @@ import { RouterLink } from '@angular/router';
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 8px 16px;
+      padding: 12px 24px;
       border-radius: 12px;
       background: rgba(28,38,56,0.6);
       backdrop-filter: blur(4px);
     }
     .featured-logo {
-      height: 64px;
-      max-width: 220px;
+      height: 80px;
+      max-width: 280px;
       width: auto;
       object-fit: contain;
       filter: drop-shadow(0 2px 8px rgba(251,191,36,0.15));
@@ -211,11 +241,12 @@ import { RouterLink } from '@angular/router';
     }
     @media (max-width: 640px) {
       .footer-collab { padding: var(--space-5) var(--space-4); }
-      .collab-img { height: 36px; max-width: 100px; filter: grayscale(100%); opacity: 0.6; }
+      .collab-img { height: 48px; max-width: 140px; filter: grayscale(100%); opacity: 0.6; }
       .collab-item:hover .collab-img { filter: grayscale(0%); opacity: 1; }
       .collab-grid { gap: var(--space-8); }
+      .featured-grid { grid-template-columns: 1fr; gap: 12px; }
       .featured-sponsor { padding: 20px 20px 18px; }
-      .featured-logo { height: 48px; max-width: 160px; }
+      .featured-logo { height: 56px; max-width: 200px; }
       .featured-tag { font-size: 8px; }
       .featured-sub { font-size: 10px; }
       .footer-main { padding: var(--space-6) var(--space-4); gap: var(--space-5); }

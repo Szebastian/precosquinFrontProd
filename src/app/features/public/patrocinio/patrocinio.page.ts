@@ -40,7 +40,7 @@ interface Plan {
 })
 export class PatrocinioPageComponent implements OnInit, OnDestroy {
   socios = [
-    { nombre: 'Rayentray', logo: 'assets/img/LRayentray.webp' },
+    { nombre: 'Rayentray', logo: 'assets/img/logoRayentray.webp' },
     { nombre: 'Hydro', logo: 'assets/img/LHydro.webp' },
     { nombre: 'Piramides', logo: 'assets/img/LPiramides.webp' },
     { nombre: 'HH', logo: 'assets/img/logoHH.webp' },

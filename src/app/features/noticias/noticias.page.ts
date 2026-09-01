@@ -1558,7 +1558,7 @@ export class NoticiasPageComponent implements OnInit, AfterViewInit {
 
   imagePresets = [
     { value: IMAGE_PATHS.HOME_BACKGROUND, label: 'Principal' },
-    { value: 'assets/img/LRayentray.webp', label: 'Rayentray' },
+    { value: 'assets/img/logoRayentray.webp', label: 'Rayentray' },
     { value: 'assets/img/LHydro.webp', label: 'Histórico' },
   ];
 
