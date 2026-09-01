@@ -170,6 +170,11 @@ export const appRoutes: Routes = [
         data: { title: 'Mensajes', roles: ['organizador', 'admin', 'staff'] }
       },
       {
+        path: 'partners',
+        loadComponent: () => import('./features/partners/partners-admin.page').then(m => m.PartnersAdminPageComponent),
+        data: { title: 'Partners', roles: ['organizador', 'admin'] }
+      },
+      {
         path: 'documentation',
         loadComponent: () => import('./features/documentation/admin-documentation.page').then(m => m.AdminDocumentationComponent),
         data: { title: 'Documentación', roles: ['organizador', 'admin', 'staff', 'jurado'] }

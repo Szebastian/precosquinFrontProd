@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { PartnersService, Partner } from '@core/services/partners.service';
 
 @Component({
   selector: 'app-home-footer',
@@ -10,66 +11,30 @@ import { RouterLink } from '@angular/router';
       <div class="footer-collab">
         <div class="collab-inner">
           <!-- Featured Sponsors -->
-          <div class="featured-grid">
-            <div class="featured-sponsor" role="link" tabindex="0" title="Southern Spirit — Avistaje de Ballenas" (click)="openUrl('https://www.instagram.com/southernspiritwhalewatch?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')" (keydown.enter)="openUrl('https://www.instagram.com/southernspiritwhalewatch?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')">
-              <span class="featured-tag">SPONSOR</span>
-              <div class="featured-logo-wrap">
-                <img src="assets/img/SouthernSpirit_logo.webp" alt="Southern Spirit — Avistaje de Ballenas" class="featured-logo" width="180" height="90" loading="lazy" decoding="async" />
-              </div>
-              <span class="featured-sub">Whale Watching · Puerto Pirámides</span>
+          @if (sponsors().length > 0) {
+            <span class="section-label">SPONSORS</span>
+            <div class="featured-grid">
+              @for (s of sponsors(); track s.id) {
+                <div class="featured-sponsor" role="link" tabindex="0" [title]="s.name" (click)="openUrl(s.link_url)" (keydown.enter)="openUrl(s.link_url)">
+                  <div class="featured-logo-wrap">
+                    <img [src]="s.logo_url" [alt]="s.name" class="featured-logo" width="180" height="90" loading="lazy" decoding="async" />
+                  </div>
+                  <span class="featured-sub">{{ s.name }}</span>
+                </div>
+              }
             </div>
-            <div class="featured-sponsor" role="link" tabindex="0" title="Hotel Rayentray" (click)="openUrl('https://www.instagram.com/rayentrayhoteles')" (keydown.enter)="openUrl('https://www.instagram.com/rayentrayhoteles')">
-              <span class="featured-tag">SPONSOR</span>
-              <div class="featured-logo-wrap">
-                <img src="assets/img/logoRayentray.webp" alt="Hotel Rayentray" class="featured-logo" width="180" height="90" loading="lazy" decoding="async" />
-              </div>
-              <span class="featured-sub">Hotel Rayentray · Puerto Pirámides</span>
-            </div>
-            <div class="featured-sponsor" role="link" tabindex="0" title="Banco del Chubut" (click)="openUrl('https://www.bancochubut.com.ar/webinstitucional/')" (keydown.enter)="openUrl('https://www.bancochubut.com.ar/webinstitucional/')">
-              <span class="featured-tag">SPONSOR</span>
-              <div class="featured-logo-wrap">
-                <img src="assets/img/bancodelchubut.webp" alt="Banco del Chubut" class="featured-logo" width="180" height="90" loading="lazy" decoding="async" />
-              </div>
-              <span class="featured-sub">Banco del Chubut</span>
-            </div>
-          </div>
+          }
 
-          <span class="collab-label">COLABORAN</span>
-          <div class="collab-grid">
-            <div class="collab-item" role="link" tabindex="0" title="Municipalidad Puerto Pirámides" (click)="openUrl('https://www.instagram.com/municipalidad_puerto_piramides/')" (keydown.enter)="openUrl('https://www.instagram.com/municipalidad_puerto_piramides/')">
-              <img src="assets/img/LPiramides.webp" alt="Puerto Pirámides" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
+          @if (colaboradores().length > 0) {
+            <span class="section-label">COLABORAN</span>
+            <div class="collab-grid">
+              @for (c of colaboradores(); track c.id) {
+                <div class="collab-item" role="link" tabindex="0" [title]="c.name" (click)="openUrl(c.link_url)" (keydown.enter)="openUrl(c.link_url)">
+                  <img [src]="c.logo_url" [alt]="c.name" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
+                </div>
+              }
             </div>
-            <div class="collab-item" role="link" tabindex="0" title="Hydro Sport Avistajes" (click)="openUrl('https://www.instagram.com/hydrosportavistajes')" (keydown.enter)="openUrl('https://www.instagram.com/hydrosportavistajes')">
-              <img src="assets/img/LHydro.webp" alt="Hydro" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="Hidden House" (click)="openUrl('https://www.instagram.com/hidden.house')" (keydown.enter)="openUrl('https://www.instagram.com/hidden.house')">
-              <img src="assets/img/logoHH.webp" alt="HH" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="Bodegón El Refugio" (click)="openUrl('https://www.instagram.com/bodegon_elrefugio')" (keydown.enter)="openUrl('https://www.instagram.com/bodegon_elrefugio')">
-              <img src="assets/img/BodegonElRefugio.webp" alt="Bodegón El Refugio" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="El Refugio Pirámides" (click)="openUrl('https://www.instagram.com/elrefugiopiramides')" (keydown.enter)="openUrl('https://www.instagram.com/elrefugiopiramides')">
-              <img src="assets/img/ElRefugioPIramiLogo.webp" alt="El Refugio Pirámides" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="La Reserva En El Mar" (click)="openUrl('https://www.instagram.com/lareservaenelmar')" (keydown.enter)="openUrl('https://www.instagram.com/lareservaenelmar')">
-              <img src="assets/img/logoLaReservaEnElMar.webp" alt="La Reserva En El Mar" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="Avistajes Peke Sosa" (click)="openUrl('https://www.instagram.com/avistajespekesosa')" (keydown.enter)="openUrl('https://www.instagram.com/avistajespekesosa')">
-              <img src="assets/img/LOGO-PEKE-png-4k.webp" alt="Avistajes Peke Sosa" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="AANPPV" (click)="openUrl('https://www.instagram.com/peninsulavaldesoficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')" (keydown.enter)="openUrl('https://www.instagram.com/peninsulavaldesoficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')">
-              <img src="assets/img/AANPPV_logo.webp" alt="AANPPV" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="Lotería del Chubut" (click)="openUrl('https://loteriadelchubut.com.ar/juegos/')" (keydown.enter)="openUrl('https://loteriadelchubut.com.ar/juegos/')">
-              <img src="assets/img/loteria.webp" alt="Lotería del Chubut" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="Parry Smart Hotel" (click)="openUrl('https://www.parryhotel.com.ar/')" (keydown.enter)="openUrl('https://www.parryhotel.com.ar/')">
-              <img src="assets/img/parry-smartHotel.webp" alt="Parry Smart Hotel" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-            <div class="collab-item" role="link" tabindex="0" title="Conservas Puerto Madryn" (click)="openUrl('https://www.instagram.com/conservas.puerto.madryn/')" (keydown.enter)="openUrl('https://www.instagram.com/conservas.puerto.madryn/')">
-              <img src="assets/img/conservas-puertomadryn.webp" alt="Conservas Puerto Madryn" class="collab-img" width="120" height="60" loading="lazy" decoding="async" />
-            </div>
-          </div>
+          }
         </div>
       </div>
 
@@ -111,7 +76,7 @@ import { RouterLink } from '@angular/router';
     .portal-footer { margin-top: auto; background-color: #151D2D; border-top: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; }
     .footer-collab { background-color: rgba(17,19,21,0.5); padding: 48px 24px; display: flex; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
     .collab-inner { width: 100%; max-width: min(92%, 1200px); display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    .collab-label { font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.2em; color: rgba(247,243,234,0.5); }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.25em; color: #D9A928; text-transform: uppercase; }
     .collab-grid { display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; }
     .collab-img { height: 60px; max-width: 180px; width: auto; object-fit: contain; object-position: center; filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
     .collab-item { display: inline-flex; text-decoration: none; cursor: pointer; }
@@ -160,15 +125,6 @@ import { RouterLink } from '@angular/router';
     .featured-sponsor:focus-visible {
       outline: 2px solid var(--brand-500);
       outline-offset: 4px;
-    }
-    .featured-tag {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.25em;
-      color: #D9A928;
-      text-transform: uppercase;
-      position: relative;
-      z-index: 1;
     }
     .featured-logo-wrap {
       position: relative;
@@ -247,7 +203,6 @@ import { RouterLink } from '@angular/router';
       .featured-grid { grid-template-columns: 1fr; gap: 12px; }
       .featured-sponsor { padding: 20px 20px 18px; }
       .featured-logo { height: 56px; max-width: 200px; }
-      .featured-tag { font-size: 8px; }
       .featured-sub { font-size: 10px; }
       .footer-main { padding: var(--space-6) var(--space-4); gap: var(--space-5); }
       .footer-logo { height: 40px; }
@@ -257,10 +212,23 @@ import { RouterLink } from '@angular/router';
     }
   `]
 })
-export class HomeFooterComponent {
+export class HomeFooterComponent implements OnInit {
   currentYear = new Date().getFullYear();
+  private partnersService = inject(PartnersService);
 
-  openUrl(url: string): void {
-    window.open(url, '_blank');
+  sponsors = signal<Partner[]>([]);
+  colaboradores = signal<Partner[]>([]);
+
+  ngOnInit(): void {
+    this.partnersService.getPublicList('sponsor').subscribe({
+      next: (res) => this.sponsors.set(res.data || [])
+    });
+    this.partnersService.getPublicList('colaborador').subscribe({
+      next: (res) => this.colaboradores.set(res.data || [])
+    });
+  }
+
+  openUrl(url: string | null): void {
+    if (url) window.open(url, '_blank');
   }
 }

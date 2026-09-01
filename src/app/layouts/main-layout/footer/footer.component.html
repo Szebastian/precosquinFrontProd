@@ -1,6 +1,6 @@
 <footer class="app-footer" role="contentinfo">
   <div class="sponsors-section" aria-label="Patrocinadores">
-    @for (sponsor of sponsors; track sponsor.src) {
+    @for (sponsor of sponsors(); track sponsor.src) {
       <img
         [ngSrc]="sponsor.src"
         [alt]="sponsor.alt"
