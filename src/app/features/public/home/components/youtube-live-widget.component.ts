@@ -119,9 +119,9 @@ export class YoutubeLiveWidgetComponent implements OnInit {
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd)
     ).subscribe(e => {
-      this.hidden.set(e.urlAfterRedirects.startsWith('/inscripcion'));
+      this.hidden.set(e.urlAfterRedirects.startsWith('/inscripcion') || e.urlAfterRedirects.startsWith('/sorteo-live'));
     });
-    this.hidden.set(this.router.url.startsWith('/inscripcion'));
+    this.hidden.set(this.router.url.startsWith('/inscripcion') || this.router.url.startsWith('/sorteo-live'));
   }
 
   toggleLive() { this.ytIsLive.set(!this.ytIsLive()); }

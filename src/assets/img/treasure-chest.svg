@@ -1,0 +1,322 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- Chest body wood gradient -->
+    <linearGradient id="woodGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a16207"/>
+      <stop offset="30%" stop-color="#854d0e"/>
+      <stop offset="60%" stop-color="#713f12"/>
+      <stop offset="85%" stop-color="#5c3310"/>
+      <stop offset="100%" stop-color="#4a2810"/>
+    </linearGradient>
+
+    <!-- Lid wood gradient (lighter) -->
+    <linearGradient id="lidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ca8a04"/>
+      <stop offset="35%" stop-color="#a16207"/>
+      <stop offset="70%" stop-color="#854d0e"/>
+      <stop offset="100%" stop-color="#713f12"/>
+    </linearGradient>
+
+    <!-- Interior gradient -->
+    <linearGradient id="interiorGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c1917"/>
+      <stop offset="100%" stop-color="#0c0a09"/>
+    </linearGradient>
+
+    <!-- Gold band gradient -->
+    <linearGradient id="goldBand" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="20%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="80%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+
+    <!-- Gold band vertical -->
+    <linearGradient id="goldBandVert" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="30%" stop-color="#fbbf24"/>
+      <stop offset="60%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+
+    <!-- Coin gradient -->
+    <radialGradient id="coinGradient" cx="35%" cy="35%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="30%" stop-color="#fbbf24"/>
+      <stop offset="70%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </radialGradient>
+
+    <!-- Jewel gradient -->
+    <radialGradient id="jewelGradient" cx="35%" cy="35%">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="50%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#0e7490"/>
+    </radialGradient>
+
+    <!-- Lock gradient -->
+    <radialGradient id="lockGradient" cx="40%" cy="35%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="40%" stop-color="#fbbf24"/>
+      <stop offset="80%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </radialGradient>
+
+    <!-- Lock glow -->
+    <radialGradient id="lockGlow" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Golden emanation glow -->
+    <radialGradient id="goldenGlow" cx="50%" cy="100%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#f59e0b" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#d97706" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Bevel filter -->
+    <filter id="bevelFilter" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
+      <feSpecularLighting in="blur" surfaceScale="3" specularConstant="0.6" specularExponent="15" result="specular">
+        <fePointLight x="150" y="50" z="200"/>
+      </feSpecularLighting>
+      <feComposite in="specular" in2="SourceAlpha" operator="in" result="specularIn"/>
+      <feComposite in="SourceGraphic" in2="specularIn" operator="arithmetic" k1="0" k2="1" k3="0.7" k4="0"/>
+    </filter>
+
+    <!-- Drop shadow -->
+    <filter id="dropShadow" x="-10%" y="-5%" width="130%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+      <feOffset dx="4" dy="8" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.35"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Inner shadow effect -->
+    <filter id="innerShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+      <feOffset dx="0" dy="3" result="offsetblur"/>
+      <feFlood flood-color="#0c0a09" flood-opacity="0.6" result="color"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feComposite in2="SourceGraphic" operator="over"/>
+    </filter>
+
+    <!-- Glow filter -->
+    <filter id="glowFilter" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8"/>
+    </filter>
+
+    <!-- Wood grain texture -->
+    <pattern id="woodGrain" patternUnits="userSpaceOnUse" width="200" height="12">
+      <line x1="0" y1="3" x2="200" y2="3" stroke="#5c3310" stroke-width="0.6" opacity="0.2"/>
+      <line x1="0" y1="7" x2="200" y2="7" stroke="#5c3310" stroke-width="0.4" opacity="0.15"/>
+      <line x1="0" y1="11" x2="200" y2="11" stroke="#5c3310" stroke-width="0.5" opacity="0.18"/>
+    </pattern>
+
+    <!-- Lid wood grain -->
+    <pattern id="lidGrain" patternUnits="userSpaceOnUse" width="180" height="10">
+      <line x1="0" y1="3" x2="180" y2="3" stroke="#713f12" stroke-width="0.5" opacity="0.2"/>
+      <line x1="0" y1="7" x2="180" y2="7" stroke="#713f12" stroke-width="0.4" opacity="0.15"/>
+    </pattern>
+
+    <!-- Clip path for interior coins -->
+    <clipPath id="interiorClip">
+      <rect x="95" y="155" width="280" height="80"/>
+    </clipPath>
+  </defs>
+
+  <!-- Subtle background glow -->
+  <ellipse cx="250" cy="180" rx="180" ry="150" fill="url(#goldenGlow)" opacity="0.3"/>
+
+  <!-- Main chest group -->
+  <g filter="url(#dropShadow)">
+
+    <!-- Chest body - complex curved shape -->
+    <path d="M 85,180
+             C 85,175 90,165 100,160
+             L 370,160
+             C 380,160 390,165 395,175
+             L 400,300
+             C 400,315 390,330 375,335
+             L 105,335
+             C 90,330 80,315 80,300
+             Z"
+          fill="url(#woodGradient)" stroke="#4a2810" stroke-width="2"/>
+
+    <!-- Wood grain texture on body -->
+    <path d="M 85,180
+             C 85,175 90,165 100,160
+             L 370,160
+             C 380,160 390,165 395,175
+             L 400,300
+             C 400,315 390,330 375,335
+             L 105,335
+             C 90,330 80,315 80,300
+             Z"
+          fill="url(#woodGrain)"/>
+
+    <!-- Inner shadow at top edge -->
+    <path d="M 100,160 L 370,160 C 380,160 390,165 395,175 L 400,180 L 80,180 L 85,175 C 90,165 85,160 100,160 Z"
+          fill="#1c1917" opacity="0.3"/>
+
+    <!-- Metal band - left vertical -->
+    <path d="M 140,160 L 140,335 L 160,335 L 160,160 Z"
+          fill="url(#goldBandVert)" stroke="#713f12" stroke-width="0.5"/>
+    <path d="M 140,160 L 140,335" stroke="#fde68a" stroke-width="1" opacity="0.4"/>
+    <path d="M 160,160 L 160,335" stroke="#713f12" stroke-width="1" opacity="0.5"/>
+
+    <!-- Metal band - center vertical -->
+    <path d="M 235,160 L 235,335 L 255,335 L 255,160 Z"
+          fill="url(#goldBandVert)" stroke="#713f12" stroke-width="0.5"/>
+    <path d="M 235,160 L 235,335" stroke="#fde68a" stroke-width="1" opacity="0.4"/>
+    <path d="M 255,160 L 255,335" stroke="#713f12" stroke-width="1" opacity="0.5"/>
+
+    <!-- Metal band - right vertical -->
+    <path d="M 325,160 L 325,335 L 345,335 L 345,160 Z"
+          fill="url(#goldBandVert)" stroke="#713f12" stroke-width="0.5"/>
+    <path d="M 325,160 L 325,335" stroke="#fde68a" stroke-width="1" opacity="0.4"/>
+    <path d="M 345,160 L 345,335" stroke="#713f12" stroke-width="1" opacity="0.5"/>
+
+    <!-- Horizontal band across middle -->
+    <path d="M 85,238 L 395,238 L 395,252 L 85,252 Z"
+          fill="url(#goldBand)" stroke="#713f12" stroke-width="0.5"/>
+    <path d="M 85,238 L 395,238" stroke="#fde68a" stroke-width="1" opacity="0.4"/>
+    <path d="M 85,252 L 395,252" stroke="#713f12" stroke-width="1" opacity="0.5"/>
+
+    <!-- Decorative corner rivets -->
+    <circle cx="105" cy="175" r="4" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+    <circle cx="375" cy="175" r="4" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+    <circle cx="105" cy="325" r="4" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+    <circle cx="375" cy="325" r="4" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+
+    <!-- Band rivets -->
+    <circle cx="150" cy="200" r="3" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+    <circle cx="150" cy="300" r="3" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+    <circle cx="245" cy="200" r="3" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+    <circle cx="245" cy="300" r="3" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+    <circle cx="335" cy="200" r="3" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+    <circle cx="335" cy="300" r="3" fill="url(#lockGradient)" stroke="#713f12" stroke-width="0.5"/>
+
+    <!-- Lock glow -->
+    <circle cx="240" cy="245" r="35" fill="url(#lockGlow)" filter="url(#glowFilter)"/>
+
+    <!-- Lock plate -->
+    <circle cx="240" cy="245" r="22" fill="url(#lockGradient)" stroke="#713f12" stroke-width="2"/>
+    <circle cx="240" cy="245" r="18" fill="none" stroke="#fde68a" stroke-width="0.8" opacity="0.5"/>
+
+    <!-- Lock decorative ring -->
+    <circle cx="240" cy="245" r="14" fill="none" stroke="#92400e" stroke-width="1.5"/>
+
+    <!-- Keyhole shape -->
+    <circle cx="240" cy="240" r="5" fill="#1c1917"/>
+    <path d="M 237,243 L 243,243 L 242,256 L 238,256 Z" fill="#1c1917"/>
+    <circle cx="239" cy="239" r="1.5" fill="#4a2810" opacity="0.5"/>
+
+    <!-- Lock highlight -->
+    <ellipse cx="234" cy="238" rx="5" ry="4" fill="white" opacity="0.15" transform="rotate(-20 234 238)"/>
+
+    <!-- Lid (open, tilted back) -->
+    <g transform="rotate(-25 240 160)">
+      <path d="M 90,160
+               C 90,145 100,130 120,125
+               L 360,125
+               C 380,130 390,145 390,160
+               L 390,165
+               L 90,165
+               Z"
+            fill="url(#lidGradient)" stroke="#4a2810" stroke-width="2"/>
+
+      <!-- Lid wood grain -->
+      <path d="M 90,160
+               C 90,145 100,130 120,125
+               L 360,125
+               C 380,130 390,145 390,160
+               L 390,165
+               L 90,165
+               Z"
+            fill="url(#lidGrain)"/>
+
+      <!-- Lid gold band -->
+      <path d="M 95,142 L 385,142 L 385,152 L 95,152 Z"
+            fill="url(#goldBand)" stroke="#713f12" stroke-width="0.5"/>
+
+      <!-- Lid top highlight -->
+      <path d="M 120,127 C 180,123 300,123 360,127"
+            stroke="#fde68a" stroke-width="1.5" fill="none" opacity="0.4"/>
+
+      <!-- Lid edge detail -->
+      <path d="M 90,160 L 390,160" stroke="#4a2810" stroke-width="1.5"/>
+    </g>
+
+    <!-- Interior visible through open lid -->
+    <g clip-path="url(#interiorClip)">
+      <!-- Dark interior background -->
+      <rect x="95" y="155" width="280" height="80" fill="url(#interiorGradient)"/>
+
+      <!-- Golden glow from inside -->
+      <ellipse cx="240" cy="200" rx="120" ry="40" fill="url(#goldenGlow)" opacity="0.6"/>
+
+      <!-- Scattered coins -->
+      <circle cx="140" cy="200" r="8" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="165" cy="210" r="7" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="190" cy="195" r="9" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="220" cy="215" r="7" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="245" cy="198" r="8" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="270" cy="212" r="9" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="300" cy="200" r="7" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="325" cy="210" r="8" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="155" cy="225" r="6" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="200" cy="228" r="7" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="260" cy="225" r="6" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+      <circle cx="310" cy="225" r="7" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+
+      <!-- Jewel sparkles -->
+      <circle cx="175" cy="205" r="4" fill="url(#jewelGradient)" opacity="0.9"/>
+      <circle cx="235" cy="218" r="3" fill="#ef4444" opacity="0.8"/>
+      <circle cx="290" cy="208" r="4" fill="#a855f7" opacity="0.8"/>
+      <circle cx="330" cy="218" r="3" fill="url(#jewelGradient)" opacity="0.9"/>
+      <circle cx="150" cy="218" r="3" fill="#22c55e" opacity="0.8"/>
+
+      <!-- Jewel sparkle highlights -->
+      <circle cx="174" cy="204" r="1" fill="white" opacity="0.7"/>
+      <circle cx="234" cy="217" r="0.8" fill="white" opacity="0.7"/>
+      <circle cx="289" cy="207" r="1" fill="white" opacity="0.7"/>
+    </g>
+
+    <!-- Inner shadow overlay on chest body -->
+    <path d="M 100,160 L 370,160 C 380,160 390,165 395,175 L 395,185 L 85,185 L 90,175 C 95,165 100,160 100,160 Z"
+          fill="#0c0a09" opacity="0.25"/>
+
+    <!-- Chest body edge highlights -->
+    <path d="M 100,162 C 100,162 90,175 85,200"
+          stroke="#ca8a04" stroke-width="1" fill="none" opacity="0.3"/>
+    <path d="M 370,162 C 380,162 390,175 395,200"
+          stroke="#4a2810" stroke-width="1" fill="none" opacity="0.4"/>
+
+    <!-- Bottom rounded corners detail -->
+    <path d="M 105,335 C 105,340 110,345 120,348"
+          stroke="#4a2810" stroke-width="1.5" fill="none"/>
+    <path d="M 375,335 C 375,340 370,345 360,348"
+          stroke="#4a2810" stroke-width="1.5" fill="none"/>
+
+  </g>
+
+  <!-- Additional sparkle effects around chest -->
+  <circle cx="180" cy="140" r="2" fill="#fbbf24" opacity="0.6">
+    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="300" cy="130" r="1.5" fill="#fbbf24" opacity="0.5">
+    <animate attributeName="opacity" values="0.5;0.1;0.5" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="250" cy="120" r="2.5" fill="#fde68a" opacity="0.4">
+    <animate attributeName="opacity" values="0.4;0.1;0.4" dur="3s" repeatCount="indefinite"/>
+  </circle>
+
+</svg>

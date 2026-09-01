@@ -76,7 +76,10 @@ function createEmpty(): SorteoData {
         <a routerLink="/" class="topbar-back">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
         </a>
-        <span class="topbar-title">Sorteo Avistaje de Ballenas</span>
+        <div class="topbar-brand">
+          <img src="assets/img/logoballena.webp" alt="Pre-Cosquín" class="topbar-logo" width="28" height="28" />
+          <span class="topbar-title">Sorteo Avistaje de Ballenas y Snorkelling</span>
+        </div>
         <span class="topbar-step">Paso {{ currentStep() + 1 }} de 4</span>
       </div>
 
@@ -92,7 +95,7 @@ function createEmpty(): SorteoData {
             <div class="step-content">
               <div class="step-icon">🐋</div>
               <h2 class="step-title">Tus datos de contacto</h2>
-              <p class="step-desc">Completá tus datos para participar del sorteo de avistaje de ballenas para 4 personas.</p>
+              <p class="step-desc">Completá tus datos para participar del sorteo de avistaje de ballenas y snorkelling para 4 personas.</p>
 
               <div class="form-group">
                 <label class="form-label">Nombre y Apellido *</label>
@@ -176,6 +179,15 @@ function createEmpty(): SorteoData {
                   <span class="form-error">{{ errors()['city'] }}</span>
                 }
               </div>
+
+              <div class="privacy-disclaimer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="privacy-icon"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <p class="privacy-text">Tus datos se usan exclusivamente para la organización del sorteo. No se comparten con terceros.</p>
+              </div>
+
+              <div class="contact-help">
+                <p class="contact-help-text">¿Tenés dudas? Escribinos a <a href="https://wa.me/5492804893519" target="_blank" class="contact-link">WhatsApp de la organización</a></p>
+              </div>
             </div>
           }
 
@@ -186,43 +198,103 @@ function createEmpty(): SorteoData {
               <h2 class="step-title">Transferí tu aporte</h2>
               <p class="step-desc">Realizá la transferencia desde tu homebanking por el monto indicado y conservá el comprobante.</p>
 
+              <div class="email-confirm-info">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span>Al validar tu comprobante, recibirás un <strong>correo de confirmación</strong> con tu número de participación.</span>
+              </div>
+
+              <div class="trust-explanation">
+                <div class="trust-explanation-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                </div>
+                <div>
+                  <p class="trust-explanation-title">¿Qué es este aporte?</p>
+                  <p class="trust-explanation-text">Tu colaboración financia la organización del sorteo. No es una compra — es una participación solidaria en un sorteo por Avistaje de Ballenas y Snorkelling para 4 personas.</p>
+                </div>
+              </div>
+
               <div class="payment-amount">
                 <span class="payment-label">Monto a transferir</span>
                 <span class="payment-value">$ 30.000</span>
               </div>
 
-              <div class="bank-data">
-                <div class="bank-row">
-                  <span class="bank-label">Alias</span>
-                  <span class="bank-value">piracosquin26.mp</span>
-                  <button class="copy-btn" (click)="copyToClipboard('piracosquin26.mp', 'alias')">
-                    @if (copiedField() === 'alias') {
-                      <span class="copy-feedback">¡Copiado!</span>
-                    } @else {
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                      Copiar
-                    }
-                  </button>
+              <button class="bank-toggle-btn" (click)="showBankData.set(!showBankData())">
+                @if (showBankData()) {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  Ocultar datos de transferencia
+                } @else {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  🔒 Mostrar datos de transferencia
+                }
+              </button>
+
+              @if (showBankData()) {
+                <div class="bank-data">
+                  <div class="bank-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    <span class="bank-header-text">Datos de la cuenta receptora</span>
+                  </div>
+
+                  <div class="bank-alias-highlight">
+                    <span class="bank-alias-label">Alias para transferir</span>
+                    <div class="bank-alias-row">
+                      <span class="bank-alias-value">piracosquin26.mp</span>
+                      <button class="copy-btn copy-btn-lg" (click)="copyToClipboard('piracosquin26.mp', 'alias')">
+                        @if (copiedField() === 'alias') {
+                          <span class="copy-feedback">¡Copiado!</span>
+                        } @else {
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                          Copiar
+                        }
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="bank-secondary">
+                    <div class="bank-row">
+                      <span class="bank-label">Titular</span>
+                      <span class="bank-value">Sandra Fabiana Contreras</span>
+                    </div>
+                    <div class="bank-row">
+                      <span class="bank-label">Entidad</span>
+                      <span class="bank-value">Mercado Pago</span>
+                    </div>
+                    <div class="bank-row">
+                      <span class="bank-label">CBU / CVU</span>
+                      <span class="bank-value bank-cbu">0000003100085207150820</span>
+                      <button class="copy-btn" (click)="copyToClipboard('0000003100085207150820', 'cbu')">
+                        @if (copiedField() === 'cbu') {
+                          <span class="copy-feedback">¡Copiado!</span>
+                        } @else {
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                          Copiar
+                        }
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div class="bank-row">
-                  <span class="bank-label">CBU / CVU</span>
-                  <span class="bank-value bank-cbu">0000003100085207150820</span>
-                  <button class="copy-btn" (click)="copyToClipboard('0000003100085207150820', 'cbu')">
-                    @if (copiedField() === 'cbu') {
-                      <span class="copy-feedback">¡Copiado!</span>
-                    } @else {
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                      Copiar
-                    }
-                  </button>
-                </div>
-                <div class="bank-row">
-                  <span class="bank-label">Entidad</span>
-                  <span class="bank-value">Mercado Pago</span>
-                </div>
-              </div>
+              }
 
               <p class="payment-note">Conservá el comprobante de la transferencia. Lo vas a adjuntar en el próximo paso.</p>
+
+              <div class="bases-link">
+                <a href="#" class="bases-link-text" (click)="showBases = !showBases; $event.preventDefault()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                  {{ showBases ? 'Ocultar' : 'Ver' }} Bases y Condiciones
+                </a>
+              </div>
+
+              @if (showBases) {
+                <div class="bases-content">
+                  <p><strong>1. Organización:</strong> Comisión Organizadora Pre-Cosquín Puerto Pirámides.</p>
+                  <p><strong>2. Participación:</strong> Cada aporte equivale a 1 (un) número de participación en el sorteo.</p>
+                  <p><strong>3. Premio:</strong> Experiencia de Avistaje de Ballenas y Snorkelling para 4 personas en Puerto Pirámides, Chubut.</p>
+                  <p><strong>4. Fecha del sorteo:</strong> Se realizará en vivo por YouTube. La fecha se anunciará oficialmente en nuestras redes.</p>
+                  <p><strong>5. Forma de elegir al ganador:</strong> Sorteo aleatorio en vivo, supervisado por la organización.</p>
+                  <p><strong>6. Notificación:</strong> El ganador será contactado por WhatsApp y/o email registrado.</p>
+                  <p><strong>7. Datos personales:</strong> Se utilizan exclusivamente para la gestión del sorteo.</p>
+                </div>
+              }
             </div>
           }
 
@@ -302,7 +374,33 @@ function createEmpty(): SorteoData {
                 </svg>
               </div>
               <h2 class="step-title">¡Mucha suerte!</h2>
-              <p class="step-desc">Tu registro quedó guardado. Descargá tu comprobante de participación y no olvides vernos el día del sorteo por YouTube.</p>
+              <p class="step-desc">Tu registro quedó guardado. No olvides vernos el día del sorteo por YouTube.</p>
+
+              @if (sorteoId()) {
+                <div class="ticket-display">
+                  <span class="ticket-display-label">Tu número de participación</span>
+                  <span class="ticket-display-number">SBA-{{ sorteoId().slice(0, 8).toUpperCase() }}</span>
+                </div>
+              }
+
+              <!-- Email confirmation — large, accessible card -->
+              <div class="email-confirm-card">
+                <div class="email-confirm-icon">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <div class="email-confirm-body">
+                  <p class="email-confirm-title">Confirmación por correo</p>
+                  <p class="email-confirm-text">Cuando la organización valide tu comprobante, vas a recibir un <strong>correo electrónico</strong> confirmando tu participación.</p>
+                  <p class="email-confirm-hint">Revisá tu casilla de spam si no lo ves en tu bandeja de entrada.</p>
+                </div>
+              </div>
+
+              @if (uploadError()) {
+                <div class="upload-warning">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span>{{ uploadError() }}</span>
+                </div>
+              }
 
               <button class="download-btn" (click)="downloadTicket()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -512,6 +610,65 @@ function createEmpty(): SorteoData {
       color: #f1f5f9;
       letter-spacing: -0.02em;
     }
+    .bank-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: #06b6d4;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-family: inherit;
+    }
+    .bank-toggle-btn:hover {
+      background: rgba(6, 182, 212, 0.18);
+      border-color: rgba(6, 182, 212, 0.5);
+    }
+    .bank-alias-highlight {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(59, 130, 246, 0.08));
+      border: 1.5px dashed rgba(6, 182, 212, 0.4);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .bank-alias-label {
+      display: block;
+      font-size: 0.7rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+    .bank-alias-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    .bank-alias-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #06b6d4;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      letter-spacing: 0.02em;
+    }
+    .copy-btn-lg {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+    }
+    .bank-secondary {
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+      padding-top: 0.5rem;
+    }
     .bank-data {
       background: #1e293b;
       border-radius: 12px;
@@ -573,6 +730,30 @@ function createEmpty(): SorteoData {
       line-height: 1.6;
       text-align: center;
       margin: 0;
+    }
+
+    .email-confirm-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.625rem;
+      background: rgba(6, 182, 212, 0.08);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .email-confirm-info svg {
+      color: #06b6d4;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .email-confirm-info span {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .email-confirm-info strong {
+      color: #e2e8f0;
     }
 
     .dropzone {
@@ -701,6 +882,19 @@ function createEmpty(): SorteoData {
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(255, 0, 0, 0.3);
     }
+    .upload-warning {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-top: 1rem;
+      color: #fbbf24;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
     .back-home-link {
       display: block;
       margin-top: 1.5rem;
@@ -770,6 +964,242 @@ function createEmpty(): SorteoData {
       .bank-value { text-align: left; flex-basis: 100%; margin-top: 0.25rem; }
       .nav-btn { padding: 0.75rem 1.25rem; font-size: 0.9rem; }
     }
+
+    /* === Trust improvements === */
+
+    /* Topbar brand with logo */
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+    .topbar-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+
+    /* Privacy disclaimer (step 0) */
+    .privacy-disclaimer {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.625rem;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      margin-top: 1rem;
+    }
+    .privacy-icon {
+      color: #60a5fa;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .privacy-text {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* Contact help (step 0) */
+    .contact-help {
+      text-align: center;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.08);
+    }
+    .contact-help-text {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin: 0;
+    }
+    .contact-link {
+      color: #22c55e;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .contact-link:hover {
+      color: #4ade80;
+      text-decoration: underline;
+    }
+
+    /* Trust explanation (step 1) */
+    .trust-explanation {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: rgba(6, 182, 212, 0.08);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      border-radius: 12px;
+      padding: 1rem 1.125rem;
+      margin-bottom: 1.5rem;
+    }
+    .trust-explanation-icon {
+      color: #06b6d4;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .trust-explanation-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 0 0 0.25rem;
+    }
+    .trust-explanation-text {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* Bank header */
+    .bank-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      margin-bottom: 0.25rem;
+      color: #94a3b8;
+    }
+    .bank-header-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Bases link */
+    .bases-link {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .bases-link-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.8rem;
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .bases-link-text:hover {
+      color: #93c5fd;
+      text-decoration: underline;
+    }
+
+    /* Bases content */
+    .bases-content {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-top: 0.75rem;
+      animation: fadeSlideIn 0.3s ease;
+    }
+    .bases-content p {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      line-height: 1.6;
+      margin: 0 0 0.5rem;
+    }
+    .bases-content p:last-child {
+      margin-bottom: 0;
+    }
+    .bases-content strong {
+      color: #e2e8f0;
+    }
+
+    /* Ticket display (step 3 success) */
+    .ticket-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.375rem;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(59, 130, 246, 0.1));
+      border: 2px dashed rgba(6, 182, 212, 0.35);
+      border-radius: 16px;
+      padding: 1.25rem 2rem;
+      margin: 1rem auto 1.5rem;
+      max-width: 320px;
+    }
+    .ticket-display-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .ticket-display-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #06b6d4;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      letter-spacing: 0.05em;
+    }
+    @media (max-width: 640px) {
+      .ticket-display-number { font-size: 1.5rem; }
+      .ticket-display { padding: 1rem 1.25rem; }
+    }
+
+    .email-confirm-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(59, 130, 246, 0.08));
+      border: 1.5px solid rgba(6, 182, 212, 0.35);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin: 0.75rem 0;
+      text-align: left;
+    }
+    .email-confirm-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(6, 182, 212, 0.15);
+      color: #06b6d4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .email-confirm-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .email-confirm-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin: 0 0 0.375rem;
+    }
+    .email-confirm-text {
+      font-size: 1rem;
+      color: #e2e8f0;
+      margin: 0 0 0.375rem;
+      line-height: 1.5;
+    }
+    .email-confirm-text strong {
+      color: #67e8f9;
+    }
+    .email-confirm-hint {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin: 0;
+      line-height: 1.4;
+    }
+    @media (max-width: 480px) {
+      .email-confirm-card { padding: 1rem; gap: 0.75rem; }
+      .email-confirm-icon { width: 44px; height: 44px; border-radius: 10px; }
+      .email-confirm-icon svg { width: 24px; height: 24px; }
+      .email-confirm-title { font-size: 1.05rem; }
+      .email-confirm-text { font-size: 0.95rem; }
+    }
   `]
 })
 export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
@@ -788,6 +1218,8 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
   uploadError = signal('');
   copiedField = signal('');
   sorteoId = signal('');
+  showBases = false;
+  showBankData = signal(false);
   provincias = PROVINCIAS;
   ciudades = computed(() => {
     const prov = this.data().province;
@@ -966,8 +1398,10 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
               this.submitting.set(false);
               this.currentStep.set(3);
             },
-            error: () => {
+            error: (err) => {
               this.submitting.set(false);
+              const msg = err.error?.detail || 'El registro se guardó pero hubo un error al subir el comprobante. Podés enviarlo después.';
+              this.uploadError.set(msg);
               this.currentStep.set(3);
             }
           });
@@ -1007,7 +1441,7 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
 
       doc.setFontSize(22);
       doc.setTextColor(34, 211, 238);
-      doc.text('SORTEO AVISTAJE DE BALENAS', cx, 42, { align: 'center' });
+      doc.text('SORTEO AVISTAJE DE BALENAS Y SNORKELLING', cx, 42, { align: 'center' });
 
       doc.setDrawColor(148, 163, 184);
       doc.setLineWidth(0.2);
@@ -1073,7 +1507,7 @@ export class SorteoAvistajePageComponent implements OnInit, OnDestroy {
 
       doc.setFontSize(7);
       doc.setTextColor(71, 85, 105);
-      doc.text('Pre-Cosquin Puerto Piramides - Sorteo Avistaje de Ballenas', cx, 268, { align: 'center' });
+      doc.text('Pre-Cosquín Puerto Pirámides - Sorteo Avistaje de Ballenas y Snorkelling', cx, 268, { align: 'center' });
 
       doc.save(`comprobante-sorteo-${ticketNum}.pdf`);
     });

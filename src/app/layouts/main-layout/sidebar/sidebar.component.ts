@@ -427,11 +427,16 @@ export class SidebarComponent {
       next: (data) => this.notifications.penaUnread.set(data.unread || 0),
       error: () => {},
     });
+    this.http.get<{ unread: number }>(`${environment.apiUrl}/sorteo-avistaje/unread-count`).subscribe({
+      next: (data) => this.notifications.sorteoPendientes.set(data.unread || 0),
+      error: () => {},
+    });
   }
 
   navItems = computed(() => {
     const count = this.notifications.inscripcionesPendientes();
     const pena = this.notifications.penaUnread();
+    const sorteo = this.notifications.sorteoPendientes();
     return [
       { label: 'Dashboard', route: '/panel/dashboard', roles: ['organizador', 'admin', 'staff', 'jurado', 'sede'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>' },
       { label: 'Inscripciones', route: '/panel/inscripciones', roles: ['organizador', 'admin', 'staff', 'sede'], badge: count > 0 ? String(count) : '', badgePulse: count > 0, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg>' },
@@ -445,6 +450,7 @@ export class SidebarComponent {
       { label: 'Comunicaciones', route: '/panel/comunicaciones', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>' },
       { label: 'Contratos', route: '/panel/contratos', roles: ['organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>' },
       { label: 'Reportes', route: '/panel/reportes', roles: ['organizador', 'admin', 'sede'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>' },
+      { label: 'Sorteo Avistaje', route: '/panel/sorteo-avistaje', roles: ['organizador', 'admin'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>' },
       { label: 'Peña Acreditaciones', route: '/panel/pena-acreditaciones', roles: ['organizador', 'admin'], badge: pena > 0 ? String(pena) : '', badgePulse: pena > 0, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11v-2a4 4 0 0 0-3-3.87"/></svg>' },
       { label: 'Invitados', route: '/panel/invitados', roles: ['organizador', 'admin'], badge: pena > 0 || count > 0 ? String((pena||0)+(count||0)) : '', badgePulse: pena > 0 || count > 0, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
       { label: 'Noticias', route: '/panel/noticias', roles: ['organizador', 'admin', 'staff'], badge: '', badgePulse: false, icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M16 8h2m-2 4h2m-14 0h6m-6-4h6m-6 8h14"/></svg>' },

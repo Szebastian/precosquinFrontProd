@@ -1,0 +1,303 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- Hull main gradient -->
+    <linearGradient id="hullGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="20%" stop-color="#fbbf24"/>
+      <stop offset="45%" stop-color="#f59e0b"/>
+      <stop offset="70%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+
+    <!-- Hull highlight gradient -->
+    <linearGradient id="hullHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" stop-opacity="0.7"/>
+      <stop offset="50%" stop-color="#fde68a" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#92400e" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Conning tower gradient -->
+    <linearGradient id="towerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+
+    <!-- Porthole radial gradient -->
+    <radialGradient id="portholeGradient" cx="40%" cy="35%">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="40%" stop-color="#0ea5e9"/>
+      <stop offset="75%" stop-color="#0369a1"/>
+      <stop offset="100%" stop-color="#1e3a5f"/>
+    </radialGradient>
+
+
+    <!-- Cyan glow gradient -->
+    <radialGradient id="cyanGlow" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#0891b2" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Headlight glow gradient -->
+    <radialGradient id="headlightGlow" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#facc15" stop-opacity="0.8"/>
+      <stop offset="60%" stop-color="#eab308" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#ca8a04" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Propeller gradient -->
+    <linearGradient id="propGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a1a1aa"/>
+      <stop offset="50%" stop-color="#71717a"/>
+      <stop offset="100%" stop-color="#3f3f46"/>
+    </linearGradient>
+
+    <!-- Fin gradient -->
+    <linearGradient id="finGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+
+    <!-- Shadow filter -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="3" dy="6" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.4"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Motion blur for propeller -->
+    <filter id="motionBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2,0.5"/>
+    </filter>
+
+    <!-- Headlight beam blur -->
+    <filter id="lightBeamBlur" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+
+    <!-- Glow filter -->
+    <filter id="glowFilter" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+    </filter>
+
+    <!-- Cyan glow filter -->
+    <filter id="cyanGlowFilter" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8"/>
+    </filter>
+
+    <!-- Hull texture pattern -->
+    <pattern id="hullTexture" patternUnits="userSpaceOnUse" width="20" height="8">
+      <line x1="0" y1="4" x2="20" y2="4" stroke="#92400e" stroke-width="0.5" stroke-opacity="0.15"/>
+      <line x1="0" y1="0" x2="20" y2="0" stroke="#92400e" stroke-width="0.3" stroke-opacity="0.1"/>
+    </pattern>
+
+    <!-- Rivet pattern -->
+    <pattern id="rivetPattern" patternUnits="userSpaceOnUse" width="25" height="25">
+      <circle cx="12.5" cy="12.5" r="1.5" fill="#78350f" opacity="0.6"/>
+    </pattern>
+
+    <!-- Light beam clip path -->
+    <clipPath id="lightBeamClip">
+      <polygon points="130,250 60,210 60,290"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background subtle gradient -->
+  <rect width="600" height="500" fill="url(#hullGradient)" opacity="0"/>
+
+  <!-- Submarine group with drop shadow -->
+  <g filter="url(#dropShadow)">
+
+    <!-- Shadow underneath hull -->
+    <ellipse cx="330" cy="340" rx="170" ry="18" fill="#1e293b" opacity="0.3">
+      <animate attributeName="rx" values="170;175;170" dur="3s" repeatCount="indefinite"/>
+    </ellipse>
+
+    <!-- Light beam from headlight -->
+    <g clip-path="url(#lightBeamClip)" filter="url(#lightBeamBlur)">
+      <polygon points="130,250 30,195 30,305" fill="url(#headlightGlow)" opacity="0.6"/>
+      <polygon points="130,250 50,215 50,285" fill="#fef08a" opacity="0.3"/>
+    </g>
+
+    <!-- Main hull body - complex bezier shape -->
+    <path d="M 155,255
+             C 155,210 180,185 230,180
+             L 420,178
+             C 470,178 495,195 500,220
+             L 502,255
+             L 502,260
+             L 500,290
+             C 495,315 470,332 420,332
+             L 230,334
+             C 180,334 155,310 155,265
+             Z"
+          fill="url(#hullGradient)" stroke="#92400e" stroke-width="1.5"/>
+
+    <!-- Hull highlight overlay -->
+    <path d="M 155,255
+             C 155,210 180,185 230,180
+             L 420,178
+             C 470,178 495,195 500,220
+             L 502,255
+             L 502,260
+             L 500,290
+             C 495,315 470,332 420,332
+             L 230,334
+             C 180,334 155,310 155,265
+             Z"
+          fill="url(#hullHighlight)"/>
+
+    <!-- Hull texture lines -->
+    <path d="M 155,255
+             C 155,210 180,185 230,180
+             L 420,178
+             C 470,178 495,195 500,220
+             L 502,255
+             L 502,260
+             L 500,290
+             C 495,315 470,332 420,332
+             L 230,334
+             C 180,334 155,310 155,265
+             Z"
+          fill="url(#hullTexture)"/>
+
+    <!-- Hull rivets along top edge -->
+    <path d="M 165,195 C 200,185 300,182 400,183 L 480,195"
+          stroke="url(#rivetPattern)" stroke-width="6" fill="none" opacity="0.4"/>
+
+    <!-- Hull rivets along bottom edge -->
+    <path d="M 165,315 C 200,325 300,328 400,327 L 480,315"
+          stroke="url(#rivetPattern)" stroke-width="6" fill="none" opacity="0.4"/>
+
+    <!-- Horizontal hull line detail -->
+    <line x1="170" y1="255" x2="495" y2="255" stroke="#92400e" stroke-width="0.8" opacity="0.3"/>
+    <line x1="175" y1="240" x2="490" y2="240" stroke="#92400e" stroke-width="0.5" opacity="0.2"/>
+    <line x1="175" y1="270" x2="490" y2="270" stroke="#92400e" stroke-width="0.5" opacity="0.2"/>
+
+    <!-- Conning tower -->
+    <path d="M 310,180
+             C 310,165 315,155 325,152
+             L 375,150
+             C 385,150 395,158 395,170
+             L 398,180
+             Z"
+          fill="url(#towerGradient)" stroke="#92400e" stroke-width="1.2"/>
+
+    <!-- Tower top highlight -->
+    <path d="M 315,168 C 325,160 360,158 380,160"
+          stroke="#fef3c7" stroke-width="1.5" fill="none" opacity="0.5"/>
+
+    <!-- Tower window -->
+    <rect x="335" y="158" width="30" height="14" rx="3" fill="#0ea5e9" opacity="0.6"/>
+    <rect x="336" y="159" width="28" height="5" rx="2" fill="#7dd3fc" opacity="0.4"/>
+
+    <!-- Antenna base -->
+    <rect x="358" y="140" width="4" height="12" rx="1" fill="#78716c"/>
+
+    <!-- Antenna -->
+    <line x1="360" y1="140" x2="360" y2="118" stroke="#a8a29e" stroke-width="2"/>
+    <circle cx="360" cy="116" r="3" fill="#ef4444" opacity="0.8">
+      <animate attributeName="opacity" values="0.8;0.3;0.8" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Periscope tube -->
+    <path d="M 340,150 L 340,105 C 340,100 345,95 350,95 L 380,95"
+          stroke="#78716c" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 340,150 L 340,105 C 340,100 345,95 350,95 L 380,95"
+          stroke="#a8a29e" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+    <!-- Periscope lens -->
+    <ellipse cx="383" cy="95" rx="5" ry="7" fill="#64748b"/>
+    <ellipse cx="382" cy="94" rx="3" ry="4" fill="#94a3b8"/>
+
+    <!-- Fin 1 (top) -->
+    <path d="M 440,200
+             C 460,185 490,175 510,180
+             C 505,190 495,200 480,210
+             C 470,215 455,215 440,210
+             Z"
+          fill="url(#finGradient)" stroke="#92400e" stroke-width="1"/>
+
+    <!-- Fin 1 detail line -->
+    <path d="M 445,205 C 465,195 490,188 505,185"
+          stroke="#92400e" stroke-width="0.6" fill="none" opacity="0.4"/>
+
+    <!-- Fin 2 (bottom) -->
+    <path d="M 440,300
+             C 460,315 490,325 510,320
+             C 505,310 495,300 480,290
+             C 470,285 455,285 440,290
+             Z"
+          fill="url(#finGradient)" stroke="#92400e" stroke-width="1"/>
+
+    <!-- Fin 2 detail line -->
+    <path d="M 445,295 C 465,305 490,312 505,315"
+          stroke="#92400e" stroke-width="0.6" fill="none" opacity="0.4"/>
+
+    <!-- Porthole 1 -->
+    <circle cx="230" cy="255" r="22" fill="#92400e" stroke="#78350f" stroke-width="2"/>
+    <circle cx="230" cy="255" r="18" fill="url(#portholeGradient)"/>
+    <circle cx="230" cy="255" r="18" fill="none" stroke="#713f12" stroke-width="1.5"/>
+    <!-- Glass reflection -->
+    <ellipse cx="224" cy="249" rx="7" ry="5" fill="white" opacity="0.3" transform="rotate(-20 224 249)"/>
+    <!-- Porthole bolts -->
+    <circle cx="215" cy="240" r="2" fill="#78350f"/>
+    <circle cx="245" cy="240" r="2" fill="#78350f"/>
+    <circle cx="215" cy="270" r="2" fill="#78350f"/>
+    <circle cx="245" cy="270" r="2" fill="#78350f"/>
+
+    <!-- Porthole 2 -->
+    <circle cx="310" cy="255" r="22" fill="#92400e" stroke="#78350f" stroke-width="2"/>
+    <circle cx="310" cy="255" r="18" fill="url(#portholeGradient)"/>
+    <circle cx="310" cy="255" r="18" fill="none" stroke="#713f12" stroke-width="1.5"/>
+    <ellipse cx="304" cy="249" rx="7" ry="5" fill="white" opacity="0.3" transform="rotate(-20 304 249)"/>
+    <circle cx="295" cy="240" r="2" fill="#78350f"/>
+    <circle cx="325" cy="240" r="2" fill="#78350f"/>
+    <circle cx="295" cy="270" r="2" fill="#78350f"/>
+    <circle cx="325" cy="270" r="2" fill="#78350f"/>
+
+    <!-- Porthole 3 -->
+    <circle cx="390" cy="255" r="22" fill="#92400e" stroke="#78350f" stroke-width="2"/>
+    <circle cx="390" cy="255" r="18" fill="url(#portholeGradient)"/>
+    <circle cx="390" cy="255" r="18" fill="none" stroke="#713f12" stroke-width="1.5"/>
+    <ellipse cx="384" cy="249" rx="7" ry="5" fill="white" opacity="0.3" transform="rotate(-20 384 249)"/>
+    <circle cx="375" cy="240" r="2" fill="#78350f"/>
+    <circle cx="405" cy="240" r="2" fill="#78350f"/>
+    <circle cx="375" cy="270" r="2" fill="#78350f"/>
+    <circle cx="405" cy="270" r="2" fill="#78350f"/>
+
+    <!-- Headlight housing -->
+    <ellipse cx="155" cy="255" rx="12" ry="16" fill="#92400e"/>
+    <ellipse cx="153" cy="255" rx="9" ry="12" fill="#fbbf24"/>
+    <ellipse cx="151" cy="255" rx="6" ry="8" fill="#fef08a" filter="url(#glowFilter)"/>
+
+    <!-- Propeller hub -->
+    <ellipse cx="505" cy="255" rx="8" ry="10" fill="#6b7280"/>
+    <ellipse cx="504" cy="255" rx="5" ry="7" fill="#9ca3af"/>
+
+    <!-- Propeller blades with motion blur -->
+    <g filter="url(#motionBlur)">
+      <path d="M 513,245 C 525,230 545,228 550,240 C 540,248 525,250 513,252 Z"
+            fill="url(#propGradient)" opacity="0.85"/>
+      <path d="M 513,258 C 525,272 545,278 548,265 C 538,257 525,255 513,253 Z"
+            fill="url(#propGradient)" opacity="0.85"/>
+      <path d="M 513,240 C 530,225 555,230 552,245 C 540,248 525,248 513,250 Z"
+            fill="url(#propGradient)" opacity="0.75"/>
+    </g>
+
+    <!-- Text on hull -->
+    <text x="250" y="295" font-family="Georgia, serif" font-size="10" fill="#92400e" opacity="0.5" font-style="italic">Phang Explorer 2026</text>
+
+  </g>
+
+
+</svg>

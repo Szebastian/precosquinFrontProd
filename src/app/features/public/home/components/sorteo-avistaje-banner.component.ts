@@ -18,8 +18,8 @@ import { Router } from '@angular/router';
             <span class="sorteo-eyebrow-dot"></span>
             SORTEO EXCLUSIVO
           </div>
-          <h2 class="sorteo-title">Avistaje de Ballenas</h2>
-          <p class="sorteo-desc">Participá por un viaje de avistaje para <strong>4 personas</strong> en la Peninsula Valdés.</p>
+          <h2 class="sorteo-title">Avistaje de Ballenas y Snorkelling</h2>
+          <p class="sorteo-desc">Participá por un viaje de avistaje de ballenas y snorkelling para <strong>4 personas</strong> en la Peninsula Valdés.</p>
           <div class="sorteo-prize-mobile">
             <span class="sorteo-prize-label">Premio</span>
             <span class="sorteo-prize-value">4 Personas</span>

@@ -1,7 +1,9 @@
-import { Component, signal, computed, ElementRef, ViewChild, AfterViewChecked, inject } from '@angular/core';
+import { Component, signal, computed, ElementRef, ViewChild, AfterViewChecked, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 interface ChatMessage {
@@ -17,6 +19,7 @@ interface ChatMessage {
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
+    @if (!hidden()) {
     <!-- Floating button -->
     <button
       class="chat-fab"
@@ -141,6 +144,7 @@ interface ChatMessage {
           </a>
         </div>
       </div>
+    }
     }
   `,
   styles: [`
@@ -483,14 +487,16 @@ interface ChatMessage {
     }
   `]
 })
-export class ChatWidgetComponent implements AfterViewChecked {
+export class ChatWidgetComponent implements AfterViewChecked, OnInit {
   @ViewChild('chatMessages') chatMessagesRef?: ElementRef<HTMLElement>;
 
   private http = inject(HttpClient);
+  private router = inject(Router);
 
   isOpen = signal(false);
   loading = signal(false);
   inputValue = signal('');
+  hidden = signal(false);
   messages = signal<ChatMessage[]>([]);
   suggestions = signal<string[]>([
     '¿Cómo me inscribo?',
@@ -499,6 +505,14 @@ export class ChatWidgetComponent implements AfterViewChecked {
   ]);
 
   private shouldScroll = false;
+
+  ngOnInit(): void {
+    const hide = (url: string) => this.hidden.set(url.startsWith('/sorteo-live'));
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd)
+    ).subscribe(e => hide(e.urlAfterRedirects));
+    hide(this.router.url);
+  }
 
   ngAfterViewChecked(): void {
     if (this.shouldScroll) {

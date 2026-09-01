@@ -4,4 +4,5 @@ import { Injectable, signal } from '@angular/core';
 export class NotificationService {
   penaUnread = signal(0);
   inscripcionesPendientes = signal(0);
+  sorteoPendientes = signal(0);
 }

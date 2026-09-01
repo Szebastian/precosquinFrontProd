@@ -65,7 +65,12 @@ export const appRoutes: Routes = [
       {
         path: 'sorteo-avistaje',
         loadComponent: () => import('./features/public/sorteo-avistaje/sorteo-avistaje-form.page').then(m => m.SorteoAvistajePageComponent),
-        data: { title: 'Sorteo Avistaje de Ballenas' }
+        data: { title: 'Sorteo Avistaje de Ballenas y Snorkelling' }
+      },
+      {
+        path: 'sorteo-live',
+        loadComponent: () => import('./features/sorteo-live/sorteo-live.page').then(m => m.SorteoLivePageComponent),
+        data: { title: 'El Océano en Pirámides' }
       },
     ]
   },
@@ -128,6 +133,11 @@ export const appRoutes: Routes = [
         path: 'reportes',
         loadChildren: () => import('./features/reportes/reportes.routes').then(m => m.REPORTES_ROUTES),
         data: { roles: ['organizador', 'admin', 'sede'] }
+      },
+      {
+        path: 'sorteo-avistaje',
+        loadComponent: () => import('./features/sorteo-avistaje/sorteo-avistaje-list.page').then(m => m.SorteoAvistajeListPageComponent),
+        data: { title: 'Sorteo Avistaje', roles: ['organizador', 'admin'] }
       },
       {
         path: 'pena-acreditaciones',

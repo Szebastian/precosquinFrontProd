@@ -586,6 +586,130 @@
   width: 100%;
 }
 
+/* Sorteo Live Control */
+.sorteo-control {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+:host-context(.dark) .sorteo-control {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.sorteo-control-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .sorteo-control-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+}
+
+.sorteo-control-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.sorteo-control-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.75rem;
+  background: rgba(56, 189, 248, 0.15);
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+:host-context(.dark) .sorteo-control-icon {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+.sorteo-control-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+:host-context(.dark) .sorteo-control-label {
+  color: #f1f5f9;
+}
+
+.sorteo-control-desc {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin: 0.125rem 0 0 0;
+  line-height: 1.4;
+}
+
+:host-context(.dark) .sorteo-control-desc {
+  color: #94a3b8;
+}
+
+.sorteo-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+:host-context(.dark) .sorteo-toggle-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: #475569;
+  color: #94a3b8;
+}
+
+.sorteo-toggle-btn:hover {
+  border-color: #38bdf8;
+  color: #0284c7;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+:host-context(.dark) .sorteo-toggle-btn:hover {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.sorteo-toggle-btn.active {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #16a34a;
+}
+
+:host-context(.dark) .sorteo-toggle-btn.active {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.sorteo-toggle-btn.active:hover {
+  background: rgba(34, 197, 94, 0.18);
+  border-color: rgba(34, 197, 94, 0.6);
+}
+
 @media (max-width: 639px) {
   .charts-section {
     overflow-x: auto;

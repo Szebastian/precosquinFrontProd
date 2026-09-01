@@ -5,6 +5,7 @@ import { AuthService } from '@core/auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
 import { SubscriptionChartsComponent } from '../subscription-charts/subscription-charts.component';
+import { SorteoVisibilityService } from '@core/services/sorteo-visibility.service';
 
 interface DashboardStats {
   total_inscripciones: number;
@@ -27,8 +28,16 @@ interface DashboardStats {
 export class AdminDashboardComponent implements OnInit {
   auth = inject(AuthService);
   private http = inject(HttpClient);
+  private sorteoVisibility = inject(SorteoVisibilityService);
 
   stats = signal<DashboardStats | null>(null);
+
+  /** Expose signal to template */
+  get sorteoLiveVisible() { return this.sorteoVisibility.sorteoLiveVisible; }
+
+  toggleSorteoLive(): void {
+    this.sorteoVisibility.toggle();
+  }
 
   recentActivity = [
     { id: 1, type: 'submitted' as const, description: 'Juan Pérez envió inscripción - Música > Solista Vocal', time: 'hace 5 min', link: '/panel/inscripciones/123' },

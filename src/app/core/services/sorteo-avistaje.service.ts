@@ -8,6 +8,7 @@ export interface SorteoCreate {
   full_name: string;
   whatsapp: string;
   email: string;
+  province?: string;
   city: string;
   comprobante_numero?: string;
 }
@@ -18,6 +19,7 @@ export interface SorteoResponse {
   full_name: string;
   whatsapp: string;
   email: string;
+  province?: string;
   city: string;
   comprobante_url?: string;
   comprobante_numero?: string;

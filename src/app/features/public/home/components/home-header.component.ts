@@ -1,5 +1,6 @@
-import { Component, signal, HostListener, HostBinding } from '@angular/core';
+import { Component, signal, HostListener, HostBinding, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SorteoVisibilityService } from '@core/services/sorteo-visibility.service';
 
 @Component({
   selector: 'app-home-header',
@@ -38,6 +39,12 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/inscripcion" class="nav-link">Inscripciones</a>
             <a routerLink="/cronograma" class="nav-link">Cronograma</a>
             <a routerLink="/documentacion" class="nav-link">Documentación</a>
+            @if (sorteoLiveVisible()) {
+              <a routerLink="/sorteo-live" class="nav-link nav-link-live">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                Sorteo en Vivo
+              </a>
+            }
           </nav>
 
         <div class="header-right">
@@ -64,6 +71,12 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/inscripcion" class="mobile-nav-link" (click)="toggleMenu()">Inscripciones</a>
             <a routerLink="/cronograma" class="mobile-nav-link" (click)="toggleMenu()">Cronograma</a>
             <a routerLink="/documentacion" class="mobile-nav-link" (click)="toggleMenu()">Documentación</a>
+            @if (sorteoLiveVisible()) {
+              <a routerLink="/sorteo-live" class="mobile-nav-link mobile-nav-link-live" (click)="toggleMenu()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                Sorteo en Vivo
+              </a>
+            }
           </nav>
           <div class="mobile-drawer-footer">
             <a routerLink="/auth/login" class="login-btn mobile-login" (click)="toggleMenu()">
@@ -102,6 +115,9 @@ import { RouterLink } from '@angular/router';
     .nav-link { font-size: var(--text-sm); font-weight: var(--weight-bold); color: rgba(255,255,255,0.8); text-transform: uppercase; text-decoration: none; height: 100%; display: flex; align-items: center; padding: 0 var(--space-1); border-bottom: 3px solid transparent; transition: all var(--transition-fast); }
     .nav-link:hover, .nav-link.active { color: #fff; border-bottom-color: #D9A928; }
     .nav-link:focus-visible { outline: 2px solid #D9A928; outline-offset: 2px; border-radius: 2px; }
+    .nav-link-live { display: inline-flex; align-items: center; gap: 5px; color: #38bdf8; border-bottom-color: transparent; animation: livePulse 2s ease-in-out infinite; }
+    .nav-link-live:hover { color: #7dd3fc; border-bottom-color: #38bdf8; }
+    @keyframes livePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     .header-right { display: flex; align-items: center; gap: var(--space-2); }
     .login-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; font-size: var(--text-sm); font-weight: var(--weight-bold); text-transform: uppercase; text-decoration: none; color: #17191C; background: #D9A928; border-radius: var(--radius-full); transition: all var(--transition-fast); letter-spacing: 0.03em; }
     .login-btn:hover { background: #B98B1D; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
@@ -130,6 +146,7 @@ import { RouterLink } from '@angular/router';
     .mobile-nav-link:hover, .mobile-nav-link.active { background: rgba(255,255,255,0.1); }
     .mobile-nav-link:focus-visible { outline: 2px solid #D9A928; outline-offset: -2px; }
     .mobile-nav-link.active { border-left: 3px solid #D9A928; }
+    .mobile-nav-link-live { display: inline-flex; align-items: center; gap: 6px; color: #38bdf8; }
     .mobile-drawer-footer { padding: var(--space-4) var(--space-6); border-top: 1px solid rgba(255,255,255,0.12); display: flex; flex-direction: column; gap: var(--space-4); }
     .mobile-login { width: 100%; justify-content: center; }
     .mobile-social { display: flex; gap: var(--space-3); justify-content: center; }
@@ -159,6 +176,11 @@ import { RouterLink } from '@angular/router';
   `]
 })
 export class HomeHeaderComponent {
+  private sorteoVisibility = inject(SorteoVisibilityService);
+
+  /** True when admin has enabled the sorteo-live public link */
+  get sorteoLiveVisible() { return this.sorteoVisibility.sorteoLiveVisible; }
+
   scrollY = signal(0);
   menuOpen = signal(false);
   private ticking = false;
