@@ -95,7 +95,7 @@ function createEmpty(): SorteoData {
             <div class="step-content">
               <div class="step-icon">🐋</div>
               <h2 class="step-title">Tus datos de contacto</h2>
-              <p class="step-desc">Completá tus datos para participar del sorteo de avistaje de ballenas y snorkelling para 4 personas.</p>
+              <p class="step-desc">Completá tus datos para participar del sorteo de avistaje de ballenas y snorkelling.</p>
 
               <div class="form-group">
                 <label class="form-label">Nombre y Apellido *</label>
@@ -184,10 +184,6 @@ function createEmpty(): SorteoData {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="privacy-icon"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 <p class="privacy-text">Tus datos se usan exclusivamente para la organización del sorteo. No se comparten con terceros.</p>
               </div>
-
-              <div class="contact-help">
-                <p class="contact-help-text">¿Tenés dudas? Escribinos a <a href="https://wa.me/5492804893519" target="_blank" class="contact-link">WhatsApp de la organización</a></p>
-              </div>
             </div>
           }
 
@@ -209,7 +205,7 @@ function createEmpty(): SorteoData {
                 </div>
                 <div>
                   <p class="trust-explanation-title">¿Qué es este aporte?</p>
-                  <p class="trust-explanation-text">Tu colaboración financia la organización del sorteo. No es una compra — es una participación solidaria en un sorteo por Avistaje de Ballenas y Snorkelling para 4 personas.</p>
+                  <p class="trust-explanation-text">Tu colaboración financia la organización del sorteo. No es una compra — es una participación solidaria en un sorteo por Avistaje de Ballenas y Snorkelling.</p>
                 </div>
               </div>
 
@@ -288,7 +284,7 @@ function createEmpty(): SorteoData {
                 <div class="bases-content">
                   <p><strong>1. Organización:</strong> Comisión Organizadora Pre-Cosquín Puerto Pirámides.</p>
                   <p><strong>2. Participación:</strong> Cada aporte equivale a 1 (un) número de participación en el sorteo.</p>
-                  <p><strong>3. Premio:</strong> Experiencia de Avistaje de Ballenas y Snorkelling para 4 personas en Puerto Pirámides, Chubut.</p>
+                  <p><strong>3. Premio:</strong> 4 experiencias de Avistaje de Ballenas y 1 de Snorkelling para 1 persona en Puerto Pirámides, Chubut.</p>
                   <p><strong>4. Fecha del sorteo:</strong> Se realizará en vivo por YouTube. La fecha se anunciará oficialmente en nuestras redes.</p>
                   <p><strong>5. Forma de elegir al ganador:</strong> Sorteo aleatorio en vivo, supervisado por la organización.</p>
                   <p><strong>6. Notificación:</strong> El ganador será contactado por WhatsApp y/o email registrado.</p>
