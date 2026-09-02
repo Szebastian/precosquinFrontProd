@@ -489,18 +489,16 @@ InscripcionStepAccessosComponent, StagePlotComponent, OtpVerifyComponent, Circul
                 </button>
               }
 
-              @if (modifyRawData()?.members?.length) {
-                <button type="button" class="modify-section" (click)="modifySection.set('members')">
-                  <div class="modify-section-header">
-                    <div class="modify-section-icon" style="background:linear-gradient(135deg,#f0fdf4,#bbf7d0);color:#16a34a">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    </div>
-                    <span class="modify-section-title">Integrantes</span>
-                    <svg class="modify-section-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              <button type="button" class="modify-section" (click)="modifySection.set('members')">
+                <div class="modify-section-header">
+                  <div class="modify-section-icon" style="background:linear-gradient(135deg,#f0fdf4,#bbf7d0);color:#16a34a">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                   </div>
-                  <div class="modify-section-preview">{{ modifyRawData()?.members?.length }} integrante(s)</div>
-                </button>
-              }
+                  <span class="modify-section-title">Integrantes</span>
+                  <svg class="modify-section-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="modify-section-preview">{{ data.members.length }} integrante{{ data.members.length === 1 ? '' : 's' }}</div>
+              </button>
 
               <button type="button" class="modify-section" (click)="modifySection.set('technical')">
                 <div class="modify-section-header">
@@ -644,13 +642,21 @@ InscripcionStepAccessosComponent, StagePlotComponent, OtpVerifyComponent, Circul
                   }
                 } @else if (modifySection() === 'members') {
                   @for (member of data.members; track $index; let i = $index) {
-                    <div class="modify-theme-card">
-                      <span class="modify-label">Integrante {{ i + 1 }}</span>
+                    <div class="modify-theme-card" style="position:relative">
+                      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                        <span class="modify-label" style="margin:0">Integrante {{ i + 1 }}</span>
+                        <button type="button" class="modify-theme-remove" (click)="removeMember(i)">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                      </div>
                       <input type="text" [value]="member.fullName" (input)="member.fullName = $any($event.target).value" placeholder="Nombre completo" class="otp-field" style="text-align:left;letter-spacing:normal" />
+                      <input type="text" [value]="member.dni" (input)="member.dni = $any($event.target).value" placeholder="DNI" class="otp-field" style="text-align:left;letter-spacing:normal;margin-top:8px" />
                       <input type="text" [value]="member.role" (input)="member.role = $any($event.target).value" placeholder="Rol" class="otp-field" style="text-align:left;letter-spacing:normal;margin-top:8px" />
                     </div>
                   }
-                  <button type="button" class="otp-resend-btn" style="color:#2563eb;margin-top:8px" (click)="addMember()">+ Agregar integrante</button>
+                  @if (data.members.length < maxMembersForSubcategory()) {
+                    <button type="button" class="otp-resend-btn" style="color:#2563eb;margin-top:8px" (click)="addMember()">+ Agregar integrante</button>
+                  }
                 } @else if (modifySection() === 'technical') {
                   <label class="modify-field"><span class="modify-label">Necesidades técnicas</span><textarea [value]="data.technicalNeeds" (input)="data.technicalNeeds = $any($event.target).value" class="otp-field" style="text-align:left;letter-spacing:normal;min-height:80px;resize:vertical" rows="4" placeholder="Ej: Microfonos, monitores, backline..."></textarea></label>
                   @if (data.category === 'musica' && data.subcategory === 'solista_instrumental') {
@@ -1102,7 +1108,7 @@ submitted = signal(false);
   data: InscripcionData = createEmptyInscripcionData();
 
   subcategoriesByCategory = subcategoriesByCategory;
-  private groupSubcategories = groupSubcategories;
+  groupSubcategories = groupSubcategories;
 
   micOptions = ['Dinámico (SM58)', 'Condensador de solista', 'Inalámbrico', 'Overhead', 'Para acordeón/guitarra', 'Para percusión'];
   backlineOptions = ['Guitarra eléctrica', 'Guitarra acústica', 'Bajo', 'Batería', 'Acordeón', 'Teclado', 'Percusión menor'];
