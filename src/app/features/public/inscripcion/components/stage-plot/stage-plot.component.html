@@ -47,15 +47,22 @@
          (click)="!readonly && (selectedInstrument = null)">
       <div class="stage-background-label top">FONDO DEL ESCENARIO</div>
       <div class="stage-grid-lines"></div>
+
+      <!-- Zone labels -->
+      <div class="stage-zone zone-back">ATRÁS</div>
+      <div class="stage-zone zone-center">CENTRO</div>
+      <div class="stage-zone zone-front">FRENTE</div>
+
       @if (instruments.length === 0) {
         <p class="stage-hint">{{ readonly ? 'Sin posiciones configuradas' : 'Hacé click en un instrumento o arrastralo al escenario' }}</p>
       }
 
       @for (instrument of instruments; track instrument.id) {
         <div class="placed-instrument"
-             [style.left]="instrument.centered ? '50%' : instrument.x + 'px'"
-             [style.top]="instrument.centered ? '50%' : instrument.y + 'px'"
+             [style.left]="instrument.centered ? '50%' : (readonly ? getPctX(instrument.x || 0) + '%' : instrument.x + 'px')"
+             [style.top]="instrument.centered ? '50%' : (readonly ? getPctY(instrument.y || 0) + '%' : instrument.y + 'px')"
              [style.transform]="'translate(-50%, -50%) rotate(' + instrument.rotation + 'deg)'"
+             [style.--inst-color]="getGroupColor(instrument.type)"
              [attr.draggable]="!readonly"
              (dragstart)="!readonly && dragStart($event, instrument)"
              (touchstart)="!readonly && onInstrumentTouchStart($event, instrument)"

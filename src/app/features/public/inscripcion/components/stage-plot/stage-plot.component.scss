@@ -12,6 +12,8 @@
   padding: 0;
 }
 
+/* ── Palette ─────────────────────────────────────────── */
+
 .instrument-palette {
   width: 100%;
   padding: 12px;
@@ -133,14 +135,8 @@
 }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .instrument-item {
@@ -197,6 +193,8 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* ── Stage Area ──────────────────────────────────────── */
+
 .stage-area-wrapper {
   flex-grow: 1;
   display: flex;
@@ -206,13 +204,21 @@
 
 .stage-area {
   flex-grow: 1;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.25);
   border: 2px dashed rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
+  border-radius: 12px;
   position: relative;
   overflow: hidden;
   min-height: 400px;
   touch-action: none;
+  /* Center horizontally */
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.readonly .stage-area {
+  min-height: 350px;
 }
 
 .stage-background-label {
@@ -231,13 +237,8 @@
   pointer-events: none;
 }
 
-.stage-background-label.top {
-  top: 8px;
-}
-
-.stage-background-label.bottom {
-  bottom: 8px;
-}
+.stage-background-label.top { top: 8px; }
+.stage-background-label.bottom { bottom: 8px; }
 
 .stage-grid-lines {
   position: absolute;
@@ -251,46 +252,66 @@
   z-index: 0;
 }
 
+/* Zone depth labels */
+.stage-zone {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.stage-zone.zone-back   { top: 28%; }
+.stage-zone.zone-center { top: 50%; transform: translate(-50%, -50%); }
+.stage-zone.zone-front  { bottom: 16%; }
+
 .stage-hint {
   color: rgba(255, 255, 255, 0.35);
   font-size: 1.1em;
   pointer-events: none;
   z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 80%;
 }
+
+/* ── Placed Instruments (clean — icon + label only) ─── */
 
 .placed-instrument {
   position: absolute;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
   cursor: grab;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6px 8px 4px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
-  transition: box-shadow 0.15s ease;
+  padding: 4px;
+  transition: transform 0.15s ease;
   z-index: 5;
-  min-width: 56px;
   touch-action: none;
 }
 
 .placed-instrument:hover {
-  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.5);
-  border-color: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%) scale(1.12);
+  z-index: 6;
 }
 
 .placed-instrument.selected {
-  outline: 2px dashed rgba(255, 255, 255, 0.6);
-  outline-offset: 3px;
+  transform: translate(-50%, -50%) scale(1.15);
   z-index: 10;
+  filter: drop-shadow(0 0 8px var(--inst-color, #60a5fa));
 }
 
 .placed-instrument-icon {
-  width: 28px;
-  height: 28px;
-  margin-bottom: 2px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -306,9 +327,17 @@
 
 .placed-instrument-label {
   color: rgba(255, 255, 255, 0.85);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
+  font-weight: 500;
   white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-top: 1px;
 }
+
+/* ── Instrument Controls ─────────────────────────────── */
 
 .instrument-controls {
   display: flex;
@@ -388,6 +417,8 @@
   stroke-width: 2;
 }
 
+/* ── Responsive ──────────────────────────────────────── */
+
 @media (max-width: 640px) {
   .stage-plot-container { padding: 12px; gap: 12px; }
   .instrument-palette { padding: 8px; }
@@ -403,9 +434,9 @@
     max-width: 100%;
     overflow: hidden;
   }
-  .placed-instrument { min-width: 48px; padding: 4px 6px 3px; }
-  .placed-instrument-icon { width: 22px; height: 22px; }
-  .placed-instrument-label { font-size: 0.55rem; }
+  .placed-instrument { padding: 3px; }
+  .placed-instrument-icon { width: 24px; height: 24px; }
+  .placed-instrument-label { font-size: 0.52rem; }
   .instrument-controls { gap: 8px; padding: 10px; }
   .control-button { padding: 6px 10px; font-size: 0.75rem; }
 }

@@ -59,13 +59,73 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
   paletteGroups = ['Cuerdas', 'Vientos', 'Teclados', 'Percusión', 'Equipo'];
   expandedGroups = signal<Set<string>>(new Set(['Cuerdas', 'Equipo']));
 
-  constructor() { }
+  /** Color scheme per instrument group */
+  private groupColors: Record<string, string> = {
+    'Cuerdas':   '#3b82f6',
+    'Vientos':   '#22c55e',
+    'Teclados':  '#a855f7',
+    'Percusión': '#f59e0b',
+    'Equipo':    '#64748b',
+  };
+
+  /** Map instrument type → group */
+  private typeToGroup: Record<string, string> = {};
+  /** Map instrument type → color */
+  private typeToColor: Record<string, string> = {};
+
+  constructor() {
+    for (const [key, cfg] of Object.entries(this.instrumentConfig)) {
+      this.typeToGroup[key] = cfg.group;
+      this.typeToColor[key] = this.groupColors[cfg.group] || '#64748b';
+    }
+  }
 
   ngOnInit() {
     this.instruments = this.initialInstruments.map(inst => ({ ...inst }));
     this.nextInstrumentId = this.instruments.length > 0
       ? Math.max(...this.instruments.map(i => parseInt(i.id.split('-')[1]))) + 1
       : 0;
+  }
+
+  /* ── Readonly bounding-box normalization ── */
+  private _bbox: { minX: number; maxX: number; minY: number; maxY: number } | null = null;
+
+  private getBbox() {
+    if (this._bbox) return this._bbox;
+    if (!this.instruments.length) {
+      this._bbox = { minX: 0, maxX: 900, minY: 0, maxY: 400 };
+      return this._bbox;
+    }
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const inst of this.instruments) {
+      const x = inst.centered ? 500 : (inst.x || 0);
+      const y = inst.centered ? 250 : (inst.y || 0);
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+    const padX = 80, padY = 60;
+    minX = Math.max(0, minX - padX);
+    minY = Math.max(0, minY - padY);
+    maxX = maxX + padX;
+    maxY = maxY + padY;
+    if (maxX - minX < 300) maxX = minX + 300;
+    if (maxY - minY < 250) maxY = minY + 250;
+    this._bbox = { minX, maxX, minY, maxY };
+    return this._bbox;
+  }
+
+  /** Percentage X for readonly mode */
+  getPctX(x: number): number {
+    const b = this.getBbox();
+    return ((x - b.minX) / (b.maxX - b.minX)) * 100;
+  }
+
+  /** Percentage Y for readonly mode */
+  getPctY(y: number): number {
+    const b = this.getBbox();
+    return ((y - b.minY) / (b.maxY - b.minY)) * 100;
   }
 
   ngAfterViewInit() {
@@ -100,6 +160,10 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getLabel(type: string): string {
     return this.instrumentConfig[type]?.label || type;
+  }
+
+  getGroupColor(type: string): string {
+    return this.typeToColor[type] || '#64748b';
   }
 
   getInstrumentsByGroup(group: string): string[] {
@@ -214,19 +278,23 @@ export class StagePlotComponent implements OnInit, AfterViewInit, OnDestroy {
       stageWidth = rect.width;
       stageHeight = rect.height;
     }
-    const padding = 60;
-    const cols = Math.max(1, Math.floor((stageWidth - padding * 2) / 70));
+    const padding = 70;
+    const spacingX = 80;
+    const spacingY = 65;
+    const cols = Math.max(1, Math.floor((stageWidth - padding * 2) / spacingX));
     const count = this.instruments.length;
     const col = count % cols;
     const row = Math.floor(count / cols);
-    const x = padding + col * 70 + 35;
-    const y = padding + row * 60 + 30;
+    const totalGridWidth = cols * spacingX;
+    const offsetX = (stageWidth - totalGridWidth) / 2 + spacingX / 2;
+    const x = offsetX + col * spacingX;
+    const y = padding + row * spacingY + 30;
 
     const newInstrument: Instrument = {
       id: `instrument-${this.nextInstrumentId++}`,
       type: instrumentType,
-      x: Math.min(x, stageWidth - padding),
-      y: Math.min(y, stageHeight - padding),
+      x: Math.max(padding, Math.min(x, stageWidth - padding)),
+      y: Math.max(padding, Math.min(y, stageHeight - padding)),
       label: this.getLabel(instrumentType),
       channel: '',
       rotation: 0,

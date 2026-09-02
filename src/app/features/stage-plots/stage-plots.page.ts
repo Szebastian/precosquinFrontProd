@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -153,7 +153,11 @@ import { StagePlotComponent } from '../public/inscripcion/components/stage-plot/
                           <div class="sp-detail-left">
                             @if (item.instrumentCount > 0) {
                               <h4 class="detail-title">Stage Plot</h4>
-                              <div class="sp-stage-plot">
+                              <div class="sp-stage-plot" (click)="openFullscreen(item.rider.stagePlotInstruments, item.inscription.category, item.inscription.stage_name || item.inscription.full_name); $event.stopPropagation()">
+                                <div class="sp-zoom-hint">
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                                  Ampliar
+                                </div>
                                 <app-stage-plot
                                   [initialInstruments]="item.rider.stagePlotInstruments"
                                   [category]="item.inscription.category"
@@ -254,6 +258,43 @@ import { StagePlotComponent } from '../public/inscripcion/components/stage-plot/
           </table>
         </div>
       }
+
+      <!-- Fullscreen Lightbox -->
+      @if (fullscreenPlot(); as fp) {
+        <div class="sp-lightbox" (click)="closeFullscreen()">
+          <div class="sp-lightbox-header">
+            <span class="sp-lightbox-title">{{ fp.name }}</span>
+            <button class="sp-lightbox-close" (click)="closeFullscreen()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="sp-lightbox-body" (click)="$event.stopPropagation()">
+            <div class="lb-stage">
+              <div class="lb-stage-label lb-top">FONDO DEL ESCENARIO</div>
+              <div class="lb-grid"></div>
+              <div class="lb-zone lb-zone-back">ATRÁS</div>
+              <div class="lb-zone lb-zone-center">CENTRO</div>
+              <div class="lb-zone lb-zone-front">FRENTE</div>
+              @for (inst of fp.instruments; track inst.id) {
+                <div class="lb-instrument"
+                     [style.left]="inst.centered ? '50%' : getPercentX(inst.x || 0) + '%'"
+                     [style.top]="inst.centered ? '50%' : getPercentY(inst.y || 0) + '%'"
+                     [style.transform]="'translate(-50%, -50%) rotate(' + (inst.rotation || 0) + 'deg)'"
+                     [style.--inst-color]="getGroupColor(inst.type)">
+                  <div class="lb-inst-icon">
+                    <img [src]="getIcon(inst.type)" [alt]="inst.label" draggable="false" width="36" height="36" />
+                  </div>
+                  <span class="lb-inst-label">{{ inst.label }}</span>
+                  @if (inst.channel) {
+                    <span class="lb-inst-channel">CH {{ inst.channel }}</span>
+                  }
+                </div>
+              }
+              <div class="lb-stage-label lb-bottom">PÚBLICO</div>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `,
   styleUrl: './stage-plots.page.scss'
@@ -266,6 +307,31 @@ export class StagePlotsPageComponent implements OnInit, OnDestroy {
   filterCategory = signal('');
   expandedId = signal<string | null>(null);
   photoUrls = signal<Record<string, string>>({});
+  fullscreenPlot = signal<{ instruments: any[]; category: string; name: string } | null>(null);
+  /** Bounding box for normalizing instrument positions in the lightbox */
+  fullscreenBounds = computed(() => {
+    const fp = this.fullscreenPlot();
+    if (!fp || !fp.instruments.length) return { minX: 0, maxX: 900, minY: 0, maxY: 400 };
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const inst of fp.instruments) {
+      const x = inst.centered ? 500 : (inst.x || 0);
+      const y = inst.centered ? 250 : (inst.y || 0);
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+    // Add padding around the bounding box
+    const padX = 80, padY = 60;
+    minX = Math.max(0, minX - padX);
+    minY = Math.max(0, minY - padY);
+    maxX = maxX + padX;
+    maxY = maxY + padY;
+    // Ensure minimum span
+    if (maxX - minX < 300) maxX = minX + 300;
+    if (maxY - minY < 250) maxY = minY + 250;
+    return { minX, maxX, minY, maxY };
+  });
 
   allPlots = signal<{ inscription: Inscription; rider: any; instrumentCount: number }[]>([]);
 
@@ -292,6 +358,21 @@ export class StagePlotsPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {}
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.fullscreenPlot()) {
+      this.fullscreenPlot.set(null);
+    }
+  }
+
+  openFullscreen(instruments: any[], category: string, name: string): void {
+    this.fullscreenPlot.set({ instruments, category, name });
+  }
+
+  closeFullscreen(): void {
+    this.fullscreenPlot.set(null);
+  }
 
   loadPlots(): void {
     this.loading.set(true);
@@ -357,6 +438,61 @@ export class StagePlotsPageComponent implements OnInit, OnDestroy {
       baile_suelto_pareja: 'Baile Pareja',
     };
     return map[sub] || sub?.replace(/_/g, ' ') || '';
+  }
+
+  /* ── Lightbox helpers (mirror stage-plot config) ── */
+
+  private instrumentConfig: Record<string, { icon: string; group: string }> = {
+    'guitarra-criolla': { icon: 'assets/iconoForm/guitarra.webp', group: 'Cuerdas' },
+    'guitarron':        { icon: 'assets/iconoForm/guitarron.webp', group: 'Cuerdas' },
+    'charango':         { icon: 'assets/iconoForm/charango.webp', group: 'Cuerdas' },
+    'violin':           { icon: 'assets/iconoForm/violin.webp', group: 'Cuerdas' },
+    'violonchelo':      { icon: 'assets/iconoForm/violonchelo.webp', group: 'Cuerdas' },
+    'contrabajo':       { icon: 'assets/iconoForm/contrabajo.webp', group: 'Cuerdas' },
+    'quena':            { icon: 'assets/iconoForm/quena.webp', group: 'Vientos' },
+    'siku':             { icon: 'assets/iconoForm/siku.webp', group: 'Vientos' },
+    'sicus':            { icon: 'assets/iconoForm/sicus.webp', group: 'Vientos' },
+    'flauta-traversa':  { icon: 'assets/iconoForm/flauta-traversa.webp', group: 'Vientos' },
+    'erke':             { icon: 'assets/iconoForm/erke.webp', group: 'Vientos' },
+    'piano':            { icon: 'assets/iconoForm/teclado.webp', group: 'Teclados' },
+    'acordeon':         { icon: 'assets/iconoForm/acordeon.webp', group: 'Teclados' },
+    'bandoneon':        { icon: 'assets/iconoForm/bandoneon.webp', group: 'Teclados' },
+    'bombo-leguero':    { icon: 'assets/iconoForm/bombo-leguero.webp', group: 'Percusión' },
+    'caja-chayera':     { icon: 'assets/iconoForm/caja-chayera.webp', group: 'Percusión' },
+    'percusion-menor':  { icon: 'assets/iconoForm/percusion-menor.webp', group: 'Percusión' },
+    'microfono-alt':    { icon: 'assets/iconoForm/microfono.webp', group: 'Equipo' },
+    'monitor-alt':      { icon: 'assets/iconoForm/altavoz-de-musica.webp', group: 'Equipo' },
+    'amplificador-alt': { icon: 'assets/iconoForm/amplificador.webp', group: 'Equipo' },
+    'energia-alt':      { icon: 'assets/iconoForm/energia.webp', group: 'Equipo' },
+    'musico-alt':       { icon: 'assets/iconoForm/usuario.webp', group: 'Equipo' },
+    'bailarin-alt':     { icon: 'assets/iconoForm/usuario.webp', group: 'Equipo' },
+  };
+
+  private groupColors: Record<string, string> = {
+    Cuerdas: '#3b82f6', Vientos: '#22c55e', Teclados: '#a855f7',
+    'Percusión': '#f59e0b', Equipo: '#64748b',
+  };
+
+  getIcon(type: string): string {
+    return this.instrumentConfig[type]?.icon || '';
+  }
+
+  getGroupColor(type: string): string {
+    const group = this.instrumentConfig[type]?.group || 'Equipo';
+    return this.groupColors[group] || '#64748b';
+  }
+
+  /** Convert instrument pixel coords to percentage within the normalized bounding box */
+  getPercentX(x: number): number {
+    const b = this.fullscreenBounds();
+    if (b.maxX === b.minX) return 50;
+    return ((x - b.minX) / (b.maxX - b.minX)) * 100;
+  }
+
+  getPercentY(y: number): number {
+    const b = this.fullscreenBounds();
+    if (b.maxY === b.minY) return 50;
+    return ((y - b.minY) / (b.maxY - b.minY)) * 100;
   }
 
 }
