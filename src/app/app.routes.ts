@@ -175,6 +175,11 @@ export const appRoutes: Routes = [
         data: { title: 'Partners', roles: ['organizador', 'admin'] }
       },
       {
+        path: 'stage-plots',
+        loadComponent: () => import('./features/stage-plots/stage-plots.page').then(m => m.StagePlotsPageComponent),
+        data: { title: 'Stage Plots', roles: ['organizador', 'admin', 'staff', 'sede'] }
+      },
+      {
         path: 'documentation',
         loadComponent: () => import('./features/documentation/admin-documentation.page').then(m => m.AdminDocumentationComponent),
         data: { title: 'Documentación', roles: ['organizador', 'admin', 'staff', 'jurado'] }

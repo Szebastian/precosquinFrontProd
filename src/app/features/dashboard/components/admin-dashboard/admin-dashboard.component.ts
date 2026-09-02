@@ -18,6 +18,14 @@ interface DashboardStats {
   contratos_pendientes: number;
 }
 
+interface ActivityItem {
+  id: string;
+  type: 'submitted' | 'approved' | 'rejected' | 'pending' | 'signed' | 'sorteado' | 'acreditado';
+  description: string;
+  time: string;
+  link: string;
+}
+
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -31,6 +39,7 @@ export class AdminDashboardComponent implements OnInit {
   private sorteoVisibility = inject(SorteoVisibilityService);
 
   stats = signal<DashboardStats | null>(null);
+  recentActivity = signal<ActivityItem[]>([]);
 
   /** Expose signal to template */
   get sorteoLiveVisible() { return this.sorteoVisibility.sorteoLiveVisible; }
@@ -39,16 +48,9 @@ export class AdminDashboardComponent implements OnInit {
     this.sorteoVisibility.toggle();
   }
 
-  recentActivity = [
-    { id: 1, type: 'submitted' as const, description: 'Juan Pérez envió inscripción - Música > Solista Vocal', time: 'hace 5 min', link: '/panel/inscripciones/123' },
-    { id: 2, type: 'approved' as const, description: 'María García aprobada - Danza > Pareja Tradicional', time: 'hace 30 min', link: '/panel/inscripciones/124' },
-    { id: 3, type: 'signed' as const, description: 'Los Pibes firmaron contrato', time: 'hace 1 hora', link: '/panel/contratos/125' },
-    { id: 4, type: 'pending' as const, description: 'Banda X pendiente revisión documentación', time: 'hace 2 horas', link: '/panel/inscripciones/126' },
-    { id: 5, type: 'rejected' as const, description: 'Pedro López rechazado - Documentación incompleta', time: 'hace 3 horas', link: '/panel/inscripciones/127' }
-  ];
-
   ngOnInit(): void {
     this.loadStats();
+    this.loadRecentActivity();
   }
 
   getRoleLabel(): string {
@@ -88,6 +90,13 @@ export class AdminDashboardComponent implements OnInit {
           contratos_pendientes: 5
         });
       }
+    });
+  }
+
+  private loadRecentActivity(): void {
+    this.http.get<ActivityItem[]>(`${environment.apiUrl}/dashboard/recent-activity?limit=10`).subscribe({
+      next: (items) => this.recentActivity.set(items),
+      error: () => this.recentActivity.set([])
     });
   }
 }
