@@ -93,9 +93,49 @@ function createEmpty(): SorteoData {
           <!-- STEP 0: Contact data -->
           @if (currentStep() === 0) {
             <div class="step-content">
-              <div class="step-icon">🐋</div>
+              <div class="step-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
               <h2 class="step-title">Tus datos de contacto</h2>
               <p class="step-desc">Completá tus datos para participar del sorteo de avistaje de ballenas y snorkelling.</p>
+
+              <!-- Prize info card -->
+              <div class="prize-info-card">
+                <div class="prize-info-header">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  <span class="prize-info-header-text">¿Qué se sortea?</span>
+                </div>
+                <div class="prize-info-items">
+                  <div class="prize-info-item">
+                    <div class="prize-info-icon prize-icon-whale">
+                      <img src="assets/iconoForm/ballena.webp" alt="Ballena" width="24" height="24" />
+                    </div>
+                    <div>
+                      <span class="prize-info-item-title">4 Avistajes de Ballenas</span>
+                      <span class="prize-info-item-desc">Experiencia para 1 persona</span>
+                    </div>
+                  </div>
+                  <div class="prize-info-item">
+                    <div class="prize-info-icon prize-icon-snorkel">
+                      <img src="assets/iconoForm/snork.webp" alt="Snorkelling" width="24" height="24" />
+                    </div>
+                    <div>
+                      <span class="prize-info-item-title">1 Avistaje de Snorkelling</span>
+                      <span class="prize-info-item-desc">Experiencia para 1 persona</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="prize-info-footer">
+                  <div class="prize-info-date">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span>Domingo 20 de Septiembre 2026</span>
+                  </div>
+                  <div class="prize-info-youtube">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="10 8 16 12 10 16 10 8"/><rect x="2" y="2" width="20" height="20" rx="5"/></svg>
+                    <span>Sorteo en vivo por YouTube</span>
+                  </div>
+                </div>
+              </div>
 
               <div class="form-group">
                 <label class="form-label">Nombre y Apellido *</label>
@@ -372,6 +412,44 @@ function createEmpty(): SorteoData {
               <h2 class="step-title">¡Mucha suerte!</h2>
               <p class="step-desc">Tu registro quedó guardado. No olvides vernos el día del sorteo por YouTube.</p>
 
+              <!-- Sorteo info card -->
+              <div class="prize-info-card">
+                <div class="prize-info-header">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  <span class="prize-info-header-text">Información del sorteo</span>
+                </div>
+                <div class="prize-info-items">
+                  <div class="prize-info-item">
+                    <div class="prize-info-icon prize-icon-whale">
+                      <img src="assets/iconoForm/ballena.webp" alt="Ballena" width="24" height="24" />
+                    </div>
+                    <div>
+                      <span class="prize-info-item-title">4 Avistajes de Ballenas</span>
+                      <span class="prize-info-item-desc">Experiencia para 1 persona</span>
+                    </div>
+                  </div>
+                  <div class="prize-info-item">
+                    <div class="prize-info-icon prize-icon-snorkel">
+                      <img src="assets/iconoForm/snork.webp" alt="Snorkelling" width="24" height="24" />
+                    </div>
+                    <div>
+                      <span class="prize-info-item-title">1 Avistaje de Snorkelling</span>
+                      <span class="prize-info-item-desc">Experiencia para 1 persona</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="prize-info-footer">
+                  <div class="prize-info-date">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span>Domingo 20 de Septiembre 2026</span>
+                  </div>
+                  <div class="prize-info-youtube">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="10 8 16 12 10 16 10 8"/><rect x="2" y="2" width="20" height="20" rx="5"/></svg>
+                    <span>Sorteo en vivo por YouTube</span>
+                  </div>
+                </div>
+              </div>
+
               @if (sorteoId()) {
                 <div class="ticket-display">
                   <span class="ticket-display-label">Tu número de participación</span>
@@ -534,6 +612,98 @@ function createEmpty(): SorteoData {
       color: #94a3b8;
       margin: 0 0 2rem;
       line-height: 1.6;
+    }
+
+    /* ── Prize info card ── */
+    .prize-info-card {
+      background: rgba(6, 182, 212, 0.06);
+      border: 1px solid rgba(6, 182, 212, 0.15);
+      border-radius: 12px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.5rem;
+    }
+    .prize-info-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      color: #22d3ee;
+    }
+    .prize-info-header-text {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .prize-info-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+    .prize-info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .prize-info-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .prize-icon-whale {
+      background: rgba(6, 182, 212, 0.12);
+    }
+    .prize-icon-snorkel {
+      background: rgba(59, 130, 246, 0.12);
+    }
+    .prize-info-icon img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+    .prize-info-item-title {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      line-height: 1.3;
+    }
+    .prize-info-item-desc {
+      display: block;
+      font-size: 0.75rem;
+      color: #64748b;
+      line-height: 1.3;
+    }
+    .prize-info-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid rgba(6, 182, 212, 0.1);
+    }
+    .prize-info-date,
+    .prize-info-youtube {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+    }
+    .prize-info-date {
+      background: rgba(34, 197, 94, 0.1);
+      color: #4ade80;
+    }
+    .prize-info-youtube {
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
     }
 
     .form-group {

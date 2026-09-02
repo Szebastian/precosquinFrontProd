@@ -19,10 +19,10 @@ import { Router } from '@angular/router';
             SORTEO EXCLUSIVO
           </div>
           <h2 class="sorteo-title">Avistaje de Ballenas y Snorkelling</h2>
-          <p class="sorteo-desc">Participá por un viaje de avistaje de ballenas y snorkelling para <strong>4 personas</strong> en la Peninsula Valdés.</p>
+          <p class="sorteo-desc">Participá por <strong>4 avistajes de ballenas</strong> y <strong>1 avistaje de snorkelling</strong> para el <strong>20 de septiembre</strong> en Puerto Pirámides.</p>
           <div class="sorteo-prize-mobile">
             <span class="sorteo-prize-label">Premio</span>
-            <span class="sorteo-prize-value">4 Personas</span>
+            <span class="sorteo-prize-value">5 Experiencias</span>
           </div>
           <div class="sorteo-cta">
             Participar Ahora
@@ -32,7 +32,7 @@ import { Router } from '@angular/router';
         <div class="sorteo-right">
           <div class="sorteo-prize">
             <span class="sorteo-prize-label">Premio</span>
-            <span class="sorteo-prize-value">4 Personas</span>
+            <span class="sorteo-prize-value">5 Experiencias</span>
           </div>
         </div>
       </div>
