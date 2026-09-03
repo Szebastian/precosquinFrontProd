@@ -42,6 +42,16 @@
 .header-right { display: flex; align-items: center; gap: 0.75rem; }
 .last-update { font-size: 0.75rem; color: var(--gray-400); }
 
+/* ========== Inscription Public Toggle ========== */
+.inscription-toggle-wrap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.2); border-radius: 8px; }
+.inscription-toggle-label { font-size: 0.75rem; font-weight: 600; color: #0284c7; white-space: nowrap; }
+.perm-toggle { position: relative; display: inline-flex; cursor: pointer; }
+.perm-toggle input { display: none; }
+.perm-toggle-track { width: 36px; height: 20px; border-radius: 10px; background: #d1d5db; transition: background 0.2s; display: flex; align-items: center; padding: 2px; }
+.perm-toggle-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.perm-toggle.perm-on .perm-toggle-track { background: #22c55e; }
+.perm-toggle.perm-on .perm-toggle-thumb { transform: translateX(16px); }
+
 /* ========== Export Header Button ========== */
 .export-header-btn {
   display: inline-flex;

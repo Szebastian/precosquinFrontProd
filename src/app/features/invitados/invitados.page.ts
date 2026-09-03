@@ -32,12 +32,12 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
         </div>
         <button class="btn-export" (click)="exportCSV()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Exportar CSV
+          Exportar Excel
         </button>
       </div>
 
       <!-- Total hero card -->
-      @if (!loading()) {
+      @if (allDataLoaded()) {
         <div class="stat-hero">
           <div class="stat-hero-icon">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -375,6 +375,7 @@ export class InvitadosPageComponent implements OnInit {
   loadingStands = signal(false);
 
   loading = computed(() => this.loadingInsc() || this.loadingPena() || this.loadingStands());
+  allDataLoaded = computed(() => !this.loadingInsc() && !this.loadingPena() && !this.loadingStands());
 
   precosequinCount = computed(() => {
     let n = this.inscriptos().length;
@@ -387,24 +388,34 @@ export class InvitadosPageComponent implements OnInit {
     return n;
   });
   standsCount = computed(() => this.stands().length);
-  totalCount = computed(() => this.precosequinCount() + this.penaCount() + this.standsCount());
+  totalCount = computed(() => this.allData().length);
 
   allData = computed(() => {
     const rows: GuestRow[] = [];
     for (const r of this.inscriptos()) {
-      rows.push({ tipo: 'Precosequin', nombre: r.full_name, dni: r.dni, fecha: r.created_at, esPrincipal: true, source: 'precosequin', sourceId: r.id });
+      if (r.full_name && r.dni) {
+        rows.push({ tipo: 'Precosequin', nombre: r.full_name, dni: r.dni, fecha: r.created_at, esPrincipal: true, source: 'precosequin', sourceId: r.id });
+      }
       for (const a of r.accompanying_persons || []) {
-        rows.push({ tipo: 'Precosequin', nombre: a.fullName, dni: a.dni, fecha: r.created_at, esPrincipal: false, source: 'precosequin', sourceId: r.id });
+        if (a.fullName && a.dni) {
+          rows.push({ tipo: 'Precosequin', nombre: a.fullName, dni: a.dni, fecha: r.created_at, esPrincipal: false, source: 'precosequin', sourceId: r.id });
+        }
       }
     }
     for (const r of this.pena()) {
-      rows.push({ tipo: 'Peña', nombre: r.nombre_grupo, dni: r.dni_responsable, fecha: r.created_at, esPrincipal: true, source: 'pena', sourceId: r.id });
+      if (r.nombre_grupo && r.dni_responsable) {
+        rows.push({ tipo: 'Peña', nombre: r.nombre_grupo, dni: r.dni_responsable, fecha: r.created_at, esPrincipal: true, source: 'pena', sourceId: r.id });
+      }
       for (const a of r.acompaniantes || []) {
-        rows.push({ tipo: 'Peña', nombre: a.nombre, dni: a.dni, fecha: r.created_at, esPrincipal: false, source: 'pena', sourceId: r.id });
+        if (a.nombre && a.dni) {
+          rows.push({ tipo: 'Peña', nombre: a.nombre, dni: a.dni, fecha: r.created_at, esPrincipal: false, source: 'pena', sourceId: r.id });
+        }
       }
     }
     for (const r of this.stands()) {
-      rows.push({ tipo: 'Stand', nombre: r.full_name, dni: r.dni, fecha: r.created_at, esPrincipal: true, source: 'stand', sourceId: r.id });
+      if (r.full_name && r.dni) {
+        rows.push({ tipo: 'Stand', nombre: r.full_name, dni: r.dni, fecha: r.created_at, esPrincipal: true, source: 'stand', sourceId: r.id });
+      }
     }
     return rows;
   });
@@ -429,7 +440,7 @@ export class InvitadosPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadingInsc.set(true);
-    this.http.get<any>(`${environment.apiUrl}/inscriptions/?page_size=100`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/inscriptions/?page_size=500`).subscribe({
       next: (res) => {
         this.inscriptos.set((res.data || []).map((r: any) => ({
           id: r.id, full_name: r.full_name, dni: r.dni || '', created_at: r.created_at,
@@ -441,7 +452,7 @@ export class InvitadosPageComponent implements OnInit {
     });
 
     this.loadingPena.set(true);
-    this.http.get<any>(`${environment.apiUrl}/pena-acreditaciones/?page=1&page_size=100`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/pena-acreditaciones/?page=1&page_size=500`).subscribe({
       next: (res) => {
         this.pena.set((res.data || []).map((r: any) => ({
           id: r.id, nombre_grupo: r.nombre_grupo, dni_responsable: r.dni_responsable, created_at: r.created_at,
@@ -458,7 +469,7 @@ export class InvitadosPageComponent implements OnInit {
     });
 
     this.loadingStands.set(true);
-    this.http.get<any>(`${environment.apiUrl}/stands/?page_size=100`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/stands/?page_size=500`).subscribe({
       next: (res) => {
         this.stands.set((res.data || []).map((r: any) => ({
           id: r.id, full_name: r.person?.full_name || r.info?.stand_name || '', dni: r.person?.dni || '', created_at: r.created_at
@@ -570,14 +581,143 @@ export class InvitadosPageComponent implements OnInit {
     }
   }
 
-  exportCSV(): void {
-    const headers = ['Nombre','DNI','Fecha'];
-    const lines = [headers.join(',')];
-    for (const r of this.allData()) {
-      lines.push([r.nombre, r.dni, r.fecha].map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(','));
+  async exportCSV(): Promise<void> {
+    const ExcelJS = await import('exceljs');
+    const wb = new ExcelJS.Workbook();
+    wb.creator = 'Pre-Cosquín Puerto Pirámides';
+    wb.created = new Date();
+
+    const ws = wb.addWorksheet('Invitados', {
+      views: [{ state: 'frozen', ySplit: 4 }]  // Freeze header rows
+    });
+
+    /* ── Load logo: fetch webp → canvas → PNG base64 ── */
+    let logoId: number | undefined;
+    try {
+      const resp = await fetch('assets/img/logoballena.webp');
+      const blob = await resp.blob();
+      const bmp = await createImageBitmap(blob);
+      const canvas = document.createElement('canvas');
+      canvas.width = 200;
+      canvas.height = 200;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(bmp, 0, 0, 200, 200);
+      const pngBase64 = canvas.toDataURL('image/png').split(',')[1];
+      logoId = wb.addImage({ base64: pngBase64, extension: 'png' });
+    } catch (e) {
+      console.warn('Logo load failed, exporting without image', e);
     }
-    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+
+    /* ── Data ── */
+    const rows = (this.searchDni() ? this.filteredData() : this.allData())
+      .filter(r => r.nombre && r.dni)
+      .map(r => [r.nombre, r.dni]);
+
+    /* ── Column widths ── */
+    ws.columns = [
+      { key: 'nombre', width: 42 },
+      { key: 'dni', width: 18 }
+    ];
+
+    /* ── Row 1: Logo centered ── */
+    ws.getRow(1).height = 65;
+    if (logoId) {
+      ws.addImage(logoId, {
+        tl: { col: 0.35, row: 0.15 },
+        ext: { width: 90, height: 90 }
+      });
+    }
+
+    /* ── Row 2: Title ── */
+    ws.getRow(2).height = 36;
+    ws.mergeCells('A2:B2');
+    const titleCell = ws.getCell('A2');
+    titleCell.value = 'PRE-COSQUÍN PUERTO PIRÁMIDES';
+    titleCell.font = { bold: true, size: 22, color: { argb: 'FFFFFFFF' }, name: 'Calibri' };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0284C7' } };
+
+    /* ── Row 3: Subtitle ── */
+    ws.getRow(3).height = 28;
+    ws.mergeCells('A3:B3');
+    const subCell = ws.getCell('A3');
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' });
+    subCell.value = `${rows.length} Invitados  ·  Exportado el ${dateStr}`;
+    subCell.font = { italic: true, size: 11, color: { argb: 'FF94A3B8' }, name: 'Calibri' };
+    subCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0F172A' } };
+
+    /* ── Row 4: Column headers ── */
+    ws.getRow(4).height = 30;
+    const headerRow = ws.getRow(4);
+    headerRow.values = ['  NOMBRE Y APELLIDO', '  DNI'];
+    headerRow.eachCell(cell => {
+      cell.font = { bold: true, size: 11, color: { argb: 'FFFFFFFF' }, name: 'Calibri' };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+      cell.alignment = { horizontal: 'left', vertical: 'middle' };
+      cell.border = {
+        bottom: { style: 'medium' as const, color: { argb: 'FF0EA5E9' } }
+      };
+    });
+
+    /* ── Data rows (starting at row 5) ── */
+    const colors = {
+      even: 'FFF8FAFC',   // light gray
+      odd:  'FFFFFFFF',   // white
+      hover: 'FFEFF6FF'   // very light blue
+    };
+
+    rows.forEach((row, i) => {
+      const r = ws.getRow(i + 5);
+      r.values = [`  ${row[0]}`, `  ${row[1]}`];
+      const bg = i % 2 === 0 ? colors.even : colors.odd;
+      r.height = 22;
+      r.eachCell(cell => {
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bg } };
+        cell.font = { size: 10, color: { argb: 'FF334155' }, name: 'Calibri' };
+        cell.alignment = { vertical: 'middle' };
+        cell.border = {
+          bottom: { style: 'thin' as const, color: { argb: 'FFE2E8F0' } }
+        };
+      });
+      // DNI column: center-aligned
+      r.getCell(2).alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    /* ── Footer row ── */
+    const footerRowNum = rows.length + 5;
+    ws.getRow(footerRowNum).height = 28;
+    ws.mergeCells(`A${footerRowNum}:B${footerRowNum}`);
+    const footerCell = ws.getCell(`A${footerRowNum}`);
+    footerCell.value = 'Pre-Cosquín Puerto Pirámides  ·  Puerto Pirámides, Chubut  ·  precosquin.com';
+    footerCell.font = { italic: true, size: 9, color: { argb: 'FF94A3B8' }, name: 'Calibri' };
+    footerCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    footerCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
+    footerCell.border = {
+      top: { style: 'thin' as const, color: { argb: 'FFE2E8F0' } }
+    };
+
+    /* ── Print setup ── */
+    ws.pageSetup = {
+      orientation: 'portrait',
+      fitToPage: true,
+      fitToWidth: 1,
+      fitToHeight: 0,
+      paperSize: 9 // A4
+    };
+    ws.headerFooter = {
+      oddFooter: '&C &8 Pre-Cosquín Puerto Pirámides  ·  Página &P de &N'
+    };
+
+    /* ── Download ── */
+    const buf = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'invitados-todos.csv'; a.click(); URL.revokeObjectURL(url);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `invitados-precosquin-${now.getFullYear()}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 }

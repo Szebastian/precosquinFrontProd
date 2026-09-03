@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { environment } from '../../../../environments/environment';
+import { InscriptionVisibilityService } from '../../../core/services/inscription-visibility.service';
 import { InscripcionConstanciaComponent } from './components/constancia.component';
 import { InscripcionStep1Component } from './components/step-1.component';
 import { InscripcionStep2Component } from './components/step-2.component';
@@ -237,7 +238,41 @@ InscripcionStepAccessosComponent, StagePlotComponent, OtpVerifyComponent, Circul
   ],
   template: `
     <div class="public-page form-layout" [class.form-layout--typeform]="typeformMode()">
-       @if (!otpVerified()) {
+      
+      @if (inscriptionsClosed()) {
+        <!-- CLOSED SCREEN -->
+        <div class="form-main-content">
+          <div class="w-full max-w-4xl mx-auto px-4 py-8">
+            <div class="form-card animate-scale-in">
+              <div class="form-header">
+                <a routerLink="/" class="back-home-link">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  Inicio
+                </a>
+                <span class="question-counter">INSCRIPCIÓN</span>
+                <h1>Festival Precosquín 2027</h1>
+              </div>
+              <div class="closed-screen" style="text-align:center; padding:48px 24px;">
+                <div style="width:80px; height:80px; margin:0 auto 24px; background:rgba(239,68,68,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </div>
+                <h2 style="font-size:24px; font-weight:800; color:#f8fafc; margin:0 0 12px;">Inscripciones Cerradas</h2>
+                <p style="font-size:16px; color:#94a3b8; max-width:400px; margin:0 auto 32px; line-height:1.6;">
+                  El período de inscripciones del Festival Pre-Cosquín 2027 ha finalizado. 
+                  Si ya te inscribiste, podés consultar el estado de tu inscripción desde tu correo electrónico.
+                </p>
+                <a routerLink="/" style="display:inline-flex; align-items:center; gap:8px; padding:12px 24px; background:#0284c7; color:#fff; border-radius:10px; text-decoration:none; font-weight:600; font-size:14px; transition:background 0.2s;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  Volver al inicio
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      } @else if (!otpVerified()) {
         <!-- STEP 0: CHOICE + EMAIL CHECK + OTP -->
         <div class="form-main-content">
           <div class="w-full max-w-4xl mx-auto px-4 py-8">
@@ -999,6 +1034,10 @@ export class InscripcionPageComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private router = inject(Router);
   private toast = inject(ToastService);
+  private inscriptionVisibility = inject(InscriptionVisibilityService);
+
+  /** `true` when inscriptions are closed — show the closed screen */
+  inscriptionsClosed = computed(() => !this.inscriptionVisibility.isOpen());
   
   @ViewChild(InscripcionStep1Component) step1Component?: InscripcionStep1Component;
   @ViewChild('nextSection') nextSectionRef?: ElementRef<HTMLElement>;

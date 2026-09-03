@@ -14,6 +14,14 @@
       </div>
     </div>
     <div class="header-right">
+      <!-- Toggle inscripciones públicas -->
+      <div class="inscription-toggle-wrap">
+        <span class="inscription-toggle-label">{{ inscriptionVisibility.isOpen() ? 'Formulario público activo' : 'Formulario público desactivado' }}</span>
+        <label class="perm-toggle" [class.perm-on]="inscriptionVisibility.isOpen()">
+          <input type="checkbox" [checked]="inscriptionVisibility.isOpen()" (change)="toggleInscriptionVisibility()" />
+          <span class="perm-toggle-track"><span class="perm-toggle-thumb"></span></span>
+        </label>
+      </div>
       <button class="export-header-btn" (click)="openExportModal()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>

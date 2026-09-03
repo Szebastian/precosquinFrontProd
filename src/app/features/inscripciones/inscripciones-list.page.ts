@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { InscriptionsService, Inscription } from '../../core/services/inscriptions.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { ExportService } from '../../core/services/export.service';
+import { InscriptionVisibilityService } from '../../core/services/inscription-visibility.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -19,6 +20,7 @@ export class InscripcionesListPageComponent implements OnInit, OnDestroy {
   auth = inject(AuthService);
   private router = inject(Router);
   private exportService = inject(ExportService);
+  inscriptionVisibility = inject(InscriptionVisibilityService);
   private keyHandler = (e: KeyboardEvent) => { if (e.key === 'Escape') this.closeLightbox(); };
 
   allInscriptions = signal<Inscription[]>([]);
@@ -354,6 +356,10 @@ export class InscripcionesListPageComponent implements OnInit, OnDestroy {
   openProfile(id: string, event: Event): void {
     event.stopPropagation();
     this.router.navigate(['/panel/inscripciones', id]);
+  }
+
+  toggleInscriptionVisibility(): void {
+    this.inscriptionVisibility.toggle();
   }
 
   openExportModal(): void {

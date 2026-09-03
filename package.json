@@ -25,11 +25,13 @@
     "animejs": "^4.5.0",
     "canvas-confetti": "^1.9.4",
     "chart.js": "^4.5.1",
+    "exceljs": "^4.4.0",
     "html5-qrcode": "^2.3.8",
     "jspdf": "^4.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.6.0",
     "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { InscriptionVisibilityService } from '../../core/services/inscription-visibility.service';
 
 interface User {
   id: string;
@@ -779,6 +780,7 @@ interface SystemConfig {
 export class AdminPageComponent implements OnInit {
   private http = inject(HttpClient);
   private sanitizer = inject(DomSanitizer);
+  private inscriptionVisibility = inject(InscriptionVisibilityService);
 
   // Main tab
   mainTab = signal<'usuarios' | 'permisos' | 'config'>('usuarios');
@@ -1042,7 +1044,15 @@ export class AdminPageComponent implements OnInit {
   loadConfig(): void {
     if (!this.configEndpointAvailable) return;
     this.http.get<SystemConfig>(`${environment.apiUrl}/admin/event-config`).subscribe({
-      next: (cfg) => { this.config = { ...this.config, ...cfg }; },
+      next: (cfg) => {
+        this.config = { ...this.config, ...cfg };
+        // Sync inscription visibility service with config
+        if (this.config.public_registration === 'true') {
+          this.inscriptionVisibility.show();
+        } else {
+          this.inscriptionVisibility.hide();
+        }
+      },
       error: (err) => {
         if (err.status === 404) {
           this.configEndpointAvailable = false;
@@ -1052,6 +1062,13 @@ export class AdminPageComponent implements OnInit {
   }
 
   saveConfig(): void {
+    // Sync inscription visibility immediately
+    if (this.config.public_registration === 'true') {
+      this.inscriptionVisibility.show();
+    } else {
+      this.inscriptionVisibility.hide();
+    }
+
     if (!this.configEndpointAvailable) {
       this.configSaved.set(true);
       setTimeout(() => this.configSaved.set(false), 3000);
