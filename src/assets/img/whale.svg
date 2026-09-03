@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <!-- Body gradient - dark charcoal to dark blue-grey -->
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2d3436"/>
+      <stop offset="40%" stop-color="#353b3e"/>
+      <stop offset="100%" stop-color="#1e272e"/>
+    </linearGradient>
+    <!-- Belly lighter tone -->
+    <linearGradient id="bellyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#636e72"/>
+      <stop offset="100%" stop-color="#535c5f"/>
+    </linearGradient>
+    <!-- Flipper -->
+    <linearGradient id="flipGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2d3436"/>
+      <stop offset="100%" stop-color="#1e272e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- BODY - Rotund, no dorsal fin -->
+  <path fill="url(#bodyGrad)" d="
+    M 140,270
+    C 140,230 165,195 210,178
+    C 250,162 310,155 370,155
+    C 440,155 510,162 570,180
+    C 620,195 655,220 675,255
+    C 695,285 710,320 715,355
+    C 718,380 710,405 690,420
+    C 665,440 625,452 580,458
+    L 240,460
+    C 190,458 155,445 140,425
+    C 128,410 128,380 140,350
+    C 140,320 140,295 140,270
+    Z"/>
+
+  <!-- Belly - lighter grey area -->
+  <path fill="url(#bellyGrad)" d="
+    M 175,355
+    C 180,330 210,305 255,290
+    C 300,278 355,272 410,275
+    C 465,278 520,290 565,310
+    C 605,328 635,355 650,385
+    C 658,400 660,418 655,432
+    C 648,445 635,452 618,456
+    L 260,458
+    C 220,458 190,448 178,432
+    C 168,418 168,390 175,355
+    Z"/>
+
+  <!-- Mouth line - long, curved upward (characteristic arched mouth of right whales) -->
+  <path fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" d="
+    M 148,335
+    C 195,310 260,295 340,298
+    C 420,302 490,320 545,350"/>
+
+  <!-- CALLOSITIES - White rough patches on head (KEY FEATURE) -->
+  <!-- Bonnet - large patch on rostrum -->
+  <path fill="#f0ece4" d="
+    M 145,275
+    C 148,262 160,252 175,250
+    C 190,248 200,255 202,268
+    C 204,278 198,288 185,292
+    C 170,296 142,290 145,275
+    Z"/>
+  <!-- Texture bumps on bonnet -->
+  <circle fill="#e0dbd0" cx="162" cy="268" r="4" opacity="0.7"/>
+  <circle fill="#e0dbd0" cx="175" cy="262" r="3.5" opacity="0.6"/>
+  <circle fill="#e0dbd0" cx="185" cy="275" r="3" opacity="0.65"/>
+
+  <!-- Callosity above eye -->
+  <path fill="#f0ece4" d="
+    M 195,238
+    C 200,232 212,230 218,236
+    C 224,242 220,252 212,254
+    C 204,256 192,248 195,238
+    Z"/>
+
+  <!-- Callosity behind blowhole -->
+  <ellipse fill="#f0ece4" cx="255" cy="198" rx="16" ry="10"/>
+  <circle fill="#e0dbd0" cx="250" cy="196" r="3" opacity="0.6"/>
+
+  <!-- Callosity on chin -->
+  <path fill="#f0ece4" d="
+    M 155,360
+    C 160,352 172,348 182,353
+    C 190,358 188,370 180,375
+    C 170,380 150,372 155,360
+    Z"/>
+
+  <!-- Eye - small, friendly -->
+  <circle fill="#0d1117" cx="210" cy="258" r="8"/>
+  <circle fill="#1e272e" cx="210" cy="258" r="5.5"/>
+  <circle fill="#ffffff" cx="207" cy="255" r="2.5"/>
+  <circle fill="#ffffff" cx="213" cy="260" r="1"/>
+
+  <!-- Blowholes -->
+  <ellipse fill="#0d1117" cx="245" cy="188" rx="6" ry="4"/>
+  <ellipse fill="#0d1117" cx="260" cy="187" rx="6" ry="4"/>
+
+  <!-- PECTORAL FLIPPER - broad, paddle-shaped -->
+  <path fill="url(#flipGrad)" d="
+    M 400,310
+    C 420,322 440,350 448,385
+    C 452,405 445,425 430,438
+    C 418,448 402,445 392,432
+    C 382,420 382,400 388,378
+    C 394,355 396,335 400,310
+    Z"/>
+  <!-- Flipper highlight -->
+  <path fill="#4a5459" d="
+    M 404,318
+    C 420,328 435,352 442,382
+    C 445,398 440,415 430,425
+    C 422,432 412,430 406,420
+    C 398,408 398,390 400,372
+    C 402,352 402,335 404,318
+    Z" opacity="0.5"/>
+
+  <!-- FLUKES - wide, flat, NO central notch -->
+  <path fill="#2d3436" d="
+    M 690,340
+    C 710,328 740,305 770,275
+    C 778,267 782,258 778,252
+    C 774,246 765,250 755,258
+    C 735,278 715,305 700,328
+    L 700,330
+    C 715,350 735,375 755,398
+    C 765,408 774,414 778,410
+    C 782,406 778,396 770,388
+    C 745,365 715,348 695,338
+    Z"/>
+  <!-- Flukes highlight -->
+  <path fill="#4a5459" d="
+    M 695,338
+    C 712,328 738,308 765,280
+    C 770,275 772,270 770,268
+    C 768,266 764,268 758,274
+    C 740,292 720,315 705,335
+    L 705,337
+    C 718,355 738,378 758,400
+    C 764,406 768,410 770,408
+    C 772,406 770,400 765,394
+    C 748,375 725,358 702,342
+    Z" opacity="0.5"/>
+
+  <!-- Skin texture - subtle ventral pleats -->
+  <g stroke="#535c5f" stroke-width="1.2" fill="none" opacity="0.4">
+    <path d="M 210,370 C 280,360 350,355 420,360 C 490,365 540,378 580,395"/>
+    <path d="M 220,390 C 290,380 360,375 430,380 C 500,385 550,398 590,415"/>
+    <path d="M 230,410 C 300,400 370,395 440,400 C 510,405 560,418 600,435"/>
+  </g>
+
+  <!-- Barnacles -->
+  <g fill="#d4cec4" opacity="0.5">
+    <circle cx="310" cy="260" r="3"/>
+    <circle cx="370" cy="252" r="2.5"/>
+    <circle cx="440" cy="258" r="2"/>
+    <circle cx="500" cy="270" r="2.5"/>
+    <circle cx="560" cy="288" r="2"/>
+  </g>
+</svg>

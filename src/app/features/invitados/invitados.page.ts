@@ -30,13 +30,71 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
           <h1 class="inv-title">Invitados</h1>
           <p class="inv-sub">Listado completo de todos los invitados incluyendo acompañantes</p>
         </div>
-        <div class="inv-stats">
-          <span class="stat">Precosequin: <strong>{{ precosequinCount() }}</strong></span>
-          <span class="stat">Peñas: <strong>{{ penaCount() }}</strong></span>
-          <span class="stat">Stands: <strong>{{ standsCount() }}</strong></span>
-        </div>
-        <button class="btn-export" (click)="exportCSV()">Exportar CSV</button>
+        <button class="btn-export" (click)="exportCSV()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar CSV
+        </button>
       </div>
+
+      <!-- Total hero card -->
+      @if (!loading()) {
+        <div class="stat-hero">
+          <div class="stat-hero-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="stat-hero-data">
+            <span class="stat-hero-num">{{ totalCount() }}</span>
+            <span class="stat-hero-label">Invitados en Total</span>
+          </div>
+        </div>
+
+        <!-- Category cards -->
+        <div class="stat-cards">
+          <div class="stat-card stat-card--precosequin">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </div>
+            <div class="stat-card-data">
+              <span class="stat-card-num">{{ precosequinCount() }}</span>
+              <span class="stat-card-label">Precosquín</span>
+            </div>
+          </div>
+          <div class="stat-card stat-card--pena">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="stat-card-data">
+              <span class="stat-card-num">{{ penaCount() }}</span>
+              <span class="stat-card-label">Peñas</span>
+            </div>
+          </div>
+          <div class="stat-card stat-card--stands">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            </div>
+            <div class="stat-card-data">
+              <span class="stat-card-num">{{ standsCount() }}</span>
+              <span class="stat-card-label">Stands</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Search bar -->
+      @if (!loading() && allData().length > 0) {
+        <div class="search-bar">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input"
+                 placeholder="Buscar por DNI..."
+                 [ngModel]="searchDni()"
+                 (ngModelChange)="searchDni.set($event)">
+          @if (searchDni()) {
+            <button class="search-clear" (click)="searchDni.set('')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          }
+        </div>
+      }
 
       @if (loading()) {
         <div class="loading"><div class="spinner"></div>Cargando todos los invitados...</div>
@@ -44,13 +102,26 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
       @else if (allData().length === 0) {
         <div class="empty">Sin invitados registrados</div>
       }
+      @else if (searchDni() && filteredData().length === 0) {
+        <div class="empty">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          <p>No se encontraron resultados para "<strong>{{ searchDni() }}</strong>"</p>
+          <button class="search-clear-btn" (click)="searchDni.set('')">Limpiar búsqueda</button>
+        </div>
+      }
       @else {
-        <div class="table-info">{{ allData().length }} invitados en total</div>
+        <div class="table-info">
+          @if (searchDni()) {
+            {{ filteredData().length }} resultado{{ filteredData().length !== 1 ? 's' : '' }} para "{{ searchDni() }}"
+          } @else {
+            {{ allData().length }} invitados en total
+          }
+        </div>
         <div class="table-wrap">
           <table class="inv-table">
             <thead><tr><th>Nombre</th><th>DNI</th><th>Fecha</th><th>Acciones</th></tr></thead>
             <tbody>
-              @for (r of allData(); track $index) {
+              @for (r of filteredData(); track $index) {
                 <tr [class.row-acomp]="!r.esPrincipal">
                   <td><strong>{{ r.nombre }}</strong></td>
                   <td style="font-family:monospace;">{{ r.dni || '—' }}</td>
@@ -186,9 +257,42 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
     .inv-header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
     .inv-title { font-family:var(--font-display); font-size:24px; font-weight:800; color:#0f172a; margin:0 0 4px; }
     .inv-sub { font-size:13px; color:#64748b; margin:0; }
-    .inv-stats { display:flex; gap:12px; flex-wrap:wrap; }
-    .stat { font-size:13px; color:#475569; background:#f1f5f9; padding:8px 12px; border-radius:999px; }
-    .btn-export { padding:10px 16px; border-radius:10px; border:none; background:#1e293b; color:#fff; font-size:13px; font-weight:600; cursor:pointer; }
+    .btn-export { display:inline-flex; align-items:center; gap:6px; padding:10px 16px; border-radius:10px; border:none; background:#1e293b; color:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; }
+    .btn-export:hover { background:#334155; }
+    .stat-hero { display:flex; align-items:center; gap:24px; padding:32px 40px; border-radius:16px; background:linear-gradient(135deg, #0ea5e9, #0284c7); color:#fff; margin-bottom:12px; box-shadow:0 8px 32px rgba(14,165,233,0.3); }
+    .stat-hero-icon { width:80px; height:80px; border-radius:20px; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; backdrop-filter:blur(4px); }
+    .stat-hero-num { display:block; font-size:56px; font-weight:900; line-height:1; letter-spacing:-0.02em; }
+    .stat-hero-label { display:block; font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin-top:6px; opacity:0.85; }
+    .stat-cards { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:20px; }
+    .stat-card { display:flex; align-items:center; gap:16px; padding:20px 24px; border-radius:14px; border:1px solid transparent; transition:transform 0.2s, box-shadow 0.2s; }
+    .stat-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+    .stat-card-icon { width:56px; height:56px; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .stat-card-num { display:block; font-size:32px; font-weight:800; line-height:1; }
+    .stat-card-label { display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-top:4px; }
+    .stat-card--total { background:#f0f9ff; border-color:#bae6fd; }
+    .stat-card--total .stat-card-icon { background:#0ea5e9; color:#fff; }
+    .stat-card--total .stat-card-num { color:#0c4a6e; }
+    .stat-card--total .stat-card-label { color:#0284c7; }
+    .stat-card--precosequin { background:#f0fdf4; border-color:#bbf7d0; }
+    .stat-card--precosequin .stat-card-icon { background:#22c55e; color:#fff; }
+    .stat-card--precosequin .stat-card-num { color:#14532d; }
+    .stat-card--precosequin .stat-card-label { color:#16a34a; }
+    .stat-card--pena { background:#faf5ff; border-color:#e9d5ff; }
+    .stat-card--pena .stat-card-icon { background:#a855f7; color:#fff; }
+    .stat-card--pena .stat-card-num { color:#581c87; }
+    .stat-card--pena .stat-card-label { color:#9333ea; }
+    .stat-card--stands { background:#fffbeb; border-color:#fde68a; }
+    .stat-card--stands .stat-card-icon { background:#f59e0b; color:#fff; }
+    .stat-card--stands .stat-card-num { color:#78350f; }
+    .stat-card--stands .stat-card-label { color:#d97706; }
+    .search-bar { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0 12px; margin-bottom:16px; }
+    .search-icon { flex-shrink:0; }
+    .search-input { flex:1; border:none; outline:none; font-size:14px; padding:12px 0; background:transparent; color:#0f172a; }
+    .search-input::placeholder { color:#94a3b8; }
+    .search-clear { display:flex; align-items:center; justify-content:center; width:24px; height:24px; border:none; background:#f1f5f9; border-radius:50%; cursor:pointer; color:#64748b; flex-shrink:0; }
+    .search-clear:hover { background:#e2e8f0; color:#0f172a; }
+    .search-clear-btn { margin-top:12px; padding:8px 16px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; color:#475569; font-size:13px; font-weight:600; cursor:pointer; }
+    .search-clear-btn:hover { background:#f1f5f9; }
     .table-info { font-size:13px; color:#64748b; margin-bottom:12px; font-weight:600; }
     .table-wrap { overflow:auto; background:#fff; border:1px solid #e2e8f0; border-radius:14px; }
     .inv-table { width:100%; border-collapse:collapse; font-size:13px; }
@@ -201,6 +305,7 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
     .badge-violet { background:#ede9fe; color:#6d28d9; }
     .badge-yellow { background:#fef9c7; color:#854d0e; }
     .loading, .empty { text-align:center; padding:48px; color:#64748b; }
+    .empty p { margin:8px 0 0; font-size:14px; }
     .spinner { width:28px; height:28px; border:3px solid #e2e8f0; border-top-color:#3b82f6; border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto 12px; }
     @keyframes spin { to { transform:rotate(360deg); } }
     .actions { display:flex; gap:6px; }
@@ -209,7 +314,8 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
     .btn-edit:hover { background:#eff6ff; border-color:#3b82f6; }
     .btn-delete { color:#ef4444; }
     .btn-delete:hover { background:#fef2f2; border-color:#ef4444; }
-    @media (max-width:768px) { .inv-table { min-width:500px; } }
+    @media (max-width:768px) { .inv-table { min-width:500px; } .stat-hero { padding:20px 24px; gap:16px; } .stat-hero-num { font-size:40px; } .stat-hero-icon { width:60px; height:60px; } .stat-cards { grid-template-columns:repeat(3, 1fr); gap:8px; } .stat-card { padding:14px 16px; } .stat-card-num { font-size:24px; } .stat-card-icon { width:44px; height:44px; } }
+    @media (max-width:480px) { .stat-hero { flex-direction:column; text-align:center; padding:24px; } .stat-cards { grid-template-columns:1fr; } }
 
     /* Modal */
     .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; }
@@ -270,9 +376,18 @@ export class InvitadosPageComponent implements OnInit {
 
   loading = computed(() => this.loadingInsc() || this.loadingPena() || this.loadingStands());
 
-  precosequinCount = computed(() => this.inscriptos().length);
-  penaCount = computed(() => this.pena().length);
+  precosequinCount = computed(() => {
+    let n = this.inscriptos().length;
+    for (const r of this.inscriptos()) n += (r.accompanying_persons || []).length;
+    return n;
+  });
+  penaCount = computed(() => {
+    let n = this.pena().length;
+    for (const r of this.pena()) n += (r.acompaniantes || []).length;
+    return n;
+  });
   standsCount = computed(() => this.stands().length);
+  totalCount = computed(() => this.precosequinCount() + this.penaCount() + this.standsCount());
 
   allData = computed(() => {
     const rows: GuestRow[] = [];
@@ -292,6 +407,17 @@ export class InvitadosPageComponent implements OnInit {
       rows.push({ tipo: 'Stand', nombre: r.full_name, dni: r.dni, fecha: r.created_at, esPrincipal: true, source: 'stand', sourceId: r.id });
     }
     return rows;
+  });
+
+  /* ── Search by DNI ── */
+  readonly searchDni = signal('');
+  readonly filteredData = computed(() => {
+    const q = this.searchDni().replace(/\D/g, '').trim();
+    if (!q) return this.allData();
+    return this.allData().filter(row => {
+      const dniClean = (row.dni || '').replace(/\D/g, '');
+      return dniClean.includes(q);
+    });
   });
 
   editModal = signal<GuestRow | null>(null);

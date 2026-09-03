@@ -180,6 +180,11 @@ export const appRoutes: Routes = [
         data: { title: 'Stage Plots', roles: ['organizador', 'admin', 'staff', 'sede'] }
       },
       {
+        path: 'import-inscripciones',
+        loadComponent: () => import('./features/import-inscripciones/import-inscripciones.page').then(m => m.ImportInscripcionesPageComponent),
+        data: { title: 'Carga Masiva', roles: ['organizador', 'admin'] }
+      },
+      {
         path: 'documentation',
         loadComponent: () => import('./features/documentation/admin-documentation.page').then(m => m.AdminDocumentationComponent),
         data: { title: 'Documentación', roles: ['organizador', 'admin', 'staff', 'jurado'] }
