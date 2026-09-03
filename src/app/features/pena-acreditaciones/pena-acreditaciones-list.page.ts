@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { NotificationService } from '../../core/services/notification.service';
+import { AcreditacionVisibilityService } from '../../core/services/acreditacion-visibility.service';
 
 interface PenaRow {
   id: string;
@@ -28,10 +29,19 @@ interface PenaRow {
           <h1 class="pena-title">Acreditaciones Peña Oficial</h1>
           <p class="pena-sub">Artistas y acompañantes registrados para control de acceso</p>
         </div>
-        <div class="pena-stats">
-          <span class="stat">Total: <strong>{{ total() }}</strong></span>
-          <span class="stat">Noche 1: <strong>{{ noche1Count() }}</strong></span>
-          <span class="stat">Noche 2: <strong>{{ noche2Count() }}</strong></span>
+        <div class="pena-header-right">
+          <div class="inscription-toggle-wrap">
+            <span class="inscription-toggle-label">{{ acreditacionVisibility.isOpen() ? 'Formulario público activo' : 'Formulario público desactivado' }}</span>
+            <label class="perm-toggle" [class.perm-on]="acreditacionVisibility.isOpen()">
+              <input type="checkbox" [checked]="acreditacionVisibility.isOpen()" (change)="acreditacionVisibility.toggle()" />
+              <span class="perm-toggle-track"><span class="perm-toggle-thumb"></span></span>
+            </label>
+          </div>
+          <div class="pena-stats">
+            <span class="stat">Total: <strong>{{ total() }}</strong></span>
+            <span class="stat">Noche 1: <strong>{{ noche1Count() }}</strong></span>
+            <span class="stat">Noche 2: <strong>{{ noche2Count() }}</strong></span>
+          </div>
         </div>
       </div>
 
@@ -175,6 +185,15 @@ interface PenaRow {
   styles: [`
     .pena-admin { padding: 16px; max-width: 1200px; margin: 0 auto; }
     .pena-header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+    .pena-header-right { display:flex; flex-direction:column; align-items:flex-end; gap:12px; }
+    .inscription-toggle-wrap { display:flex; align-items:center; gap:8px; padding:6px 12px; background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.2); border-radius:8px; }
+    .inscription-toggle-label { font-size:0.75rem; font-weight:600; color:#0284c7; white-space:nowrap; }
+    .perm-toggle { position:relative; display:inline-flex; cursor:pointer; }
+    .perm-toggle input { display:none; }
+    .perm-toggle-track { width:36px; height:20px; border-radius:10px; background:#d1d5db; transition:background 0.2s; display:flex; align-items:center; padding:2px; }
+    .perm-toggle-thumb { width:16px; height:16px; border-radius:50%; background:#fff; transition:transform 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+    .perm-toggle.perm-on .perm-toggle-track { background:#22c55e; }
+    .perm-toggle.perm-on .perm-toggle-thumb { transform:translateX(16px); }
     .pena-title { font-family:var(--font-display); font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; }
     .pena-sub { font-size:13px; color:#64748b; margin:0; }
     .pena-stats { display:flex; gap:12px; flex-wrap:wrap; }
@@ -274,6 +293,7 @@ interface PenaRow {
 export class PenaAcreditacionesListPageComponent implements OnInit {
   private http = inject(HttpClient);
   private notifications = inject(NotificationService);
+  acreditacionVisibility = inject(AcreditacionVisibilityService);
   rows = signal<PenaRow[]>([]);
   total = signal(0);
   loading = signal(false);

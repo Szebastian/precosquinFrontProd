@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { InscriptionVisibilityService } from '../../core/services/inscription-visibility.service';
+import { AcreditacionVisibilityService } from '../../core/services/acreditacion-visibility.service';
 
 interface User {
   id: string;
@@ -297,6 +298,16 @@ interface SystemConfig {
                   </div>
                   <label class="perm-toggle" [class.perm-on]="config.public_registration === 'true'">
                     <input type="checkbox" [checked]="config.public_registration === 'true'" (change)="config.public_registration = config.public_registration === 'true' ? 'false' : 'true'" />
+                    <span class="perm-toggle-track"><span class="perm-toggle-thumb"></span></span>
+                  </label>
+                </div>
+                <div class="config-toggle-row">
+                  <div class="config-toggle-info">
+                    <span class="config-toggle-label">Acreditación Peñas</span>
+                    <span class="config-toggle-desc">Mostrar formulario de acreditación de peñas en la web</span>
+                  </div>
+                  <label class="perm-toggle" [class.perm-on]="acreditacionVisibility.isOpen()">
+                    <input type="checkbox" [checked]="acreditacionVisibility.isOpen()" (change)="acreditacionVisibility.toggle()" />
                     <span class="perm-toggle-track"><span class="perm-toggle-thumb"></span></span>
                   </label>
                 </div>
@@ -780,7 +791,8 @@ interface SystemConfig {
 export class AdminPageComponent implements OnInit {
   private http = inject(HttpClient);
   private sanitizer = inject(DomSanitizer);
-  private inscriptionVisibility = inject(InscriptionVisibilityService);
+  inscriptionVisibility = inject(InscriptionVisibilityService);
+  acreditacionVisibility = inject(AcreditacionVisibilityService);
 
   // Main tab
   mainTab = signal<'usuarios' | 'permisos' | 'config'>('usuarios');
