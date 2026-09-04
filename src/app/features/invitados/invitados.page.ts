@@ -114,7 +114,10 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
           @if (searchDni()) {
             {{ filteredData().length }} resultado{{ filteredData().length !== 1 ? 's' : '' }} para "{{ searchDni() }}"
           } @else {
-            {{ allData().length }} invitados en total
+            {{ uniqueData().length }} invitados únicos
+            @if (duplicatesRemoved() > 0) {
+              <span class="duplicates-badge">· {{ duplicatesRemoved() }} duplicados eliminados</span>
+            }
           }
         </div>
         <div class="table-wrap">
@@ -294,6 +297,7 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
     .search-clear-btn { margin-top:12px; padding:8px 16px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; color:#475569; font-size:13px; font-weight:600; cursor:pointer; }
     .search-clear-btn:hover { background:#f1f5f9; }
     .table-info { font-size:13px; color:#64748b; margin-bottom:12px; font-weight:600; }
+    .duplicates-badge { display:inline-block; font-size:11px; font-weight:700; color:#0284c7; background:rgba(14,165,233,0.1); padding:3px 8px; border-radius:6px; margin-left:6px; }
     .table-wrap { overflow:auto; background:#fff; border:1px solid #e2e8f0; border-radius:14px; }
     .inv-table { width:100%; border-collapse:collapse; font-size:13px; }
     .inv-table th { background:#f8fafc; color:#475569; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; padding:12px 14px; text-align:center; border-bottom:1px solid #e2e8f0; white-space:nowrap; }
@@ -388,7 +392,7 @@ export class InvitadosPageComponent implements OnInit {
     return n;
   });
   standsCount = computed(() => this.stands().length);
-  totalCount = computed(() => this.allData().length);
+  totalCount = computed(() => this.uniqueData().length);
 
   allData = computed(() => {
     const rows: GuestRow[] = [];
@@ -420,12 +424,28 @@ export class InvitadosPageComponent implements OnInit {
     return rows;
   });
 
+  /** Deduplicated by DNI — keeps first occurrence */
+  uniqueData = computed(() => {
+    const seen = new Set<string>();
+    const result: GuestRow[] = [];
+    for (const row of this.allData()) {
+      const key = row.dni.replace(/\D/g, '');
+      if (!seen.has(key)) {
+        seen.add(key);
+        result.push(row);
+      }
+    }
+    return result;
+  });
+
+  duplicatesRemoved = computed(() => this.allData().length - this.uniqueData().length);
+
   /* ── Search by DNI ── */
   readonly searchDni = signal('');
   readonly filteredData = computed(() => {
     const q = this.searchDni().replace(/\D/g, '').trim();
-    if (!q) return this.allData();
-    return this.allData().filter(row => {
+    if (!q) return this.uniqueData();
+    return this.uniqueData().filter(row => {
       const dniClean = (row.dni || '').replace(/\D/g, '');
       return dniClean.includes(q);
     });
@@ -609,7 +629,7 @@ export class InvitadosPageComponent implements OnInit {
     }
 
     /* ── Data ── */
-    const rows = (this.searchDni() ? this.filteredData() : this.allData())
+    const rows = (this.searchDni() ? this.filteredData() : this.uniqueData())
       .filter(r => r.nombre && r.dni)
       .map(r => [r.nombre, r.dni]);
 
