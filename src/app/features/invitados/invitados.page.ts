@@ -85,7 +85,7 @@ interface StandRaw { id: string; full_name: string; dni: string; created_at: str
         <div class="search-bar">
           <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" class="search-input"
-                 placeholder="Buscar por DNI..."
+                 placeholder="Buscar por nombre o DNI..."
                  [ngModel]="searchDni()"
                  (ngModelChange)="searchDni.set($event)">
           @if (searchDni()) {
@@ -440,14 +440,18 @@ export class InvitadosPageComponent implements OnInit {
 
   duplicatesRemoved = computed(() => this.allData().length - this.uniqueData().length);
 
-  /* ── Search by DNI ── */
+  /* ── Search by name or DNI ── */
   readonly searchDni = signal('');
   readonly filteredData = computed(() => {
-    const q = this.searchDni().replace(/\D/g, '').trim();
+    const q = this.searchDni().trim();
     if (!q) return this.uniqueData();
+    const qLower = q.toLowerCase();
+    const qDigits = q.replace(/\D/g, '');
     return this.uniqueData().filter(row => {
+      const nameMatch = (row.nombre || '').toLowerCase().includes(qLower);
       const dniClean = (row.dni || '').replace(/\D/g, '');
-      return dniClean.includes(q);
+      const dniMatch = qDigits ? dniClean.includes(qDigits) : false;
+      return nameMatch || dniMatch;
     });
   });
 
